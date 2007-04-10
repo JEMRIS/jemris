@@ -24,6 +24,7 @@ public:
  	m_dalpha=dalpha;
    };
 
+// magnitude calculation
   bool Prepare(bool verbose){
 	double t0=1.0/m_dBW, Sum = 0.0, DeltaT = getDuration()/10000.0 ;
 	for (double t=-m_iN*t0; t<=m_iN*t0; t+=DeltaT)
