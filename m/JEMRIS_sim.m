@@ -95,9 +95,8 @@ fid=fopen('simu.xml','w');
  fprintf(fid,'</JMRI-SIM>\n');
 fclose(fid);
 if nargin==2 %redraw sample
- [s,USER]=unix('whoami');
  [dummy,SUBDIR]=fileparts(handles.CWD);
- unixcommand=sprintf('ssh %s@mrcluster "cd %s ; ./jemris %s simu.xml"',USER,SUBDIR,handles.seqfile);
+ unixcommand=sprintf('ssh mrcluster "cd %s ; ./jemris %s simu.xml"',SUBDIR,handles.seqfile);
  [status,dump]=unix(unixcommand);
  for i=[1 3 4 5 6]
     cla(handles.hax{i},'reset');
@@ -158,8 +157,7 @@ write_simu_xml(handles);
 %set up a PBS script on the cluster
 S_PBS=sprintf('sed -e ''s/XML_SEQ/%s/'' -e ''s/XML_SIM/simu.xml/'' pbs.script > mypbs',handles.seqfile);
 %command to launch command into queue on cluster 
-[s,USER]=unix('whoami');
-unixcommand=sprintf('ssh %s@mrcluster "cd %s; rm -f simu.done out.txt; %s; qsub mypbs"',USER,SUBDIR,S_PBS);
+unixcommand=sprintf('ssh mrcluster "cd %s; rm -f simu.done out.txt; %s; qsub mypbs"',SUBDIR,S_PBS);
 C={'now executing',unixcommand,'','... wait for results'};
 set(handles.sim_dump,'String',C);
 guidata(hObject, handles);
@@ -167,7 +165,7 @@ guidata(hObject, handles);
 pause(1);
 %block matlab until result appears (?? is there a better way ??)
 while exist('simu.done')~=2,end
-unix(['ssh ',USER,'@mrcluster "cd ',SUBDIR,'; rm -f mypbs simu.done *.ime462.tmp"']);
+unix(['ssh mrcluster "cd ',SUBDIR,'; rm -f mypbs simu.done *.ime462.tmp"']);
 C={};
 fid=fopen('out.txt');
 while 1
