@@ -77,6 +77,7 @@ protected:
  void CreateTGPS(PulseShape** pPulse, DOMNode* node);
  void CreateRO_TGPS(PulseShape** pPulse, DOMNode* node);
  void CreatePE_TGPS(PulseShape** pPulse, DOMNode* node);
+ void CreateSS_TGPS(PulseShape** pPulse, DOMNode* node);
  void CreateGradientSpiral(PulseShape** pPulse, DOMNode* node);
 
 private:
