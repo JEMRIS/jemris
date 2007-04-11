@@ -69,6 +69,7 @@ protected:
  void CreatePulseShape(PulseShape** pPulse, int* iTreeSteps, DOMNode* node);
  void CreateEmptyPulse(PulseShape** pPulse, DOMNode* node);
  void CreateExternalPulseShape(PulseShape** pPulse, DOMNode* node);
+ void CreateSincRfPulseShape(PulseShape** pPulse, DOMNode* node);
  void CreateHardRfPulseShape(PulseShape** pPulse, DOMNode* node);
  void CreateRfReceiverPhase(PulseShape** pPulse, DOMNode* node);
  void CreateRfPhaseCycling(PulseShape** pPulse, DOMNode* node);
