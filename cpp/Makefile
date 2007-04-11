@@ -27,7 +27,7 @@ MODOBJS=$(MOD)MR_Model.o $(MOD)BCV_MR_Model.o $(MOD)bloch.o  $(MOD)Sample.o $(MO
 
 #dependence on header files (add new sequences to this list)
 SEQH =  $(SFW)Parameter.h $(SFW)AllPulses.h $(SFW)EmptyPulse.h $(SFW)GradientPulseShape.h \
-	$(SFW)RfPulseShape.h  $(SFW)HardRfPulseShape.h $(SFW)Scanner.h \
+	$(SFW)RfPulseShape.h $(SFW)HardRfPulseShape.h $(SFW)SincRfPulseShape.h $(SFW)Scanner.h \
 	$(SFW)ConcatPulseShape.h $(SFW)RfSpoiling.h $(SFW)RfPhaseCycling.h \
 	$(SFW)PulseShape.h $(SFW)RO_TGPS.h  $(SFW)PE_TGPS.h $(SFW)DelayAtom.h\
 	$(SFW)ExternalPulseShape.h $(SFW)GradientSpiral.h $(MOD)Spin.h \
