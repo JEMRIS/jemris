@@ -20,6 +20,7 @@
 #include "TGPS.h"
 #include "PE_TGPS.h"
 #include "RO_TGPS.h"
+#include "SS_TGPS.h"
 #include "RfReceiverPhase.h"
 #include "GradientSpiral.h"
 
