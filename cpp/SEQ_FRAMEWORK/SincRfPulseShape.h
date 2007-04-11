@@ -43,6 +43,9 @@ public:
  	return true;
   };
 
+ //! has to move to RfPulseShape.h !!!
+ double getBandWidth(){return m_dBW;}
+
 //! set the number of NLPs to eight times the number of zeros
  void setNLPs() {
   	m_iNumNLPs=8*m_iN+1;
