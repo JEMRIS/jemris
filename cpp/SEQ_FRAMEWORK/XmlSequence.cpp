@@ -240,6 +240,7 @@
 	if ( name == "EmptyPulse"	  ) CreateEmptyPulse(pPulse, node);
 	if ( name == "ExternalPulseShape" ) CreateExternalPulseShape(pPulse, node);
 	if ( name == "HardRfPulseShape"   ) CreateHardRfPulseShape(pPulse, node);
+	if ( name == "SincRfPulseShape"   ) CreateSincRfPulseShape(pPulse, node);
 	if ( name == "RfReceiverPhase"	  ) CreateRfReceiverPhase(pPulse, node);
 	if ( name == "RfPhaseCycling"	  ) CreateRfPhaseCycling(pPulse, node);
 	if ( name == "RfSpoiling"	  ) CreateRfSpoiling(pPulse, node);
@@ -324,6 +325,32 @@
 	if (flipangle == 0.0 ) cout << name << " warning: zero flipangle" << endl;
 	if (duration == 0.0 ) cout << name << " warning: zero duration" << endl;
 	*pPulse = new HardRfPulseShape(flipangle, phase, duration, name);
+ };
+
+/*****************************************************************************/
+ void XmlSequence::CreateSincRfPulseShape(PulseShape** pPulse, DOMNode* node){
+	string name="SincRfPulseShape",item,value;
+	double factor=0.5,phase=0.0,flipangle=90.0,bw=0.5;
+	int N=3;
+	DOMNamedNodeMap *pAttributes = node->getAttributes();
+	if (pAttributes)
+	{
+		int nSize = pAttributes->getLength();
+		for(int i=0;i<nSize;++i)
+		{
+			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
+			item = XMLString::transcode(pAttributeNode->getName());
+			value = XMLString::transcode(pAttributeNode->getValue());
+			if (item=="Name")	name = value;
+			if (item=="FlipAngle")	flipangle = atof(value.c_str()); 
+			if (item=="Phase")	phase = atof(value.c_str());
+			if (item=="Bandwidth")	bw = atof(value.c_str());
+			if (item=="Zeros")	N = atoi(value.c_str());
+			if (item=="Factor")	factor = atof(value.c_str());
+		}
+	}
+	if (flipangle == 0.0 ) cout << name << " warning: zero flipangle" << endl;
+	*pPulse = new SincRfPulseShape(flipangle, phase, bw, N, factor, name);
  };
 
 /*****************************************************************************/
