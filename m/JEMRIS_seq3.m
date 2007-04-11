@@ -86,9 +86,10 @@ varargout{1} = handles;
 function call_jemris(hObject,handles)
 
 %cluster call
+[s,USER]=unix('whoami');
 [dummy,SUBDIR]=fileparts(handles.CWD);
-unixcommand=sprintf('ssh tstoecker@mrcluster "cd %s ; rm -f out.txt; ./jemris %s > out.txt"',...
-                    SUBDIR,handles.seqfile);
+unixcommand=sprintf('ssh %s@mrcluster "cd %s ; rm -f out.txt; ./jemris %s > out.txt"',...
+                    USER,SUBDIR,handles.seqfile);
 
 %local call
 %unixcommand=sprintf('ssh localhost "cd %s ; rm -f out.txt; ../jemris %s > out.txt"',...
