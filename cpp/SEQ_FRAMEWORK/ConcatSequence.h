@@ -132,9 +132,9 @@ public:
 
 
 private:
-   int 		m_iRepetitions;
+   int 			m_iRepetitions;
    Sequence* 	m_cChildrenPtr[CHILDRENMAX+1]; //we need one addtional NULL after full list
-	int	m_getLoopMethod;
+	int			m_getLoopMethod;
   int           m_iLoop; 
 
 };
