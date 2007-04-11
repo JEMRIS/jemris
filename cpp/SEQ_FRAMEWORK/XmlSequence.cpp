@@ -246,6 +246,7 @@
 	if ( name == "RfSpoiling"	  ) CreateRfSpoiling(pPulse, node);
 	if ( name == "TGPS"		  ) CreateTGPS(pPulse, node);
 	if ( name == "PE_TGPS"		  ) CreatePE_TGPS(pPulse, node);
+	if ( name == "SS_TGPS"		  ) CreateSS_TGPS(pPulse, node);
 	if ( name == "RO_TGPS"		  ) CreateRO_TGPS(pPulse, node);
 	if ( name == "GradientSpiral"	  ) CreateGradientSpiral(pPulse, node);
 	//add ADCs to pulse shape, if not already done
@@ -571,6 +572,34 @@
 		if (eAxis==AXIS_GY) ((GradientPulseShape*)*pPulse)->getAreaMethod(2);
 		if (eAxis==AXIS_GZ) ((GradientPulseShape*)*pPulse)->getAreaMethod(3);
 	}
+ };
+
+/*****************************************************************************/
+ void XmlSequence::CreateSS_TGPS(PulseShape** pPulse, DOMNode* node){
+	string name="SS_TGPS",item,value;
+	double slicethickness=-1.0;
+	int steps=0; bool noramps=false;
+	PulseAxis eAxis=AXIS_GZ;
+	DOMNamedNodeMap *pAttributes = node->getAttributes();
+	if (pAttributes)
+	{
+		int nSize = pAttributes->getLength();
+		for(int i=0;i<nSize;++i)
+		{
+			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
+			item = XMLString::transcode(pAttributeNode->getName());
+			value = XMLString::transcode(pAttributeNode->getValue());
+			if (item=="Name")		name = value;
+			if (item=="SliceThickness")	slicethickness = atof(value.c_str());
+			if (item=="Axis")
+				{
+                        		if ( value == "GX" ) eAxis = AXIS_GX ;
+                        		if ( value == "GY" ) eAxis = AXIS_GY ;
+                        		if ( value == "GZ" ) eAxis = AXIS_GZ ;
+				}
+		}
+	}
+	*pPulse = new SS_TGPS(eAxis, slicethickness, name);
  };
 
 /*****************************************************************************/
