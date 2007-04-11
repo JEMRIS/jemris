@@ -4,10 +4,9 @@ ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
 
 ifeq ($(ARCH), i386)
 	MPICC=mpicxx
-else ifeq ($(ARCH), x86_64)
+endif
+ifeq ($(ARCH), x86_64)
 	MPICC=mpicxx.mpich-gcc64
-else
-	info "architecture not supported yet"
 endif
 
 #libraries source code directories
