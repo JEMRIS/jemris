@@ -1,9 +1,14 @@
-CC=g++
-CCOPTS= -O2
-MPICC=mpicxx
+CC     =g++
+CCOPTS = -O2
+ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
 
-#MPI compile on cluster
-#MPICC=mpicxx.mpich-gcc64
+ifeq ($(ARCH), i386)
+	MPICC=mpicxx
+else ifeq ($(ARCH), x86_64)
+	MPICC=mpicxx.mpich-gcc64
+else
+	info "architecture not supported yet"
+endif
 
 #libraries source code directories
 SFW = ./SEQ_FRAMEWORK/
