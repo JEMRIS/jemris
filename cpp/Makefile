@@ -1,7 +1,8 @@
-CC     =g++
+CC     = g++
 CCOPTS = -O2
 ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
 
+#architecture check
 ifeq ($(ARCH), i386)
 	MPICC=mpicxx
 endif
