@@ -12,6 +12,7 @@
 #include <cmath>
 
 #include "EmptyPulse.h"
+#include "SincRfPulseShape.h"
 #include "HardRfPulseShape.h"
 #include "ExternalPulseShape.h"
 #include "RfSpoiling.h"
