@@ -48,7 +48,7 @@ public:
 					break;
 				}
 	}
-	setArea(PI*bw*duration/m_dSliceThickness);
+	setArea(2.0*PI*bw*duration/m_dSliceThickness);
 	setDuration(duration);
 //cout << "SS_TGPS: " << getDuration() << " " << duration << " " << m_dSliceThickness << endl;
 	return (fabs(duration-getDuration())<0.0001);
