@@ -188,7 +188,7 @@ seq.Name=['Sequence Root'];
 attr=seq.Attributes;
 N=length(seq.Children(1).Attributes);
 seq.Attributes(end+1:end+N)=seq.Children(1).Attributes;
-seq.A={'Name','Repetitions','Factor','TR','TE','TI','TD','Nx','Ny','FOVx','FOVy','ReadBW'};
+seq.A={'Name','Repetitions','Factor','TR','TE','TI','TD','Nx','Ny','Nz','FOVx','FOVy','FOVz','ReadBW'};
 seqcad_common(seq,handles)
 seq.Name=name;
 seq.Attributes=attr;
@@ -218,6 +218,11 @@ A={'Name','FlipAngle','Phase','Duration','ADCs'};
 seq.A=A;
 if ~isempty(handles),seqcad_common(seq,handles);end
 
+function A=seqcad_SincRfPulseShape(src,eventdata,seq,handles)
+A={'Name','FlipAngle','Phase','Bandwidth','Zeros','Factor','ADCs','ConnectToLoop'};
+seq.A=A;
+if ~isempty(handles),seqcad_common(seq,handles);end
+
 function A=seqcad_RfPhaseCycling(src,eventdata,seq,handles)
 A={'Name','Duration','ConnectToLoop','Cycle','Phase1','Phase2','Phase3','Phase4','ADCs'};
 seq.A=A;
@@ -233,13 +238,18 @@ A={'Name','Axis','Area','Factor','Duration','Gmax','SlewRate'};
 seq.A=A;
 if ~isempty(handles),seqcad_common(seq,handles);end
 
+function A=seqcad_SS_TGPS(src,eventdata,seq,handles)
+A={'Name','Axis','SliceThickness','Gmax','SlewRate'};
+seq.A=A;
+if ~isempty(handles),seqcad_common(seq,handles);end
+
 function A=seqcad_PE_TGPS(src,eventdata,seq,handles)
 A={'Name','Axis','ConnectToLoop','Area','Duration','Factor','Gmax','SlewRate'};
 seq.A=A;
 if ~isempty(handles),seqcad_common(seq,handles);end
 
 function A=seqcad_RO_TGPS(src,eventdata,seq,handles)
-A={'Name','Axis','Area','FlatTop','ADCs','Factor','Gmax','SlewRate'};
+A={'Name','Axis','Area','FlatTop','Factor','Gmax','SlewRate'};
 seq.A=A;
 if ~isempty(handles),seqcad_common(seq,handles);end
 
