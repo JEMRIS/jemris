@@ -110,8 +110,10 @@
 				if (item=="TD")		(*pSeq)->getParameter()->setTD( atof(value.c_str() ) );
 				if (item=="Nx")		(*pSeq)->getParameter()->setNx( atoi(value.c_str() ) );
 				if (item=="Ny")		(*pSeq)->getParameter()->setNy( atoi(value.c_str() ) );
+				if (item=="Nz")		(*pSeq)->getParameter()->setNz( atoi(value.c_str() ) );
 				if (item=="FOVx")	(*pSeq)->getParameter()->setFOVx( atof(value.c_str() ) );
 				if (item=="FOVy")	(*pSeq)->getParameter()->setFOVy( atof(value.c_str() ) );
+				if (item=="FOVz")	(*pSeq)->getParameter()->setFOVz( atof(value.c_str() ) );
 				if (item=="ReadBW")	(*pSeq)->getParameter()->setReadBW( atof(value.c_str() ) );
 			}
 		}
@@ -331,8 +333,9 @@
 /*****************************************************************************/
  void XmlSequence::CreateSincRfPulseShape(PulseShape** pPulse, DOMNode* node){
 	string name="SincRfPulseShape",item,value;
-	double factor=0.5,phase=0.0,flipangle=90.0,bw=0.5;
+	double factor=0.5,phase=0.0,flipangle=90.0,bw=0.5,offset=0.0;
 	int N=3;
+	SLICE_ORDER SO=LINEAR;
 	DOMNamedNodeMap *pAttributes = node->getAttributes();
 	if (pAttributes)
 	{
@@ -342,16 +345,21 @@
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
-			if (item=="FlipAngle")	flipangle = atof(value.c_str()); 
-			if (item=="Phase")	phase = atof(value.c_str());
-			if (item=="Bandwidth")	bw = atof(value.c_str());
-			if (item=="Zeros")	N = atoi(value.c_str());
-			if (item=="Factor")	factor = atof(value.c_str());
+			if (item=="Name")	 name = value;
+			if (item=="FlipAngle")	 flipangle = atof(value.c_str()); 
+			if (item=="Phase")	 phase = atof(value.c_str());
+			if (item=="Bandwidth")	 bw = atof(value.c_str());
+			if (item=="Zeros")	 N = atoi(value.c_str());
+			if (item=="Factor")	 factor = atof(value.c_str());
+			if (item=="SliceOrder")
+				{
+                        		if ( value == "LINEAR" ) SO = LINEAR ;
+                        		if ( value == "INTERLEAVED" ) SO = INTERLEAVED ;
+				}
 		}
 	}
 	if (flipangle == 0.0 ) cout << name << " warning: zero flipangle" << endl;
-	*pPulse = new SincRfPulseShape(flipangle, phase, bw, N, factor, name);
+	*pPulse = new SincRfPulseShape(flipangle, phase, bw, N, factor, SO, name);
  };
 
 /*****************************************************************************/
@@ -577,7 +585,7 @@
 /*****************************************************************************/
  void XmlSequence::CreateSS_TGPS(PulseShape** pPulse, DOMNode* node){
 	string name="SS_TGPS",item,value;
-	double slicethickness=-1.0;
+	double slewrate=-1.0, maxampl=-1.0,slicethickness=-1.0;
 	int steps=0; bool noramps=false;
 	PulseAxis eAxis=AXIS_GZ;
 	DOMNamedNodeMap *pAttributes = node->getAttributes();
@@ -591,6 +599,8 @@
 			value = XMLString::transcode(pAttributeNode->getValue());
 			if (item=="Name")		name = value;
 			if (item=="SliceThickness")	slicethickness = atof(value.c_str());
+			if (item=="Gmax")	maxampl = atof(value.c_str());
+			if (item=="SlewRate")	slewrate = atof(value.c_str());
 			if (item=="Axis")
 				{
                         		if ( value == "GX" ) eAxis = AXIS_GX ;
@@ -600,6 +610,8 @@
 		}
 	}
 	*pPulse = new SS_TGPS(eAxis, slicethickness, name);
+	if (maxampl>0.0) ((GradientPulseShape*)*pPulse)->setMaxAmpl(maxampl);
+	if (slewrate>0.0) ((GradientPulseShape*)*pPulse)->setSlewRate(slewrate);
  };
 
 /*****************************************************************************/
