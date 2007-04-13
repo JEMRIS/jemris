@@ -5,28 +5,30 @@ ht = uitoolbar(hObject);
 ic=handles.icons;
 Modules=handles.Modules;
 ModuleToolTip={'sequence container (ConcatSequence)','pulse container (AtomicSequence)','delay (DelayAtom)',...
-               'empty pulse','hard RF pulse','simple gradient pulse','phase encode gradient table',...
-               'readout gradient','RF phase cycling','RF spoiling'};
+               'empty pulse','hard RF pulse','sinc RF pulse','simple gradient pulse',...
+               'slice select gradient','readout gradient','phase encode gradient table',...
+               'RF phase cycling','RF spoiling'};
 %draw buttons
-for i=1:length(Modules)
+NM=length(Modules);
+for i=1:NM
     eval(['B=ic.',Modules{i},';']);       %the icon
     if i==4,bsep='on';else;bsep='off';end %separator for SEQ|PULSES
     if (i>3); B(find(isnan(B)))=1; end    %make background white for pulse icons
     handles.hpt{i} = uitoggletool(ht,'CData',B,'TooltipString',['Insert ',ModuleToolTip{i}],'Separator',bsep);
 end
-handles.hpt{11} = uitoggletool(ht,'CData',ic.EraseModule,'TooltipString','erase a module','Separator','on');
+handles.hpt{NM+1} = uitoggletool(ht,'CData',ic.EraseModule,'TooltipString','erase a module','Separator','on');
 CopyModule=permute(ic.SwapModules,[2 1 3]);
-handles.hpt{12} = uitoggletool(ht,'CData',CopyModule,'TooltipString','copy a module','Separator','on');
-handles.hpt{13} = uitoggletool(ht,'CData',ic.SwapModules,'TooltipString','swap two modules','Separator','on');
+handles.hpt{NM+2} = uitoggletool(ht,'CData',CopyModule,'TooltipString','copy a module','Separator','on');
+handles.hpt{NM+3} = uitoggletool(ht,'CData',ic.SwapModules,'TooltipString','swap two modules','Separator','on');
 
 %define callbacks
 for i=1:length(handles.hpt)
    if i<11
     eval(['set(handles.hpt{i},''OnCallback'',{@tbbdf_',Modules{i},',Modules{i},handles});']); 
    end
-   if i==11; set(handles.hpt{i},'OnCallback',{@tbbdf_Erase,handles}); end
-   if i==12; set(handles.hpt{i},'OnCallback',{@tbbdf_Copy,handles}); end
-   if i==13; set(handles.hpt{i},'OnCallback',{@tbbdf_Swap,handles}); end
+   if i==NM+1; set(handles.hpt{i},'OnCallback',{@tbbdf_Erase,handles}); end
+   if i==NM+2; set(handles.hpt{i},'OnCallback',{@tbbdf_Copy,handles}); end
+   if i==NM+3; set(handles.hpt{i},'OnCallback',{@tbbdf_Swap,handles}); end
    set(handles.hpt{i},'OffCallback',@tbbdf_Off);
 end
 hpt =handles.hpt;
@@ -76,6 +78,12 @@ function tbbdf_EmptyPulse(src,eventdata,seq,handles)
 tbbdf_common(seq,handles)
 
 function tbbdf_HardRfPulseShape(src,eventdata,seq,handles)
+tbbdf_common(seq,handles)
+
+function tbbdf_SincRfPulseShape(src,eventdata,seq,handles)
+tbbdf_common(seq,handles)
+
+function tbbdf_SS_TGPS(src,eventdata,seq,handles)
 tbbdf_common(seq,handles)
 
 function tbbdf_PE_TGPS(src,eventdata,seq,handles)
