@@ -6,13 +6,15 @@ if (nargin<5);img_num=1;end
 %arg 2: perform EPI reordering of every other line
 colormap(gray)
 
-f=fopen('signal.bin'); A=fread(f,Inf,'double');fclose(f);
-n=size(A,1)/4; A =reshape(A,4,n)';t=A(:,1);[t,I]=sort(t);M=A(I,2:4);
-d=diff(diff(t));d(d<1e-5)=0;I=[0;find(d)+1;length(t)];
+if WHAT~=1
+ f=fopen('signal.bin'); A=fread(f,Inf,'double','l');fclose(f);
+ n=size(A,1)/4; A =reshape(A,4,n)';t=A(:,1);[t,I]=sort(t);M=A(I,2:4);
+ d=diff(diff(t));d(d<1e-5)=0;I=[0;find(d)+1;length(t)];
+end
 
 %add noise scaled with bandwidth (only to x- and y-component)
 if noise
-  f=fopen('sample.bin'); A=fread(f,Inf,'double');fclose(f);
+  f=fopen('sample.bin'); A=fread(f,Inf,'double','l');fclose(f);
   n=size(A,1)/8; A =reshape(A,8,n)'; M0=max(A(:,1));
   for i=1:length(I)-1
    J=[I(i)+1:I(i+1)];
@@ -86,7 +88,7 @@ end
 %plot sample
 if WHAT==1
 
- f=fopen('sample.bin'); A=fread(f,Inf,'double');fclose(f);
+ f=fopen('sample.bin'); A=fread(f,Inf,'double','l');fclose(f);
  n=size(A,1)/8; A =reshape(A,8,n)';
  d=unique(sort(A(:,6)));d=diff(d(1:2));
  XYZ=round(A(:,[6:8])/d);
