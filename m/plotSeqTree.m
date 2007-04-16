@@ -141,7 +141,7 @@ set(seq.hl,'color',[1 0 0],'linewidth',3)
 
 %show attributes
 set(handles.SeqObjectPanel,'Title',['Module: ',seq.Name])
-for i=1:14
+for i=1:16
     if i>length(seq.A)
         bvis='''off''';
     else
@@ -188,7 +188,7 @@ seq.Name=['Sequence Root'];
 attr=seq.Attributes;
 N=length(seq.Children(1).Attributes);
 seq.Attributes(end+1:end+N)=seq.Children(1).Attributes;
-seq.A={'Name','Repetitions','Factor','TR','TE','TI','TD','Nx','Ny','Nz','FOVx','FOVy','FOVz','ReadBW'};
+seq.A={'Name','Repetitions','Factor','TR','TE','TI','TD','ReadBW','Nx','Ny','Nz','FOVx','FOVy','FOVz','Gmax','SlewRate'};
 seqcad_common(seq,handles)
 seq.Name=name;
 seq.Attributes=attr;
