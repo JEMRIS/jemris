@@ -60,14 +60,14 @@ handles.Attributes={...
         {'Name','Duration','ConnectToLoop','Cycle','Phase1','Phase2','Phase3','Phase4','ADCs'};...
         {'Name','Duration','ConnectToLoop','QuadPhaseInc','StartCycle'}...
     } ;
-handles.Parameter={'TR','TE','TI','TD','Nx','Ny','Nz','FOVx','FOVy','FOVz','ReadBW'};
+handles.Parameter={'TR','TE','TI','TD','ReadBW','Nx','Ny','Nz','FOVx','FOVy','FOVz','Gmax','SlewRate'};
 
 for i=1:length(handles.Modules)
     eval(['handles.ModuleAtrributes.',handles.Modules{i},'=[];']) %filled by plotSeqTree button presses
 end
 
 set(handles.addADCs,'Visible','off');
-for i=1:14
+for i=1:16
     eval(['set(handles.SOtag',num2str(i),',''Visible'',''off'');'])
     eval(['set(handles.SOEtag',num2str(i),',''Visible'',''off'');'])
 end
@@ -410,4 +410,23 @@ function SOEtag14_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+function SOEtag15_Callback(hObject, eventdata, handles)
+common_SOEtags(hObject,handles)
+
+% --- Executes during object creation, after setting all properties.
+function SOEtag15_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function SOEtag16_Callback(hObject, eventdata, handles)
+common_SOEtags(hObject,handles)
+
+% --- Executes during object creation, after setting all properties.
+function SOEtag16_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
 
