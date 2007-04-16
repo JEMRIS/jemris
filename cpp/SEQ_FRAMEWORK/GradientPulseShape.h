@@ -17,12 +17,13 @@ public:
   GradientPulseShape (){
 	setName("GradientPulseShape");
 	setAxis(AXIS_GX); //if not specified, gradients at x-axis by default
-	Scanner scanner;
-	setLimits(&scanner);
 	m_dFactor=0.0;
 	m_getAreaMethod=0;
 	m_sGradPulse="";
 	m_dNewDuration=0.0;
+	m_bSlewRate=true;
+	m_bMaxAmpl=true;
+	setLimits();
   };
   ~GradientPulseShape(){};
 
@@ -42,13 +43,21 @@ public:
 	m_eAxis=eAxis;
   };
 
-  void setLimits(Scanner* pScan){
-	m_dSlewRate = pScan->getMaxSlewRate();
-	m_dMaxAmpl  = pScan->getMaxGradientPower();
+  void setLimits(){
+	//set limits from scanner, if limits have not been locally changed
+	if (m_bSlewRate) m_dSlewRate = m_scanner.getMaxSlewRate();
+	if (m_bMaxAmpl)  m_dMaxAmpl  = m_scanner.getMaxGradientPower();
+	//set limits from parameters, if available and limits have not been locally changed
+	double dMG=-1.0 , dSR=-1.0;
+	if (m_bMaxAmpl && getAtomicSeq()!=NULL) dMG=getAtomicSeq()->getRoot()->getParameter()->getMaxAmpl();
+	if (dMG>0.0) m_dMaxAmpl=dMG;
+	if (m_bSlewRate && getAtomicSeq()!=NULL) dSR=getAtomicSeq()->getRoot()->getParameter()->getSlewRate();
+	if (dSR>0.0) m_dSlewRate=dSR;
   };
 
-void setSlewRate ( double val ){m_dSlewRate=val; }; 
-void setMaxAmpl  ( double val ){m_dMaxAmpl =val; }; 
+//setting limits, ignoring the scanner limits
+void setSlewRate ( double val ){m_dSlewRate=val; m_bSlewRate=false; };
+void setMaxAmpl  ( double val ){m_dMaxAmpl =val; m_bMaxAmpl=false; };
 
 double getSlewRate ( ){return m_dSlewRate;}; 
 double getMaxAmpl ( ){return m_dMaxAmpl;}; 
@@ -67,8 +76,11 @@ string LinkToPulse(){return m_sGradPulse;};
 void  NewDuration(double val){m_dNewDuration=val;};
 double  NewDuration(){return m_dNewDuration;};
 protected:
+	Scanner m_scanner;
 	double 	m_dSlewRate;
 	double 	m_dMaxAmpl;
+	bool 	m_bSlewRate;
+	bool 	m_bMaxAmpl;
 	double 	m_dArea;
 	double 	m_dFactor;
 	int	m_getAreaMethod;
