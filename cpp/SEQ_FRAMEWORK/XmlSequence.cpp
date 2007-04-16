@@ -115,6 +115,8 @@
 				if (item=="FOVy")	(*pSeq)->getParameter()->setFOVy( atof(value.c_str() ) );
 				if (item=="FOVz")	(*pSeq)->getParameter()->setFOVz( atof(value.c_str() ) );
 				if (item=="ReadBW")	(*pSeq)->getParameter()->setReadBW( atof(value.c_str() ) );
+				if (item=="Gmax")	(*pSeq)->getParameter()->setMaxAmpl( atof(value.c_str() ) );
+				if (item=="SlewRate")	(*pSeq)->getParameter()->setSlewRate( atof(value.c_str() ) );
 			}
 		}
 	}
