@@ -480,15 +480,14 @@ if get(handles.showLeft,'Value')>1
  h=copyobj(handles.hax{1},h);
  set(h,'units','normalized','position',[.1 .1 .8 .8])
 else
-    p=[ 0.0300    0.5838    0.3347    0.3412; ...
-        0.5003    0.5838    0.3347    0.3412; ...
-        0.0300    0.1100    0.3347    0.3412; ...
-        0.5003    0.1100    0.3347    0.3412];
+    p=[ 0.1300    0.5838    0.3347    0.3412; ...
+        0.5703    0.5838    0.3347    0.3412; ...
+        0.1300    0.1100    0.3347    0.3412; ...
+        0.5703    0.1100    0.3347    0.3412];
     for j=1:4
          g(j)=copyobj(handles.hax{2+j},h);
          set(g(j),'units','normalized','position',p(j,:))
-         c=colorbar('peer',g(j));
-         set(c,'position',get(c,'position')-[.05 0 0 0])
+         colorbar('peer',g(j));
     end
 end
 
@@ -504,25 +503,15 @@ function SettingsTag_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function ParCompTag_Callback(hObject, eventdata, handles)
-if strcmp(get(hObject,'Checked'),'on')
-    set(hObject,'Checked','off')
-    set(handles.LocCompTag,'Checked','on');
-else
-    set(hObject,'Checked','on')
-    set(handles.LocCompTag,'Checked','off');
-end
-guidata(hObject, handles);
+ set(hObject,'Checked','on')
+ set(handles.LocCompTag,'Checked','off');
+ guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function LocCompTag_Callback(hObject, eventdata, handles)
-if strcmp(get(hObject,'Checked'),'on')
-    set(hObject,'Checked','off')
-    set(handles.ParCompTag,'Checked','on');
-else
-    set(hObject,'Checked','on')
-    set(handles.ParCompTag,'Checked','off');
-end
-guidata(hObject, handles);
+ set(hObject,'Checked','on')
+ set(handles.ParCompTag,'Checked','off');
+ guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function ComputationTag_Callback(hObject, eventdata, handles)
@@ -533,6 +522,10 @@ function loadSigTag_Callback(hObject, eventdata, handles)
  if FileName==0,return;end
  SIGNAL=load(FileName);
  f=fopen('signal.bin','wb'); fwrite(f,SIGNAL.All,'double','l'); fclose(f);
+ cla(handles.hax{2},'reset');
+ set(handles.hax{2},'color',[1 1 1],'visible','off');
+ set(handles.EPI_R,'Visible','off');
+ set(handles.ImageR,'Visible','off');
  plotall(handles.hax,2,handles.epir,handles.sim.RN,handles.img_num);
  set(handles.showRight,'Value',1);
  guidata(hObject, handles);
