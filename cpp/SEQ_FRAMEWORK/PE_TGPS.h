@@ -38,6 +38,7 @@ public:
 
   bool Prepare(bool verbose){
 	m_bVerbose=verbose;
+	setLimits();
 	if ( getAreaMethod()==1 ) //along X axis
 	{
 		m_dArea = getFactor()*getAtomicSeq()->getRoot()->getParameter()->getKMAXx();
