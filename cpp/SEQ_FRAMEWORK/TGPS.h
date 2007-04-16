@@ -30,6 +30,7 @@ public:
 
   bool Prepare(bool verbose){
         m_bVerbose=verbose;
+	setLimits();
 	GradientPulseShape* pLinkedPulse = NULL;
 	if (getAtomicSeq()!=NULL) pLinkedPulse = (GradientPulseShape*)getAtomicSeq()->getRoot()->FindPulse(LinkToPulse());
 	if (pLinkedPulse!=NULL) m_dArea = getFactor()*pLinkedPulse->getArea();
