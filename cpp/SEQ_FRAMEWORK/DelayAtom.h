@@ -30,10 +30,12 @@ public:
 	m_bUseTD=false;
 	m_dFactor=-1.0;
 	setName(sName); 
+	m_sPulse="NULL";
   };
   ~DelayAtom(){};
   
   void setStartStopSeq(string S1, string S2){ m_S1=S1; m_S2=S2; m_bSearchStartStopSeq=true; };
+  void setDelayFromPulse(string S1){ m_sPulse=S1;};
   void useTE(){ m_bUseTE=true; };
   void useHalfTE(){ m_bUseHalfTE=true; };
   void useTR(){ m_bUseTR=true; };
@@ -51,6 +53,9 @@ public:
 	if (m_bUseHalfTE) m_dRTime = 0.5*getRoot()->getParameter()->getTE();
 	if (m_bUseTI)     m_dRTime = getRoot()->getParameter()->getTI();
 	if (m_bUseTD)     m_dRTime = getRoot()->getParameter()->getTD();
+	PulseShape* pLinkedPulse = NULL;
+	if (m_sPulse!="NULL") pLinkedPulse = getRoot()->FindPulse(m_sPulse);
+	if (pLinkedPulse!=NULL) m_dRTime = pLinkedPulse->getDuration();
 	if (m_dFactor>0.0) m_dRTime *= m_dFactor;
 	//clean up first (then start from scratch)
 	m_dDuration=0.0;
@@ -134,7 +139,7 @@ private:
 	int m_iNADC;
 	DelayType m_DT;
 	bool m_bSearchStartStopSeq, m_bUseTR, m_bUseHalfTE, m_bUseTE, m_bUseTI, m_bUseTD;
-	string m_S1, m_S2;
+	string m_S1, m_S2, m_sPulse;
 };
 
 #endif
