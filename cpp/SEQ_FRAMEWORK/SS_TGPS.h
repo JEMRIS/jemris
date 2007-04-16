@@ -28,6 +28,7 @@ public:
 
   bool Prepare(bool verbose){
         m_bVerbose=verbose;
+	setLimits();
 	double duration=0.0, bw=0.0;
 	AtomicSequence* pAS = ((AtomicSequence*) getAtomicSeq() );
 	if (pAS!=NULL)
