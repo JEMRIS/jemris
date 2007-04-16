@@ -32,6 +32,7 @@ public:
 
   bool Prepare(bool verbose){
         m_bVerbose=verbose;
+	setLimits();
 	if ( getAreaMethod()==1 ) //along X axis
 	{
 		m_dFlatTopArea = getFactor()*2.0*getAtomicSeq()->getRoot()->getParameter()->getKMAXx();
