@@ -152,7 +152,7 @@
 
 /*****************************************************************************/
  void XmlSequence::CreateDelayAtom(Sequence** pSeq, DOMNode* node){
-	string S1="NULL",S2="NULL",name="DelayAtom",item,value;
+	string S1="NULL",S2="NULL",S3="NULL",name="DelayAtom",item,value;
 	double delay,factor=-1.0;
 	int iNADC=0;
 	DelayType DT;
@@ -167,8 +167,12 @@
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
 			if (item=="Name")	name = value;
-			if (item=="Delay")	delay = atof(value.c_str()); //set numeric delay
-			if (item=="Factor")	factor = atof(value.c_str()); //set numeric delay
+			if (item=="Factor")	factor = atof(value.c_str()); //set factor for delay
+			if (item=="Delay")
+			{
+				delay = atof(value.c_str()); //set numeric delay
+				if (delay==0.0) S3=value; //remember string
+			}
 			if (item=="Delay" && value=="TE")	bUseTE=true ;		//use TE delay from parameter
 			if (item=="Delay" && value=="TE/2")	bUseHalfTE=true ;	//use TE delay from parameter
 			if (item=="Delay" && value=="TR")	bUseTR=true ;		//use TR delay from parameter
@@ -194,6 +198,7 @@
 	if (bUseTI) ((DelayAtom*)*pSeq)->useTI();
 	if (bUseTD) ((DelayAtom*)*pSeq)->useTD();
 	if (factor>0.0) ((DelayAtom*)*pSeq)->setFactor(factor);
+	if (S3!="NULL") ((DelayAtom*)*pSeq)->setDelayFromPulse(S3);
  };
 
 /*****************************************************************************/
