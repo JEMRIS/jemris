@@ -51,7 +51,7 @@ void  TGPS::setNLPs() {
 
 void  TGPS::setFlatTopArea(double value) {
 	if (value==0.0) return;
-	double dC = 1.0/fabs(2.0*getSlopeUp()) + 1.0/fabs(2.0*getSlopeDn());
+	double dC = 2.0/fabs(2.0*getSlewRate());
 	setArea( value *( 1.0 + getMaxAmpl()*getMaxAmpl()*dC / fabs(value) ) );
 };
 
