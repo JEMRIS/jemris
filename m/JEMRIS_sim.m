@@ -43,7 +43,7 @@ handles.CWD=pwd;
 sample.type='Sphere';
 sample.T1=1000;sample.T2=100;sample.M0=1;sample.CS=0;
 sample.R=50;sample.DxDy=1;
-sim.DF=0;sim.CSF=0;sim.CF=0;sim.RN=0;
+sim.DF=0; sim.CSF=0; sim.CF=0; sim.RN=0; sim.INC=0;
 handles.sample=sample;
 handles.sim=sim;
 handles.img_num=1;
@@ -51,7 +51,7 @@ handles.img_num=1;
 
 C={'Sample','Signal','k-Space','Image'};
 set(handles.showLeft,'String',C);
-C={'Signal','k-Space','Image'};
+C={'Signal','k-Space','Image','Evolution'};
 set(handles.showRight,'String',C);
 C={'Sphere','2Spheres','brain1','brain2'};
 set(handles.Sample,'String',C);
@@ -70,33 +70,38 @@ guidata(hObject, handles);
 % --- writes the simulation xml file. This is *not* an object of the GUI!
 function write_simu_xml(handles,redraw)
 sample=handles.sample;sim=handles.sim;
-fid=fopen('simu.xml','w');
- fprintf(fid,'<?xml version="1.0" encoding="iso-8859-1"?>\n');
- fprintf(fid,'<JMRI-SIM>\n');
+SIMU.Name='JMRI-SIM'; SIMU.Attributes=''; SIMU.Data='';
+SAMPLE.Name='Sample'; SAMPLE.Attributes=''; SAMPLE.Data=''; SAMPLE.Children=[]; 
+
  switch sample.type
      case 'Sphere'
-                fprintf(fid,[' <Sample Shape="%s2D" Radius="%4.2f" Delta="%4.2f"',...
-                             ' M0="%4.2f" T1="%5.2f" T2="%5.2f" CS="%5.2f"/>\n'], ...
-                        sample.type,sample.R,sample.DxDy,sample.M0,sample.T1,sample.T2,sample.CS);
+         NAMES = {'Shape','Radius','Delta','M0','T1','T2','CS'};
+         VALUES= {'Sphere2D',num2str(sample.R),num2str(sample.DxDy),num2str(sample.M0),num2str(sample.T1),...
+                  num2str(sample.T2),num2str(sample.CS)};
      case '2Spheres'
-                 fprintf(fid,[' <Sample Shape="%s2D"  Delta="%4.2f"',...
-                              ' Radius_1="%4.2f" M0_1="%4.2f" T1_1="%5.2f" T2_1="%5.2f" CS_1="%5.2f"',...
-                              ' Radius_2="%4.2f" M0_2="%4.2f" T1_2="%5.2f" T2_2="%5.2f" CS_2="%5.2f"/>\n'], ...
-                         sample.type,sample.DxDy,sample.R(1),sample.M0(1),sample.T1(1),sample.T2(1),...
-                         sample.CS(1),sample.R(2),sample.M0(2),sample.T1(2),sample.T2(2),sample.CS(2));
+         NAMES = {'Shape','Delta','Radius_1','M0_1','T1_1','T2_1','CS_1','Radius_2','M0_2','T1_2','T2_2','CS_2'};
+         VALUES= {'2Spheres2D',num2str(sample.DxDy),num2str(sample.R(1)),num2str(sample.M0(1)),...
+                  num2str(sample.T1(1)),num2str(sample.T2(1)),num2str(sample.CS(1)),num2str(sample.R(2)),...
+                  num2str(sample.M0(2)),num2str(sample.T1(2)),num2str(sample.T2(2)),num2str(sample.CS(2))};
     case 'brain1'
-         fprintf(fid,' <Sample InFile="tra0mm_mr_Susc_CS.bin" />\n'); sim.CSF=sample.CS(1);
+          NAMES = {'InFile'}; VALUES= {'tra0mm_mr_Susc_CS.bin'};
      case 'brain2'
-         fprintf(fid,' <Sample InFile="tra32mm_mr_Susc_CS.bin" />\n'); sim.CSF=sample.CS(1);
+          NAMES = {'InFile'}; VALUES= {'tra32mm_mr_Susc_CS.bin'};
  end
- if nargin<2
- if (sim.CF==0),CF=-1;else CF=1/sim.CF;end
-  fprintf(fid,[' <Model FieldFluctuations="%5.4f" ChemicalShiftFactor="%5.4f"',...
-               ' ConcomitantFields="%5.4f"/>\n'],sim.DF,sim.CSF,CF);
+ for i=1:length(NAMES); SAMPLE.Attributes(i).Name=NAMES{i}; SAMPLE.Attributes(i).Value=VALUES{i}; end
+ SIMU.Children(1)=SAMPLE;
+ 
+ if nargin<2 %call from "StartSimu" => add Model to xml file
+  MODEL.Name='Model'; MODEL.Attributes=''; MODEL.Data=''; MODEL.Children=[]; 
+  if (sim.CF==0),CF=-1;else CF=1/sim.CF;end
+  NAMES = {'FieldFluctuations','ChemicalShiftFactor','ConcomitantFields'};
+  VALUES= {num2str(sim.DF),num2str(sim.CSF),num2str(CF)};
+  for i=1:length(NAMES); MODEL.Attributes(i).Name=NAMES{i}; MODEL.Attributes(i).Value=VALUES{i}; end
+  if (sim.INC>0),MODEL.Attributes(end+1).Name='SaveEvolution';MODEL.Attributes(end).Value=num2str(sim.INC);end
+  SIMU.Children(2)=MODEL;
  end
- fprintf(fid,'</JMRI-SIM>\n');
-fclose(fid);
-save simumat handles
+ writeXMLseq(SIMU,'simu.xml');
+
 if nargin==2 %redraw sample
  [dummy,SUBDIR]=fileparts(handles.CWD);
  if strcmp(get(handles.ParCompTag,'Checked'),'on')
@@ -287,6 +292,16 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function setIncTag_Callback(hObject, eventdata, handles)
+handles.sim.INC=str2num(get(hObject,'String'));
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function setIncTag_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
 function setDeltaF_Callback(hObject, eventdata, handles)
 handles.sim.DF=1e-3*str2num(get(hObject,'String'));
 guidata(hObject, handles);
@@ -356,8 +371,8 @@ set(handles.hax{2},'color',[1 1 1],'visible','off');
 Nimg=plotall(handles.hax,1+get(hObject,'Value'),handles.epir,handles.sim.RN,handles.img_num);
 if get(hObject,'Value')==1,bvis='off';else;bvis='on';end
 set(handles.EPI_R,'Visible',bvis);
-if (Nimg==1),bvis='off';
-else;bvis='on';for i=1:Nimg;C{i}=['# ',num2str(i)];end;set(handles.ImageR,'String',C);end
+if (Nimg==1),bvis='off';handles.img_num=1;
+else;bvis='on';for i=1:Nimg;C{i}=['# ',num2str(i)];end;set(handles.ImageR,'Value',1),set(handles.ImageR,'String',C);end
 set(handles.ImageR,'Visible',bvis);
 guidata(hObject, handles);
 
@@ -497,6 +512,7 @@ h=figure;
 colormap(gray);
 h=copyobj(handles.hax{2},h);
 set(h,'units','normalized','position',[.1 .1 .8 .8])
+if get(handles.showRight,'Value')==4;colorbar('peer',h,'southoutside');end
 
 % --------------------------------------------------------------------
 function SettingsTag_Callback(hObject, eventdata, handles)
@@ -538,3 +554,17 @@ function saveSigTag_Callback(hObject, eventdata, handles)
  d=diff(diff(t));d(d<1e-5)=0;I=[0;find(d)+1;length(t)];
  save(FileName,'t','M','I','All');
  
+
+
+% --------------------------------------------------------------------
+function saveMagEvolTag_Callback(hObject, eventdata, handles)
+ [FileName,PathName] = uiputfile('*.mat');
+ if FileName==0,return;end
+ [M,x,y,t]=read_selex_evol(pwd);
+ save(FileName,'t','M','x','y');
+
+% hObject    handle to saveMagEvolTag (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
