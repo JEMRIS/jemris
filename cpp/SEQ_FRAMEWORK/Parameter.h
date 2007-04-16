@@ -25,7 +25,9 @@ public:
 	m_dFOVx = 256;
 	m_dFOVy = 256;
 	m_dFOVz = 1;
- };
+	m_dSlewRate = -1.0; //default: no scanner limits settings
+	m_dMaxAmpl  = -1.0; //         through the parameter class
+  };
  ~Parameter(){ };
 
 //setter
@@ -41,6 +43,8 @@ void setFOVy(double val){m_dFOVy=val;};
 void setFOVz(double val){m_dFOVz=val;}; 
 void setDz(double val){m_dFOVz=val*m_iNz;}; //slice thickness is not used internally
 void setReadBW(double val){m_dReadBW=val;}; 
+void setSlewRate ( double val ){m_dSlewRate=val; }; 
+void setMaxAmpl  ( double val ){m_dMaxAmpl =val; }; 
 
 //getter
 int getNx(){return m_iNx;}; 
@@ -63,6 +67,8 @@ double getKMAXz(){return PARAM_PI/getDz();};
 double getDKx(){return 2*getKMAXx()/m_iNx;}; 
 double getDKy(){return 2*getKMAXy()/m_iNy;}; 
 double getDKz(){return 2*getKMAXz()/m_iNz;}; 
+double getSlewRate ( ){return m_dSlewRate;}; 
+double getMaxAmpl ( ){return m_dMaxAmpl;}; 
 
 double getArea(int method){
 	switch (method)
@@ -89,6 +95,8 @@ private:
 	double m_dFOVx;
 	double m_dFOVy;
 	double m_dFOVz;
+	double 	m_dSlewRate;
+	double 	m_dMaxAmpl;
 };
 
 
