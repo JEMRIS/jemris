@@ -6,6 +6,26 @@ if (nargin<5);img_num=1;end
 %arg 2: perform EPI reordering of every other line
 colormap(gray)
 
+%plot evolution
+if WHAT==5
+   [M,x,y,t]=read_selex_evol(pwd);
+   Nimg=length(t);
+   [Nx,Ny]=size(M(:,:,1,1));
+   S=zeros(2*Nx,2*Ny);
+   %S(1:Nx,1:Ny)=sqrt(sum(M(:,:,img_num,1:2).^2,4));
+   %S(1:Nx,Ny+[1:Ny])=atan2(M(:,:,img_num,2),M(:,:,img_num,1))/pi;
+   S(1:Nx,1:Ny)=M(:,:,img_num,1);
+   S(1:Nx,Ny+[1:Ny])=M(:,:,img_num,2);
+   S(Nx+[1:Nx],Ny+[1:Ny])=M(:,:,img_num,3);
+   imagesc(S),h=colorbar('peer',hax{2},'southoutside');%set(h,'position',get(h,'position')-[.05 0 0 0]);
+   axis image,set(gca,'xtick',[],'ytick',[])
+   %text(.25*Nx,1.5*Ny,sprintf('|M_{xy}|   \\phi_{xy} \n\n           M_{z}'),'color','r','fontsize',12,'fontweight','bold')
+   text(.25*Nx,1.6*Ny,sprintf('M_{x}   M_{y} \n\n        M_{z}'),'color','y','fontsize',12,'fontweight','bold')
+   title(sprintf('t = %5.2f ms',t(img_num)),'fontsize',12,'fontweight','bold')
+   return
+end
+
+%read signal
 if WHAT~=1
  f=fopen('signal.bin'); A=fread(f,Inf,'double','l');fclose(f);
  n=size(A,1)/4; A =reshape(A,4,n)';t=A(:,1);[t,I]=sort(t);M=A(I,2:4);
