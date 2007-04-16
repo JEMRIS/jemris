@@ -59,6 +59,8 @@ set(handles.EPI_L,'Visible','off');
 set(handles.EPI_R,'Visible','off');
 set(handles.ImageL,'Visible','off');
 set(handles.ImageR,'Visible','off');
+set(handles.LocCompTag,'Checked','off');
+set(handles.ParCompTag,'Checked','on');
 guidata(hObject, handles);
 
 
@@ -94,9 +96,14 @@ fid=fopen('simu.xml','w');
  end
  fprintf(fid,'</JMRI-SIM>\n');
 fclose(fid);
+save simumat handles
 if nargin==2 %redraw sample
  [dummy,SUBDIR]=fileparts(handles.CWD);
- unixcommand=sprintf('ssh mrcluster "cd %s ; ./jemris %s simu.xml"',SUBDIR,handles.seqfile);
+ if strcmp(get(handles.ParCompTag,'Checked'),'on')
+    unixcommand=sprintf('ssh mrcluster "cd %s ; ./jemris %s simu.xml"',SUBDIR,handles.seqfile);
+ else
+    unixcommand=sprintf('ssh localhost "cd %s ; ./jemris %s simu.xml"',handles.CWD,handles.seqfile);
+ end
  [status,dump]=unix(unixcommand);
  for i=[1 3 4 5 6]
     cla(handles.hax{i},'reset');
@@ -108,7 +115,7 @@ end
 
 % --- Outputs from this function are returned to the command line.
 function varargout = JEMRIS_sim_OutputFcn(hObject, eventdata, handles) 
-varargout{1} = handles.output;
+varargout{1} = handles;
 
 % --- Executes on selection change in Sample.
 function Sample_Callback(hObject, eventdata, handles)
@@ -153,19 +160,29 @@ end
 % --- Executes on button press in start_simu.
 function start_simu_Callback(hObject, eventdata, handles)
 write_simu_xml(handles);
-[dummy,SUBDIR]=fileparts(handles.CWD);
-%set up a PBS script on the cluster
-S_PBS=sprintf('sed -e ''s/XML_SEQ/%s/'' -e ''s/XML_SIM/simu.xml/'' pbs.script > mypbs',handles.seqfile);
-%command to launch command into queue on cluster 
-unixcommand=sprintf('ssh mrcluster "cd %s; rm -f simu.done out.txt; %s; qsub mypbs"',SUBDIR,S_PBS);
-C={'now executing',unixcommand,'','... wait for results'};
-set(handles.sim_dump,'String',C);
-guidata(hObject, handles);
-[status,dump]=unix(unixcommand);
-pause(1);
-%block matlab until result appears (?? is there a better way ??)
-while exist('simu.done')~=2,end
-unix(['ssh mrcluster "cd ',SUBDIR,'; rm -f mypbs simu.done *.ime462.tmp"']);
+if strcmp(get(handles.ParCompTag,'Checked'),'on')
+ [dummy,SUBDIR]=fileparts(handles.CWD);
+ %set up a PBS script on the cluster
+ S_PBS=sprintf('sed -e ''s/XML_SEQ/%s/'' -e ''s/XML_SIM/simu.xml/'' pbs.script > mypbs',handles.seqfile);
+ %command to launch command into queue on cluster 
+ unixcommand=sprintf('ssh mrcluster "cd %s; rm -f simu.done out.txt; %s; qsub mypbs"',SUBDIR,S_PBS);
+ C={'now executing',unixcommand,'','... wait for results'};
+ set(handles.sim_dump,'String',C);
+ guidata(hObject, handles);
+ [status,dump]=unix(unixcommand);
+ pause(1);
+ %block matlab until result appears (?? is there a better way ??)
+ while exist('simu.done')~=2,end
+ unix(['ssh mrcluster "cd ',SUBDIR,'; rm -f mypbs simu.done *.ime462.tmp"']);
+else
+ unixcommand=sprintf('ssh localhost "cd %s ; ./jemris %s simu.xml > out.txt"',handles.CWD,handles.seqfile);
+ C={'now executing',unixcommand,'','... wait for results'};
+ set(handles.sim_dump,'String',C);
+ guidata(hObject, handles);
+ pause(1);
+ [status,dump]=unix(unixcommand);
+end
+
 C={};
 fid=fopen('out.txt');
 while 1
@@ -194,14 +211,6 @@ guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function loadSampleTag_Callback(hObject, eventdata, handles)
-
-% --- Executes on button press in save_plot.
-function SAVEPLOT(hObject, eventdata, handles)
-[a,b,c]=fileparts(handles.seqfile);
-D=dir([b,'*_sim*.pdf']);
-pdfname=sprintf('%s_sim%03d',b,length(D)+1);
-set(gcf,'PaperPositionMode','auto','InvertHardcopy','off')
-print('-dpdf',pdfname)
 
 % --- Executes on selection change in sim_dump.
 function sim_dump_Callback(hObject, eventdata, handles)
@@ -457,9 +466,82 @@ function plotTag_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function plotGUITag_Callback(hObject, eventdata, handles)
+ [FileName,PathName] = uiputfile('*.jpg');
+ if FileName==0,return;end
+ set(gcf,'PaperPositionMode','auto','InvertHardcopy','off')
+ print('-djpeg90',FileName)
+
 
 % --------------------------------------------------------------------
 function plotLeftTag_Callback(hObject, eventdata, handles)
+h=figure;
+colormap(gray);
+if get(handles.showLeft,'Value')>1
+ h=copyobj(handles.hax{1},h);
+ set(h,'units','normalized','position',[.1 .1 .8 .8])
+else
+    p=[ 0.0300    0.5838    0.3347    0.3412; ...
+        0.5003    0.5838    0.3347    0.3412; ...
+        0.0300    0.1100    0.3347    0.3412; ...
+        0.5003    0.1100    0.3347    0.3412];
+    for j=1:4
+         g(j)=copyobj(handles.hax{2+j},h);
+         set(g(j),'units','normalized','position',p(j,:))
+         c=colorbar('peer',g(j));
+         set(c,'position',get(c,'position')-[.05 0 0 0])
+    end
+end
 
 % --------------------------------------------------------------------
 function plotRightTag_Callback(hObject, eventdata, handles)
+h=figure;
+colormap(gray);
+h=copyobj(handles.hax{2},h);
+set(h,'units','normalized','position',[.1 .1 .8 .8])
+
+% --------------------------------------------------------------------
+function SettingsTag_Callback(hObject, eventdata, handles)
+
+% --------------------------------------------------------------------
+function ParCompTag_Callback(hObject, eventdata, handles)
+if strcmp(get(hObject,'Checked'),'on')
+    set(hObject,'Checked','off')
+    set(handles.LocCompTag,'Checked','on');
+else
+    set(hObject,'Checked','on')
+    set(handles.LocCompTag,'Checked','off');
+end
+guidata(hObject, handles);
+
+% --------------------------------------------------------------------
+function LocCompTag_Callback(hObject, eventdata, handles)
+if strcmp(get(hObject,'Checked'),'on')
+    set(hObject,'Checked','off')
+    set(handles.ParCompTag,'Checked','on');
+else
+    set(hObject,'Checked','on')
+    set(handles.ParCompTag,'Checked','off');
+end
+guidata(hObject, handles);
+
+% --------------------------------------------------------------------
+function ComputationTag_Callback(hObject, eventdata, handles)
+
+% --------------------------------------------------------------------
+function loadSigTag_Callback(hObject, eventdata, handles)
+ [FileName,PathName] = uigetfile('*.mat','Select a Signal mat-file');
+ if FileName==0,return;end
+ SIGNAL=load(FileName);
+ f=fopen('signal.bin','wb'); fwrite(f,SIGNAL.All,'double','l'); fclose(f);
+ plotall(handles.hax,2,handles.epir,handles.sim.RN,handles.img_num);
+ set(handles.showRight,'Value',1);
+ guidata(hObject, handles);
+% --------------------------------------------------------------------
+function saveSigTag_Callback(hObject, eventdata, handles)
+ [FileName,PathName] = uiputfile('*.mat');
+ if FileName==0,return;end
+ f=fopen('signal.bin'); All=fread(f,Inf,'double','l');fclose(f);
+ n=size(All,1)/4; A =reshape(All,4,n)';t=A(:,1);[t,I]=sort(t);M=A(I,2:4);
+ d=diff(diff(t));d(d<1e-5)=0;I=[0;find(d)+1;length(t)];
+ save(FileName,'t','M','I','All');
+ 
