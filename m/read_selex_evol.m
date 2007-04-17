@@ -23,13 +23,13 @@ for node=1:length(SD)
  	%fprintf('reading file %s \n',S)
 	f=fopen(S);
  	A=fread(f,Inf,'double'); fclose(f);
+    N=A(end); A(end)=[];
 	if node==1 %find number of timepoints and allocate output matrix
-		[s,w]=unix(['cat ',P,'/out.txt | grep "slave  1:" | awk ''{print $6}'' ']);
-		Nt=size(A,1)/7/str2num(w);
+        Nt=size(A,1)/7/N; Is=[1:Nt];
 		Is=[1:Nt];
 		M=zeros(Nx*Ny,length(Is),3);
-	end
-	N=size(A,1)/7/Nt; A=reshape(A,7,Nt,N);
+    end
+    A=reshape(A,7,Nt,N);
  	x=squeeze(A(2,1,:)); y=squeeze(A(3,1,:));
 	x=x/d;y=y/d;x=x+amx+1;y=y+amy+1;
 	I=sub2ind([Nx Ny],x,y);
