@@ -10,6 +10,7 @@
 
 #include "TGPS.h"
 #include "AtomicSequence.h"
+#include "RfPulseShape.h"
 
 //! slice selection trapezoidal gradient pulse shape
 class SS_TGPS :public TGPS{
@@ -45,16 +46,17 @@ public:
 			if ( pAS->getPulse(i)->getAxis() == AXIS_RF )
 				{
 					duration = pAS->getPulse(i)->getDuration();
-					bw = ((SincRfPulseShape*) pAS->getPulse(i))->getBandWidth();
+					bw = ((RfPulseShape*) pAS->getPulse(i))->getBandWidth();
 					break;
 				}
 	}
 	setArea(2.0*PI*bw*duration/m_dSliceThickness);
 	setDuration(duration);
-//cout << "SS_TGPS: " << getDuration() << " " << duration << " " << m_dSliceThickness << endl;
+//cout << "SS_TGPS: " << getDuration() << " " << getArea() << " " << m_dSliceThickness << endl;
 	return (fabs(duration-getDuration())<0.0001);
  };
 
+ double getSliceThickness(){return m_dSliceThickness; };
 private: 
 	double m_dSliceThickness;
 
