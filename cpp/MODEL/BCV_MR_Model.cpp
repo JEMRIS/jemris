@@ -29,8 +29,10 @@ void  BCV_MR_Model:: MRCalculate( double& dTimeShift, long& lIndexShift, AtomicS
 			m_MagCylCord[0]=Ith( ((nvec*) (m_pSpin->SolverSettings))->y,1 );
 			m_MagCylCord[1]=Ith( ((nvec*) (m_pSpin->SolverSettings))->y,2 );
 			m_MagCylCord[2]=Ith( ((nvec*) (m_pSpin->SolverSettings))->y,3 );
-			if (bTP[i]) { AddToSignal(lIndexShift++,dTimeShift+dTP[i],pA); }
-			if (pfout != NULL && i%iStep == 0) SaveEvolution( pfout, lSpin, dTimeShift + dTP[i] );
+			if (pfout != NULL && bTP[i] && lIndexShift%iStep == 0) //write time evolution
+				SaveEvolution( pfout, lSpin, dTimeShift + dTP[i] );
+			if (bTP[i]) //write signal
+				AddToSignal(lIndexShift++,dTimeShift+dTP[i],pA);
 	}
 	dTimeShift += pA->getDuration();
 	N_VFree( ((nvec*) (m_pSpin->SolverSettings))->abstol);  //free the abstol vector
