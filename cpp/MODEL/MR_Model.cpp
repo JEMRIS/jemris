@@ -103,7 +103,7 @@ double MR_Model:: getDeltaB(double dx,double dy, double dz){
 Signal*  MR_Model::Solve(bool cont, bool remember, string* fn, int iStep) {
 
    ofstream* pfout=NULL;
-   if (fn!=NULL) pfout = new ofstream(fn->c_str(), ios::binary); 
+   if (fn!=NULL) { pfout = new ofstream(fn->c_str(), ios::binary); }
 
    long lIndexShift;
    double dTimeShift;
@@ -129,7 +129,14 @@ Signal*  MR_Model::Solve(bool cont, bool remember, string* fn, int iStep) {
 	}
 	freeSolver();
    }
-   if (fn!=NULL) { pfout->close(); delete pfout; }
+
+   if (fn!=NULL)
+   {
+	double dNSP = ((double) m_pSam->sSample.NumberOfPoints);
+	pfout->write((char *) &dNSP, sizeof dNSP );
+	pfout->close();
+	delete pfout;
+   }
    return m_pSig;
 };
 
