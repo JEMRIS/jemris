@@ -219,7 +219,7 @@ seq.A=A;
 if ~isempty(handles),seqcad_common(seq,handles);end
 
 function A=seqcad_SincRfPulseShape(src,eventdata,seq,handles)
-A={'Name','FlipAngle','Phase','Bandwidth','Zeros','Factor','ADCs','ConnectToLoop'};
+A={'Name','FlipAngle','Phase','Bandwidth','Zeros','Factor','ADCs','ConnectToLoop','Gap','SliceOrder'};
 seq.A=A;
 if ~isempty(handles),seqcad_common(seq,handles);end
 
