@@ -340,9 +340,9 @@
 /*****************************************************************************/
  void XmlSequence::CreateSincRfPulseShape(PulseShape** pPulse, DOMNode* node){
 	string name="SincRfPulseShape",item,value;
-	double factor=0.5,phase=0.0,flipangle=90.0,bw=0.5,offset=0.0;
+	double factor=0.5,phase=0.0,flipangle=90.0,bw=0.5,offset=0.0,gap =0.0;
 	int N=3;
-	SLICE_ORDER SO=LINEAR;
+	SLICE_ORDER SO=ASCENDING;
 	DOMNamedNodeMap *pAttributes = node->getAttributes();
 	if (pAttributes)
 	{
@@ -358,15 +358,17 @@
 			if (item=="Bandwidth")	 bw = atof(value.c_str());
 			if (item=="Zeros")	 N = atoi(value.c_str());
 			if (item=="Factor")	 factor = atof(value.c_str());
+			if (item=="Gap")	 gap = atof(value.c_str());
 			if (item=="SliceOrder")
 				{
-                        		if ( value == "LINEAR" ) SO = LINEAR ;
+                        		if ( value == "ASCENDING" ) SO = ASCENDING ;
+                        		if ( value == "DESCENDING" ) SO = DESCENDING ;
                         		if ( value == "INTERLEAVED" ) SO = INTERLEAVED ;
 				}
 		}
 	}
 	if (flipangle == 0.0 ) cout << name << " warning: zero flipangle" << endl;
-	*pPulse = new SincRfPulseShape(flipangle, phase, bw, N, factor, SO, name);
+	*pPulse = new SincRfPulseShape(flipangle, phase, bw, N, factor, SO, gap, name);
  };
 
 /*****************************************************************************/
