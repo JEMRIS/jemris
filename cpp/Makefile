@@ -36,8 +36,6 @@ SEQH =  $(SFW)Parameter.h $(SFW)AllPulses.h $(SFW)EmptyPulse.h $(SFW)GradientPul
 	$(SFW)GradientSpiralPart.h $(SFW)GradientSpiralConcatSequence.h \
 	$(SFW)GradientSpiralExtRfConcatSequence.h
 
-<<<<<<< .mine
-=======
 #CVODE
 cvode :
 	cd CVODE; make
@@ -46,7 +44,6 @@ cvode :
 cluster-install : cvode all
 	runner=`whoami`; if test $$runner != "root"; then echo "You are not root. Have password ready"; su -c "cp pjemris jemris ${CLUSTER_INSTALL_DIR}"; else   echo "You are root" ; cp pjemris jemris "${CLUSTER_INSTALL_DIR}"; fi
 
->>>>>>> .r71
 #TO DO: all objects + main program
 all   : cvode $(SFWOBJS) $(MODOBJS) jemris pjemris
 
