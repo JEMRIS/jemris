@@ -177,7 +177,8 @@ if strcmp(get(handles.ParCompTag,'Checked'),'on')
  while exist('simu.done')~=2,end
  unix(['ssh mrcluster "cd ',SUBDIR,'; rm -f mypbs simu.done *.ime462.tmp"']);
 else
- unixcommand=sprintf('ssh localhost "cd %s ; ./jemris %s simu.xml > out.txt"',handles.CWD,handles.seqfile);
+ unixcommand=sprintf('ssh localhost "cd %s; %s/jemris %s simu.xml > out.txt"',...
+                     handles.CWD,handles.JEMRISPATH,handles.seqfile);
  C={'now executing',unixcommand,'','... wait for results'};
  set(handles.sim_dump,'String',C);
  guidata(hObject, handles);
