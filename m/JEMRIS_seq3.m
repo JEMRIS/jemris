@@ -90,13 +90,8 @@ function call_jemris(hObject,handles)
 
 %cluster call
 [dummy,SUBDIR]=fileparts(handles.CWD);
-unixcommand=sprintf('ssh mrcluster "cd %s ; rm -f seqout.txt; ./jemris %s > seqout.txt"',...
-                    SUBDIR,handles.seqfile);
-
-%local call
-%unixcommand=sprintf('ssh localhost "cd %s ; rm -f out.txt; ../jemris %s > out.txt"',...
-%                    handles.CWD,handles.seqfile);
-                
+unixcommand=sprintf('ssh localhost "cd %s ; rm -f seqout.txt; %s/jemris %s > seqout.txt"',...
+                    handles.CWD,handles.JemrisPath,handles.seqfile);                
 [status,dump]=unix(unixcommand);
 C={};
 fid=fopen('seqout.txt');
