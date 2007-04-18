@@ -62,6 +62,7 @@ set(handles.ImageL,'Visible','off');
 set(handles.ImageR,'Visible','off');
 set(handles.LocCompTag,'Checked','off');
 set(handles.ParCompTag,'Checked','on');
+write_simu_xml(handles,1);
 guidata(hObject, handles);
 
 
@@ -70,6 +71,12 @@ guidata(hObject, handles);
 
 % --- writes the simulation xml file. This is *not* an object of the GUI!
 function write_simu_xml(handles,redraw)
+if nargin==2
+    RESOURCES=handles.JEMRISPATH;
+else
+    RESOURCES='/apps/prod/misc/share/jemris';
+end
+
 sample=handles.sample;sim=handles.sim;
 SIMU.Name='JMRI-SIM'; SIMU.Attributes=''; SIMU.Data='';
 SAMPLE.Name='Sample'; SAMPLE.Attributes=''; SAMPLE.Data=''; SAMPLE.Children=[]; 
@@ -85,9 +92,9 @@ SAMPLE.Name='Sample'; SAMPLE.Attributes=''; SAMPLE.Data=''; SAMPLE.Children=[];
                   num2str(sample.T1(1)),num2str(sample.T2(1)),num2str(sample.CS(1)),num2str(sample.R(2)),...
                   num2str(sample.M0(2)),num2str(sample.T1(2)),num2str(sample.T2(2)),num2str(sample.CS(2))};
     case 'brain1'
-          NAMES = {'InFile'}; VALUES= {'tra0mm_mr_Susc_CS.bin'};
+          NAMES = {'InFile'}; VALUES= {[RESOURCES,'/tra0mm_mr_Susc_CS.bin']};
      case 'brain2'
-          NAMES = {'InFile'}; VALUES= {'tra32mm_mr_Susc_CS.bin'};
+          NAMES = {'InFile'}; VALUES= {[RESOURCES,'/tra32mm_mr_Susc_CS.bin']};
  end
  for i=1:length(NAMES); SAMPLE.Attributes(i).Name=NAMES{i}; SAMPLE.Attributes(i).Value=VALUES{i}; end
  SIMU.Children(1)=SAMPLE;
@@ -165,7 +172,7 @@ write_simu_xml(handles);
 if strcmp(get(handles.ParCompTag,'Checked'),'on')
  [dummy,SUBDIR]=fileparts(handles.CWD);
  %set up a PBS script on the cluster
- S_PBS=sprintf('sed -e ''s/XML_SEQ/%s/'' -e ''s/XML_SIM/simu.xml/'' pbs.script > mypbs',handles.seqfile);
+ S_PBS=sprintf('sed -e ''s/XML_SEQ/%s/'' -e ''s/XML_SIM/simu.xml/'' /apps/prod/misc/share/jemris/pbs.script > mypbs',handles.seqfile);
  %command to launch command into queue on cluster 
  unixcommand=sprintf('ssh mrcluster "cd %s; rm -f simu.done out.txt; %s; qsub mypbs"',SUBDIR,S_PBS);
  C={'now executing',unixcommand,'','... wait for results'};
@@ -272,6 +279,7 @@ end
 
 function setRadius_Callback(hObject, eventdata, handles)
 handles.sample.R=str2num(get(hObject,'String'));
+write_simu_xml(handles,1);
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -282,6 +290,7 @@ end
 
 function setGrid_Callback(hObject, eventdata, handles)
 handles.sample.DxDy=str2num(get(hObject,'String'));
+write_simu_xml(handles,1);
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
