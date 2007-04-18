@@ -85,9 +85,10 @@ void Sample::writeBinaryFile(string filename)
 
 void Sample::readBinaryFile(string filename)
 {
-	long N;
+	long N; double n;
 	ifstream fin(filename.c_str(), ios::binary);
-	fin.read((char *)(&(N)), sizeof(long));
+	fin.read((char *)(&(n)), sizeof(double));
+	N = ((long ) n);
 	CreateSamplestruct(N);
 
         for (long v=0;v<sSample.NumberOfPoints;v++)
