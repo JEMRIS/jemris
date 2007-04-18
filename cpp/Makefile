@@ -1,6 +1,8 @@
 CC     = g++
 CCOPTS = -O2
+CP	 = /bin/cp
 ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
+CLUSTER_INSTALL_DIR = /usr/local/bin
 
 #architecture check
 ifeq ($(ARCH), i386)
@@ -33,6 +35,14 @@ SEQH =  $(SFW)Parameter.h $(SFW)AllPulses.h $(SFW)EmptyPulse.h $(SFW)GradientPul
 	$(SFW)ExternalPulseShape.h $(SFW)GradientSpiral.h $(MOD)Spin.h \
 	$(SFW)GradientSpiralPart.h $(SFW)GradientSpiralConcatSequence.h \
 	$(SFW)GradientSpiralExtRfConcatSequence.h
+
+#CVODE
+cvode :
+	cd CVODE; make
+
+#install
+install :	all
+	runner=`whoami`; if test $$runner != "root"; then echo "You are not root. Have password ready"; su -c "cp pjemris jemris ${CLUSTER_INSTALL_DIR}"; else   echo "You are root" ; cp pjemris jemris "${CLUSTER_INSTALL_DIR}"; fi
 
 #TO DO: all objects + main program
 all   : $(SFWOBJS) $(MODOBJS) jemris pjemris
