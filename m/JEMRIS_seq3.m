@@ -268,10 +268,26 @@ function PlotTag_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function PlotGUITag_Callback(hObject, eventdata, handles)
+ [FileName,PathName] = uiputfile('*.jpg');
+ if FileName==0,return;end
+ set(gcf,'PaperPositionMode','auto','InvertHardcopy','off')
+ print('-djpeg90',FileName)
 
 % --------------------------------------------------------------------
 function PlotPDTag_Callback(hObject, eventdata, handles)
-
+h=figure;
+    p=[ 0.1300    0.7093    0.3347    0.2157;...
+        0.5703    0.7093    0.3347    0.2157;...
+        0.1300    0.4096    0.3347    0.2157;...
+        0.5703    0.4096    0.3347    0.2157;...
+        0.1300    0.1100    0.3347    0.2157;...
+        0.5703    0.1100    0.3347    0.2157];
+    I=[1 3 5 2 4 6];
+    for j=1:6
+         g(j)=copyobj(handles.hax{j},h);
+         set(g(j),'units','normalized','position',p(I(j),:))
+    end
+    
 %this function is performed for all text-edit callbacks on the module card
 function common_SOEtags(hObject,handles)
 S=get(hObject,'Tag');S(3)=[];
