@@ -41,7 +41,7 @@ cvode :
 	cd CVODE; make
 
 #install
-install :	all
+cluster-install : cvode all
 	runner=`whoami`; if test $$runner != "root"; then echo "You are not root. Have password ready"; su -c "cp pjemris jemris ${CLUSTER_INSTALL_DIR}"; else   echo "You are root" ; cp pjemris jemris "${CLUSTER_INSTALL_DIR}"; fi
 
 #TO DO: all objects + main program
