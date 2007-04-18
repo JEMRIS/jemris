@@ -2,7 +2,7 @@ CC     = g++
 CCOPTS = -O2
 CP	 = /bin/cp
 ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
-CLUSTER_INSTALL_DIR = /usr/local/bin
+CLUSTER_INSTALL_DIR = /srv/apps/prod/misc/bin
 
 #architecture check
 ifeq ($(ARCH), i386)
