@@ -14,23 +14,54 @@ using namespace std;
 
 int main (int argc, char *argv[])
 {
-	if (argc==1) {cout << "usage: jemris <seq.xml> <simu.xml>" << endl; return 0;}
-	XmlSequence* xSeq = new XmlSequence(argv[1]);
-	if (!xSeq->Status()) {cout << argv[1] << " is not a valid sequence xml file" << endl; return -1;} 
-	bool bverbose = false;
-	if (argc==2) {bverbose = true;} 
-	ConcatSequence* pSeq = xSeq->getSequence(bverbose);
-	delete xSeq;
+	//show info
+	if (argc==1)
+	{
+		 cout << endl << "usage: a) jemris <seq.xml>            " << endl;
+		 cout << "       b) jemris <simu.xml>           " << endl;
+		 cout << "       c) jemris <seq.xml> <simu.xml> " << endl;
+		 cout << endl << "a) stores sequence diagramme (seq.bin) , b) stores sample (sample.bin)," << endl;
+		 cout << "c) performs the simulation and stores sample and signal (sample.bin & signal.bin)" << endl << endl;
+		 return 0;
+	}
 
-	if (argc==2) {delete pSeq; return 0;} //exit, if no simu.xml file
+	XmlSequence* xSeq = new XmlSequence(argv[1]);		//parse first argument as sequence file
+	
+	if (argc==2) //only one input file
+	{
+		if (xSeq->Status()) //sequence parse ok => write sequence diagram (seq.bin)
+		{
+			ConcatSequence* pSeq = xSeq->getSequence(true);
+			delete xSeq; delete pSeq; return 0;
+		}
+		else
+		{
+			XmlSimulation* xSim = new XmlSimulation(argv[1],NULL);	//parse first argument as simulation file
+			if (!xSim->Status())
+			 {cout	<< argv[1] << " is neither a valid sequence xml file, nor a valid simulation xml file"
+				<< endl; return -1;} 
+			Sample* pSam   = xSim->getSample(true);
+			delete pSam; delete xSim;
+			return 0;
+		}
+	}
+
+	if (!xSeq->Status()) //sequence parse ok => write sequence diagram (seq.bin)
+		{cout << argv[1] << " is not a valid sequence xml file" << endl; return -1;} 
+
+	ConcatSequence* pSeq = xSeq->getSequence(false); //get sequence object
 
 	XmlSimulation* xSim = new XmlSimulation(argv[2],pSeq);
-	if (!xSim->Status()) {cout << argv[2] << " is not a valid simulation xml file" << endl; return -1;} 
+
+	if (!xSim->Status())
+		{cout << argv[2] << " is not a valid simulation xml file" << endl; return -1;} 
+
 	cout <<  endl << "MR SIMULATION" << endl << endl << "Sequence : '"<< pSeq->getName() 
 		<< "' , duration = " << pSeq->getDuration() << "msec" << endl;
+
 	Sample* pSam   = xSim->getSample(true);
 	MR_Model* pMod = xSim->getModel(true);
-	if (pMod==NULL) {delete pSeq; delete pSam; delete xSim; return 0;} //exit, if no Model in simu.xml file
+
 	Signal* pSig ;
 	if ( xSim->getEvolution()>0 )
 		{ string fn="sim_data.bin"; pSig = pMod->Solve(false,true,&fn,xSim->getEvolution()); }
