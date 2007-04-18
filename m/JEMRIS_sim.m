@@ -31,7 +31,7 @@ colordef white
 % Choose default command line output for JEMRIS_sim
 handles.output = hObject;
 
-handles.seqfile = 'FID.xml';
+handles.seqfile = '';
 hax{1}=handles.axes1; hax{2}=handles.axes2;
 hax{3}=handles.axes3; hax{4}=handles.axes4;
 hax{5}=handles.axes5; hax{6}=handles.axes6;
@@ -40,6 +40,7 @@ handles.hax=hax;
 handles.epil=0;
 handles.epir=0;
 handles.CWD=pwd;
+handles.JEMRISPATH=fileparts(which('JEMRIS_sim'));
 sample.type='Sphere';
 sample.T1=1000;sample.T2=100;sample.M0=1;sample.CS=0;
 sample.R=50;sample.DxDy=1;
@@ -72,7 +73,7 @@ function write_simu_xml(handles,redraw)
 sample=handles.sample;sim=handles.sim;
 SIMU.Name='JMRI-SIM'; SIMU.Attributes=''; SIMU.Data='';
 SAMPLE.Name='Sample'; SAMPLE.Attributes=''; SAMPLE.Data=''; SAMPLE.Children=[]; 
-
+ %sample item
  switch sample.type
      case 'Sphere'
          NAMES = {'Shape','Radius','Delta','M0','T1','T2','CS'};
@@ -90,25 +91,20 @@ SAMPLE.Name='Sample'; SAMPLE.Attributes=''; SAMPLE.Data=''; SAMPLE.Children=[];
  end
  for i=1:length(NAMES); SAMPLE.Attributes(i).Name=NAMES{i}; SAMPLE.Attributes(i).Value=VALUES{i}; end
  SIMU.Children(1)=SAMPLE;
- 
- if nargin<2 %call from "StartSimu" => add Model to xml file
-  MODEL.Name='Model'; MODEL.Attributes=''; MODEL.Data=''; MODEL.Children=[]; 
-  if (sim.CF==0),CF=-1;else CF=1/sim.CF;end
-  NAMES = {'FieldFluctuations','ChemicalShiftFactor','ConcomitantFields'};
-  VALUES= {num2str(sim.DF),num2str(sim.CSF),num2str(CF)};
-  for i=1:length(NAMES); MODEL.Attributes(i).Name=NAMES{i}; MODEL.Attributes(i).Value=VALUES{i}; end
-  if (sim.INC>0),MODEL.Attributes(end+1).Name='SaveEvolution';MODEL.Attributes(end).Value=num2str(sim.INC);end
-  SIMU.Children(2)=MODEL;
- end
+ %model item
+ MODEL.Name='Model'; MODEL.Attributes=''; MODEL.Data=''; MODEL.Children=[]; 
+ if (sim.CF==0),CF=-1;else CF=1/sim.CF;end
+ NAMES = {'FieldFluctuations','ChemicalShiftFactor','ConcomitantFields'};
+ VALUES= {num2str(sim.DF),num2str(sim.CSF),num2str(CF)};
+ for i=1:length(NAMES); MODEL.Attributes(i).Name=NAMES{i}; MODEL.Attributes(i).Value=VALUES{i}; end
+ if (sim.INC>0),MODEL.Attributes(end+1).Name='SaveEvolution';MODEL.Attributes(end).Value=num2str(sim.INC);end
+ SIMU.Children(2)=MODEL;
+ %write simu xml file 
  writeXMLseq(SIMU,'simu.xml');
 
-if nargin==2 %redraw sample
- [dummy,SUBDIR]=fileparts(handles.CWD);
- if strcmp(get(handles.ParCompTag,'Checked'),'on')
-    unixcommand=sprintf('ssh mrcluster "cd %s ; ./jemris %s simu.xml"',SUBDIR,handles.seqfile);
- else
-    unixcommand=sprintf('ssh localhost "cd %s ; ./jemris %s simu.xml"',handles.CWD,handles.seqfile);
- end
+%redraw sample
+if nargin==2
+ unixcommand=sprintf('ssh localhost "cd %s; %s/jemris simu.xml"',handles.CWD,handles.JEMRISPATH);
  [status,dump]=unix(unixcommand);
  for i=[1 3 4 5 6]
     cla(handles.hax{i},'reset');
@@ -164,6 +160,7 @@ end
 
 % --- Executes on button press in start_simu.
 function start_simu_Callback(hObject, eventdata, handles)
+if (exist(handles.seqfile) ~= 2); errordlg('select sequence first!'); return; end
 write_simu_xml(handles);
 if strcmp(get(handles.ParCompTag,'Checked'),'on')
  [dummy,SUBDIR]=fileparts(handles.CWD);
