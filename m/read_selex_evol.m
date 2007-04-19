@@ -2,7 +2,7 @@ function [M,x,y,t]=read_selex_evol(P);
 
 if nargin<1,P=pwd;end
 
-if ( exist('sim_data01.bin')~=2 || exist('sample.bin') ~=2)
+if ( ( exist('sim_data.bin')~=2 && exist('sim_data01.bin')~=2 ) || exist('sample.bin') ~=2)
     error('binary files do not exist')
 end
 
@@ -17,9 +17,9 @@ Z=XYZ(:,3);amz=abs(min(Z));Z=Z+amz+1;
 Nx=max(X);Ny=max(Y);Nz=max(Z);
 
 %read timepoints of every node
-SD=dir([P,'/sim_data*.bin']);
-for node=1:length(SD)
-	S=sprintf('%s/sim_data%02d.bin',P,node);
+SD=dir([P,'/sim_data*.bin']);SD=char(SD.name);
+for node=1:size(SD,1)
+	S=sprintf('%s/%s',P,SD(node,:));
  	%fprintf('reading file %s \n',S)
 	f=fopen(S);
  	A=fread(f,Inf,'double'); fclose(f);
