@@ -140,17 +140,23 @@ for i=1:length(h), set(h,'color',[0 0 0],'linewidth',2), end
 set(seq.hl,'color',[1 0 0],'linewidth',3)
 
 %show attributes
-set(handles.SeqObjectPanel,'Title',['Module: ',seq.Name])
+if strcmp(seq.Name,'Sequence Root')
+    A=handles.RootAttributes;
+else
+    set(handles.SeqObjectPanel,'Title',['Module: ',seq.Name])
+    A=handles.Attributes{find(strcmp(handles.Modules,seq.Name))};
+end
+
 for i=1:16
-    if i>length(seq.A)
+    if i>length(A)
         bvis='''off''';
     else
-        eval(['set(handles.SOtag',num2str(i),',''String'',''',seq.A{i},''');'])
+        eval(['set(handles.SOtag',num2str(i),',''String'',''',A{i},''');'])
         s=struct2cell(seq.Attributes);
-        n=find(strcmp(seq.A{i},squeeze(s(1,:,:))));
+        n=find(strcmp(A{i},squeeze(s(1,:,:))));
         if isempty(n)
             val='';
-            if strcmp(seq.A{i},'Name'),val=seq.Name;end
+            if strcmp(A{i},'Name'),val=seq.Name;end
         else
             val=seq.Attributes(n).Value;
         end
@@ -162,14 +168,10 @@ for i=1:16
 end
 
 %change the sequence tree?
-global INSERT_MODULE_NUMBER % -2 = swap, -1 =delete, 1,2,... insert modules
+global INSERT_MODULE_NUMBER % -3 = copy, -2 = swap, -1 =delete, 1,2,... insert modules
 ism=INSERT_MODULE_NUMBER;
 if ism
-  A=struct;
-  if ism>0
-      eval(['A=seqcad_',handles.Modules{ism},'([],[],A,[]);']);
-  end
-  Seq=changeSeqTree(handles.Seq,handles,A,1);
+  Seq=changeSeqTree(handles.Seq,handles,1);
   %if the tree is changed, update the handles and redraw the tree
   if ~isempty(Seq) && ism~=INSERT_MODULE_NUMBER 
     if ism==-1, Seq.current=1; end %case delete: highlight the root node
@@ -188,68 +190,43 @@ seq.Name=['Sequence Root'];
 attr=seq.Attributes;
 N=length(seq.Children(1).Attributes);
 seq.Attributes(end+1:end+N)=seq.Children(1).Attributes;
-seq.A={'Name','Repetitions','Factor','TR','TE','TI','TD','ReadBW','Nx','Ny','Nz','FOVx','FOVy','FOVz','Gmax','SlewRate'};
 seqcad_common(seq,handles)
 seq.Name=name;
 seq.Attributes=attr;
 
-function A=seqcad_AtomicSequence(src,eventdata,seq,handles)
-A={'Name'};
-seq.A=A;
+function seqcad_ConcatSequence(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_ConcatSequence(src,eventdata,seq,handles)
-A={'Name','Repetitions','Factor','ConnectToLoop'};
-seq.A=A;
+function seqcad_AtomicSequence(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_DelayAtom(src,eventdata,seq,handles)
-A={'Name','Delay','DelayType','StartSeq','StopSeq','Factor','ADCs'};
-seq.A=A;
+function seqcad_DelayAtom(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_EmptyPulse(src,eventdata,seq,handles)
-A={'Name','Duration','ADCs'};
-seq.A=A;
+function seqcad_EmptyPulse(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_HardRfPulseShape(src,eventdata,seq,handles)
-A={'Name','FlipAngle','Phase','Duration','ADCs'};
-seq.A=A;
+function seqcad_HardRfPulseShape(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_SincRfPulseShape(src,eventdata,seq,handles)
-A={'Name','FlipAngle','Phase','Bandwidth','Zeros','Factor','ADCs','ConnectToLoop','Gap','SliceOrder'};
-seq.A=A;
+function seqcad_SincRfPulseShape(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_RfPhaseCycling(src,eventdata,seq,handles)
-A={'Name','Duration','ConnectToLoop','Cycle','Phase1','Phase2','Phase3','Phase4','ADCs'};
-seq.A=A;
+function seqcad_RfPhaseCycling(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_RfSpoiling(src,eventdata,seq,handles)
-A={'Name','Duration','ConnectToLoop','QuadPhaseInc','StartCycle'};
-seq.A=A;
+function seqcad_RfSpoiling(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_TGPS(src,eventdata,seq,handles)
-A={'Name','Axis','Area','Factor','Duration','Gmax','SlewRate'};
-seq.A=A;
+function seqcad_TGPS(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_SS_TGPS(src,eventdata,seq,handles)
-A={'Name','Axis','SliceThickness','Gmax','SlewRate'};
-seq.A=A;
+function seqcad_SS_TGPS(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_PE_TGPS(src,eventdata,seq,handles)
-A={'Name','Axis','ConnectToLoop','Area','Duration','Factor','Gmax','SlewRate'};
-seq.A=A;
+function seqcad_PE_TGPS(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
-function A=seqcad_RO_TGPS(src,eventdata,seq,handles)
-A={'Name','Axis','Area','FlatTop','Factor','Gmax','SlewRate'};
-seq.A=A;
+function seqcad_RO_TGPS(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
