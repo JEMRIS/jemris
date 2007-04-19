@@ -17,6 +17,7 @@ SFW = ./SEQ_FRAMEWORK/
 MOD = ./MODEL/
 CVI = ./CVODE/include/
 CVL = ./CVODE/lib/
+CV  = ./CVODE
 
 #location of xerces-c
 XRCL = /apps/prod/misc/lib/
@@ -80,9 +81,9 @@ clean : remove-objects remove-binaries
 
 #CVODE
 cvode :
-	cd CVODE; make
+	cd $(CV); make
 
 #install
 cluster-install :	cvode all
-	runner=`whoami`; if test $$runner != "root"; then echo "You are not root. Have password ready"; su -c "cp pjemris jemris ${CLUSTER_INSTALL_DIR}"; else   echo "You are root" ; cp pjemris jemris "${CLUSTER_INSTALL_DIR}"; fi
+	runner=`whoami`; if test $$runner != "root"; then echo "You are not root. Have password ready"; su -c "cp *jemris ${CLUSTER_INSTALL_DIR}"; cp pjemris jemris "${CLUSTER_INSTALL_DIR}"; fi
 
