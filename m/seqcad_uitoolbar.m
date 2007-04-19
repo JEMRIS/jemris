@@ -22,15 +22,16 @@ handles.hpt{NM+2} = uitoggletool(ht,'CData',CopyModule,'TooltipString','copy a m
 handles.hpt{NM+3} = uitoggletool(ht,'CData',ic.SwapModules,'TooltipString','swap two modules','Separator','on');
 
 %define callbacks
-for i=1:length(handles.hpt)
-   if i<11
+for i=1:NM
     eval(['set(handles.hpt{i},''OnCallback'',{@tbbdf_',Modules{i},',Modules{i},handles});']); 
-   end
-   if i==NM+1; set(handles.hpt{i},'OnCallback',{@tbbdf_Erase,handles}); end
-   if i==NM+2; set(handles.hpt{i},'OnCallback',{@tbbdf_Copy,handles}); end
-   if i==NM+3; set(handles.hpt{i},'OnCallback',{@tbbdf_Swap,handles}); end
-   set(handles.hpt{i},'OffCallback',@tbbdf_Off);
 end
+set(handles.hpt{NM+1},'OnCallback',{@tbbdf_Erase,handles});
+set(handles.hpt{NM+2},'OnCallback',{@tbbdf_Copy,handles});
+set(handles.hpt{NM+3},'OnCallback',{@tbbdf_Swap,handles});
+for i=1:length(handles.hpt)
+    set(handles.hpt{i},'OffCallback',@tbbdf_Off);
+end
+
 hpt =handles.hpt;
 
 %%%%%%%%%%%%%%%%%%%%%&%%%%%%%%%%%
