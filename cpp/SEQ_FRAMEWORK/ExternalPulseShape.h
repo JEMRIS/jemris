@@ -25,9 +25,11 @@ public:
 
   bool ReadPulseShape(){
 	ifstream fin(m_fname.c_str(), ios::binary);
-	fin.read((char *)(&(i_NumberOfTimePoints)), sizeof(int));
+	double dNumOfTPs;
+	fin.read((char *)(&(dNumOfTPs)), sizeof(double));
+	m_iNumberOfTimePoints = ((int) dNumOfTPs);
 	//cout << "  : Nt = " << m_iNumNLPs << endl;
-	for (int i=0; i<i_NumberOfTimePoints; ++i)
+	for (int i=0; i<m_iNumberOfTimePoints; ++i)
 	{
 		fin.read((char *)(&(m_dArrayOfNLPs[i])), sizeof(double));
 		fin.read((char *)(&(m_dValArray1[i])), sizeof(double));
@@ -37,11 +39,12 @@ public:
 	//cout << " : " << m_dArrayOfNLPs[i] << " : " << m_dValArray1[i] << " : " <<m_dValArray2[i] << endl;
 	}
 	fin.close();
-	setDuration(m_dArrayOfNLPs[i_NumberOfTimePoints-1]);
-	//cout << "  : Duration = " << m_dArrayOfNLPs[i_NumberOfTimePoints-1] << endl;
+	setDuration(m_dArrayOfNLPs[m_iNumberOfTimePoints-1]);
+	setNLPs();
+	//cout << "  : Duration = " << m_dArrayOfNLPs[m_iNumberOfTimePoints-1] << endl;
   };
 
-  void setNLPs() {m_iNumNLPs=i_NumberOfTimePoints; }; //setting of timepoints in  ReadPulseShape()
+  void setNLPs() {m_iNumNLPs=m_iNumberOfTimePoints; }; //setting of timepoints in  ReadPulseShape()
 
   double* getValArray1(){return &m_dValArray1[0];};
   double* getValArray2(){return &m_dValArray2[0];};
@@ -70,7 +73,7 @@ public:
 
 private:
 	string m_fname;
-	int i_NumberOfTimePoints;
+	int m_iNumberOfTimePoints;
 	double m_dScale;
 	double m_dValArray1[PULSESHAPE_MAXPOINTS];
 	double m_dValArray2[PULSESHAPE_MAXPOINTS];
