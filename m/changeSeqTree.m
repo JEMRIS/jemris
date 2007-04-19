@@ -1,8 +1,9 @@
-function Seq=changeSeqTree(Seq,handles,A,root)
-global INSERT_MODULE_NUMBER MODULE1 MODULE2 
+function Seq=changeSeqTree(Seq,handles,root)
+global  MODULE1 MODULE2 
 
+%add child to root, if root is current
 if root && Seq.current
- NewChild=ChangeMe(Seq,handles,A);
+ NewChild=ChangeMe(Seq,handles);
  if isstruct(NewChild)
      Seq.current=0;
      Seq.Children(end+1)=NewChild;
@@ -14,13 +15,13 @@ end
 
 %recursion to find and change node(s) 
 for i=1:length(Seq.Children)
-    Seq.Children(i)=changeSeqTree(Seq.Children(i),handles,A,0);    
+    Seq.Children(i)=changeSeqTree(Seq.Children(i),handles,0);    
     if Seq.Children(i).current
-        NewChild=ChangeMe(Seq.Children(i),handles,A);
+        NewChild=ChangeMe(Seq.Children(i),handles);
         % different possibilities of changing
         if isstruct(NewChild) % 1. insert module
             Seq.Children(i).current=0;
-            if length(Seq.Children(i).Children)==0
+            if isempty(Seq.Children(i).Children)
                 Seq.Children(i).Children=NewChild;
             else
                 Seq.Children(i).Children(end+1)=NewChild;
@@ -77,11 +78,11 @@ function P=get_parent(M,S,root)
   if root; P=PARENT; end
 
 %%%%
-function NewModule=ChangeMe(Seq,handles,A)
+function NewModule=ChangeMe(Seq,handles)
  global INSERT_MODULE_NUMBER MODULE1 MODULE2
  switch INSERT_MODULE_NUMBER
     case -1 %delete a node
-        if length(Seq.Children)>0
+        if ~isempty(Seq.Children)
             if strcmp(Seq.Children(1).Name,'Parameter')
                 errordlg('Delete of root node is not possible!');
                 NewModule=[];
@@ -128,7 +129,7 @@ function NewModule=ChangeMe(Seq,handles,A)
                                  'of type %s is not possible!'],modname,Seq.Name))
                 return;
             end
-            if length(MODULE1.Children)>0
+            if ~isempty(MODULE1.Children)
                 if strcmp(MODULE1.Children(1).Name,'Parameter')
                     MODULE1.Children(1)=[];
                 end
@@ -157,9 +158,11 @@ end
       'Data',cell(1), 'Children',cell(1), 'current', cell(1), ...
       'hp',cell(1), 'hl',cell(1), 'hi', cell(1));
       NewModule.Name=modname;
+      A=handles.Attributes{INSERT_MODULE_NUMBER};
+      V=handles.Values{INSERT_MODULE_NUMBER};
       for i=1:length(A)
           eval(['NewModule.Attributes(i).Name=''',A{i},''';'])
-          NewModule.Attributes(i).Value='';
+          NewModule.Attributes(i).Value=V{i};
       end
       NewModule.Attributes(1).Value=modname;
       NewModule.current=1;NewModule.hp=0;NewModule.hl=0;NewModule.hi=0;
