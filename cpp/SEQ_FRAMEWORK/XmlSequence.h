@@ -22,6 +22,7 @@ XERCES_CPP_NAMESPACE_USE
 #include "AllSequences.h"
 #include "AllPulses.h"
 
+const string AREA            = "Area";
 const string BAND_WIDTH      = "Bandwidth";
 const string CONNECT_TO_LOOP = "ConnectToLoop";
 const string DELAY           = "DELAY";

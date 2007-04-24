@@ -303,6 +303,7 @@ void XmlSequence::CreateGradientSpiralExtRfConcatSequence (Sequence** pSeq,
             if (item=="Resolution")    dres=atof(value.c_str());
         }
     }
+
     *pSeq = new GradientSpiralExtRfConcatSequence (filename, 
                                                    dturns,dtune,dres,name);
  };
@@ -353,6 +354,7 @@ void XmlSequence::CreatePulseShape (PulseShape** pPulse, int* iTreeSteps,
     if (*pPulse != NULL)
         if (iNADC>0 && (*pPulse)->getNumOfADCs() == 0)
             (*pPulse)->setNumOfADCs(iNADC);
+
 
 };
 
@@ -413,6 +415,7 @@ void XmlSequence::CreateExternalPulseShape (PulseShape** pPulse, DOMNode* node) 
             }
         }
     }
+
     *pPulse = new ExternalPulseShape(filename, eAxis, factor, name);
 
  };
@@ -586,11 +589,13 @@ void XmlSequence::CreateRfSpoiling (PulseShape** pPulse, DOMNode* node) {
             if (item=="StartCycle")   startcycle = atoi(value.c_str());
         }
     }
+
     *pPulse = new RfSpoiling(phase, duration, startcycle, name);
+
  };
 
 /*****************************************************************************/
-void XmlSequence::CreateTGPS(PulseShape** pPulse, DOMNode* node){
+void XmlSequence::CreateTGPS (PulseShape** pPulse, DOMNode* node) {
     
     string    name          = "TGPS";
     string    item;
@@ -650,10 +655,11 @@ void XmlSequence::CreateTGPS(PulseShape** pPulse, DOMNode* node){
 
     if (getareamethod>0) //get area from seq-root parameters (KMAXx or KMAXy)
         ((GradientPulseShape*)*pPulse)->getAreaMethod(getareamethod);
+
 };
 
 /*****************************************************************************/
-void XmlSequence::CreateRO_TGPS(PulseShape** pPulse, DOMNode* node){
+void XmlSequence::CreateRO_TGPS (PulseShape** pPulse, DOMNode* node) {
 
     string    name          = "RO_TGPS";
     string    item;
@@ -703,121 +709,145 @@ void XmlSequence::CreateRO_TGPS(PulseShape** pPulse, DOMNode* node){
         if (eAxis==AXIS_GY) ((GradientPulseShape*)*pPulse)->getAreaMethod(2);
         if (eAxis==AXIS_GZ) ((GradientPulseShape*)*pPulse)->getAreaMethod(3);
     }
+
 };
 
 /*****************************************************************************/
- void XmlSequence::CreatePE_TGPS(PulseShape** pPulse, DOMNode* node){
-    string name="PE_TGPS",item,value;
-    double area=0.0,factor=1.0, duration=-1.0, slewrate=-1.0, maxampl=-1.0,asymsr=0.0;
-    int steps=0; bool noramps=false;
-    PulseAxis eAxis=AXIS_GY;
-    PE_ORDER order=LINEAR_UP;
+void XmlSequence::CreatePE_TGPS (PulseShape** pPulse, DOMNode* node) {
+    string    name          = "PE_TGPS";
+	string    item;
+	string    value;
+    double    area          =  0.0;
+	double    factor        =  1.0;
+	double    duration      = -1.0;
+	double    slewrate      = -1.0;
+	double    maxampl       = -1.0;
+	double    asymsr        =  0.0;
+    int       steps         =  0;
+	bool      noramps       = false;
+    PulseAxis eAxis         = AXIS_GY;
+    PE_ORDER  order         = LINEAR_UP;
+
     DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
+
+    if (pAttributes) {
+
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
+
+        for(int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)    name = value;
-            if (item==FACTOR)    factor = atof(value.c_str());
-            if (item==AREA)    area = atof(value.c_str());
-            if (item=="Gmax")    maxampl = atof(value.c_str());
-            if (item=="SlewRate")    slewrate = atof(value.c_str());
-            if (item=="AsymSR")    asymsr = atof(value.c_str());
-            if (item=="NoRamps" && value=="true")    noramps=true;
-            if (item==DURATION)    duration = atof(value.c_str());
-            if (item=="Steps")    steps = atoi(value.c_str());
-            if (item=="Axis")
-                {
-                                if ( value == "GX" ) eAxis = AXIS_GX ;
-                                if ( value == "GY" ) eAxis = AXIS_GY ;
-                                if ( value == "GZ" ) eAxis = AXIS_GZ ;
-                }
-            if (item=="Order")
-                {
-                                if ( value == "LINEAR_UP"   ) order = LINEAR_UP   ;
-                                if ( value == "LINEAR_DN"   ) order = LINEAR_DN   ;
-                                if ( value == "CENTRIC_OUT" ) order = CENTRIC_OUT ;
-                                if ( value == "CENTRIC_IN"  ) order = CENTRIC_IN  ;
-                }
+            if (item == NAME)       name     = value;
+            if (item == FACTOR)     factor   = atof(value.c_str());
+            if (item == AREA)       area     = atof(value.c_str());
+            if (item == "Gmax")     maxampl  = atof(value.c_str());
+            if (item == "SlewRate") slewrate = atof(value.c_str());
+            if (item == "AsymSR")   asymsr   = atof(value.c_str());
+            if (item == "NoRamps" && value=="true")   noramps=true;
+            if (item == DURATION)   duration = atof(value.c_str());
+            if (item == "Steps")    steps    = atoi(value.c_str());
+            if (item == "Axis") {
+				if ( value == "GX" ) eAxis = AXIS_GX ;
+				if ( value == "GY" ) eAxis = AXIS_GY ;
+				if ( value == "GZ" ) eAxis = AXIS_GZ ;
+			}
+            if (item=="Order") {
+				if ( value == "LINEAR_UP"   ) order = LINEAR_UP   ;
+				if ( value == "LINEAR_DN"   ) order = LINEAR_DN   ;
+				if ( value == "CENTRIC_OUT" ) order = CENTRIC_OUT ;
+				if ( value == "CENTRIC_IN"  ) order = CENTRIC_IN  ;
+			}
         }
     }
+
     *pPulse = new PE_TGPS(area, steps, order, eAxis, name);
-    if (maxampl>0.0) ((GradientPulseShape*)*pPulse)->setMaxAmpl(maxampl);
-    if (slewrate>0.0) ((GradientPulseShape*)*pPulse)->setSlewRate(slewrate);
-    if (asymsr!=0.0) ((TGPS*)*pPulse)->setAsymSR(asymsr);
+    if (maxampl  > 0.0) ((GradientPulseShape*)*pPulse)->setMaxAmpl(maxampl);
+    if (slewrate > 0.0) ((GradientPulseShape*)*pPulse)->setSlewRate(slewrate);
+    if (asymsr  != 0.0) ((TGPS*)*pPulse)->setAsymSR(asymsr);
     if (noramps) ((TGPS*)*pPulse)->NoRamps();
     if (duration > 0.0) ((PE_TGPS*)*pPulse)->NewDuration(duration);
     ((GradientPulseShape*)*pPulse)->setFactor(factor);
-    if (steps==0)
-    {
-        if (eAxis==AXIS_GX) ((GradientPulseShape*)*pPulse)->getAreaMethod(1);
-        if (eAxis==AXIS_GY) ((GradientPulseShape*)*pPulse)->getAreaMethod(2);
-        if (eAxis==AXIS_GZ) ((GradientPulseShape*)*pPulse)->getAreaMethod(3);
+    if (steps==0) {
+        if (eAxis == AXIS_GX) ((GradientPulseShape*)*pPulse)->getAreaMethod(1);
+        if (eAxis == AXIS_GY) ((GradientPulseShape*)*pPulse)->getAreaMethod(2);
+        if (eAxis == AXIS_GZ) ((GradientPulseShape*)*pPulse)->getAreaMethod(3);
     }
- };
+
+};
 
 /*****************************************************************************/
- void XmlSequence::CreateSS_TGPS(PulseShape** pPulse, DOMNode* node){
-    string name="SS_TGPS",item,value;
-    double slewrate=-1.0, maxampl=-1.0,slicethickness=-1.0;
-    int steps=0; bool noramps=false;
-    PulseAxis eAxis=AXIS_GZ;
-    DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
+void XmlSequence::CreateSS_TGPS (PulseShape** pPulse, DOMNode* node) {
+    string    name="SS_TGPS";
+	string    item;
+	string    value;
+    double    slewrate       = -1.0;
+	double    maxampl        = -1.0;
+	double    slicethickness = -1.0;
+    int       steps          =  0;
+	bool      noramps        = false;
+    PulseAxis eAxis          = AXIS_GZ;
+    
+	DOMNamedNodeMap *pAttributes = node->getAttributes();
+    
+	if (pAttributes) {
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
+        for(int i=0;i<nSize;++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)        name = value;
-            if (item=="SliceThickness")    slicethickness = atof(value.c_str());
-            if (item=="Gmax")    maxampl = atof(value.c_str());
-            if (item=="SlewRate")    slewrate = atof(value.c_str());
-            if (item=="Axis")
-                {
-                                if ( value == "GX" ) eAxis = AXIS_GX ;
-                                if ( value == "GY" ) eAxis = AXIS_GY ;
-                                if ( value == "GZ" ) eAxis = AXIS_GZ ;
-                }
+            if (item==NAME)              name           = value;
+            if (item=="SliceThickness")  slicethickness = atof(value.c_str());
+            if (item=="Gmax")            maxampl        = atof(value.c_str());
+            if (item=="SlewRate")        slewrate       = atof(value.c_str());
+            if (item=="Axis") {
+				if ( value == "GX" ) eAxis = AXIS_GX ;
+				if ( value == "GY" ) eAxis = AXIS_GY ;
+				if ( value == "GZ" ) eAxis = AXIS_GZ ;
+			}
         }
     }
+	
     *pPulse = new SS_TGPS(eAxis, slicethickness, name);
     if (maxampl>0.0) ((GradientPulseShape*)*pPulse)->setMaxAmpl(maxampl);
     if (slewrate>0.0) ((GradientPulseShape*)*pPulse)->setSlewRate(slewrate);
- };
+	
+};
 
 /*****************************************************************************/
- void XmlSequence::CreateGradientSpiral(PulseShape** pPulse, DOMNode* node){
-   string name="GradientSpiral",item,value;
-    double duration=1.0,turns=1.0,tune=0.5,res=1.0;
-    PulseAxis eAxis=AXIS_GX;
+void XmlSequence::CreateGradientSpiral (PulseShape** pPulse, DOMNode* node) {
+	string    name        = "GradientSpiral";
+	string    item;
+	string    value;
+    double    duration    =  1.0;
+	double    turns       =  1.0;
+	double    tune        =  0.5;
+	double    res         =  1.0;
+    PulseAxis eAxis       = AXIS_GX;
+
     DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
+
+    if (pAttributes) {
+		
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
+
+        for(int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)    name = value;
-            if (item==DURATION)    duration = atof(value.c_str());
-            if (item=="Turns")    turns = atof(value.c_str());
-            if (item=="Parameter")    tune = atof(value.c_str());
-            if (item=="Resolution")    res = atof(value.c_str());
-            if (item=="Axis")
-                {
-                                if ( value == "GX" ) eAxis = AXIS_GX ;
-                                if ( value == "GY" ) eAxis = AXIS_GY ;
-                }
+            if (item==NAME)         name     = value;
+            if (item==DURATION)     duration = atof(value.c_str());
+            if (item=="Turns")      turns    = atof(value.c_str());
+            if (item=="Parameter")  tune     = atof(value.c_str());
+            if (item=="Resolution") res      = atof(value.c_str());
+            if (item=="Axis") {
+				if ( value == "GX" ) eAxis = AXIS_GX ;
+				if ( value == "GY" ) eAxis = AXIS_GY ;
+			}
         }
     }
+
     *pPulse = new GradientSpiral(duration, turns, tune, res, eAxis, name);
- };
+
+};
 
