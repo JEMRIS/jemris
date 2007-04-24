@@ -8,7 +8,7 @@
 #include "XmlSequence.h"
 
 /*****************************************************************************/
-ConcatSequence* XmlSequence::getSequence (bool verbose ) {
+ConcatSequence* XmlSequence::getSequence (bool verbose) {
 
     ConcatSequence* pSeq = (ConcatSequence*)Transform( getRoot() );
     pSeq->Prepare(false);
@@ -90,7 +90,7 @@ Sequence* XmlSequence::Transform (DOMNode* node) {
 ******************************************************************************/
 
 /*****************************************************************************/
-void XmlSequence::CreateConcatSequence(Sequence** pSeq, DOMNode* node){
+void XmlSequence::CreateConcatSequence (Sequence** pSeq, DOMNode* node) {
 
     string item; 
     string value;
@@ -169,7 +169,7 @@ void XmlSequence::CreateConcatSequence(Sequence** pSeq, DOMNode* node){
  };
 
 /*****************************************************************************/
-void XmlSequence::CreateAtomicSequence(Sequence** pSeq, DOMNode* node) {
+void XmlSequence::CreateAtomicSequence (Sequence** pSeq, DOMNode* node) {
 
     string name,item,value;
 
@@ -201,7 +201,7 @@ void XmlSequence::CreateAtomicSequence(Sequence** pSeq, DOMNode* node) {
 };
 
 /*****************************************************************************/
-void XmlSequence::CreateDelayAtom(Sequence** pSeq, DOMNode* node){
+void XmlSequence::CreateDelayAtom (Sequence** pSeq, DOMNode* node) {
 
     string S1         = "NULL";
     string S2         = "NULL";
@@ -313,7 +313,7 @@ void XmlSequence::CreateGradientSpiralExtRfConcatSequence (Sequence** pSeq,
 ******************************************************************************/
 
 /*****************************************************************************/
-void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps, 
+void XmlSequence::CreatePulseShape (PulseShape** pPulse, int* iTreeSteps, 
                                     DOMNode* node) {
     string name;
     string item;
@@ -357,7 +357,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 };
 
 /*****************************************************************************/
- void XmlSequence::CreateEmptyPulse(PulseShape** pPulse, DOMNode* node){
+ void XmlSequence::CreateEmptyPulse (PulseShape** pPulse, DOMNode* node) {
 
     string name="EmptyPulse";
     string item;
@@ -382,7 +382,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
  };
 
 /*****************************************************************************/
-void XmlSequence::CreateExternalPulseShape(PulseShape** pPulse, DOMNode* node){
+void XmlSequence::CreateExternalPulseShape (PulseShape** pPulse, DOMNode* node) {
     
     string    name       = "ExternalPulseShape";
     string    filename;
@@ -418,181 +418,239 @@ void XmlSequence::CreateExternalPulseShape(PulseShape** pPulse, DOMNode* node){
  };
 
 /*****************************************************************************/
- void XmlSequence::CreateHardRfPulseShape(PulseShape** pPulse, DOMNode* node){
-    string name="HardRfPulseShape",item,value;
-    double duration=0.0,phase=0.0,flipangle=0.0;
+void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
+	
+	string name          ="HardRfPulseShape";
+	string item;
+	string value;
+    double duration      = 0.0;
+	double phase         = 0.0;
+	double flipangle     = 0.0;
+
     DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
+
+    if (pAttributes) {
+
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
+
+        for(int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
-            item = XMLString::transcode(pAttributeNode->getName());
+            item =  XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)    name = value;
-            if (item==DURATION)    duration = atof(value.c_str());
-            if (item=="FlipAngle")    flipangle = atof(value.c_str()); 
-            if (item=="Phase")    phase = atof(value.c_str());
+            if (item == NAME)       name      = value;
+            if (item == DURATION)   duration  = atof(value.c_str());
+            if (item == FLIP_ANGLE) flipangle = atof(value.c_str()); 
+            if (item == PHASE)      phase     = atof(value.c_str());
         }
     }
+
     if (flipangle == 0.0 ) cout << name << " warning: zero flipangle" << endl;
-    if (duration == 0.0 ) cout << name << " warning: zero duration" << endl;
+    if (duration == 0.0 )  cout << name << " warning: zero duration"  << endl;
+
     *pPulse = new HardRfPulseShape(flipangle, phase, duration, name);
+
  };
 
 /*****************************************************************************/
- void XmlSequence::CreateSincRfPulseShape(PulseShape** pPulse, DOMNode* node){
-    string name="SincRfPulseShape",item,value;
-    double factor=0.5,phase=0.0,flipangle=90.0,bw=0.5,offset=0.0,gap =0.0;
-    int N=3;
-    SLICE_ORDER SO=ASCENDING;
+void XmlSequence::CreateSincRfPulseShape (PulseShape** pPulse, DOMNode* node) {
+
+	string name          = "SincRfPulseShape";
+	string item;
+	string value;
+    double factor        =  0.5;
+	double phase         =  0.0;
+	double flipangle     = 90.0;
+	double bw            =  0.5;
+	double offset        =  0.0;
+	double gap           =  0.0;
+    int    N             =  3;
+
+    SLICE_ORDER SO = ASCENDING;
+
     DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
+
+    if (pAttributes) {
+
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
+
+        for(int i=0; i<nSize; ++i) {
+            DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
+            item =  XMLString::transcode(pAttributeNode->getName());
+            value = XMLString::transcode(pAttributeNode->getValue());
+            if (item == NAME)       name      = value;
+            if (item == FLIP_ANGLE) flipangle = atof(value.c_str()); 
+            if (item == PHASE)      phase     = atof(value.c_str());
+            if (item == BAND_WIDTH) bw        = atof(value.c_str());
+            if (item == ZEROS)      N         = atoi(value.c_str());
+            if (item == FACTOR)     factor    = atof(value.c_str());
+            if (item == GAP)        gap       = atof(value.c_str());
+            if (item == SLICEORDER) {
+				if ( value == "ASCENDING" ) SO = ASCENDING ;
+				if ( value == "DESCENDING" ) SO = DESCENDING ;
+				if ( value == "INTERLEAVED" ) SO = INTERLEAVED ;
+			}
+        }
+    }
+
+    if (flipangle == 0.0 ) cout << name << " warning: zero flipangle" << endl;
+
+    *pPulse = new SincRfPulseShape(flipangle, phase, bw, N, factor, SO, gap, 
+								   name);
+
+ };
+
+/*****************************************************************************/
+void XmlSequence::CreateRfReceiverPhase (PulseShape** pPulse, DOMNode* node) {
+
+    string name          = "RfReceiverPhase";
+	string item;
+	string value;
+    double phase         = 0.0;
+
+    DOMNamedNodeMap *pAttributes = node->getAttributes();
+
+    if (pAttributes) {
+
+        int nSize = pAttributes->getLength();
+
+        for(int i=0; i<nSize; ++i) {
+            DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
+            item = XMLString::transcode(pAttributeNode->getName());
+            value = XMLString::transcode(pAttributeNode->getValue());
+            if (item==NAME)  name = value;
+            if (item==PHASE) phase = atof(value.c_str());
+        }
+    }
+
+    *pPulse = new RfReceiverPhase(phase, name);
+
+ };
+
+/*****************************************************************************/
+void XmlSequence::CreateRfPhaseCycling (PulseShape** pPulse, DOMNode* node) {
+	 
+    string name          = "RfPhaseCycling";
+	string item;
+	string value;
+    double phases[128];
+	double duration      =  0.0;
+    int    cycle         =  1;
+
+    DOMNamedNodeMap *pAttributes = node->getAttributes();
+
+    if (pAttributes) {
+
+        int nSize = pAttributes->getLength();
+
+        for(int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
             if (item==NAME)     name = value;
-            if (item=="FlipAngle")     flipangle = atof(value.c_str()); 
-            if (item=="Phase")     phase = atof(value.c_str());
-            if (item=="Bandwidth")     bw = atof(value.c_str());
-            if (item=="Zeros")     N = atoi(value.c_str());
-            if (item==FACTOR)     factor = atof(value.c_str());
-            if (item=="Gap")     gap = atof(value.c_str());
-            if (item=="SliceOrder")
-                {
-                                if ( value == "ASCENDING" ) SO = ASCENDING ;
-                                if ( value == "DESCENDING" ) SO = DESCENDING ;
-                                if ( value == "INTERLEAVED" ) SO = INTERLEAVED ;
-                }
+            if (item==DURATION) duration = atof(value.c_str());
+            if (item=="Cycle")  cycle = atoi(value.c_str());
+            if (item=="Phase1") phases[0] = atof(value.c_str());
+            if (item=="Phase2") phases[1] = atof(value.c_str());
+            if (item=="Phase3") phases[2] = atof(value.c_str());
+            if (item=="Phase4") phases[3] = atof(value.c_str());
         }
     }
-    if (flipangle == 0.0 ) cout << name << " warning: zero flipangle" << endl;
-    *pPulse = new SincRfPulseShape(flipangle, phase, bw, N, factor, SO, gap, name);
- };
 
-/*****************************************************************************/
- void XmlSequence::CreateRfReceiverPhase(PulseShape** pPulse, DOMNode* node){
-    string name="RfReceiverPhase",item,value;
-    double phase=0.0;
-    DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
-        int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
-            DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
-            item = XMLString::transcode(pAttributeNode->getName());
-            value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)    name = value;
-            if (item=="Phase")    phase = atof(value.c_str());
-        }
-    }
-    *pPulse = new RfReceiverPhase(phase, name);
- };
-
-/*****************************************************************************/
- void XmlSequence::CreateRfPhaseCycling(PulseShape** pPulse, DOMNode* node){
-    string name="RfPhaseCycling",item,value;
-    double phases[128],duration=0.0;
-    int cycle=1;
-    DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
-        int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
-            DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
-            item = XMLString::transcode(pAttributeNode->getName());
-            value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)    name = value;
-            if (item==DURATION)    duration = atof(value.c_str());
-            if (item=="Cycle")    cycle = atoi(value.c_str());
-            if (item=="Phase1")    phases[0] = atof(value.c_str());
-            if (item=="Phase2")    phases[1] = atof(value.c_str());
-            if (item=="Phase3")    phases[2] = atof(value.c_str());
-            if (item=="Phase4")    phases[3] = atof(value.c_str());
-        }
-    }
     *pPulse = new RfPhaseCycling(&phases[0], cycle, duration, name);
+
  };
 
 /*****************************************************************************/
- void XmlSequence::CreateRfSpoiling(PulseShape** pPulse, DOMNode* node){
-    string name="RfSpoiling",item,value;
-    double phase=0.0,duration=0.0;
-    int startcycle=0;
+void XmlSequence::CreateRfSpoiling (PulseShape** pPulse, DOMNode* node) {
+
+    string name          = "RfSpoiling";
+	string item;
+	string value;
+    double phase         =  0.0;
+	double duration      =  0.0;
+    int startcycle       =  0;
+
     DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
+
+    if (pAttributes) {
+
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
+
+        for(int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)        name = value;
-            if (item=="QuadPhaseInc")    phase = atof(value.c_str());
-            if (item==DURATION)        duration = atof(value.c_str());
-            if (item=="StartCycle")        startcycle = atoi(value.c_str());
+            if (item==NAME)           name       = value;
+            if (item=="QuadPhaseInc") phase      = atof(value.c_str());
+            if (item==DURATION)       duration   = atof(value.c_str());
+            if (item=="StartCycle")   startcycle = atoi(value.c_str());
         }
     }
     *pPulse = new RfSpoiling(phase, duration, startcycle, name);
  };
 
 /*****************************************************************************/
- void XmlSequence::CreateTGPS(PulseShape** pPulse, DOMNode* node){
-    string name="TGPS",item,value,pulse_name;
-    double area=0.0,factor=1.0,duration=0.0, slewrate=-1.0, maxampl=-1.0,asymsr=0.0;
-    PulseAxis eAxis=AXIS_GX;
-    int getareamethod=0;
+void XmlSequence::CreateTGPS(PulseShape** pPulse, DOMNode* node){
+	
+	string    name          = "TGPS";
+	string    item;
+	string    value;
+	string    pulse_name;
+    double    area          =  0.0;
+	double    factor        =  1.0;
+	double    duration      =  0.0;
+	double    slewrate      = -1.0;
+	double    maxampl       = -1.0;
+	double    asymsr        =  0.0;
+    PulseAxis eAxis         = AXIS_GX;
+    int       getareamethod =0;
+	
     DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
+
+    if (pAttributes) {
+
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
+
+        for(int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
-            item = XMLString::transcode(pAttributeNode->getName());
+            item  = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)    name = value;
-            if (item=="Area")    pulse_name = value;
-            if (item=="Area")    area = atof(value.c_str());
-            if (item=="Gmax")    maxampl = atof(value.c_str());
-            if (item=="SlewRate")    slewrate = atof(value.c_str());
-            if (item=="AsymSR")    asymsr = atof(value.c_str());
-            if (item==FACTOR)    factor = atof(value.c_str());
-            if (item==DURATION)    duration = atof(value.c_str());
-            if (item=="Area" && value=="KMAXx")    getareamethod=1 ;
-            if (item=="Area" && value=="KMAXy")    getareamethod=2 ;
-            if (item=="Area" && value=="KMAXz")    getareamethod=3 ;
-            if (item=="Area" && value=="DKx")    getareamethod=4 ;
-            if (item=="Area" && value=="DKy")    getareamethod=5 ;
-            if (item=="Area" && value=="DKz")    getareamethod=6 ;
-            if (item=="Axis")
-                {
-                                if ( value == "GX" ) eAxis = AXIS_GX ;
-                                if ( value == "GY" ) eAxis = AXIS_GY ;
-                                if ( value == "GZ" ) eAxis = AXIS_GZ ;
-                }
+
+            if (item == NAME)                  name       = value;
+            if (item == AREA)                  pulse_name = value;
+            if (item == AREA)                  area       = atof(value.c_str());
+            if (item == "Gmax")                maxampl    = atof(value.c_str());
+            if (item == "SlewRate")            slewrate   = atof(value.c_str());
+            if (item == "AsymSR")              asymsr     = atof(value.c_str());
+            if (item == FACTOR)                factor     = atof(value.c_str());
+            if (item == DURATION)              duration   = atof(value.c_str());
+
+            if (item == AREA && value == "KMAXx") getareamethod = 1;
+            if (item == AREA && value == "KMAXy") getareamethod = 2;
+            if (item == AREA && value == "KMAXz") getareamethod = 3;
+            if (item == AREA && value == "DKx")   getareamethod = 4;
+            if (item == AREA && value == "DKy")   getareamethod = 5;
+            if (item == AREA && value == "DKz")   getareamethod = 6;
+            if (item == "Axis") {
+				if ( value == "GX" ) eAxis = AXIS_GX ;
+				if ( value == "GY" ) eAxis = AXIS_GY ;
+				if ( value == "GZ" ) eAxis = AXIS_GZ ;
+			}
         }
     }
     *pPulse = new TGPS(area, eAxis, name);
     ((GradientPulseShape*)*pPulse)->setFactor(factor);
-    if (maxampl>0.0) ((GradientPulseShape*)*pPulse)->setMaxAmpl(maxampl);
-    if (slewrate>0.0) ((GradientPulseShape*)*pPulse)->setSlewRate(slewrate);
-    if (asymsr!=0.0) ((TGPS*)*pPulse)->setAsymSR(asymsr);
+    if (maxampl  > 0.0) ((GradientPulseShape*)*pPulse)->setMaxAmpl(maxampl);
+    if (slewrate > 0.0) ((GradientPulseShape*)*pPulse)->setSlewRate(slewrate);
+    if (asymsr  != 0.0) ((TGPS*)*pPulse)->setAsymSR(asymsr);
     if (duration > 0.0) ((GradientPulseShape*)*pPulse)->NewDuration(duration);
 
-    ((GradientPulseShape*)*pPulse)->LinkToPulse(pulse_name); //get area from another pulse
+	//get area from another pulse
+    ((GradientPulseShape*)*pPulse)->LinkToPulse(pulse_name);
 
     if (getareamethod>0) //get area from seq-root parameters (KMAXx or KMAXy)
         ((GradientPulseShape*)*pPulse)->getAreaMethod(getareamethod);
- };
+};
 
 /*****************************************************************************/
  void XmlSequence::CreateRO_TGPS(PulseShape** pPulse, DOMNode* node){
@@ -610,7 +668,7 @@ void XmlSequence::CreateExternalPulseShape(PulseShape** pPulse, DOMNode* node){
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
             if (item==NAME)    name = value;
-            if (item=="Area")    area = atof(value.c_str());
+            if (item==AREA)    area = atof(value.c_str());
             if (item==FACTOR)    factor = atof(value.c_str());
             if (item=="Gmax")    maxampl = atof(value.c_str());
             if (item=="SlewRate")    slewrate = atof(value.c_str());
@@ -658,7 +716,7 @@ void XmlSequence::CreateExternalPulseShape(PulseShape** pPulse, DOMNode* node){
             value = XMLString::transcode(pAttributeNode->getValue());
             if (item==NAME)    name = value;
             if (item==FACTOR)    factor = atof(value.c_str());
-            if (item=="Area")    area = atof(value.c_str());
+            if (item==AREA)    area = atof(value.c_str());
             if (item=="Gmax")    maxampl = atof(value.c_str());
             if (item=="SlewRate")    slewrate = atof(value.c_str());
             if (item=="AsymSR")    asymsr = atof(value.c_str());

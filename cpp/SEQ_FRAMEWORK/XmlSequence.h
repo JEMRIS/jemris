@@ -22,13 +22,19 @@ XERCES_CPP_NAMESPACE_USE
 #include "AllSequences.h"
 #include "AllPulses.h"
 
+const string BAND_WIDTH      = "Bandwidth";
 const string CONNECT_TO_LOOP = "ConnectToLoop";
 const string DELAY           = "DELAY";
 const string DURATION        = "Duration";
 const string FACTOR          = "Factor";
 const string FILE_NAME       = "FileName";
+const string FLIP_ANGLE      = "FlipAngle";
 const string NAME            = "Name";
+const string PHASE           = "Phase";
 const string REPETITIONS     = "Repetitions";
+const string ZEROS           = "Zeros";
+const string GAP             = "Gap";
+const string SLICEORDER     = "SliceOrder";
 
 class XmlSequence {
 
