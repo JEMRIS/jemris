@@ -30,7 +30,13 @@ for node=1:size(SD,1)
 		M=zeros(Nx*Ny,length(Is),3);
     end
     A=reshape(A,7,Nt,N);
-	I=sub2ind([Nx Ny],X,Y);
+    if size(SD,1)==1
+        I=sub2ind([Nx Ny],X,Y);
+    else
+    x=squeeze(A(2,1,:)); y=squeeze(A(3,1,:));
+	x=x/d;y=y/d;x=x+amx+1;y=y+amy+1;
+	I=sub2ind([Nx Ny],x,y);
+    end
  	M(I,:,1)=squeeze(A(5,Is,:))';
 	M(I,:,2)=squeeze(A(6,Is,:))';
 	M(I,:,3)=squeeze(A(7,Is,:))';
