@@ -336,18 +336,18 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
     name = XMLString::transcode(node->getNodeName()) ;
 
     //add new pulse shapes to this list and implement creator function below
-    if ( name == "EmptyPulse"         ) CreateEmptyPulse(pPulse, node);
-    if ( name == "ExternalPulseShape" ) CreateExternalPulseShape(pPulse, node);
-    if ( name == "HardRfPulseShape"   ) CreateHardRfPulseShape(pPulse, node);
-    if ( name == "SincRfPulseShape"   ) CreateSincRfPulseShape(pPulse, node);
-    if ( name == "RfReceiverPhase"    ) CreateRfReceiverPhase(pPulse, node);
-    if ( name == "RfPhaseCycling"     ) CreateRfPhaseCycling(pPulse, node);
-    if ( name == "RfSpoiling"         ) CreateRfSpoiling(pPulse, node);
-    if ( name == "TGPS"               ) CreateTGPS(pPulse, node);
-    if ( name == "PE_TGPS"            ) CreatePE_TGPS(pPulse, node);
-    if ( name == "SS_TGPS"            ) CreateSS_TGPS(pPulse, node);
-    if ( name == "RO_TGPS"            ) CreateRO_TGPS(pPulse, node);
-    if ( name == "GradientSpiral"     ) CreateGradientSpiral(pPulse, node);
+    if ( name == "EmptyPulse"         ) CreateEmptyPulse         (pPulse, node);
+    if ( name == "ExternalPulseShape" ) CreateExternalPulseShape (pPulse, node);
+    if ( name == "HardRfPulseShape"   ) CreateHardRfPulseShape   (pPulse, node);
+    if ( name == "SincRfPulseShape"   ) CreateSincRfPulseShape   (pPulse, node);
+    if ( name == "RfReceiverPhase"    ) CreateRfReceiverPhase    (pPulse, node);
+    if ( name == "RfPhaseCycling"     ) CreateRfPhaseCycling     (pPulse, node);
+    if ( name == "RfSpoiling"         ) CreateRfSpoiling         (pPulse, node);
+    if ( name == "TGPS"               ) CreateTGPS               (pPulse, node);
+    if ( name == "PE_TGPS"            ) CreatePE_TGPS            (pPulse, node);
+    if ( name == "SS_TGPS"            ) CreateSS_TGPS            (pPulse, node);
+    if ( name == "RO_TGPS"            ) CreateRO_TGPS            (pPulse, node);
+    if ( name == "GradientSpiral"     ) CreateGradientSpiral     (pPulse, node);
 
     //add ADCs to pulse shape, if not already done
     if (*pPulse != NULL)
