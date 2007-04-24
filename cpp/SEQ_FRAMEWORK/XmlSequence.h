@@ -39,13 +39,18 @@ class XmlSequence {
 
 		if (m_bOK) {
 
+			//trying to parse the file otherwise exiting
 			try { m_pXDP->parse( xmlfile.c_str() ); }
-			catch (const XMLException& toCatch) {//DOM parsing failed, exiting
+			catch (const XMLException& toCatch) {
 				m_bOK=false; return; }
+
+			//exiting if XML validation fails *** TODO ***
 
 			m_nSeq = (DOMNode*)m_pXDP->getDocument();
 			m_nSeq = m_nSeq -> getFirstChild();
-			if (m_nSeq==NULL) {                  //root element is NULL, exiting
+
+			//exiting if root element NULL
+			if (m_nSeq==NULL) {                  
 				m_bOK=false; return;} 
 
 			string name = XMLString::transcode(m_nSeq->getNodeName()) ;
