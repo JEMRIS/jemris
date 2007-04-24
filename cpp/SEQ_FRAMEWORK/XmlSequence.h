@@ -26,7 +26,7 @@ const string CONNECT_TO_LOOP = "ConnectToLoop";
 const string DELAY           = "DELAY";
 const string DURATION        = "Duration";
 const string FACTOR          = "Factor";
-const string FILENAME        = "FileName";
+const string FILE_NAME       = "FileName";
 const string NAME            = "Name";
 const string REPETITIONS     = "Repetitions";
 

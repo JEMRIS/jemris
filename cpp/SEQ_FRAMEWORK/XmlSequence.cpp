@@ -383,10 +383,10 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 
 /*****************************************************************************/
 void XmlSequence::CreateExternalPulseShape(PulseShape** pPulse, DOMNode* node){
-	
+    
     string    name       = "ExternalPulseShape";
-	string    filename;
-	string    item,value;
+    string    filename;
+    string    item,value;
     double    factor     = 1.0;
 
     PulseAxis eAxis      = AXIS_GX;
@@ -406,11 +406,11 @@ void XmlSequence::CreateExternalPulseShape(PulseShape** pPulse, DOMNode* node){
             if (item==FILE_NAME) filename = value;
             if (item==FACTOR)    factor   = atof(value.c_str());
             if (item=="Axis") {
-				if ( value == "RF" ) eAxis = AXIS_RF ;
-				if ( value == "GX" ) eAxis = AXIS_GX ;
-				if ( value == "GY" ) eAxis = AXIS_GY ;
-				if ( value == "GZ" ) eAxis = AXIS_GZ ;
-			}
+                if ( value == "RF" ) eAxis = AXIS_RF ;
+                if ( value == "GX" ) eAxis = AXIS_GX ;
+                if ( value == "GY" ) eAxis = AXIS_GY ;
+                if ( value == "GZ" ) eAxis = AXIS_GZ ;
+            }
         }
     }
     *pPulse = new ExternalPulseShape(filename, eAxis, factor, name);
