@@ -1,7 +1,7 @@
 /*
 	This file is part of the MR simulation project
 	Date: 04/2007
-	Author:  T. Stoecker, J. Dai
+	Author:  T. Stoecker
 	MR group, Institute of Medicine, Research Centre Juelich, Germany
 */
 
@@ -71,6 +71,7 @@ public:
 					m_pSS = ((SS_TGPS*) pAS->getPulse(i)); break;
 			default: continue;
 		}
+		if (getTreeSteps()==0) m_iNumberOfSlices = 0; //no multiple slices, if not connected to a loop!
 		//multislice preparation
 		if (m_iNumberOfSlices>1)
 		{
@@ -121,7 +122,7 @@ public:
  *   2) sets slice offset according to the loop counter and 
  */
  void setFrequencyModulation(int const iLoop) {
-	if (iLoop!= m_iLastLoopCounter) 
+	if (iLoop!= m_iLastLoopCounter && m_iNumberOfSlices>1) 
 	{
 		m_iLastLoopCounter = iLoop;
 		if (m_pSS != NULL)
