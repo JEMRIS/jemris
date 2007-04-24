@@ -656,14 +656,14 @@ void XmlSequence::CreateTGPS(PulseShape** pPulse, DOMNode* node){
 void XmlSequence::CreateRO_TGPS(PulseShape** pPulse, DOMNode* node){
 
     string    name          = "RO_TGPS";
-	string    item;
-	string    value;
+    string    item;
+    string    value;
     double    area          =  1.0;
-	double    flat_top_duration = 1.0;
-	double    factor        =  1.0;
-	double    slewrate      = -1.0;
-	double    maxampl       = -1.0;
-	double    asymsr        =  0.0;
+    double    flat_top_duration = 1.0;
+    double    factor        =  1.0;
+    double    slewrate      = -1.0;
+    double    maxampl       = -1.0;
+    double    asymsr        =  0.0;
     int       iNADC         =  0;
     PulseAxis eAxis         = AXIS_GX;
 
@@ -684,10 +684,10 @@ void XmlSequence::CreateRO_TGPS(PulseShape** pPulse, DOMNode* node){
             if (item == "FlatTop")  flat_top_duration = atof(value.c_str());
             if (item == "ADCs")     iNADC             = atoi(value.c_str());
             if (item == "Axis") {
-				if ( value == "GX" ) eAxis = AXIS_GX ;
-				if ( value == "GY" ) eAxis = AXIS_GY ;
-				if ( value == "GZ" ) eAxis = AXIS_GZ ;
-			}
+                if ( value == "GX" ) eAxis = AXIS_GX ;
+                if ( value == "GY" ) eAxis = AXIS_GY ;
+                if ( value == "GZ" ) eAxis = AXIS_GZ ;
+            }
         }
     }
 
