@@ -1,8 +1,8 @@
-function [M,x,y,t]=read_selex_evol(P);
+function [M,x,y,t]=read_selex_evol(P)
 
 if nargin<1,P=pwd;end
 
-if ( ( exist('sim_data.bin')~=2 && exist('sim_data01.bin')~=2 ) || exist('sample.bin') ~=2)
+if ( ( exist('sim_data.bin','file')~=2 && exist('sim_data01.bin','file')~=2 ) || exist('sample.bin','file') ~=2)
     error('binary files do not exist')
 end
 
@@ -30,9 +30,7 @@ for node=1:size(SD,1)
 		M=zeros(Nx*Ny,length(Is),3);
     end
     A=reshape(A,7,Nt,N);
- 	x=squeeze(A(2,1,:)); y=squeeze(A(3,1,:));
-	x=x/d;y=y/d;x=x+amx+1;y=y+amy+1;
-	I=sub2ind([Nx Ny],x,y);
+	I=sub2ind([Nx Ny],X,Y);
  	M(I,:,1)=squeeze(A(5,Is,:))';
 	M(I,:,2)=squeeze(A(6,Is,:))';
 	M(I,:,3)=squeeze(A(7,Is,:))';
