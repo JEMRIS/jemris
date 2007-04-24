@@ -372,40 +372,49 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
-            if (item == NAME)        name = value;
-            if (item == DURATION)    duration = atof(value.c_str());
+            if (item == NAME)     name     = value;
+            if (item == DURATION) duration = atof(value.c_str());
         }
     }
+
     *pPulse = new EmptyPulse(duration, 0, name);
+
  };
 
 /*****************************************************************************/
- void XmlSequence::CreateExternalPulseShape(PulseShape** pPulse, DOMNode* node){
-    string name="ExternalPulseShape",filename,item,value;
-    double factor=1.0;
-    PulseAxis eAxis=AXIS_GX;
+void XmlSequence::CreateExternalPulseShape(PulseShape** pPulse, DOMNode* node){
+	
+    string    name       = "ExternalPulseShape";
+	string    filename;
+	string    item,value;
+    double    factor     = 1.0;
+
+    PulseAxis eAxis      = AXIS_GX;
+
     DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
+
+    if (pAttributes) {
+
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
+
+        for(int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)    name = value;
-            if (item=="FileName")    filename = value;
-            if (item==FACTOR)    factor = atof(value.c_str());
-            if (item=="Axis")
-                {
-                                if ( value == "RF" ) eAxis = AXIS_RF ;
-                                if ( value == "GX" ) eAxis = AXIS_GX ;
-                                if ( value == "GY" ) eAxis = AXIS_GY ;
-                                if ( value == "GZ" ) eAxis = AXIS_GZ ;
-                }
+
+            if (item==NAME)      name     = value;
+            if (item==FILE_NAME) filename = value;
+            if (item==FACTOR)    factor   = atof(value.c_str());
+            if (item=="Axis") {
+				if ( value == "RF" ) eAxis = AXIS_RF ;
+				if ( value == "GX" ) eAxis = AXIS_GX ;
+				if ( value == "GY" ) eAxis = AXIS_GY ;
+				if ( value == "GZ" ) eAxis = AXIS_GZ ;
+			}
         }
     }
     *pPulse = new ExternalPulseShape(filename, eAxis, factor, name);
+
  };
 
 /*****************************************************************************/
