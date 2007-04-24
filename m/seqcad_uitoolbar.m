@@ -7,7 +7,7 @@ Modules=handles.Modules;
 ModuleToolTip={'sequence container (ConcatSequence)','pulse container (AtomicSequence)','delay (DelayAtom)',...
                'empty pulse','hard RF pulse','sinc RF pulse','simple gradient pulse',...
                'slice select gradient','readout gradient','phase encode gradient table',...
-               'RF phase cycling','RF spoiling'};
+               'RF phase cycling','RF spoiling','RF receiver phase','external pulse'};
 %draw buttons
 NM=length(Modules);
 for i=1:NM
@@ -96,9 +96,15 @@ tbbdf_common(seq,handles)
 function tbbdf_RfSpoiling(src,eventdata,seq,handles)
 tbbdf_common(seq,handles)
 
+function tbbdf_RfReceiverPhase(src,eventdata,seq,handles)
+tbbdf_common(seq,handles)
+
 function tbbdf_RO_TGPS(src,eventdata,seq,handles)
 tbbdf_common(seq,handles)
 
 function tbbdf_TGPS(src,eventdata,seq,handles)
+tbbdf_common(seq,handles)
+
+function tbbdf_ExternalPulseShape(src,eventdata,seq,handles)
 tbbdf_common(seq,handles)
 
