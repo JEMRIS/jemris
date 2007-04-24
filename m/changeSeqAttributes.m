@@ -1,4 +1,4 @@
-function Seq=changeSeqAttributes(AttrName,AttrVal,Seq,handles,root);
+function Seq=changeSeqAttributes(AttrName,AttrVal,Seq,handles,root)
 
 if Seq.current
     
@@ -18,7 +18,7 @@ if Seq.current
    end
  
    %special case of the root node's parameter tag
-   if root && length(Seq.Children)>0
+   if root && ~isempty(Seq.Children)
       if strcmp('Parameter',Seq.Children(1).Name)
            pos=getPosition(AttrName,Seq.Children(1),handles,1);
         if pos>0
@@ -34,6 +34,42 @@ if Seq.current
         end
       end
    end
+
+   %special case of external pulse shapes
+   if strcmp(Seq.Name,'ExternalPulseShape') && strcmp(AttrName,'FileName')
+       if exist(AttrVal,'file') == 2, return, end %file exists!
+       eval(['global ',AttrVal])
+       eval(['val= ',AttrVal,';'])
+       [N,M]=size(val);
+       AX='';
+       for i=1:length(Seq.Attributes)
+           if strcmp(Seq.Attributes(i).Name,'Axis')
+               AX=Seq.Attributes(i).Value;
+           end
+           if strcmp(Seq.Attributes(i).Name,'FileName')
+               iFN=i;
+           end
+       end
+       
+       if strcmp(AX,'GX') || strcmp(AX,'GY') || strcmp(AX,'GZ')
+           if M~=2,
+               uiwait(warndlg('Gradient pulses must be Nx2 vectors ([time,Amplitude]','warning','modal'))
+               return
+           end
+       elseif strcmp(AX,'RF')
+           if M~=3,
+               uiwait(warndlg('RF pulses must be Nx3 vectors ([time,Magnitude,Phase]','warning','modal'))
+               return
+           end
+       else
+           uiwait(warndlg('specify axis first!','warning','modal'))
+           return
+       end
+       
+       writeExtPulseBinFile(AttrVal,val)
+       Seq.Attributes(iFN).Value=[AttrVal,'.bin'];
+   end
+   
    return;
 end
 
@@ -43,6 +79,16 @@ for i=1:length(Seq.Children)
 end
 
 %%% END of function changeSeqAttributes %%%
+
+%%%%%%%
+function writeExtPulseBinFile(FileName,values)
+ FileName=[FileName,'.bin'];
+ [N,M]=size(values);
+ values=real(values)';
+ f=fopen(FileName,'w','l');
+ fwrite(f,N,'double');
+ fwrite(f,values(:),'double');
+ fclose(f);
 
 %%%%%%%
 function pos=getPosition(AttrName,Seq,handles,parametertag)
