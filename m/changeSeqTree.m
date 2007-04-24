@@ -165,5 +165,5 @@ end
           NewModule.Attributes(i).Value=V{i};
       end
       NewModule.Attributes(1).Value=modname;
-      NewModule.current=1;NewModule.hp=0;NewModule.hl=0;NewModule.hi=0;
+      NewModule.current=1;NewModule.hp=0;NewModule.hl=0;NewModule.hi=0;NewModule.ht=0;
  end
