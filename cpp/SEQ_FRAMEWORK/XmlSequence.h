@@ -74,11 +74,10 @@ class XmlSequence {
 	void CreateAtomicSequence              (Sequence** pSeq, DOMNode* node);
 	void CreateDelayAtom                   (Sequence** pSeq, DOMNode* node);
 	void CreateGradientSpiralExtRfConcatSequence 
-		(Sequence** pSeq, DOMNode* node);
+		                                   (Sequence** pSeq, DOMNode* node);
 	
 	//every pulseshape class needs to have a create function
-	void CreatePulseShape 
-		(PulseShape** pPulse, int* iTreeSteps, DOMNode* node);
+	void CreatePulseShape (PulseShape** pPulse, int* iTreeSteps, DOMNode* node);
 	void CreateEmptyPulse                  (PulseShape** pPulse, DOMNode* node);
 	void CreateExternalPulseShape          (PulseShape** pPulse, DOMNode* node);
 	void CreateSincRfPulseShape            (PulseShape** pPulse, DOMNode* node);
