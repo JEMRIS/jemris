@@ -103,7 +103,7 @@ void XmlSequence::CreateConcatSequence (Sequence** pSeq, DOMNode* node) {
 
     if (pAttributes) {
         int nSize = pAttributes->getLength();
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item  = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -132,7 +132,7 @@ void XmlSequence::CreateConcatSequence (Sequence** pSeq, DOMNode* node) {
         pAttributes = child->getAttributes();
         if (name=="Parameter" && pAttributes) {
             int nSize = pAttributes->getLength();
-            for(int i=0; i<nSize; ++i) {
+            for (int i=0; i<nSize; ++i) {
                 DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
                 item = XMLString::transcode(pAttributeNode->getName());
                 value = XMLString::transcode(pAttributeNode->getValue());
@@ -177,7 +177,7 @@ void XmlSequence::CreateAtomicSequence (Sequence** pSeq, DOMNode* node) {
 
     if (pAttributes) {
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i) {
+        for (int i=0;i<nSize;++i) {
             DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -292,7 +292,7 @@ void XmlSequence::CreateGradientSpiralExtRfConcatSequence (Sequence** pSeq,
 
     if (pAttributes) {
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i) {
+        for (int i=0;i<nSize;++i) {
             DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -325,7 +325,7 @@ void XmlSequence::CreatePulseShape (PulseShape** pPulse, int* iTreeSteps,
 
     if (pAttributes) {
         int nSize = pAttributes->getLength();
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -370,7 +370,7 @@ void XmlSequence::CreatePulseShape (PulseShape** pPulse, int* iTreeSteps,
 
     if (pAttributes) {
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i) {
+        for (int i=0;i<nSize;++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -399,7 +399,7 @@ void XmlSequence::CreateExternalPulseShape (PulseShape** pPulse, DOMNode* node) 
 
         int nSize = pAttributes->getLength();
 
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -436,7 +436,7 @@ void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
 
         int nSize = pAttributes->getLength();
 
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item =  XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -476,7 +476,7 @@ void XmlSequence::CreateSincRfPulseShape (PulseShape** pPulse, DOMNode* node) {
 
         int nSize = pAttributes->getLength();
 
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item =  XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -516,7 +516,7 @@ void XmlSequence::CreateRfReceiverPhase (PulseShape** pPulse, DOMNode* node) {
 
         int nSize = pAttributes->getLength();
 
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -545,7 +545,7 @@ void XmlSequence::CreateRfPhaseCycling (PulseShape** pPulse, DOMNode* node) {
 
         int nSize = pAttributes->getLength();
 
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -579,7 +579,7 @@ void XmlSequence::CreateRfSpoiling (PulseShape** pPulse, DOMNode* node) {
 
         int nSize = pAttributes->getLength();
 
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -616,7 +616,7 @@ void XmlSequence::CreateTGPS (PulseShape** pPulse, DOMNode* node) {
 
         int nSize = pAttributes->getLength();
 
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item  = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -677,7 +677,7 @@ void XmlSequence::CreateRO_TGPS (PulseShape** pPulse, DOMNode* node) {
 
     if (pAttributes) {
         int nSize = pAttributes->getLength();
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -715,16 +715,16 @@ void XmlSequence::CreateRO_TGPS (PulseShape** pPulse, DOMNode* node) {
 /*****************************************************************************/
 void XmlSequence::CreatePE_TGPS (PulseShape** pPulse, DOMNode* node) {
     string    name          = "PE_TGPS";
-	string    item;
-	string    value;
+    string    item;
+    string    value;
     double    area          =  0.0;
-	double    factor        =  1.0;
-	double    duration      = -1.0;
-	double    slewrate      = -1.0;
-	double    maxampl       = -1.0;
-	double    asymsr        =  0.0;
+    double    factor        =  1.0;
+    double    duration      = -1.0;
+    double    slewrate      = -1.0;
+    double    maxampl       = -1.0;
+    double    asymsr        =  0.0;
     int       steps         =  0;
-	bool      noramps       = false;
+    bool      noramps       = false;
     PulseAxis eAxis         = AXIS_GY;
     PE_ORDER  order         = LINEAR_UP;
 
@@ -734,7 +734,7 @@ void XmlSequence::CreatePE_TGPS (PulseShape** pPulse, DOMNode* node) {
 
         int nSize = pAttributes->getLength();
 
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -748,16 +748,16 @@ void XmlSequence::CreatePE_TGPS (PulseShape** pPulse, DOMNode* node) {
             if (item == DURATION)   duration = atof(value.c_str());
             if (item == "Steps")    steps    = atoi(value.c_str());
             if (item == "Axis") {
-				if ( value == "GX" ) eAxis = AXIS_GX ;
-				if ( value == "GY" ) eAxis = AXIS_GY ;
-				if ( value == "GZ" ) eAxis = AXIS_GZ ;
-			}
+                if ( value == "GX" ) eAxis = AXIS_GX ;
+                if ( value == "GY" ) eAxis = AXIS_GY ;
+                if ( value == "GZ" ) eAxis = AXIS_GZ ;
+            }
             if (item=="Order") {
-				if ( value == "LINEAR_UP"   ) order = LINEAR_UP   ;
-				if ( value == "LINEAR_DN"   ) order = LINEAR_DN   ;
-				if ( value == "CENTRIC_OUT" ) order = CENTRIC_OUT ;
-				if ( value == "CENTRIC_IN"  ) order = CENTRIC_IN  ;
-			}
+                if ( value == "LINEAR_UP"   ) order = LINEAR_UP   ;
+                if ( value == "LINEAR_DN"   ) order = LINEAR_DN   ;
+                if ( value == "CENTRIC_OUT" ) order = CENTRIC_OUT ;
+                if ( value == "CENTRIC_IN"  ) order = CENTRIC_IN  ;
+            }
         }
     }
 
@@ -779,20 +779,20 @@ void XmlSequence::CreatePE_TGPS (PulseShape** pPulse, DOMNode* node) {
 /*****************************************************************************/
 void XmlSequence::CreateSS_TGPS (PulseShape** pPulse, DOMNode* node) {
     string    name="SS_TGPS";
-	string    item;
-	string    value;
+    string    item;
+    string    value;
     double    slewrate       = -1.0;
-	double    maxampl        = -1.0;
-	double    slicethickness = -1.0;
+    double    maxampl        = -1.0;
+    double    slicethickness = -1.0;
     int       steps          =  0;
-	bool      noramps        = false;
+    bool      noramps        = false;
     PulseAxis eAxis          = AXIS_GZ;
     
-	DOMNamedNodeMap *pAttributes = node->getAttributes();
+    DOMNamedNodeMap *pAttributes = node->getAttributes();
     
-	if (pAttributes) {
+    if (pAttributes) {
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i) {
+        for (int i=0;i<nSize;++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -801,37 +801,37 @@ void XmlSequence::CreateSS_TGPS (PulseShape** pPulse, DOMNode* node) {
             if (item=="Gmax")            maxampl        = atof(value.c_str());
             if (item=="SlewRate")        slewrate       = atof(value.c_str());
             if (item=="Axis") {
-				if ( value == "GX" ) eAxis = AXIS_GX ;
-				if ( value == "GY" ) eAxis = AXIS_GY ;
-				if ( value == "GZ" ) eAxis = AXIS_GZ ;
-			}
+                if ( value == "GX" ) eAxis = AXIS_GX ;
+                if ( value == "GY" ) eAxis = AXIS_GY ;
+                if ( value == "GZ" ) eAxis = AXIS_GZ ;
+            }
         }
     }
-	
+    
     *pPulse = new SS_TGPS(eAxis, slicethickness, name);
     if (maxampl>0.0) ((GradientPulseShape*)*pPulse)->setMaxAmpl(maxampl);
     if (slewrate>0.0) ((GradientPulseShape*)*pPulse)->setSlewRate(slewrate);
-	
+    
 };
 
 /*****************************************************************************/
 void XmlSequence::CreateGradientSpiral (PulseShape** pPulse, DOMNode* node) {
-	string    name        = "GradientSpiral";
-	string    item;
-	string    value;
+    string    name        = "GradientSpiral";
+    string    item;
+    string    value;
     double    duration    =  1.0;
-	double    turns       =  1.0;
-	double    tune        =  0.5;
-	double    res         =  1.0;
+    double    turns       =  1.0;
+    double    tune        =  0.5;
+    double    res         =  1.0;
     PulseAxis eAxis       = AXIS_GX;
 
     DOMNamedNodeMap *pAttributes = node->getAttributes();
 
     if (pAttributes) {
-		
+        
         int nSize = pAttributes->getLength();
 
-        for(int i=0; i<nSize; ++i) {
+        for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
@@ -841,9 +841,9 @@ void XmlSequence::CreateGradientSpiral (PulseShape** pPulse, DOMNode* node) {
             if (item=="Parameter")  tune     = atof(value.c_str());
             if (item=="Resolution") res      = atof(value.c_str());
             if (item=="Axis") {
-				if ( value == "GX" ) eAxis = AXIS_GX ;
-				if ( value == "GY" ) eAxis = AXIS_GY ;
-			}
+                if ( value == "GX" ) eAxis = AXIS_GX ;
+                if ( value == "GY" ) eAxis = AXIS_GY ;
+            }
         }
     }
 
