@@ -653,50 +653,57 @@ void XmlSequence::CreateTGPS(PulseShape** pPulse, DOMNode* node){
 };
 
 /*****************************************************************************/
- void XmlSequence::CreateRO_TGPS(PulseShape** pPulse, DOMNode* node){
-    string name="RO_TGPS",item,value;
-    double area=1.0,flat_top_duration=1.0,factor=1.0, slewrate=-1.0, maxampl=-1.0,asymsr=0.0;
-    int iNADC=0;
-    PulseAxis eAxis=AXIS_GX;
+void XmlSequence::CreateRO_TGPS(PulseShape** pPulse, DOMNode* node){
+
+    string    name          = "RO_TGPS";
+	string    item;
+	string    value;
+    double    area          =  1.0;
+	double    flat_top_duration = 1.0;
+	double    factor        =  1.0;
+	double    slewrate      = -1.0;
+	double    maxampl       = -1.0;
+	double    asymsr        =  0.0;
+    int       iNADC         =  0;
+    PulseAxis eAxis         = AXIS_GX;
+
     DOMNamedNodeMap *pAttributes = node->getAttributes();
-    if (pAttributes)
-    {
+
+    if (pAttributes) {
         int nSize = pAttributes->getLength();
-        for(int i=0;i<nSize;++i)
-        {
+        for(int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
             item = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
-            if (item==NAME)    name = value;
-            if (item==AREA)    area = atof(value.c_str());
-            if (item==FACTOR)    factor = atof(value.c_str());
-            if (item=="Gmax")    maxampl = atof(value.c_str());
-            if (item=="SlewRate")    slewrate = atof(value.c_str());
-            if (item=="AsymSR")    asymsr = atof(value.c_str());
-            if (item=="FlatTop")    flat_top_duration = atof(value.c_str());
-            if (item=="ADCs")    iNADC = atoi(value.c_str());
-            if (item=="Axis")
-                {
-                                if ( value == "GX" ) eAxis = AXIS_GX ;
-                                if ( value == "GY" ) eAxis = AXIS_GY ;
-                                if ( value == "GZ" ) eAxis = AXIS_GZ ;
-                }
+            if (item == NAME)       name              = value;
+            if (item == AREA)       area              = atof(value.c_str());
+            if (item == FACTOR)     factor            = atof(value.c_str());
+            if (item == "Gmax")     maxampl           = atof(value.c_str());
+            if (item == "SlewRate") slewrate          = atof(value.c_str());
+            if (item == "AsymSR")   asymsr            = atof(value.c_str());
+            if (item == "FlatTop")  flat_top_duration = atof(value.c_str());
+            if (item == "ADCs")     iNADC             = atoi(value.c_str());
+            if (item == "Axis") {
+				if ( value == "GX" ) eAxis = AXIS_GX ;
+				if ( value == "GY" ) eAxis = AXIS_GY ;
+				if ( value == "GZ" ) eAxis = AXIS_GZ ;
+			}
         }
     }
+
     *pPulse = new RO_TGPS(area, flat_top_duration, iNADC, eAxis, name);
     ((GradientPulseShape*)*pPulse)->setFactor(factor);
-    if (maxampl>0.0) ((GradientPulseShape*)*pPulse)->setMaxAmpl(maxampl);
-    if (slewrate>0.0) ((GradientPulseShape*)*pPulse)->setSlewRate(slewrate);
-    if (asymsr!=0.0) ((TGPS*)*pPulse)->setAsymSR(asymsr);
+    if (maxampl  > 0.0) ((GradientPulseShape*)*pPulse)->setMaxAmpl(maxampl);
+    if (slewrate > 0.0) ((GradientPulseShape*)*pPulse)->setSlewRate(slewrate);
+    if (asymsr  != 0.0) ((TGPS*)*pPulse)->setAsymSR(asymsr);
     ((TGPS*)*pPulse)->Prepare(false);
-    if (iNADC==0)
-    {
+    if (iNADC==0) {
         ((GradientPulseShape*)*pPulse)->setFactor(factor);
         if (eAxis==AXIS_GX) ((GradientPulseShape*)*pPulse)->getAreaMethod(1);
         if (eAxis==AXIS_GY) ((GradientPulseShape*)*pPulse)->getAreaMethod(2);
         if (eAxis==AXIS_GZ) ((GradientPulseShape*)*pPulse)->getAreaMethod(3);
     }
- };
+};
 
 /*****************************************************************************/
  void XmlSequence::CreatePE_TGPS(PulseShape** pPulse, DOMNode* node){
