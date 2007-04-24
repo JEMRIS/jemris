@@ -1,14 +1,14 @@
 /*
-        This file is part of the MR simulation project
-        Date: 03/2006
-        Authors:  T. Stoecker, J. Dai
-        MR group, Institute of Medicine, Research Centre Juelich, Germany
+  This file is part of the MR simulation project
+  Date: 03/2006
+  Authors:  T. Stoecker, J. Dai
+  MR group, Institute of Medicine, Research Centre Juelich, Germany
 */
 
 #include "XmlSequence.h"
 
 /*****************************************************************************/
- ConcatSequence* XmlSequence::getSequence(bool verbose ){
+ConcatSequence* XmlSequence::getSequence(bool verbose ){
 	ConcatSequence* pSeq = (ConcatSequence*)Transform( getRoot() );
 	pSeq->Prepare(false);
 	bool bstatus = pSeq->Prepare(true);

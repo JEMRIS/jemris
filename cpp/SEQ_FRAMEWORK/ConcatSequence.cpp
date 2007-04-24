@@ -1,8 +1,8 @@
 /*
-        This file is part of the MR simulation project
-        Date: 03/2006
-        Authors:  T. Stoecker, J. Dai
-        MR group, Institute of Medicine, Research Centre Juelich, Germany
+  This file is part of the MR simulation project
+  Date: 03/2006
+  Authors:  T. Stoecker, J. Dai
+  MR group, Institute of Medicine, Research Centre Juelich, Germany
 */
 
 #include <iostream>
@@ -16,27 +16,27 @@ using std::setiosflags;
 #include "ConcatSequence.h"
 
 /******************************************************************/
-  bool ConcatSequence::InsertChild(Sequence* const sSeqOldChildPtr,Sequence* const sSeqNewChildPtr)
-     {
-        if (sSeqNewChildPtr== NULL )  return false;
-        if (getNumberOfChildren() == CHILDRENMAX ) return false;
-        
+bool ConcatSequence::InsertChild ( Sequence* const sSeqOldChildPtr,
+								   Sequence* const sSeqNewChildPtr) {
+
+	if (sSeqNewChildPtr== NULL )  return false;
+	if (getNumberOfChildren() == CHILDRENMAX ) return false;
+	
   	//insert the first child
-        if ((m_cChildrenPtr[0] == NULL || m_cChildrenPtr[0] == this) && sSeqOldChildPtr==NULL)
-        {
-                m_cChildrenPtr[0] = sSeqNewChildPtr;
-                sSeqNewChildPtr->setParent(this);
+	if ( (m_cChildrenPtr[0] == NULL || m_cChildrenPtr[0] == this) && sSeqOldChildPtr==NULL) {
+		m_cChildrenPtr[0] = sSeqNewChildPtr;
+		sSeqNewChildPtr->setParent(this);
 		return true;
-        }
+	}
 
   	//insert somewhere in the tree
-        int pos=-1; 
+	int pos=-1; 
 	for (int i=0;i<getNumberOfChildren();++i)
 		if ( getChild(i) == sSeqOldChildPtr) { pos=i; break; }
 	for (int i=getNumberOfChildren()-1; i>pos; i--)
 		m_cChildrenPtr[i+1] = m_cChildrenPtr[i];
 	m_cChildrenPtr[pos+1] = sSeqNewChildPtr;
-        sSeqNewChildPtr->setParent(this);
+	sSeqNewChildPtr->setParent(this);
 	return true;
 };
 

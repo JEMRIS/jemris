@@ -1,8 +1,8 @@
 /*
-        This file is part of the MR simulation project
-        Date: 03/2006
-        Authors:  T. Stoecker, J. Dai
-        MR group, Institute of Medicine, Research Centre Juelich, Germany
+  This file is part of the MR simulation project
+  Date: 03/2006
+  Authors:  T. Stoecker, J. Dai
+  MR group, Institute of Medicine, Research Centre Juelich, Germany
 */
 #ifndef _CONCATSEQUENCE_H_
 #define _CONCATSEQUENCE_H_
@@ -12,35 +12,47 @@
 
 #define CHILDRENMAX 4096
 
-class ConcatSequence :public Sequence  
-{
-public:
-  ConcatSequence(string sName = "ConcatSequence" , int iRepetitions=1)
-  { 
+class ConcatSequence :public Sequence {
+
+ public:
+
+	ConcatSequence(string sName = "ConcatSequence" , int iRepetitions=1) { 
         setParent(this);
         setName(sName); 
        	setRepetitions(iRepetitions);
-	for (int i=0;i<=CHILDRENMAX;++i) m_cChildrenPtr[i]=NULL;
-  };
-  ~ConcatSequence(){if (getParent()==this) {Destroy();} }; //delete seq-tree from the top
+		for (int i=0; i<=CHILDRENMAX; ++i) 
+			m_cChildrenPtr[i]=NULL;
+	};
+
+	//delete seq-tree from the top
+	~ConcatSequence() { if (getParent()==this) {Destroy();} }; 
    
-  Sequence* getChild(int ChildID ){return m_cChildrenPtr[ChildID];};
-  void setRepetitions(const int iRepetition); 
-  int getRepetitions() {return  m_iRepetitions;};
-  int getNumberOfChildren ( ){int i; for (i=0;i<CHILDRENMAX; i++) {if (m_cChildrenPtr[i]==NULL) {break;}}; return i;};
-  void getInfo(int ident) {
-	cout << "ConcatSequence: Name = '" << getName() << "' , duration = "<< getDuration()
-	     << " , Repetitions = " << getRepetitions() << " , Children = " << getNumberOfChildren() << endl;
-  	for (int i=0;i<getNumberOfChildren(); i++)
-	{ 
-		for (int j=0;j<ident;j++) cout << " ";
-		cout << " Child " << i+1 << ": ";
-		if (m_cChildrenPtr[i]->getNumberOfChildren() > 0)
-			m_cChildrenPtr[i]->getInfo(ident+i);
-		else
-			m_cChildrenPtr[i]->getInfo(ident);
-	}
-  };
+	Sequence* getChild(int ChildID ){ return m_cChildrenPtr[ChildID]; };
+	void setRepetitions (const int iRepetition); 
+	int getRepetitions() {return  m_iRepetitions;};
+
+	int getNumberOfChildren () {
+		int i; 
+		for (i=0;i<CHILDRENMAX; i++) {
+			if (m_cChildrenPtr[i]==NULL) {break;}
+		}; return i;
+	};
+
+	void getInfo(int ident) {
+		cout << "ConcatSequence: Name = '" << getName() 
+			 << "' , duration = "          << getDuration()
+			 << " , Repetitions = "        << getRepetitions() 
+			 << " , Children = "           << getNumberOfChildren() 
+			 << endl;
+		for (int i=0;i<getNumberOfChildren(); i++) { 
+			for (int j=0;j<ident;j++) cout << " ";
+			cout << " Child " << i+1 << ": ";
+			if (m_cChildrenPtr[i]->getNumberOfChildren() > 0)
+				m_cChildrenPtr[i]->getInfo(ident+i);
+			else
+				m_cChildrenPtr[i]->getInfo(ident);
+		}
+	};
 
   double getDuration();
   bool getValue(const double time ,double * const d_AllValuesPtr);
