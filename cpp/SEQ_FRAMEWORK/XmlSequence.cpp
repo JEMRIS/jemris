@@ -419,13 +419,13 @@ void XmlSequence::CreateExternalPulseShape (PulseShape** pPulse, DOMNode* node) 
 
 /*****************************************************************************/
 void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
-	
-	string name          ="HardRfPulseShape";
-	string item;
-	string value;
+    
+    string name          ="HardRfPulseShape";
+    string item;
+    string value;
     double duration      = 0.0;
-	double phase         = 0.0;
-	double flipangle     = 0.0;
+    double phase         = 0.0;
+    double flipangle     = 0.0;
 
     DOMNamedNodeMap *pAttributes = node->getAttributes();
 
@@ -454,15 +454,15 @@ void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
 /*****************************************************************************/
 void XmlSequence::CreateSincRfPulseShape (PulseShape** pPulse, DOMNode* node) {
 
-	string name          = "SincRfPulseShape";
-	string item;
-	string value;
+    string name          = "SincRfPulseShape";
+    string item;
+    string value;
     double factor        =  0.5;
-	double phase         =  0.0;
-	double flipangle     = 90.0;
-	double bw            =  0.5;
-	double offset        =  0.0;
-	double gap           =  0.0;
+    double phase         =  0.0;
+    double flipangle     = 90.0;
+    double bw            =  0.5;
+    double offset        =  0.0;
+    double gap           =  0.0;
     int    N             =  3;
 
     SLICE_ORDER SO = ASCENDING;
@@ -485,17 +485,17 @@ void XmlSequence::CreateSincRfPulseShape (PulseShape** pPulse, DOMNode* node) {
             if (item == FACTOR)     factor    = atof(value.c_str());
             if (item == GAP)        gap       = atof(value.c_str());
             if (item == SLICEORDER) {
-				if ( value == "ASCENDING" ) SO = ASCENDING ;
-				if ( value == "DESCENDING" ) SO = DESCENDING ;
-				if ( value == "INTERLEAVED" ) SO = INTERLEAVED ;
-			}
+                if ( value == "ASCENDING" ) SO = ASCENDING ;
+                if ( value == "DESCENDING" ) SO = DESCENDING ;
+                if ( value == "INTERLEAVED" ) SO = INTERLEAVED ;
+            }
         }
     }
 
     if (flipangle == 0.0 ) cout << name << " warning: zero flipangle" << endl;
 
     *pPulse = new SincRfPulseShape(flipangle, phase, bw, N, factor, SO, gap, 
-								   name);
+                                   name);
 
  };
 
@@ -503,8 +503,8 @@ void XmlSequence::CreateSincRfPulseShape (PulseShape** pPulse, DOMNode* node) {
 void XmlSequence::CreateRfReceiverPhase (PulseShape** pPulse, DOMNode* node) {
 
     string name          = "RfReceiverPhase";
-	string item;
-	string value;
+    string item;
+    string value;
     double phase         = 0.0;
 
     DOMNamedNodeMap *pAttributes = node->getAttributes();
@@ -528,12 +528,12 @@ void XmlSequence::CreateRfReceiverPhase (PulseShape** pPulse, DOMNode* node) {
 
 /*****************************************************************************/
 void XmlSequence::CreateRfPhaseCycling (PulseShape** pPulse, DOMNode* node) {
-	 
+     
     string name          = "RfPhaseCycling";
-	string item;
-	string value;
+    string item;
+    string value;
     double phases[128];
-	double duration      =  0.0;
+    double duration      =  0.0;
     int    cycle         =  1;
 
     DOMNamedNodeMap *pAttributes = node->getAttributes();
@@ -564,10 +564,10 @@ void XmlSequence::CreateRfPhaseCycling (PulseShape** pPulse, DOMNode* node) {
 void XmlSequence::CreateRfSpoiling (PulseShape** pPulse, DOMNode* node) {
 
     string name          = "RfSpoiling";
-	string item;
-	string value;
+    string item;
+    string value;
     double phase         =  0.0;
-	double duration      =  0.0;
+    double duration      =  0.0;
     int startcycle       =  0;
 
     DOMNamedNodeMap *pAttributes = node->getAttributes();
@@ -591,20 +591,20 @@ void XmlSequence::CreateRfSpoiling (PulseShape** pPulse, DOMNode* node) {
 
 /*****************************************************************************/
 void XmlSequence::CreateTGPS(PulseShape** pPulse, DOMNode* node){
-	
-	string    name          = "TGPS";
-	string    item;
-	string    value;
-	string    pulse_name;
+    
+    string    name          = "TGPS";
+    string    item;
+    string    value;
+    string    pulse_name;
     double    area          =  0.0;
-	double    factor        =  1.0;
-	double    duration      =  0.0;
-	double    slewrate      = -1.0;
-	double    maxampl       = -1.0;
-	double    asymsr        =  0.0;
+    double    factor        =  1.0;
+    double    duration      =  0.0;
+    double    slewrate      = -1.0;
+    double    maxampl       = -1.0;
+    double    asymsr        =  0.0;
     PulseAxis eAxis         = AXIS_GX;
     int       getareamethod =0;
-	
+    
     DOMNamedNodeMap *pAttributes = node->getAttributes();
 
     if (pAttributes) {
@@ -632,10 +632,10 @@ void XmlSequence::CreateTGPS(PulseShape** pPulse, DOMNode* node){
             if (item == AREA && value == "DKy")   getareamethod = 5;
             if (item == AREA && value == "DKz")   getareamethod = 6;
             if (item == "Axis") {
-				if ( value == "GX" ) eAxis = AXIS_GX ;
-				if ( value == "GY" ) eAxis = AXIS_GY ;
-				if ( value == "GZ" ) eAxis = AXIS_GZ ;
-			}
+                if ( value == "GX" ) eAxis = AXIS_GX ;
+                if ( value == "GY" ) eAxis = AXIS_GY ;
+                if ( value == "GZ" ) eAxis = AXIS_GZ ;
+            }
         }
     }
     *pPulse = new TGPS(area, eAxis, name);
@@ -645,7 +645,7 @@ void XmlSequence::CreateTGPS(PulseShape** pPulse, DOMNode* node){
     if (asymsr  != 0.0) ((TGPS*)*pPulse)->setAsymSR(asymsr);
     if (duration > 0.0) ((GradientPulseShape*)*pPulse)->NewDuration(duration);
 
-	//get area from another pulse
+    //get area from another pulse
     ((GradientPulseShape*)*pPulse)->LinkToPulse(pulse_name);
 
     if (getareamethod>0) //get area from seq-root parameters (KMAXx or KMAXy)
