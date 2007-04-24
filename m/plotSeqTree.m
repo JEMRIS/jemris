@@ -27,6 +27,7 @@ end
 a=X+x;a=[a a(1)];b=Y+y;b=[b b(1)];
 S.hp=patch(a,b,C);
 S.hl=line(a,b,'color',[0 0 0],'linewidth',2);
+
 %overlay icon on pulseshapes
 if isempty([findstr('Atom',S.Name) findstr('Sequence',S.Name)])
     eval(['B=handles.icons.',S.Name,';']);
@@ -40,7 +41,7 @@ end
 oldx=x;
 N=length(S.Children);
 for i=1:N
-    S.Children(i).hp=0; S.Children(i).hl=0;  S.Children(i).hi=0; 
+    S.Children(i).hp=0; S.Children(i).hl=0; S.Children(i).hi=0; S.Children(i).ht=0;
     %the parameter tag uis not shown but belongs to the root node
     if strcmp(S.Children(i).Name,'Parameter');continue;end
     %pulseshape tags are drawn at different positions ...
@@ -57,13 +58,14 @@ for i=1:N
 end
 
 %show loop conection numbers
-A=S.Attributes;
+A=S.Attributes; ht=0;
 for j=1:length(A)
     if strcmp(A(j).Name,'ConnectToLoop')
-        text(mean(a)+.07,mean(b)-.07,A(j).Value,...
+        ht=text(mean(a)+.07,mean(b)-.07,A(j).Value,...
              'color',[1 0 0],'fontweight','bold');
     end
 end
+S.ht=ht;
 
 %increase x-position
 if (x==oldx),x=x+dx;end
@@ -105,18 +107,18 @@ function S=set_active(hp,S)
      S.Children(i)=set_active(hp,S.Children(i));
  end
 
- %%%% set button down function for the patches and images of all modules %%%%
+ %%%% set button down function for all handles of this module %%%%
  function set_ButtonDownFnc(S,handles)
- eval(['set(S.hp,''ButtonDownFcn'',{@seqcad_',S.Name,',S,handles});']);
- if S.hi
-     eval(['set(S.hi,''ButtonDownFcn'',{@seqcad_',S.Name,',S,handles});']);
- end
+ eval(['set(S.hp,''ButtonDownFcn'',{@seqcad_',S.Name,',S,handles});']); %the path
+ eval(['set(S.hl,''ButtonDownFcn'',{@seqcad_',S.Name,',S,handles});']); %the line
+ if S.hi, eval(['set(S.hi,''ButtonDownFcn'',{@seqcad_',S.Name,',S,handles});']); end %the image (pulse shape icon)
+ if S.ht, eval(['set(S.ht,''ButtonDownFcn'',{@seqcad_',S.Name,',S,handles});']); end %the text (loop connection number)
  for i=1:length(S.Children)
      set_ButtonDownFnc(S.Children(i),handles);
  end
 
 %call ButtonDownFnc of the active module
-function call_CurrentModule(S,handles);
+function call_CurrentModule(S,handles)
  if S.current
         eval(['seqcad_',S.Name,'([],[],S,handles);']);
         return
@@ -215,6 +217,9 @@ if ~isempty(handles),seqcad_common(seq,handles);end
 function seqcad_RfPhaseCycling(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
+function seqcad_RfReceiverPhase(src,eventdata,seq,handles)
+if ~isempty(handles),seqcad_common(seq,handles);end
+
 function seqcad_RfSpoiling(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
@@ -228,5 +233,8 @@ function seqcad_PE_TGPS(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
 function seqcad_RO_TGPS(src,eventdata,seq,handles)
+if ~isempty(handles),seqcad_common(seq,handles);end
+
+function seqcad_ExternalPulseShape(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
