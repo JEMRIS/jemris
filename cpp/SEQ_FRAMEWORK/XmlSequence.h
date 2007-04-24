@@ -22,6 +22,12 @@ XERCES_CPP_NAMESPACE_USE
 #include "AllSequences.h"
 #include "AllPulses.h"
 
+const string CONNECT_TO_LOOP = "ConnectToLoop";
+const string DELAY           = "DELAY";
+const string DURATION        = "Duration";
+const string FACTOR          = "Factor";
+const string NAME            = "Name";
+const string REPETITIONS     = "Repetitions";
 
 class XmlSequence {
 
@@ -105,12 +111,5 @@ class XmlSequence {
     bool m_bOK;
 
 };
-
-const string CONNECT_TO_LOOP = "ConnectToLoop";
-const string DELAY           = "DELAY";
-const string DURATION        = "Duration";
-const string FACTOR          = "Factor";
-const string NAME            = "Name";
-const string REPETITIONS     = "Repetitions";
 
 #endif
