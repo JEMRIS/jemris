@@ -38,21 +38,31 @@ ConcatSequence* XmlSequence::getSequence (bool verbose ) {
 
 /*****************************************************************************/
 Sequence* XmlSequence::Transform (DOMNode* node) {
+
 	string name;
-	Sequence *pSeq=NULL, *pChildLast=NULL, *pChildNext=NULL;
+	Sequence *pSeq       = NULL;
+	Sequence *pChildLast = NULL;
+	Sequence *pChildNext = NULL;
+
 	if (!node) return NULL;
 
 	name = XMLString::transcode(node->getNodeName()) ;
-	if (name == "ConcatSequence" ) {
+	if (name == "ConcatSequence") {
 		CreateConcatSequence(&pSeq,node);
 		DOMNode* child ;
-		for (child = node->getFirstChild(); child != 0; child=child->getNextSibling()) {
+
+		for (child=node->getFirstChild(); 
+			 child!=0; child=child->getNextSibling()) {
 			pChildNext=Transform(child);
 			if (pChildNext != NULL) {
-				//cout << pSeq->getName() << ": inserting " << pChildNext->getName() ;   
-				//if (pChildLast!=NULL) cout << " after " << pChildLast->getName() ;   
+				//cout << pSeq->getName() << ": inserting " 
+				//     << pChildNext->getName();   
+				//if (pChildLast!=NULL) cout << " after " 
+				//     << pChildLast->getName();   
+
 				((ConcatSequence*)pSeq)->InsertChild( pChildLast, pChildNext );
 				pChildLast=pChildNext;
+
 				//cout << " successful!" << endl;
 			}
 		}
@@ -71,6 +81,7 @@ Sequence* XmlSequence::Transform (DOMNode* node) {
 		return pSeq;}
 
 	return NULL; //if the node name is not known
+
  };
 
 /******************************************************************************
@@ -89,24 +100,29 @@ void XmlSequence::CreateConcatSequence(Sequence** pSeq, DOMNode* node){
 	double factor     = 1.0;
 
 	DOMNamedNodeMap *pAttributes = node->getAttributes();
+
 	if (pAttributes) {
 		int nSize = pAttributes->getLength();
 		for(int i=0; i<nSize; ++i) {
 			DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item  = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")		   name = value;
-			if (item=="Repetitions")   reps = atoi(value.c_str() );
-			if (item=="ConnectToLoop") iTreeSteps = atoi(value.c_str());
-			if (item=="Factor")		   factor = atof(value.c_str() );
+			if (item == NAME)		     name = value;
+			if (item == REPETITIONS)     reps = atoi(value.c_str() );
+			if (item == CONNECT_TO_LOOP) iTreeSteps = atoi(value.c_str());
+			if (item == FACTOR)		     factor = atof(value.c_str() );
 		}
 	}
+
 	*pSeq = new ConcatSequence(name,reps);
+
 	if (iTreeSteps>0) (*pSeq)->setTreeSteps(iTreeSteps);
+	
 	(*pSeq)->setFactor(factor);
-	if (item=="Repetitions" && value=="Nx")	{
+	
+	if (item == REPETITIONS && value == "Nx") {
 		(*pSeq)->NewParam(true); ((ConcatSequence*)*pSeq)->getLoopMethod(1);}
-	if (item=="Repetitions" && value=="Ny")	{
+	if (item == REPETITIONS && value == "Ny") {
 		(*pSeq)->NewParam(true); ((ConcatSequence*)*pSeq)->getLoopMethod(2);}
 
 	//get parameters for this ConcatSequence
@@ -149,22 +165,29 @@ void XmlSequence::CreateConcatSequence(Sequence** pSeq, DOMNode* node){
 			}
 		}
 	}
+
  };
 
 /*****************************************************************************/
 void XmlSequence::CreateAtomicSequence(Sequence** pSeq, DOMNode* node) {
+
 	string name,item,value;
+
 	DOMNamedNodeMap *pAttributes = node->getAttributes();
+
 	if (pAttributes) {
 		int nSize = pAttributes->getLength();
 		for(int i=0;i<nSize;++i) {
 			DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")		name = value;
+			if (item == NAME)
+				name = value;
 		}
 	}
+
 	*pSeq = new AtomicSequence(name);
+
 	//set pulses
 	DOMNode* child ;
 	for (child=node->getFirstChild(); child!=0; child=child->getNextSibling()) {
@@ -174,6 +197,7 @@ void XmlSequence::CreateAtomicSequence(Sequence** pSeq, DOMNode* node) {
 		if (pPulse!=NULL)
 			((AtomicSequence*)*pSeq)->setPulse(pPulse,iTreeSteps);
 	}
+
 };
 
 /*****************************************************************************/
@@ -203,30 +227,30 @@ void XmlSequence::CreateDelayAtom(Sequence** pSeq, DOMNode* node){
 			item  = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
 
-			if (item=="Name")   name   = value;
+			if (item==NAME)   name   = value;
 
 			//set factor for delay
-			if (item=="Factor")	factor = atof(value.c_str()); 
+			if (item==FACTOR)	factor = atof(value.c_str()); 
 
-			if (item=="Delay") {
+			if (item==DELAY) {
 				delay = atof(value.c_str()); //set numeric delay
 				if (delay==0.0) S3=value; //remember string
 			}
 
 			//use TE delay from parameter
-			if (item=="Delay" && value=="TE")	bUseTE=true ;
+			if (item==DELAY && value=="TE")	bUseTE=true ;
 
 			//use TE delay from parameter
-			if (item=="Delay" && value=="TE/2")	bUseHalfTE=true ;
+			if (item==DELAY && value=="TE/2")	bUseHalfTE=true ;
 			
 			//use TR delay from parameter
-			if (item=="Delay" && value=="TR")	bUseTR=true ;
+			if (item==DELAY && value=="TR")	bUseTR=true ;
 			
 			//use TI delay from parameter
-			if (item=="Delay" && value=="TI")	bUseTI=true ;
+			if (item==DELAY && value=="TI")	bUseTI=true ;
 			
 			//use TD delay from parameter
-			if (item=="Delay" && value=="TD")	bUseTD=true ;
+			if (item==DELAY && value=="TD")	bUseTD=true ;
 
 			if (item=="StartSeq")	            S1= value;
 
@@ -272,7 +296,7 @@ void XmlSequence::CreateGradientSpiralExtRfConcatSequence (Sequence** pSeq,
 			DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
+			if (item==NAME)	name = value;
 			if (item=="RfFileName")	filename = value;
 			if (item=="Turns")	dturns=atof(value.c_str());
 			if (item=="Tune")	dtune=atof(value.c_str());
@@ -291,17 +315,21 @@ void XmlSequence::CreateGradientSpiralExtRfConcatSequence (Sequence** pSeq,
 /*****************************************************************************/
 void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps, 
 									DOMNode* node){
-	string name,item,value;
-	int iNADC=0;
+	string name;
+	string item;
+	string value;
+	int    iNADC = 0;
+
 	DOMNamedNodeMap *pAttributes = node->getAttributes();
+
 	if (pAttributes) {
 		int nSize = pAttributes->getLength();
-		for(int i=0;i<nSize;++i) {
+		for(int i=0; i<nSize; ++i) {
 			DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="ConnectToLoop")	*iTreeSteps = atoi(value.c_str());
-			if (item=="ADCs")		iNADC = atoi(value.c_str());
+			if (item==CONNECT_TO_LOOP) *iTreeSteps = atoi(value.c_str());
+			if (item=="ADCs")		   iNADC = atoi(value.c_str());
 		}
 	}
 
@@ -325,6 +353,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 	if (*pPulse != NULL)
 		if (iNADC>0 && (*pPulse)->getNumOfADCs() == 0)
 			(*pPulse)->setNumOfADCs(iNADC);
+
 };
 
 /*****************************************************************************/
@@ -340,7 +369,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
+			if (item==NAME)	name = value;
 			if (item=="Duration")	duration = atof(value.c_str());
 		}
 	}
@@ -361,9 +390,9 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
+			if (item==NAME)	name = value;
 			if (item=="FileName")	filename = value;
-			if (item=="Factor")	factor = atof(value.c_str());
+			if (item==FACTOR)	factor = atof(value.c_str());
 			if (item=="Axis")
 				{
                         		if ( value == "RF" ) eAxis = AXIS_RF ;
@@ -389,7 +418,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
+			if (item==NAME)	name = value;
 			if (item=="Duration")	duration = atof(value.c_str());
 			if (item=="FlipAngle")	flipangle = atof(value.c_str()); 
 			if (item=="Phase")	phase = atof(value.c_str());
@@ -415,12 +444,12 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	 name = value;
+			if (item==NAME)	 name = value;
 			if (item=="FlipAngle")	 flipangle = atof(value.c_str()); 
 			if (item=="Phase")	 phase = atof(value.c_str());
 			if (item=="Bandwidth")	 bw = atof(value.c_str());
 			if (item=="Zeros")	 N = atoi(value.c_str());
-			if (item=="Factor")	 factor = atof(value.c_str());
+			if (item==FACTOR)	 factor = atof(value.c_str());
 			if (item=="Gap")	 gap = atof(value.c_str());
 			if (item=="SliceOrder")
 				{
@@ -447,7 +476,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
+			if (item==NAME)	name = value;
 			if (item=="Phase")	phase = atof(value.c_str());
 		}
 	}
@@ -468,7 +497,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
+			if (item==NAME)	name = value;
 			if (item=="Duration")	duration = atof(value.c_str());
 			if (item=="Cycle")	cycle = atoi(value.c_str());
 			if (item=="Phase1")	phases[0] = atof(value.c_str());
@@ -494,7 +523,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")		name = value;
+			if (item==NAME)		name = value;
 			if (item=="QuadPhaseInc")	phase = atof(value.c_str());
 			if (item=="Duration")		duration = atof(value.c_str());
 			if (item=="StartCycle")		startcycle = atoi(value.c_str());
@@ -518,13 +547,13 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
+			if (item==NAME)	name = value;
 			if (item=="Area")	pulse_name = value;
 			if (item=="Area")	area = atof(value.c_str());
 			if (item=="Gmax")	maxampl = atof(value.c_str());
 			if (item=="SlewRate")	slewrate = atof(value.c_str());
 			if (item=="AsymSR")	asymsr = atof(value.c_str());
-			if (item=="Factor")	factor = atof(value.c_str());
+			if (item==FACTOR)	factor = atof(value.c_str());
 			if (item=="Duration")	duration = atof(value.c_str());
 			if (item=="Area" && value=="KMAXx")	getareamethod=1 ;
 			if (item=="Area" && value=="KMAXy")	getareamethod=2 ;
@@ -568,9 +597,9 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
+			if (item==NAME)	name = value;
 			if (item=="Area")	area = atof(value.c_str());
-			if (item=="Factor")	factor = atof(value.c_str());
+			if (item==FACTOR)	factor = atof(value.c_str());
 			if (item=="Gmax")	maxampl = atof(value.c_str());
 			if (item=="SlewRate")	slewrate = atof(value.c_str());
 			if (item=="AsymSR")	asymsr = atof(value.c_str());
@@ -615,8 +644,8 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
-			if (item=="Factor")	factor = atof(value.c_str());
+			if (item==NAME)	name = value;
+			if (item==FACTOR)	factor = atof(value.c_str());
 			if (item=="Area")	area = atof(value.c_str());
 			if (item=="Gmax")	maxampl = atof(value.c_str());
 			if (item=="SlewRate")	slewrate = atof(value.c_str());
@@ -669,7 +698,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")		name = value;
+			if (item==NAME)		name = value;
 			if (item=="SliceThickness")	slicethickness = atof(value.c_str());
 			if (item=="Gmax")	maxampl = atof(value.c_str());
 			if (item=="SlewRate")	slewrate = atof(value.c_str());
@@ -700,7 +729,7 @@ void XmlSequence::CreatePulseShape( PulseShape** pPulse, int* iTreeSteps,
 			DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
 			item = XMLString::transcode(pAttributeNode->getName());
 			value = XMLString::transcode(pAttributeNode->getValue());
-			if (item=="Name")	name = value;
+			if (item==NAME)	name = value;
 			if (item=="Duration")	duration = atof(value.c_str());
 			if (item=="Turns")	turns = atof(value.c_str());
 			if (item=="Parameter")	tune = atof(value.c_str());
