@@ -95,7 +95,7 @@ void XmlSequence::CreateConcatSequence (Sequence** pSeq, DOMNode* node) {
     string item; 
     string value;
     string name       = "ConcatSequence";
-    int    reps       =1;
+    int    reps       = 1;
     int    iTreeSteps = 0;
     double factor     = 1.0;
 
@@ -108,9 +108,9 @@ void XmlSequence::CreateConcatSequence (Sequence** pSeq, DOMNode* node) {
             item  = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
             if (item == NAME)             name = value;
-            if (item == REPETITIONS)     reps = atoi(value.c_str() );
-            if (item == CONNECT_TO_LOOP) iTreeSteps = atoi(value.c_str());
-            if (item == FACTOR)             factor = atof(value.c_str() );
+            if (item == REPETITIONS)      reps = atoi(value.c_str() );
+            if (item == CONNECT_TO_LOOP)  iTreeSteps = atoi(value.c_str());
+            if (item == FACTOR)           factor = atof(value.c_str() );
         }
     }
 
@@ -423,7 +423,7 @@ void XmlSequence::CreateExternalPulseShape (PulseShape** pPulse, DOMNode* node) 
 /*****************************************************************************/
 void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
     
-    string name          ="HardRfPulseShape";
+    string name          = "HardRfPulseShape";
     string item;
     string value;
     double duration      = 0.0;
@@ -431,6 +431,29 @@ void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
     double flipangle     = 0.0;
 
     DOMNamedNodeMap *pAttributes = node->getAttributes();
+	DOMNodeList     *npAngles    = node->getChildNodes();
+
+
+	if (npAngles) {
+		DOMNode *npAngle        = npAngles->item(0);
+		if (npAngle) {
+
+			char*   cpAngle     = XMLString::transcode(npAngle->getNodeValue());
+			string  spAngle     = cpAngle;
+			string  buf;
+			XMLString::release(&cpAngle);
+
+			stringstream ss(spAngle);
+			vector<double> angles;
+
+			while (ss >> buf) {
+				angles.push_back(atof(buf.c_str()));
+			}
+
+			vector<double>::iterator iter;
+			for (iter = angles.begin(); iter != angles.end(); iter++) 
+		}
+	}
 
     if (pAttributes) {
 
@@ -438,7 +461,7 @@ void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
 
         for (int i=0; i<nSize; ++i) {
             DOMAttr* pAttributeNode = (DOMAttr*) pAttributes->item(i);
-            item =  XMLString::transcode(pAttributeNode->getName());
+            item  = XMLString::transcode(pAttributeNode->getName());
             value = XMLString::transcode(pAttributeNode->getValue());
             if (item == NAME)       name      = value;
             if (item == DURATION)   duration  = atof(value.c_str());
@@ -447,8 +470,8 @@ void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
         }
     }
 
-    if (flipangle == 0.0 ) cout << name << " warning: zero flipangle" << endl;
-    if (duration == 0.0 )  cout << name << " warning: zero duration"  << endl;
+    if (flipangle == 0.0) cout << name << " warning: zero flipangle" << endl;
+    if (duration  == 0.0) cout << name << " warning: zero duration"  << endl;
 
     *pPulse = new HardRfPulseShape(flipangle, phase, duration, name);
 

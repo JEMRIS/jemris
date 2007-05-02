@@ -11,8 +11,7 @@ using namespace std;
 
 void HardRfPulseShape::getValue(double * dAllVal, double const time,int const iLoop) {
 	double dT=getDuration();
-	if ( time >= 0 && time <= dT )
-	{
+	if ( time >= 0 && time <= dT ) {
 		dAllVal[0] += getFlipAngle() * PI /(180.0*dT);
 		dAllVal[1] += getPhase() * PI / 180.0;
 	}

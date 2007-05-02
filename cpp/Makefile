@@ -68,7 +68,7 @@ $(MOD)XmlSimulation.o : $(MOD)XmlSimulation.cpp
 
 #commands for main programs
 jemris : $(SFWOBJS) $(SEQH) $(MODOBJS) jemris.cpp
-	$(CC) $(CCOPTS) -I$(CVI) -L$(CVL) -L$(XRCL) -I$(XRCI) -I$(SFW) -I$(MOD) -o jemris $(SFWOBJS) $(MODOBJS) jemris.cpp -lm -lcvode -lxerces-c
+	$(CC) -L/usr/lib $(CCOPTS) -I$(CVI) -L$(CVL) -L$(XRCL) -I$(XRCI) -I$(SFW) -I$(MOD) -o jemris $(SFWOBJS) $(MODOBJS) jemris.cpp -lm -lcvode -lxerces-c
 pjemris : $(SFWOBJS) $(MODOBJS) $(SEQH) pjemris.cpp
 	$(MPICC) $(CCOPTS) -I$(CVI) -L$(CVL) -L$(XRCL) -I$(XRCI) -I$(SFW) -I$(MOD) -o pjemris $(SFWOBJS) $(MODOBJS) pjemris.cpp -lm -lcvode -lxerces-c
 

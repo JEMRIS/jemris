@@ -59,8 +59,10 @@ public:
 	m_iLastLoopCounter=0;
 	//set repetitions of the looping sequence
 	Sequence* sSeq=getAtomicSeq();
-	for (int j=0;j< getTreeSteps(); ++j) {sSeq = sSeq->getParent();}
-	if (sSeq !=NULL && sSeq != getAtomicSeq() ) ((ConcatSequence*)sSeq)->setRepetitions(m_iPEsteps);
+	for (int j=0;j< getTreeSteps(); ++j) 
+		sSeq = sSeq->getParent();
+	if (sSeq !=NULL && sSeq != getAtomicSeq())
+		((ConcatSequence*)sSeq)->setRepetitions(m_iPEsteps);
 	return true;
   };
 
