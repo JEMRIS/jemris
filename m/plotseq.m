@@ -1,4 +1,4 @@
-function [SeqTree,ax]=plotseq(handles,moment_flag,kspace_flag);
+function [SeqTree,ax]=plotseq(handles,moment_flag,kspace_flag)
 
 %TS@IME-FZJ 03/2007
 hax=handles.hax;
@@ -45,10 +45,10 @@ if moment_flag
     end
     if kspace_flag
         for i=1:6;cla(hax{i},'reset');set(hax{i},'visible','off');end
-        axes(hax{8});set(gca,'visible','on');hold on
+        axes(hax{8});cla(hax{8},'reset');set(gca,'visible','on');hold on
         C=flipud(autumn(length(J)));
         for j=1:length(J)
-            if j<length(J);n_end=J(j+1)-1;else,n_end=length(A(:,3));end
+            if j<length(J);n_end=J(j+1)-1;else n_end=length(A(:,3));end
             n_all=J(j)+1:n_end;
             plot(A(n_all,3),A(n_all,4),'color',C(j,:))
         end
