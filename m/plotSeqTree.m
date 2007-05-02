@@ -143,10 +143,16 @@ set(seq.hl,'color',[1 0 0],'linewidth',3)
 
 %show attributes
 if strcmp(seq.Name,'Sequence Root')
+    set(handles.SeqObjectPanel,'Title','Module: Sequence Root')
     A=handles.RootAttributes;
 else
     set(handles.SeqObjectPanel,'Title',['Module: ',seq.Name])
     A=handles.Attributes{find(strcmp(handles.Modules,seq.Name))};
+end
+
+if isempty(seq.Attributes)
+    seq.Attributes.Name='Name';
+    seq.Attributes.Value=seq.Name;
 end
 
 for i=1:16
