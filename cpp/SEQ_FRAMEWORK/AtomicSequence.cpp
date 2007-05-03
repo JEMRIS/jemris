@@ -114,38 +114,40 @@ void AtomicSequence::setListOfTimepoints (bool force) {
 	
 	if (force)
 		m_bDoSetListOfTPs = true;
-
+	
 	//list already set -> nothing to do!
 	if (!m_bDoSetListOfTPs) 
 		return;   
-
-	int      iN=0;
-	int      iNtotal=0;
+	
+	int      iN      = 0;
+	int      iNtotal = 0;
 	double*  pdArray;
-
-	//collect NLPs and ADCs from PulseShapes
+	
+	//collect all NLPs and ADCs from PulseShapes
 	for (int j=0; j<getNumberOfPulses(); j++) {	
-
+		
 		iN      = getPulse(j)->getNumOfADCs();
 		pdArray = getPulse(j)->getADCarray();
-
+		
+		//all ADCs
 		for (int i=0; i<iN; i++) {
-			m_dTPs[i+iNtotal]=pdArray[i]; 
-			m_bTPs[i+iNtotal]=true;
+			m_dTPs[i+iNtotal] = pdArray[i]; 
+			m_bTPs[i+iNtotal] = true;
 		}
 
 		iNtotal += iN;
-		iN = getPulse(j)->getNumOfNLPs();
-		pdArray=getPulse(j)->getNLParray();
+		iN       = getPulse(j)->getNumOfNLPs();
+		pdArray  = getPulse(j)->getNLParray();
 
+		//all NLPs
 		for (int i=0;i<iN;i++) {
-			m_dTPs[i+iNtotal]=pdArray[i];
-			m_bTPs[i+iNtotal]=false;
+			m_dTPs[i+iNtotal] = pdArray[i];
+			m_bTPs[i+iNtotal] = false;
 		}
 
 		if (getPulse(j)->getDuration() < getDuration()) {
-			m_dTPs[iN+iNtotal]=getPulse(j)->getDuration()+TIME_ERR_TOL;
-			m_bTPs[iN+iNtotal]=false; iN++;
+			m_dTPs[iN+iNtotal] = getPulse(j)->getDuration()+TIME_ERR_TOL;
+			m_bTPs[iN+iNtotal] = false; iN++;
 		}
 
 		iNtotal += iN;
@@ -155,8 +157,7 @@ void AtomicSequence::setListOfTimepoints (bool force) {
 	//sort time points
 	for(int iUp=iNtotal-1;iUp>0;--iUp)
 		for(int i=0; i<iUp; ++i)
-			if(m_dTPs[i]>m_dTPs[i+1])
-			{
+			if(m_dTPs[i]>m_dTPs[i+1]) {
 				double d=m_dTPs[i]; m_dTPs[i]=m_dTPs[i+1]; m_dTPs[i+1]=d;
 				bool   b=m_bTPs[i]; m_bTPs[i]=m_bTPs[i+1]; m_bTPs[i+1]=b;
 			}
@@ -164,43 +165,45 @@ void AtomicSequence::setListOfTimepoints (bool force) {
 	//remove multiple timepoints (according to TIME_ERR_TOL)
 	m_iTPs=0; bool same=false, badc=false;
 	for(int i=0; i<iNtotal; ++i)
-		if( fabs(m_dTPs[i]-m_dTPs[i+1])>TIME_ERR_TOL)
-		{
+		if( fabs(m_dTPs[i]-m_dTPs[i+1])>TIME_ERR_TOL) {
 			m_dTPs[m_iTPs] = m_dTPs[i];
 			m_bTPs[m_iTPs] = (same?badc:m_bTPs[i]);
 			++m_iTPs;
 			same=false;
 			badc=false;
-		} //remember multiples, to correctly set the ADC bits
-		else
-		{
+		} else { //remember multiples, to correctly set the ADC bits
 			same=true;
 			badc=(badc || m_bTPs[i] || m_bTPs[i+1]);
 		}
 
-	//increase zero 
+	//CVODE doesn't like the first pulse at time 0
+	//so increase zero by TIME_ERR_TOL
 	if(m_dTPs[0]==0) { m_dTPs[0]=TIME_ERR_TOL; } 
-
+	
 	m_bDoSetListOfTPs=false;
 };
 
 /******************************************************************/
-void AtomicSequence::writeSeqVal(double& dTimeShift,ofstream* pfout){
+void AtomicSequence::writeSeqVal(double& dTimeShift, ofstream* pfout){
+
 	setListOfTimepoints(true);
-	for (int i=0; i<m_iTPs; ++i)
-	{
+
+	for (int i=0; i<m_iTPs; ++i) { 
 		//write all as double for faster reading from MATLAB
-		double dVal[5]={0.0,0.0,0.0,0.0,0.0};
-		double dTime=m_dTPs[i]+dTimeShift;
-		double dADC=(m_bTPs[i]?1.0:-1.0);
+		double dVal[5] = {0.0,0.0,0.0,0.0,0.0};
+		double dTime   =  m_dTPs[i]+dTimeShift;
+		double dADC    = (m_bTPs[i]?1.0:-1.0);
+
 		getValue(m_dTPs[i],&dVal[0]);
-		(*pfout).write((char *)(&(dTime)), sizeof(double));
+		(*pfout).write((char *)(&(dTime)),   sizeof(double));
 		(*pfout).write((char *)(&(dVal[0])), sizeof(double));
 		(*pfout).write((char *)(&(dVal[1])), sizeof(double));
 		(*pfout).write((char *)(&(dVal[2])), sizeof(double));
 		(*pfout).write((char *)(&(dVal[3])), sizeof(double));
 		(*pfout).write((char *)(&(dVal[4])), sizeof(double));
-		(*pfout).write((char *)(&(dADC)), sizeof(double));
+		(*pfout).write((char *)(&(dADC)),    sizeof(double));
 	}
+
 	dTimeShift += getDuration();
+
 };

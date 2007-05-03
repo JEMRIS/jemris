@@ -14,40 +14,39 @@
 
 //trapezoidal gradient pulse shape (e.g. for cartesian k-space imaging)
 class TGPS :public GradientPulseShape{
-
-public:
-  TGPS (double dArea=0.0, PulseAxis eAxis=AXIS_GX, string sName="TGPS"){
- 	setName(sName);
- 	setAxis(eAxis);
-	m_dArea=dArea;
-	m_bNoRamps=false;
+	
+ public:
+	TGPS (double dArea=0.0, PulseAxis eAxis=AXIS_GX, string sName="TGPS") {
+		setName(sName);
+		setAxis(eAxis);
+		m_dArea=dArea;
+		m_bNoRamps=false;
     	m_dAsymSR = 0.0;
- 	m_dSlopeUp = getSlewRate();
- 	m_dSlopeDn = -1.0*getSlewRate();
-	m_bVerbose=false;
-	Prepare(m_bVerbose);
-  };
+		m_dSlopeUp = getSlewRate();
+		m_dSlopeDn = -1.0*getSlewRate();
+		m_bVerbose=false;
+		Prepare(m_bVerbose);
+	};
 
-  bool Prepare(bool verbose){
+	bool Prepare(bool verbose){
         m_bVerbose=verbose;
-	setLimits();
-	GradientPulseShape* pLinkedPulse = NULL;
-	if (getAtomicSeq()!=NULL) pLinkedPulse = (GradientPulseShape*)getAtomicSeq()->getRoot()->FindPulse(LinkToPulse());
-	if (pLinkedPulse!=NULL) m_dArea = getFactor()*pLinkedPulse->getArea();
-	if (getAreaMethod()>0)  m_dArea = getFactor()*getAtomicSeq()->getRoot()->getParameter()->getArea( getAreaMethod() );
-	setArea(m_dArea);
-
-	if ( NewDuration()>0 )
-	{
-		setDuration(NewDuration());
-		if ( getNumOfADCs()>0 ) setNumOfADCs( getNumOfADCs() );
-	}
-	return true;
-  };
-
-  ~TGPS(){};
-
-public:
+		setLimits();
+		GradientPulseShape* pLinkedPulse = NULL;
+		if (getAtomicSeq()!=NULL) pLinkedPulse = (GradientPulseShape*)getAtomicSeq()->getRoot()->FindPulse(LinkToPulse());
+		if (pLinkedPulse!=NULL) m_dArea = getFactor()*pLinkedPulse->getArea();
+		if (getAreaMethod()>0)  m_dArea = getFactor()*getAtomicSeq()->getRoot()->getParameter()->getArea( getAreaMethod() );
+		setArea(m_dArea);
+		
+		if ( NewDuration()>0 ) {
+			setDuration(NewDuration());
+			if ( getNumOfADCs()>0 ) setNumOfADCs( getNumOfADCs() );
+		}
+		return true;
+	};
+	
+	~TGPS(){};
+	
+ public:
 
 //  
 void getValue(double * dAllVal, double const time, int const iLoop);
