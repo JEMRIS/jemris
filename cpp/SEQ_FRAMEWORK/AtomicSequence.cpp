@@ -60,24 +60,29 @@ PulseShape* AtomicSequence::FindPulse(string sPulseName) {
 }
 
 /*****************************************************************************/
-  bool AtomicSequence::Prepare(bool verbose){
-	bool btag=true;
-        m_dDuration=0.0;
-	for (int i=0;i<getNumberOfPulses();++i)
-	{
+bool AtomicSequence::Prepare(bool verbose){
+
+	bool btag   = true;
+	m_dDuration = 0.0;
+
+	for (int i=0; i<getNumberOfPulses(); ++i) {
 		btag = (btag && getPulse(i)->Prepare(verbose));
-        	setDuration(getPulse(i)->getDuration());
+		setDuration(getPulse(i)->getDuration());
 	}
+
 	return btag;
+
   };
 
-/*****************************************************************************/
-  void AtomicSequence::Destroy() //destructor call: delete all pulses, then myself
-  {
+/******************************************************************************/
+/*  destructor call: delete all pulses, then myself                           */
+/******************************************************************************/
+void AtomicSequence::Destroy() {
+	
 	for (int i=0;i<getNumberOfPulses() ;++i)
 		delete getPulse(i);
 	delete this;
-  }
+}
 
 /*****************************************************************************/
 void AtomicSequence::writeADCs(ofstream* pfout){

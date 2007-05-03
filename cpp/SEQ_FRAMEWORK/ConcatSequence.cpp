@@ -83,19 +83,24 @@ void ConcatSequence::setRepetitions(const int iRepetition) {
 	}
 };
 /******************************************************************/
-  bool ConcatSequence::Prepare(bool verbose) {
-	bool btag=true;
-	if (NewParam()) //get repetitions from root parameter
-	{
-		if (getLoopMethod()==1) setRepetitions( (int) ( getFactor()*getRoot()->getParameter()->getNx() ) );
-		if (getLoopMethod()==2) setRepetitions( (int) ( getFactor()*getRoot()->getParameter()->getNy() ) );
-		NewParam(false);
+  bool ConcatSequence::Prepare (bool verbose) {
+
+	  bool btag=true;
+
+	  if (NewParam()) { //get repetitions from root parameter 
+		  if (getLoopMethod()==1) 
+			  setRepetitions( (int) ( getFactor()*getRoot()->getParameter()->getNx() ) );
+		  if (getLoopMethod()==2)
+			  setRepetitions( (int) ( getFactor()*getRoot()->getParameter()->getNy() ) );
+		  NewParam(false);
 	}
-	for (int i=0;i<getNumberOfChildren();++i)
+
+	for (int i=0; i<getNumberOfChildren(); ++i)
 		btag = (btag && getChild(i)->Prepare(verbose));
 	if (getParent()==this && !btag && verbose) //only the top node of the tree cries out
 		cout << "warning in Prepare() of sequence: " << getName() << endl;
 	return btag;
+
 };
 
 /******************************************************************/
