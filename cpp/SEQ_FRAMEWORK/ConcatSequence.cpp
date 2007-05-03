@@ -131,7 +131,10 @@ void ConcatSequence::setRepetitions(const int iRepetition) {
         return  true;
 };
 
-/******************************************************************/
+/******************************************************************************/
+/*  get duration of this concat sequence by adding the durations of all       */
+/*  child nodes                                                               */
+/******************************************************************************/
 double ConcatSequence::getDuration() {
 
 	double dDuration = 0.0;
