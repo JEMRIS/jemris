@@ -11,6 +11,8 @@
 #define MAXPULSENUMBER 100
 
 // CVODE doesn't like the first pulse at time 0
+// and time points which lie extremely near to
+// each other
 #define TIME_ERR_TOL 1e-6 
 
 #include <cmath>
