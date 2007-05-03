@@ -17,7 +17,7 @@ class ConcatSequence :public Sequence {
 	
  public:
 	
-	ConcatSequence(string sName = "ConcatSequence" , int iRepetitions=1) { 
+	ConcatSequence(string sName = "ConcatSequence", int iRepetitions=1) { 
         setParent(this);
         setName(sName); 
        	setRepetitions(iRepetitions);

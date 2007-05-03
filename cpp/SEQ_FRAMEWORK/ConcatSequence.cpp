@@ -136,30 +136,42 @@ double ConcatSequence::getDuration() {
 
 	double dDuration = 0.0;
 
+	//run through the repetitions
 	for (int i=0; i<getRepetitions(); ++i) {
-
+		
+		//set the accessible loop counter
 		setLoop(i);
+
+		//accumulate duration of ALL child nodes
 		for (int j=0; j<getNumberOfChildren() ; ++j)
 			dDuration += m_cChildrenPtr[j]->getDuration();
-
+		
 	}
 
 	return( dDuration );
 
 };
 
-/******************************************************************/
+/*******************************************************************************/
+/*  get value of this sequence for a given time, time and put it into dVal     */
+/*******************************************************************************/
+
 bool  ConcatSequence::getValue (const double time, double * const pdVal) {
 
 	//only do something, when within duration of this sqeuence
-	if (time<0.0 || time>getDuration()) { return false; }
+	if (time < 0.0 || time > getDuration()) { return false; }
 	
 	double dRemTime  =  time;
 	
-	for (int i=0; i<getRepetitions(); ++i) {
+	//run through the repetitions
+	for (int i = 0; i < getRepetitions(); ++i) {
 		setLoop(i);
-		for (int j=0; j<getNumberOfChildren() ; ++j) {
-			if ( dRemTime < m_cChildrenPtr[j]->getDuration()) {
+		
+		// run through all child nodes
+		for (int j = 0; j < getNumberOfChildren(); ++j) {
+			
+			//get value tuple from the particular LONGEST time
+			if (dRemTime < m_cChildrenPtr[j]->getDuration()) {
 				m_cChildrenPtr[j]->getValue(dRemTime,pdVal);
 				return true ; 
 			}
@@ -174,6 +186,7 @@ bool  ConcatSequence::getValue (const double time, double * const pdVal) {
 
 /******************************************************************/
 void ConcatSequence::writeADCs (ofstream* pfout) {
+
 	int iN = getRepetitions();
 	double dT= getDuration()/iN;
 	int iNC=getNumberOfChildren();
@@ -184,31 +197,37 @@ void ConcatSequence::writeADCs (ofstream* pfout) {
 	for (int i=0;i<iNC;i++) { m_cChildrenPtr[i]->writeADCs(pfout); }
 	
 	*pfout << "</concat> " << endl;
+
 };
 
 /******************************************************************/
 void ConcatSequence::Destroy() { //destructor call: recursive delete of the sequence tree
+
 	for (int i=0; i< getNumberOfChildren() ; ++i)
 		m_cChildrenPtr[i]->Destroy();
 	if (getParent()!=this) delete this;
+
 };
 
 /******************************************************************/
-  void ConcatSequence::writeSeqDiagram(string filename){
+void ConcatSequence::writeSeqDiagram (string filename) {
+
 	ofstream fout(filename.c_str(), ios::binary);
 	double dTime=0.0;
 	writeSeqVal(dTime,&fout);
 	double dEndOfFileFlag= -1.0;
 	fout.write((char *)(&(dEndOfFileFlag)), sizeof(dEndOfFileFlag));
 	fout.close();
+
 };
 
 /******************************************************************/
-void ConcatSequence::writeSeqVal(double& dTimeShift,ofstream* pfout){
-	for (int i=0; i<getRepetitions(); ++i)
-	{
+void ConcatSequence::writeSeqVal (double& dTimeShift, ofstream* pfout) {
+
+	for (int i=0; i<getRepetitions(); ++i) {
 		setLoop(i);
-        	for (int j=0; j<getNumberOfChildren() ; ++j)
+		for (int j=0; j<getNumberOfChildren(); ++j)
 			m_cChildrenPtr[j]->writeSeqVal(dTimeShift, pfout);
+
 	}
 };
