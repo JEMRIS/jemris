@@ -18,7 +18,7 @@ using std::setiosflags;
 /******************************************************************/
 bool ConcatSequence::InsertChild ( Sequence* const sSeqOldChildPtr,
 								   Sequence* const sSeqNewChildPtr) {
-
+	
 	if (sSeqNewChildPtr== NULL )  return false;
 	if (getNumberOfChildren() == CHILDRENMAX ) return false;
 	
@@ -28,7 +28,7 @@ bool ConcatSequence::InsertChild ( Sequence* const sSeqOldChildPtr,
 		sSeqNewChildPtr->setParent(this);
 		return true;
 	}
-
+	
   	//insert somewhere in the tree
 	int pos=-1; 
 	for (int i=0;i<getNumberOfChildren();++i)
@@ -41,12 +41,12 @@ bool ConcatSequence::InsertChild ( Sequence* const sSeqOldChildPtr,
 };
 
 /******************************************************************/
-PulseShape* ConcatSequence::FindPulse(string sPulseName) {
+PulseShape* ConcatSequence::FindPulse (string sPulseName) {
 	PulseShape* pPulse=NULL;
-	for (int i=0;i<getNumberOfChildren();++i)
-	{
+	for (int i=0;i<getNumberOfChildren();++i) {
 		pPulse = getChild(i)->FindPulse(sPulseName);
-		if (pPulse!=NULL) return pPulse;
+		if (pPulse!=NULL)
+			return pPulse;
 	}
 	return pPulse;
 };
@@ -133,50 +133,56 @@ void ConcatSequence::setRepetitions(const int iRepetition) {
 
 /******************************************************************/
 double ConcatSequence::getDuration() {
-        double dDuration = 0.0;
-	for (int i=0; i<getRepetitions(); ++i)
-	{
+
+	double dDuration = 0.0;
+
+	for (int i=0; i<getRepetitions(); ++i) {
+
 		setLoop(i);
-        	for (int j=0; j<getNumberOfChildren() ; ++j)
-			{ dDuration += m_cChildrenPtr[j]->getDuration(); }
+		for (int j=0; j<getNumberOfChildren() ; ++j)
+			dDuration += m_cChildrenPtr[j]->getDuration();
+
 	}
-        return( dDuration );
+
+	return( dDuration );
+
 };
 
 /******************************************************************/
-    bool  ConcatSequence::getValue(const double time ,double * const pdVal) {
-        if (time<0.0 || time>getDuration() ) { return false; }
+bool  ConcatSequence::getValue (const double time, double * const pdVal) {
 
-        double dRemTime  =  time;
-
-	for (int i=0; i<getRepetitions(); ++i)
-	{
+	//only do something, when within duration of this sqeuence
+	if (time<0.0 || time>getDuration()) { return false; }
+	
+	double dRemTime  =  time;
+	
+	for (int i=0; i<getRepetitions(); ++i) {
 		setLoop(i);
-        	for (int j=0; j<getNumberOfChildren() ; ++j)
-		{
-			if ( dRemTime < m_cChildrenPtr[j]->getDuration() )
-			{
+		for (int j=0; j<getNumberOfChildren() ; ++j) {
+			if ( dRemTime < m_cChildrenPtr[j]->getDuration()) {
 				m_cChildrenPtr[j]->getValue(dRemTime,pdVal);
-        			return true ; 
+				return true ; 
 			}
 			dRemTime -= m_cChildrenPtr[j]->getDuration();
 		}
 	}
-        cout << "???" << endl; return false ; //this should never happen !!!
+
+	cout << "???" << endl; return false ; //this should never happen !!!
+
 };
 
 
 /******************************************************************/
-void ConcatSequence::writeADCs(ofstream* pfout){
+void ConcatSequence::writeADCs (ofstream* pfout) {
 	int iN = getRepetitions();
 	double dT= getDuration()/iN;
 	int iNC=getNumberOfChildren();
-
+	
 	*pfout	<< "<concat duration=\"" << dT << "\" children=\"" << iNC 
-		<< "\" repetitions=\"" << iN << "\"> " << endl;
-
-        for (int i=0;i<iNC;i++) { m_cChildrenPtr[i]->writeADCs(pfout); }
-
+			<< "\" repetitions=\"" << iN << "\"> " << endl;
+	
+	for (int i=0;i<iNC;i++) { m_cChildrenPtr[i]->writeADCs(pfout); }
+	
 	*pfout << "</concat> " << endl;
 };
 

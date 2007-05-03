@@ -10,7 +10,7 @@
 /*****************************************************************************/
 ConcatSequence* XmlSequence::getSequence (bool verbose) {
 
-    ConcatSequence* pSeq = (ConcatSequence*)Transform( getRoot() );
+    ConcatSequence* pSeq = (ConcatSequence*)Transform(getRoot());
     pSeq->Prepare(false);
     bool bstatus = pSeq->Prepare(true);
 
@@ -451,7 +451,7 @@ void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
 			}
 
 			vector<double>::iterator iter;
-			for (iter = angles.begin(); iter != angles.end(); iter++) 
+			for (iter = angles.begin(); iter != angles.end(); iter++) {}
 		}
 	}
 

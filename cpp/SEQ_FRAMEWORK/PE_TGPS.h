@@ -15,56 +15,57 @@
 enum PE_ORDER {LINEAR_UP, LINEAR_DN, CENTRIC_OUT, CENTRIC_IN};
 
 class PE_TGPS : public TGPS{
-public:
-
-   //create with area, number of phase encode steps, ordering method, and name
-   PE_TGPS(double dArea=0.0, int iPEsteps=0, PE_ORDER order=LINEAR_UP,
-	   PulseAxis eAxis=AXIS_GY, string sName="PE_TGPS" ) {
- 	setName(sName);
-	setAxis(eAxis);
-	m_order=order;
-	m_dUserDuration=-1.0;
-	Initialize(dArea,iPEsteps);
-	m_bVerbose=false;
-	Prepare(m_bVerbose);
+ public:
+	
+	//create with area, number of phase encode steps, ordering method, and name
+	PE_TGPS(double dArea=0.0, int iPEsteps=0, PE_ORDER order=LINEAR_UP,
+			PulseAxis eAxis=AXIS_GY, string sName="PE_TGPS" ) {
+		setName(sName);
+		setAxis(eAxis);
+		m_order=order;
+		m_dUserDuration=-1.0;
+		Initialize(dArea,iPEsteps);
+		m_bVerbose=false;
+		Prepare(m_bVerbose);
+	};
+	
+   ~PE_TGPS(){};
+   
+   void Initialize(double dArea, int iPEsteps){
+	   setArea(dArea);
+	   m_iPEsteps=iPEsteps;
    };
 
-   ~PE_TGPS(){};
+   bool Prepare(bool verbose) {
+	   m_bVerbose = verbose;
+	   setLimits();
 
- void Initialize(double dArea, int iPEsteps){
-	setArea(dArea);
-  	m_iPEsteps=iPEsteps;
- };
+	   if ( getAreaMethod()==1 ) { //along X axis
+		   m_dArea = getFactor()*getAtomicSeq()->getRoot()->getParameter()->getKMAXx();
+		   m_iPEsteps = getAtomicSeq()->getRoot()->getParameter()->getNx();
+	   }
 
-  bool Prepare(bool verbose){
-	m_bVerbose=verbose;
-	setLimits();
-	if ( getAreaMethod()==1 ) //along X axis
-	{
-		m_dArea = getFactor()*getAtomicSeq()->getRoot()->getParameter()->getKMAXx();
-		m_iPEsteps = getAtomicSeq()->getRoot()->getParameter()->getNx();
-	}
-	if ( getAreaMethod()==2 ) //along Y axis
-	{
-		m_dArea = getFactor()*getAtomicSeq()->getRoot()->getParameter()->getKMAXy();
-		m_iPEsteps = getAtomicSeq()->getRoot()->getParameter()->getNy();
-	}
-	if ( getAreaMethod()==3 ) //along Z axis
-	{
-		m_dArea = getFactor()*getAtomicSeq()->getRoot()->getParameter()->getKMAXz();
-		m_iPEsteps = getAtomicSeq()->getRoot()->getParameter()->getNz();
-	}
-	setPEtable(getArea(), m_iPEsteps, m_order);
+	   if ( getAreaMethod()==2 ) { //along Y axis
+		   m_dArea = getFactor()*getAtomicSeq()->getRoot()->getParameter()->getKMAXy();
+		   m_iPEsteps = getAtomicSeq()->getRoot()->getParameter()->getNy();
+	   }
+
+	   if ( getAreaMethod()==3 ) { //along Z axis
+		   m_dArea = getFactor()*getAtomicSeq()->getRoot()->getParameter()->getKMAXz();
+		   m_iPEsteps = getAtomicSeq()->getRoot()->getParameter()->getNz();
+	   }
+
+	   setPEtable(getArea(), m_iPEsteps, m_order);
 	
-	m_iLastLoopCounter=0;
-	//set repetitions of the looping sequence
-	Sequence* sSeq=getAtomicSeq();
-	for (int j=0;j< getTreeSteps(); ++j) 
-		sSeq = sSeq->getParent();
-	if (sSeq !=NULL && sSeq != getAtomicSeq())
-		((ConcatSequence*)sSeq)->setRepetitions(m_iPEsteps);
-	return true;
-  };
+	   m_iLastLoopCounter=0;
+	   //set repetitions of the looping sequence
+	   Sequence* sSeq=getAtomicSeq();
+	   for (int j=0;j< getTreeSteps(); ++j) 
+		   sSeq = sSeq->getParent();
+	   if (sSeq !=NULL && sSeq != getAtomicSeq())
+		   ((ConcatSequence*)sSeq)->setRepetitions(m_iPEsteps);
+	   return true;
+   };
 
    void setPEtable(double dArea, int iPEsteps, PE_ORDER order){
 
