@@ -9,6 +9,8 @@
 #define _ATOMICSEQUENCE_H_
 
 #define MAXPULSENUMBER 100
+
+// CVODE doesn't like the first pulse at time 0
 #define TIME_ERR_TOL 1e-6 
 
 #include <cmath>

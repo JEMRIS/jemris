@@ -110,27 +110,32 @@ void AtomicSequence::writeADCs(ofstream* pfout){
 };
 
 /*****************************************************************************/
-void AtomicSequence::setListOfTimepoints(bool force){
+void AtomicSequence::setListOfTimepoints (bool force) {
+	
+	if (force)
+		m_bDoSetListOfTPs = true;
 
-	if (force) m_bDoSetListOfTPs=true;
-	if (!m_bDoSetListOfTPs) return;   //list already set -> nothing to do!
+	//list already set -> nothing to do!
+	if (!m_bDoSetListOfTPs) 
+		return;   
 
-	int iN=0, iNtotal=0;
-	double* pdArray;
+	int      iN=0;
+	int      iNtotal=0;
+	double*  pdArray;
 
 	//collect NLPs and ADCs from PulseShapes
-	for (int j=0;j<getNumberOfPulses();j++)
-	{	
-		iN = getPulse(j)->getNumOfADCs();
-		pdArray=getPulse(j)->getADCarray();
-		for (int i=0;i<iN;i++){ m_dTPs[i+iNtotal]=pdArray[i]; m_bTPs[i+iNtotal]=true; }
+	for (int j=0; j<getNumberOfPulses(); j++) {	
+		iN      = getPulse(j)->getNumOfADCs();
+		pdArray = getPulse(j)->getADCarray();
+		for (int i=0; i<iN; i++)
+			{m_dTPs[i+iNtotal]=pdArray[i]; m_bTPs[i+iNtotal]=true;}
 		iNtotal += iN;
 
 		iN = getPulse(j)->getNumOfNLPs();
 		pdArray=getPulse(j)->getNLParray();
 		for (int i=0;i<iN;i++){ m_dTPs[i+iNtotal]=pdArray[i]; m_bTPs[i+iNtotal]=false; }
 		if (getPulse(j)->getDuration() < getDuration())
-		{ m_dTPs[iN+iNtotal]=getPulse(j)->getDuration()+TIME_ERR_TOL; m_bTPs[iN+iNtotal]=false; iN++; }
+			{ m_dTPs[iN+iNtotal]=getPulse(j)->getDuration()+TIME_ERR_TOL; m_bTPs[iN+iNtotal]=false; iN++; }
 		iNtotal += iN;
 	}
 	
