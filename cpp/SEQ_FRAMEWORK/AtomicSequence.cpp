@@ -126,30 +126,26 @@ void AtomicSequence::setListOfTimepoints (bool force) {
 	//collect all NLPs and ADCs from PulseShapes
 	for (int j=0; j<getNumberOfPulses(); j++) {	
 		
-		iN      = getPulse(j)->getNumOfADCs();
-		pdArray = getPulse(j)->getADCarray();
-		
 		//all ADCs
+		iN       = getPulse(j)->getNumOfADCs();
+		pdArray  = getPulse(j)->getADCarray();
 		for (int i=0; i<iN; i++) {
-			m_dTPs[i+iNtotal] = pdArray[i]; 
-			m_bTPs[i+iNtotal] = true;
+			m_dTPs[i+iNtotal]  = pdArray[i]; 
+			m_bTPs[i+iNtotal]  = true;
 		}
-
 		iNtotal += iN;
+		
+		//all NLPs
 		iN       = getPulse(j)->getNumOfNLPs();
 		pdArray  = getPulse(j)->getNLParray();
-
-		//all NLPs
-		for (int i=0;i<iN;i++) {
-			m_dTPs[i+iNtotal] = pdArray[i];
-			m_bTPs[i+iNtotal] = false;
+		for (int i=0; i<iN; i++) {
+			m_dTPs[i+iNtotal]  = pdArray[i];
+			m_bTPs[i+iNtotal]  = false;
 		}
-
 		if (getPulse(j)->getDuration() < getDuration()) {
 			m_dTPs[iN+iNtotal] = getPulse(j)->getDuration()+TIME_ERR_TOL;
 			m_bTPs[iN+iNtotal] = false; iN++;
 		}
-
 		iNtotal += iN;
 
 	}
@@ -184,7 +180,7 @@ void AtomicSequence::setListOfTimepoints (bool force) {
 };
 
 /******************************************************************/
-void AtomicSequence::writeSeqVal(double& dTimeShift, ofstream* pfout){
+void AtomicSequence::writeSeqVal (double& dTimeShift, ofstream* pfout){
 
 	setListOfTimepoints(true);
 

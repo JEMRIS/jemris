@@ -15,9 +15,10 @@ ConcatSequence* XmlSequence::getSequence (bool verbose) {
     bool bstatus = pSeq->Prepare(true);
 
     //verbose output
-    if (verbose) { 
+    if (verbose) {
+		
         pSeq->writeSeqDiagram("seq.bin");
-
+		
         cout << endl << "Sequence  '"
              << pSeq->getName() << "' created " ;
         if (bstatus) 
@@ -28,13 +29,14 @@ ConcatSequence* XmlSequence::getSequence (bool verbose) {
              << " msec " << endl;
         cout << " - sequence diagram stored to seq.bin " << endl;
         cout << endl << "Dump of sequence tree: " << endl << endl;
-
+		
         pSeq->getInfo(0);
+		
     }
-
+	
     return pSeq;
-
- };
+	
+};
 
 /*****************************************************************************/
 Sequence* XmlSequence::Transform (DOMNode* node) {
@@ -43,46 +45,45 @@ Sequence* XmlSequence::Transform (DOMNode* node) {
     Sequence *pSeq       = NULL;
     Sequence *pChildLast = NULL;
     Sequence *pChildNext = NULL;
-
+	
     if (!node) return NULL;
-
+	
     name = XMLString::transcode(node->getNodeName()) ;
     if (name == "ConcatSequence") {
         CreateConcatSequence(&pSeq,node);
         DOMNode* child ;
 
-        for (child=node->getFirstChild(); 
-             child!=0; child=child->getNextSibling()) {
+        for (child = node->getFirstChild(); child! = 0; child = child->getNextSibling()) {
             pChildNext=Transform(child);
             if (pChildNext != NULL) {
                 //cout << pSeq->getName() << ": inserting " 
                 //     << pChildNext->getName();   
                 //if (pChildLast!=NULL) cout << " after " 
                 //     << pChildLast->getName();   
-
+				
                 ((ConcatSequence*)pSeq)->InsertChild( pChildLast, pChildNext );
-                pChildLast=pChildNext;
-
+                pChildLast = pChildNext;
+				
                 //cout << " successful!" << endl;
             }
         }
         return pSeq;
     }
-
+	
     //add new seq types to this list and implement creator function below
-    if (name == "AtomicSequence" ) { 
+    if (name == "AtomicSequence") { 
         CreateAtomicSequence(&pSeq,node);    
         return pSeq;}
-    if (name == "DelayAtom"    ) { 
+    if (name == "DelayAtom") { 
         CreateDelayAtom(&pSeq,node);        
         return pSeq;}
     if (name == "GradientSpiralExtRfConcatSequence") {
         CreateGradientSpiralExtRfConcatSequence(&pSeq,node);
         return pSeq;}
-
+	
     return NULL; //if the node name is not known
-
- };
+	
+};
 
 /******************************************************************************
   implementation of conversion for different sequence types: 
@@ -192,7 +193,7 @@ void XmlSequence::CreateAtomicSequence (Sequence** pSeq, DOMNode* node) {
     DOMNode* child ;
     for (child=node->getFirstChild(); child!=0; child=child->getNextSibling()) {
         PulseShape* pPulse = NULL;
-        int iTreeSteps=0;
+        int iTreeSteps = 0;
         CreatePulseShape(&pPulse, &iTreeSteps, child);
         if (pPulse!=NULL)
             ((AtomicSequence*)*pSeq)->setPulse(pPulse,iTreeSteps);
@@ -238,25 +239,25 @@ void XmlSequence::CreateDelayAtom (Sequence** pSeq, DOMNode* node) {
             }
 
             //use TE delay from parameter
-            if (item==DELAY && value=="TE")    bUseTE=true ;
+            if (item==DELAY && value=="TE")   bUseTE=true ;
 
             //use TE delay from parameter
-            if (item==DELAY && value=="TE/2")    bUseHalfTE=true ;
+            if (item==DELAY && value=="TE/2") bUseHalfTE=true ;
             
             //use TR delay from parameter
-            if (item==DELAY && value=="TR")    bUseTR=true ;
+            if (item==DELAY && value=="TR")   bUseTR=true ;
             
             //use TI delay from parameter
-            if (item==DELAY && value=="TI")    bUseTI=true ;
+            if (item==DELAY && value=="TI")   bUseTI=true ;
             
             //use TD delay from parameter
-            if (item==DELAY && value=="TD")    bUseTD=true ;
+            if (item==DELAY && value=="TD")   bUseTD=true ;
 
-            if (item=="StartSeq")                S1= value;
+            if (item=="StartSeq")             S1= value;
 
-            if (item=="StopSeq")                S2= value;
+            if (item=="StopSeq")              S2= value;
 
-            if (item=="ADCs")                    iNADC = atoi(value.c_str());
+            if (item=="ADCs")                 iNADC = atoi(value.c_str());
 
             if (item=="DelayType") {
                 if ( value== "B2E" ) DT = DELAY_B2E ;
