@@ -53,7 +53,9 @@ Sequence* XmlSequence::Transform (DOMNode* node) {
         CreateConcatSequence(&pSeq,node);
         DOMNode* child ;
 
-        for (child = node->getFirstChild(); child! = 0; child = child->getNextSibling()) {
+        for (child=node->getFirstChild(); 
+             child!=0; child=child->getNextSibling()) {
+
             pChildNext=Transform(child);
             if (pChildNext != NULL) {
                 //cout << pSeq->getName() << ": inserting " 
