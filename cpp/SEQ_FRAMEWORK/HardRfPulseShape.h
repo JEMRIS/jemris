@@ -9,6 +9,7 @@
 #define _HARDRFPULSESHAPE_H_
 
 #include "RfPulseShape.h"
+#include <vector>
 
 class HardRfPulseShape :public RfPulseShape {
 	
@@ -18,6 +19,14 @@ class HardRfPulseShape :public RfPulseShape {
 					  string sName="HardRfPulseShape" ) {
 		setName      (sName);
 		setFlipAngle (dFlipAngle);
+		setPhase     (dPhase);
+		setDuration  (dDuration);
+	};
+	
+	HardRfPulseShape (vector<double> dFlipAngles, double dPhase=0, double dDuration=0,
+					  string sName="HardRfPulseShape" ) {
+		setName      (sName);
+		setFlipAngle (dFlipAngles[0]);
 		setPhase     (dPhase);
 		setDuration  (dDuration);
 	};
