@@ -55,7 +55,7 @@ Sequence* XmlSequence::Transform (DOMNode* node) {
 
         for (child=node->getFirstChild(); 
              child!=0; child=child->getNextSibling()) {
-
+			
             pChildNext=Transform(child);
             if (pChildNext != NULL) {
                 //cout << pSeq->getName() << ": inserting " 
@@ -426,39 +426,47 @@ void XmlSequence::CreateExternalPulseShape (PulseShape** pPulse, DOMNode* node) 
 /*****************************************************************************/
 void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
     
-    string name          = "HardRfPulseShape";
-    string item;
-    string value;
-    double duration      = 0.0;
-    double phase         = 0.0;
-    double flipangle     = 0.0;
+    string         name          = "HardRfPulseShape";
+    string         item;
+    string         value;
+    double         duration      = 0.0;
+    double         phases[100];
+    double         angles[100];
+	vector<double> tuple;
 
     DOMNamedNodeMap *pAttributes = node->getAttributes();
-	DOMNodeList     *npAngles    = node->getChildNodes();
+	DOMNodeList     *pTuples     = node->getChildNodes();
 
 
-	if (npAngles) {
-		DOMNode *npAngle        = npAngles->item(0);
-		if (npAngle) {
+	if (pAttributes && pTuples) {
 
-			char*   cpAngle     = XMLString::transcode(npAngle->getNodeValue());
-			string  spAngle     = cpAngle;
+		DOMNode *pTuple        = pTuples->item(0);
+
+		if (pTuple) {
+
+			char*   cTuple     = XMLString::transcode(pTuple->getNodeValue());
+			string  sTuple     = cTuple;
 			string  buf;
-			XMLString::release(&cpAngle);
+			XMLString::release(&cTuple);
 
-			stringstream ss(spAngle);
-			vector<double> angles;
+			cout << sTuple;
+
+			stringstream ss(sTuple);
+			vector<double> tuple;
 
 			while (ss >> buf) {
-				angles.push_back(atof(buf.c_str()));
+				tuple.push_back(atof(buf.c_str()));
 			}
 
-			vector<double>::iterator iter;
-			for (iter = angles.begin(); iter != angles.end(); iter++) {}
-		}
-	}
+			if (tuple.size() % 2 == 1)
+				tuple.push_back(0.0);
+			
+			for (int i = 0; i < tuple.size()/2; ++i) {
+				angles[i] = tuple.at(i*2);
+				phases[i] = tuple.at(i*2+1);
+			}
 
-    if (pAttributes) {
+		}
 
         int nSize = pAttributes->getLength();
 
@@ -468,15 +476,17 @@ void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
             value = XMLString::transcode(pAttributeNode->getValue());
             if (item == NAME)       name      = value;
             if (item == DURATION)   duration  = atof(value.c_str());
-            if (item == FLIP_ANGLE) flipangle = atof(value.c_str()); 
-            if (item == PHASE)      phase     = atof(value.c_str());
+            if (item == FLIP_ANGLE) angles[0] = atof(value.c_str()); 
+            if (item == PHASE)      phases[0] = atof(value.c_str());
         }
-    }
+	}
 
-    if (flipangle == 0.0) cout << name << " warning: zero flipangle" << endl;
+    if (angles[0] == 0.0) cout << name << " warning: zero flipangle" << endl;
     if (duration  == 0.0) cout << name << " warning: zero duration"  << endl;
 
-    *pPulse = new HardRfPulseShape(flipangle, phase, duration, name);
+	cout << "pair: " << angles[0] << " " << phases[0] << "\n";
+
+    *pPulse = new HardRfPulseShape(angles, phases, duration, name);
 
  };
 
