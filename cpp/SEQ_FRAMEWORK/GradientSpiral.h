@@ -49,9 +49,9 @@ public:
 	m_dres=value; 
 	double T = 1.0/sqrt(m_dtune + (1.0-m_dtune)) ;
 	if (getAxis() == AXIS_GX)
-		m_dArea = (PI/m_dres)*T*cos(2.0*PI*T*m_dturns);
+		m_dArea = (2.0*PI/m_dres)*T*cos(2.0*PI*T*m_dturns);
 	if (getAxis() == AXIS_GY)
-		m_dArea = (PI/m_dres)*T*sin(2.0*PI*T*m_dturns);
+		m_dArea = (2.0*PI/m_dres)*T*sin(2.0*PI*T*m_dturns);
   };
 
   void getValue(double* dAllVal, double const time,int const iLoopCounter){
@@ -60,10 +60,10 @@ public:
 
 	double t = time/getDuration();
 	if (getAxis() == AXIS_GX)
-		dAllVal[2] += (PI/(m_dres*getDuration())) * ( 1/(sqrt(m_dtune+t-m_dtune*t))*cos(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)-t/sqrt(pow(m_dtune+t-m_dtune*t,3.0))*cos(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)*(1.0-m_dtune)/2.0-t/sqrt(m_dtune+t-m_dtune*t)*sin(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)*(2.0*PI/sqrt(m_dtune+t-m_dtune*t)*m_dturns-PI*t/sqrt(pow(m_dtune+t-m_dtune*t,3.0))*m_dturns*(1.0-m_dtune)) );
+		dAllVal[2] += (2.0*PI/(m_dres*getDuration())) * ( 1/(sqrt(m_dtune+t-m_dtune*t))*cos(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)-t/sqrt(pow(m_dtune+t-m_dtune*t,3.0))*cos(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)*(1.0-m_dtune)/2.0-t/sqrt(m_dtune+t-m_dtune*t)*sin(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)*(2.0*PI/sqrt(m_dtune+t-m_dtune*t)*m_dturns-PI*t/sqrt(pow(m_dtune+t-m_dtune*t,3.0))*m_dturns*(1.0-m_dtune)) );
 
 	if (getAxis() == AXIS_GY)
-		dAllVal[3] += (PI/(m_dres*getDuration())) * ( 1/(sqrt(m_dtune+t-m_dtune*t))*sin(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)-t/sqrt(pow(m_dtune+t-m_dtune*t,3.0))*sin(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)*(1.0-m_dtune)/2.0+t/sqrt(m_dtune+t-m_dtune*t)*cos(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)*(2.0*PI/sqrt(m_dtune+t-m_dtune*t)*m_dturns-PI*t/sqrt(pow(m_dtune+t-m_dtune*t,3.0))*m_dturns*(1.0-m_dtune)) );
+		dAllVal[3] += (2.0*PI/(m_dres*getDuration())) * ( 1/(sqrt(m_dtune+t-m_dtune*t))*sin(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)-t/sqrt(pow(m_dtune+t-m_dtune*t,3.0))*sin(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)*(1.0-m_dtune)/2.0+t/sqrt(m_dtune+t-m_dtune*t)*cos(2.0*PI*t/sqrt(m_dtune+t-m_dtune*t)*m_dturns)*(2.0*PI/sqrt(m_dtune+t-m_dtune*t)*m_dturns-PI*t/sqrt(pow(m_dtune+t-m_dtune*t,3.0))*m_dturns*(1.0-m_dtune)) );
   };
 
 private:
