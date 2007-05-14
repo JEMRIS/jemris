@@ -13,6 +13,7 @@
 class RfReceiverPhase :public RfPulseShape{
 
 public:
+
    RfReceiverPhase  (double dPhase=0, string sName="RfReceiverPhase" ) {
 	setName(sName);
 	m_dPhase = dPhase;

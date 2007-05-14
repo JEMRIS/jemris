@@ -9,7 +9,6 @@
 #define _HARDRFPULSESHAPE_H_
 
 #include "RfPulseShape.h"
-#include <vector>
 
 class HardRfPulseShape :public RfPulseShape {
 	
