@@ -76,12 +76,12 @@ if i2<length(t),i2=i2+1;end
 I=i1:i2;
 
 YL={'ADC','|RF|','RF{\phi}','GX','GY','GZ'};
-axes(hax{1}),plot(Tadc,zeros(size(Tadc)),'.r'),set(gca,'ytick',[],'xticklabel',[])
+cla(hax{1},'reset');axes(hax{1}),plot(Tadc,zeros(size(Tadc)),'.r'),set(gca,'ytick',[],'xticklabel',[])
 set(gca,'xlim',[ax(1) ax(2)],'ylim',[-1 1]),grid
 ylabel(YL{1},'fontsize',14,'fontweight','bold')
 
 for i=1:5
- axes(hax{i+1}),plot(t(I),A(I,i),'linewidth',2),grid
+ cla(hax{i+1},'reset');axes(hax{i+1}),plot(t(I),A(I,i),'linewidth',2),grid
  ylabel(YL{i+1},'fontsize',14,'fontweight','bold')
  set(gca,'xlim',[ax(1) ax(2)])
  if (i==2 || i==5),xlabel('t [msec]','fontsize',12),else,set(gca,'xticklabel',[]),end
