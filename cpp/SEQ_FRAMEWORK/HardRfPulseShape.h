@@ -38,7 +38,7 @@ class HardRfPulseShape :public RfPulseShape {
 	void getValue (double * dAllVal, double const time, int const iLoop) {
 		double dT=getDuration();
 
-		cout << "using angle:" << getFlipAngle(iLoop) << " phase: " << getPhase(iLoop) << " in loop: " << iLoop << "\n";
+		// cout << "using angle:" << getFlipAngle(iLoop) << " phase: " << getPhase(iLoop) << " in loop: " << iLoop << "\n";
 		
 		if ( time >= 0 && time <= dT ) {
 			dAllVal[0] += getFlipAngle(iLoop) * PI /(180.0*dT);

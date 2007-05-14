@@ -449,8 +449,6 @@ void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
 			string  buf;
 			XMLString::release(&cTuple);
 
-			cout << sTuple;
-
 			stringstream ss(sTuple);
 			vector<double> tuple;
 
@@ -484,7 +482,7 @@ void XmlSequence::CreateHardRfPulseShape (PulseShape** pPulse, DOMNode* node) {
     if (angles[0] == 0.0) cout << name << " warning: zero flipangle" << endl;
     if (duration  == 0.0) cout << name << " warning: zero duration"  << endl;
 
-	cout << "pair: " << angles[0] << " " << phases[0] << "\n";
+	// cout << "pair: " << angles[0] << " " << phases[0] << "\n";
 
     *pPulse = new HardRfPulseShape(angles, phases, duration, name);
 
