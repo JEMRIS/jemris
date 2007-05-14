@@ -20,10 +20,10 @@ class RfPulseShape :public PulseShape {
 	virtual void getValue (double * dAllVal, double const time,int const iLoop){};
 	
 	double  getFlipAngle  () {return m_dFlipAngle;}; 
-	void    setFlipAngle  (double value) {m_dFlipAngle = value;};
+	void    setFlipAngle  (double value) {m_dFlipAngle = value;  m_dFlipAngles[0]=value; };
 
 	double  getPhase      () {return m_dPhase;}; 
-	void    setPhase      (double value) {m_dPhase     = value;};
+	void    setPhase      (double value) {m_dPhase     = value; m_dPhases[0]=value; };
 	
 	double  getFlipAngle  (int iLoop) {return m_dFlipAngles[iLoop];}; 
 	void    setFlipAngles (double values[]) 
