@@ -241,6 +241,9 @@ if ~isempty(handles),seqcad_common(seq,handles);end
 function seqcad_RO_TGPS(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
+function seqcad_GradientSpiral(src,eventdata,seq,handles)
+if ~isempty(handles),seqcad_common(seq,handles);end
+
 function seqcad_ExternalPulseShape(src,eventdata,seq,handles)
 if ~isempty(handles),seqcad_common(seq,handles);end
 
