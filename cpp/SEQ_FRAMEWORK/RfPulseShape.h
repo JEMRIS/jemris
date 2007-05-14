@@ -9,6 +9,7 @@
 #define _RFPULSESHAPE_H_
 
 #include "PulseShape.h"
+#include <vector>
 
 class RfPulseShape :public PulseShape {
 	
@@ -19,13 +20,23 @@ class RfPulseShape :public PulseShape {
 	virtual void getValue (double * dAllVal, double const time,int const iLoop){};
 	
 	double  getFlipAngle  () {return m_dFlipAngle;}; 
-	void    setFlipAngle  (double value ) {m_dFlipAngle = value;};
-	
+	void    setFlipAngle  (double value) {m_dFlipAngle = value;};
+
 	double  getPhase      () {return m_dPhase;}; 
-	void    setPhase      (double value ) {m_dPhase     = value;};
+	void    setPhase      (double value) {m_dPhase     = value;};
+	
+	double  getFlipAngle  (int iLoop) {return m_dFlipAngles[iLoop];}; 
+	void    setFlipAngles (double values[]) 
+		{for (int i = 0; i < sizeof(values); ++i)
+			m_dFlipAngles[i] = values[i];};
+
+	double  getPhase      (int iLoop) {return m_dPhases[iLoop];}; 
+	void    setPhases     (double values[]) 
+		{for (int i = 0; i < sizeof(values); ++i)
+			m_dPhases[i] = values[i];};
 	
 	bool    getPhaseLock  () {return m_bPhaseLock;};
-	void    setPhaseLock  (bool bval)     {m_bPhaseLock = bval;};
+	void    setPhaseLock  (bool bval)    {m_bPhaseLock = bval;};
 	
 	double  getBandWidth  () {return m_dBW;}
 	
@@ -33,9 +44,13 @@ class RfPulseShape :public PulseShape {
 	
 	double	m_dFlipAngle;
 	double	m_dPhase;
-	bool		m_bPhaseLock;
+
+	double  m_dFlipAngles[100];
+	double  m_dPhases[100];
+	
+	bool	m_bPhaseLock;
 	//! bandwidth of the pulse
-	double m_dBW;
+	double  m_dBW;
 	
 };
 
