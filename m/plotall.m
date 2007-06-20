@@ -119,12 +119,13 @@ if WHAT==1
  I=sub2ind([Nx Ny Nz],X,Y,Z);
  T={'M0','T1','T2','CS'};
 
- B=zeros(4*Nx,4*Ny,Nz);
+
  for i=1:4
   B=zeros(Nx,Ny,Nz);
   if i==4;j=5;else;j=i;end
   B(I)=A(:,j);
   axes(hax{2+i})
+  if Nz>1; B=B(:,:,round(Nz/2)); end
   imagesc(flipud(B'))
   axis image,axis off,title(T{i},'fontsize',12,'fontweight','bold')
   colorbar
