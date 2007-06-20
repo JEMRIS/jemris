@@ -46,6 +46,7 @@ sample.T1=1000;sample.T2=100;sample.M0=1;sample.CS=0;
 sample.R=50;sample.DxDy=1;
 sim.DF=0; sim.CSF=0; sim.CF=0; sim.RN=0; sim.INC=0;
 handles.sample=sample;
+handles.UserSample=[];
 handles.sim=sim;
 handles.img_num=1;
 %set(gcf,'color',[.88 .88 .88])
@@ -54,7 +55,7 @@ C={'Sample','Signal','k-Space','Image'};
 set(handles.showLeft,'String',C);
 C={'Signal','k-Space','Image','Evolution'};
 set(handles.showRight,'String',C);
-C={'Sphere','2Spheres','brain1','brain2'};
+C={'Sphere','2Spheres','brain1','brain2','user defined'};
 set(handles.Sample,'String',C);
 set(handles.EPI_L,'Visible','off');
 set(handles.EPI_R,'Visible','off');
@@ -70,10 +71,10 @@ guidata(hObject, handles);
 % uiwait(handles.figure1);
 
 % --- writes the simulation xml file. This is *not* an object of the GUI!
-function write_simu_xml(handles,redraw)
-if nargin==2
-    RESOURCES=handles.JEMRISPATH;
-else
+function handles=write_simu_xml(handles,redraw)
+
+RESOURCES=handles.JEMRISPATH;
+if nargin<2 && strcmp(get(handles.ParCompTag,'Checked'),'on')
     RESOURCES='/apps/prod/misc/share/jemris';
 end
 
@@ -93,8 +94,21 @@ SAMPLE.Name='Sample'; SAMPLE.Attributes=''; SAMPLE.Data=''; SAMPLE.Children=[];
                   num2str(sample.M0(2)),num2str(sample.T1(2)),num2str(sample.T2(2)),num2str(sample.CS(2))};
     case 'brain1'
           NAMES = {'InFile'}; VALUES= {[RESOURCES,'/tra0mm_mr_Susc_CS.bin']};
-     case 'brain2'
+    case 'brain2'
           NAMES = {'InFile'}; VALUES= {[RESOURCES,'/tra32mm_mr_Susc_CS.bin']};
+    case 'user defined'
+          if isempty(handles.UserSample)
+           [FileName,PathName] = uigetfile('*.mat','Select the Sample Mat file');
+           if FileName==0,return;end
+           S=load(FileName);
+           b=isfield(S,{'fname','M0','T1','T2','DB','dx','dy','dz'});
+           if ~isempty(find(b==0, 1))
+             error('Mat file has not the required fields (fname,M0,T1,T2,DB,dx,dy,dz)')
+           end
+           writeSample(S);
+           handles.UserSample=S;
+          end
+          NAMES = {'InFile'}; VALUES= {handles.UserSample.fname};
  end
  for i=1:length(NAMES); SAMPLE.Attributes(i).Name=NAMES{i}; SAMPLE.Attributes(i).Value=VALUES{i}; end
  SIMU.Children(1)=SAMPLE;
@@ -140,8 +154,8 @@ function Sample_Callback(hObject, eventdata, handles)
         handles.sample.R=[50 25];handles.sample.DxDy=1;
         handles.sim.DF=0;handles.sim.CSF=1;
  end
- if Nsample>2;bvis='off';handles.sample.CS=handles.sample.CS(1);else;bvis='on';end
- if Nsample>2;CSstr='CS fact';else;CSstr='CS [kHz]';end
+ if Nsample>2;bvis='off';handles.sample.CS=handles.sample.CS(1);else bvis='on';end
+ if Nsample>2;CSstr='CS fact';else CSstr='CS [kHz]';end
  set(handles.text17,'String',CSstr); 
  set(handles.setT1,'String',num2str(handles.sample.T1),'Visible',bvis);
  set(handles.setT2,'String',num2str(handles.sample.T2),'Visible',bvis);
@@ -155,8 +169,11 @@ function Sample_Callback(hObject, eventdata, handles)
  set(handles.text12,'Visible',bvis);
  set(handles.text13,'Visible',bvis);
  set(handles.text16,'Visible',bvis);
+ if Nsample>4; bvis='off'; else,bvis='on';handles.UserSample=[]; end
+ set(handles.text17,'Visible',bvis);
+ set(handles.setChemShift,'Visible',bvis);
  %redraw sample
- write_simu_xml(handles,1);
+ handles=write_simu_xml(handles,1);
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -221,6 +238,10 @@ guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function loadSampleTag_Callback(hObject, eventdata, handles)
+[FileName,PathName] = uigetfile('*.mat;*.bin','Select sample from mat file, or binary file');
+if FileName==0,return;end
+handles.samplefile=FileName;
+guidata(hObject, handles);
 
 % --- Executes on selection change in sim_dump.
 function sim_dump_Callback(hObject, eventdata, handles)
@@ -459,7 +480,7 @@ try
  c=get(gca,'Children'); A=get(c(end),'Cdata');
  [X,Y]=size(A);[X,Y]=meshgrid(1:X,1:Y);
  [I,J]=find( (X-x).^2+(Y-y).^2 <= r^2 );
- if length(I>0); A=A(I,J); else, A=A(round(x),round(y));end
+ if ~isempty(I); A=A(I,J); else A=A(round(x),round(y));end
  set(handles.MROI,'String',['M=',num2str(mean(A(:)),3)]);
  set(handles.SROI,'String',['S=',num2str(std(A(:)),3)]);
  hold on
