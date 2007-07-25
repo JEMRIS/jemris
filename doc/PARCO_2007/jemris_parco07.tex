@@ -48,7 +48,7 @@
 
 \begin{abstracts}
 High performance computer (HPC) simulations provide helpful insights to the process of magnetic resonance
-image (MRI) generation, e.g. for general pulse sequence design and optimization, artifact detection, validation of
+image (MRI) generation, e.g. for general pulse sequence design and optimization, artefact detection, validation of
 experimental results, hardware optimization, MRI sample development and for education purposes. This manuscript presents
 the recently developed simulator JEMRIS (Jülich Environment for Magnetic Resonance Imaging Simulation). JEMRIS is
 developed in C++, the message passing is realised with the MPI library. The approach provides generally valid numerical
@@ -63,7 +63,7 @@ In the field of pulse sequence optimisation, e.g.~for artefact detection and eli
 differentiate between effects related to principal physics and hardware imperfection. If the simulation environment
 is further able to simulate the hardware malfunction, then results may be used for the optimisation of the hardware
 itself. Another prominent application is the design of specialised RF pulses which is often based on numerical simulations
-of the excitation process. In general, the interpretation and validation of experimental results benefits from comparisons
+of the excitation process. In general, the interpretation and validation of experimental results benefit from comparisons
 to simulated data, which is especially important in the context of MRI sample development, e.g.~for the development of implants.
 Another important direction of application is image generation for the purpose of medical image processing -- here, the complete
 control on the properties of the input data allows a tailored design of image processing algorithms for certain applications.\\
@@ -120,7 +120,7 @@ where $\gamma$ is the gyromagnetic ratio of the inspected nuclei (usually proton
 \end{equation}
 which integrates all components within the RF coil volume, $V$. For the description of the MR measurement process, the time
 evolution of different spin isochromates is completely independent of each other and  the problem is ideally suited for a numerical treatment with
-parallel processing. In MRI, the measurement process is expressed by the MRI sequence \cite{haacke} which describes the timing of pulsed currents
+parallel processing. \\ In MRI, the measurement process is expressed by the MRI sequence \cite{haacke} which describes the timing of pulsed currents
 in the various coils to induce the RF field for excitation and the gradient field for encoding spatial information to the phase of the MR signal: 
 $\varphi({\bf r},t)\,=\,\gamma \int {\bf G}(t)\,dt\cdot{\bf r}\,\equiv\,{\bf k}(t)\cdot{\bf r}$. Inserting this expression in Eq.~(\ref{eq:signal}) shows
 that the MR signal, $S(t)$, can be reordered as a function of the k-vector, $S({\bf k})$. Then, the MR image, $M_r({\bf r})$, is given by the Fourier
@@ -135,7 +135,7 @@ imaging applications and it is the cause for the success of MRI in medicine.
 \subsection{Selective excitation}
 %{\it Selective \medskip excitation}\\
 Multidimensional spatially selective excitation \cite{pauly} is an important concept of growing interest in MRI, e.g. in the field
-of in vivo spectroscopy or for the challenging task of correcting subject-induced $B_1$ field inhomogeneities at ultra high field \cite{ibrahim}.
+of in vivo spectroscopy or for the challenging task of correcting subject-induced $B_1$ field inhomogeneities at ultra high fields \cite{ibrahim}.
 However, thus far the computation of these pulses is based on a simplified physical model neglecting relaxation and
 off-resonance effects during the pulse. Then, the calculation of the unknown RF pulse shape, $B_1$, from a
 given target excitation pattern, $M_p$, reduces to a linear system:
@@ -173,7 +173,7 @@ FORTRAN and C. For the purpose of the present MRI simulator which is developed i
 of the Bloch equation as well as an mechanism for transferring data in an distributed multi-processor environment was needed.
 The former was found in the CVODE library \cite{cohen}, a highly efficient variable time stepping integrator for ordinary
 differential equations. CVODE is written in C and therefore straight forward for integration in a C++ software project.
-Message passing is realised with the C++ bindings of the MPI library \footnote{The MPI standard. {\sf http://www-unix.mcs.anl.gov/mpi/}}.
+Message passing is realised with the C++ bindings of the MPI\footnote{The MPI standard. {\sf http://www-unix.mcs.anl.gov/mpi/}} library.
 The software design of JEMRIS is based on the definition of four main classes: {\it Sample}, {\it Signal}, {\it Model}, and
 {\it Sequence}, respectively. The {\it Sample} class describe the physical properties of the object, currently defined by the set
 $P=(M_0,T_1,T_2)$ at every spatial position ${\bf r}=(x,y,z)$ of the sample.
@@ -186,11 +186,10 @@ Fig.~\ref{fig:epitree} depicts by example how the different modules of an EPI se
 an ordered tree. Trees can be effectively accessed by recursion and they are very well suited for building as well as accessing
 values of the sequence. For this, a new object-oriented design pattern for MRI sequences is introduced which derives the basic parts,
 loops (branch nodes) and modules (leaf nodes), from an abstract sequence class. The modules play out the pulses and, therefore,
-have the functionality to set pulses of various types. The pulses itself are defined in a separate class hierarchy.
-JEMRIS uses XML to store the sequence tree information, i.e. sequences can be read from XML files, where the C++ Xerces XML parser
-from Apache is used\footnote{\sf http://xml.apache.org/xerces-c/}. JEMRIS parses the XML file and automatically generates the sequence
-tree object. Further, a GUI was implemented in MATLAB\footnote{\sf http://www.mathworks.com} which allows to interactively build
-the sequence tree, view the pulse diagram, and to perform the simulation. For this, the GUI calls JEMRIS via {\sf ssh} on the HPC cluster.
+have the functionality to set pulses of various types. The pulses themselves are defined in a separate class hierarchy.
+JEMRIS uses an XML representation of the sequence tree, i.e. sequences can be read from or written in XML files. The C++ Xerces XML parser
+provided by the Apache Software Foundation\footnote{\sf http://xml.apache.org/xerces-c/} is used for serialising or deserialising the sequence object. Further, a GUI was implemented in MATLAB\footnote{\sf http://www.mathworks.com} which allows to interactively build
+the sequence tree, view the pulse diagram, and to perform the simulation. For the latter, MATLAB calls JEMRIS via {\sf ssh} on the remote HPC cluster.
 
 \epsfiguresv{fig/EPI_sketch.eps}{fig//EPI_tree.eps}{{\bf Top:} Sketch of a native EPI pulse sequence diagram,
                 consisting of an outer loop (e.g.~slices) in which
@@ -347,9 +346,9 @@ the sequence tree, view the pulse diagram, and to perform the simulation. For th
 \end{algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Parallel implementation}
-Pseudo code of the parallel work flow of JEMRIS is shown in the parallel algorithm diagram \ref{parcode1}. (Comments
+Pseudo code of the parallel workflow of JEMRIS is shown in the parallel algorithm diagram \ref{parcode1}. (Comments
 are written with a reduced fontsize.) The (mostly sleeping) master process subdivides the problem
-in the beginning and collects the result in the end.  The basic functionality of the slave processes is hidden
+in the beginning and harvests the result in the end. The basic functionality of the slave processes is hidden
 in the {\it Solve()} method of the {\it Model} class, where the solution for each spin is obtained during a recursive
 travel through the sequence tree. All functionality on introducing off-resonance effects is hidden in the
 lines {\footnotesize 9} and {\footnotesize 19} of the slave process. Settings about this functionality, as well the
@@ -368,16 +367,16 @@ slaves proceed with the final mangetisation state of the previous step.
 \section{Results}
 \subsection{Benchmarks}
 The simulations were performed on a 16 dual-core CPU Opteron cluster. This can be seen as small-scale HPC, however, it is sufficient
-to perform 2D MRI simulations within minutes. Thus, the here presented simulations reduce to 2D examples, also the simulator
-is able to treat 3D simulations. The performance of the simulator is depicted in Fig.~\ref{fig:performance}. The results from
+to perform 2D MRI simulations within minutes. Thus, the here presented simulations reduce to 2D examples, though the simulator
+is also able to treat 3D simulations. The performance of the simulator is depicted in Fig.~\ref{fig:performance}. The results from
 sequential program profiling show, that most of the time is spent in the highly optimised CVODE libraries, however, a significant
 amount of 28 \% is spent in the {\it Sequence.getValue()} function, leaving room for future optimisation of the data retrieval from
-the sequence tree. As expected, the parallel performance scales nearly perfectly, i.e.~the speed linearly increases with the number
+the sequence tree. As expected, the parallel performance scales nearly perfectly, i.e.~the speed increases linearly with the number
 of processors.
 %%%%%%%%%%%%%%%%
-\epsfigure{fig/performance.eps}{JEMRIS performance testing. {\bf Left:} Sequential profiling shows that $\approx$ 70 \% of the time
+\epsfigure{fig/performance.eps}{JEMRIS performance testing. {\bf Left:} Sequential profiling shows that $\approx$ 70 \% of the computing time
                              is spent in the highly optimised CVODE library. {\bf Right:} The speed
-			     gain due to parallelisation (right) is close to optimal for large scale problems, ax expected.}
+			     gain due to parallelisation (right) is close to optimal for large scale problems, as expected.}
 			{fig:performance}{bp}{1.0}
 \subsection{MRI simulation examples}
 \epsfigures{fig/GUI_seq_ex1.eps}{fig/GUI_sim_ex1.eps}{{\bf Left:}  Example of the JEMRIS GUI for sequence development: the EPI sequence
@@ -386,7 +385,7 @@ of processors.
 			     diagram is shown. Possible error output is given in the slider-window.
                              {\bf Right:} Example of the JEMRIS GUI for simulations: a simple three pulse sequence
 			     ( 60$^\circ$-90$^\circ$-90$^\circ$ at 0-10-25 ms) on a homogeneous sphere under strong field inhomogeneities
-			     results in the famous five echoes: three spin echos, one reflected spin echo, and the stimulated
+			     results in the famous five echoes: three spin echoes, one reflected spin echo, and the stimulated
 			     echo.}{fig:gui}{tp}{0.45}
 \epsfigure{fig/simartex.eps}{Example of artefact simulations on a human head model: {\bf a} EPI with chemical shift.
                                {\bf b} EPI distortions due to a nonlinear read gradient. {\bf c} TrueFISP banding artefacts
@@ -405,7 +404,7 @@ yield the prominent fat-water shift in MRI; b) Malfunction MR scanner hardware s
 in a distorted EPI image; c) TrueFISP simulation including susceptibility-induced field inhomogeneity yield the well-known
 banding artefacts in the human brain; d) artefact in spin echo imaging due to a very long inversion pulse exciting transverse
 magnetisation. Note that the latter example can not be realised with any simulator relying on analytical solutions of the Bloch
-equation due to neglect of relaxation effects during the RF pulse. The exact simulation of the simultaneous occurrence of RF
+equation due to neglection of relaxation effects during the RF pulse. The exact simulation of the simultaneous occurrence of RF
 pulses and imaging gradients with JEMRIS is the basement for the derivation of new selective excitation pulses.
 \begin{small}
  \begin{table}[tp]
