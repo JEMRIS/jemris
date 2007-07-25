@@ -165,8 +165,7 @@ the RF pulse, the final magnetisation states are taken as the starting condition
 %{\it General design of the \medskip framework}\\
 %%%%%%%%%%%%%
 \epsfigure{fig/jemris-classes.eps}{Class hierarchy of the basic JEMRIS components, Sample, Signal, Model, and Sequence class,
-                            respectively.  The PulseShape class has a strong link to the Sequence class.
-                            (See text for description.)}{fig:classes}{bp}{1.0}
+                            respectively.}{fig:classes}{bp}{1.0}
 Modular and encapsulated development of software projects highly benefit from an object-oriented approach. However,
 efficient implementations of numerical demanding problems are still dominated by sequential programming languages like
 FORTRAN and C. For the purpose of the present MRI simulator which is developed in C++, an efficient numerical integrator
@@ -175,7 +174,7 @@ The former was found in the CVODE library \cite{cohen}, a highly efficient varia
 differential equations. CVODE is written in C and therefore straight forward for integration in a C++ software project.
 Message passing is realised with the C++ bindings of the MPI\footnote{The MPI standard. {\sf http://www-unix.mcs.anl.gov/mpi/}} library.
 The software design of JEMRIS is based on the definition of four main classes: {\it Sample}, {\it Signal}, {\it Model}, and
-{\it Sequence}, respectively. The {\it Sample} class describe the physical properties of the object, currently defined by the set
+{\it Sequence}, respectively. The {\it Sample} class describes the physical properties of the object, currently defined by the set
 $P=(M_0,T_1,T_2)$ at every spatial position ${\bf r}=(x,y,z)$ of the sample.
 Since MPI has no functionality for object serialisation, send/receive of sub-samples is realised with appropriate MPI data-types.
 Similar, the {\it Signal} holds information on the `MR signal' consisting of the net magnetisation vector
