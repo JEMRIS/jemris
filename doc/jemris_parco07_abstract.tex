@@ -1,0 +1,46 @@
+\documentclass{nic-series}
+
+\begin{document} 
+
+\title{HPC Simulation of Magnetic Resonance Imaging}
+
+\author{Tony~St\"ocker, Kaveh Vahedipour, \and N.~Jon~Shah }
+
+\institute{Institute of Medicine,\\
+         Research Centre J\"ulich, 52425 J\"ulich, Germany\\
+         \email{\{t.stoecker, k.vahedipour, n.j.shah\}@fz-juelich.de}
+          }
+
+\maketitle
+
+\section*{Abstract}
+High performance computer (HPC) simulations provide helpful insights to the process of magnetic resonance
+image (MRI) generation,  e.g. for general MRI pulse sequence design \cite{haacke} and optimization, MRI artefact detection,
+validation of experimental results, hardware optimization, MRI sample development and for education purposes. This abstract presents
+the recently developed simulator JEMRIS (J\"ulich Environment for Magnetic Resonance Imaging Simulation). JEMRIS is
+developed in C++ and the message passing is realised with the MPI library. In contrast to previous approaches known from the literature,
+JEMRIS provides generally valid numerical solutions for the case of classical MR spin physics governed by the Bloch equations.\\
+A new object-oriented design pattern for the rapid implementation of MRI
+sequences was developed. Here the sequence is defined by a set of interacting objects inserted into a left-right ordered tree structure. 
+The framework provides a GUI for the rapid development of the MRI sequence tree, which is stored in XML format and parsed into a
+C++ object for the simulation routines. Thus, the set-up of MR imaging sequences relying on the pre-defined modules is easily performed
+without any programming.\\
+The parallel HPC implementation allows the treatment of huge spin ensembles
+resulting in realistic MR signals. On small HPC clusters, 2D simulations can be obtained in the order of minutes,
+whereas for 3D simulations it is recommended to use higher scaling HPC systems. The simulator can be
+applied to MRI research for the development of new pulse sequences.
+The framework already serves as a tool in research projects, as will be shown for the important example of
+multidimensional spatially selective excitation.
+The impact of these newly designed pulses in real experiments has to be tested in the near future.
+Further, the rapidly evolving field of medical image processing might benefit of a “gold standard”, serving as a testbed
+for the application of new methods and algorithms. Here, JEMRIS could provide a general framework for generating
+standardised and realistic MR images for many different situations and purposes.
+
+\begin{thebibliography}{10}
+
+\bibitem{haacke}
+E.M.~Haacke, R.W.~Brown, M.R.~Thompson, and R.~Venkatesan, ``Magnetic Resonance Imaging: Physical Principles and Sequence Design,''
+  \emph{Wiley \& Sons}, 1999.
+\end{thebibliography}
+
+\end{document} 
