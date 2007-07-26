@@ -190,16 +190,16 @@ The design of the {\it Sequence} class and its underlying
 sequence framework proved to be the a very demanding task. It supplies
 the most complex part of the simulator. For this a novel object
 orinted design pattern for MRI is introduced which derives the basic
-parts, loops (branch nodes) and modules (leaf nodes) from an abstract
-module class. To reduce the complexity in and
-promote the encapsulation of the objects in this part of the framework
-a prototypical approach is implemented as suggested by
-Gamma et al. 
+parts, {\it Sequence}s (loopable branch nodes) and {\it Pulse}s (leaf
+nodes) from an abstract {\it Module} class. To further reduce the complexity in and
+promote the encapsulation of the objects in this part of the framework,
+an abstract factory approach using prototypes is implemented as suggested by
+Gamma et al\cite{gamma}. 
 \\
-A sequence (object) is populated via an XML file during startup of the
+A sequence is populated via an XML file during startup of the
 simulator to represent a left-right ordered
 tree. Fig.~\ref{fig:epitree} depicts by example how the different
-modules of an EPI sequence, loops (sequences) and pulses, can be arranged in an
+modules of an EPI sequence, loops and pulses, can be arranged in an
 ordered tree. Trees can be effectively accessed by
 recursion and they are very well suited for building as well as
 accessing values of the sequence. The atomic sequences are containers
@@ -506,6 +506,11 @@ T.~Ibrahim, R.~Lee, A.~Abduljalil, B.~Baertlein, and P.~Robitaille,
   ``Dielectric resonances and $B_1$ field inhomogeneity in {UHFMRI}:
   computational analysis and experimental findings.,''
   \emph{Magnetic Resonance Imaging}, vol. 19(2), pp. 219--226, 2001.
+
+\bibitem{gamma}
+E.~Gamma, R.~Helm, R.~Johnson and J.~Vlissides
+  ``Design Patterns``
+  \emph{Addison Wesley}, 2005
 
 \end{thebibliography}
 
