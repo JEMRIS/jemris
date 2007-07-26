@@ -201,19 +201,18 @@ modules of an EPI sequence, loops and pulses, can be arranged in an
 ordered tree. Trees can be effectively accessed by
 recursion and are very well suited for building as well as
 accessing values of the sequence. The atomic sequences are containers
-for the pulses and, thus, display the 
-the functionality to emit pulses of various types. The pulses
-themselves are defined in a seceded class hierarchy. 
+for the pulses and, thus, display the functionality to emit pulses of
+various types. The pulses themselves are defined in a seceded class hierarchy. 
 \\
-The discussed tree is internally handled via XML. Thus sequences
+The sequence tree is internally handled via XML. Thus sequences
 themselves in turn can be read from or written to XML files. 
 The Xerces C++ parser provided by the Apache Software Foundation\footnote{\sf
 http://xml.apache.org/xerces-c/} is used for serialising and
 deserialising the sequence object. Further, a GUI was implemented in
 MATLAB\footnote{\sf http://www.mathworks.com} which allows to
-interactively build the sequence tree, view the pulse diagram, and to
+interactively build the sequence tree, view the pulse diagram, and
 perform the simulation. For the latter, MATLAB calls JEMRIS via {\sf
-ssh} on the remote HPC cluster.
+ssh} on the remote HPC site.
 
 \epsfiguresv{fig/EPI_sketch.eps}{fig//EPI_tree.eps}{{\bf Top:} Sketch of a native EPI pulse sequence diagram,
                 consisting of an outer loop (e.g.~slices) in which
