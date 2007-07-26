@@ -166,30 +166,56 @@ the RF pulse, the final magnetisation states are taken as the starting condition
 %%%%%%%%%%%%%
 \epsfigure{fig/jemris-classes.eps}{Class hierarchy of the basic JEMRIS components, Sample, Signal, Model, and Sequence class,
                             respectively.}{fig:classes}{bp}{1.0}
-Modular and encapsulated development of software projects highly benefit from an object-oriented approach. However,
-efficient implementations of numerical demanding problems are still dominated by sequential programming languages like
-FORTRAN and C. For the purpose of the present MRI simulator which is developed in C++, an efficient numerical integrator
-of the Bloch equation as well as an mechanism for transferring data in an distributed multi-processor environment was needed.
-The former was found in the CVODE library \cite{cohen}, a highly efficient variable time stepping integrator for ordinary
-differential equations. CVODE is written in C and therefore straight forward for integration in a C++ software project.
-Message passing is realised with the C++ bindings of the MPI\footnote{The MPI standard. {\sf http://www-unix.mcs.anl.gov/mpi/}} library.
-The software design of JEMRIS is based on the definition of four main classes: {\it Sample}, {\it Signal}, {\it Model}, and
-{\it Sequence}, respectively. The {\it Sample} class describes the physical properties of the object, currently defined by the set
-$P=(M_0,T_1,T_2)$ at every spatial position ${\bf r}=(x,y,z)$ of the sample.
-Since MPI has no functionality for object serialisation, send/receive of sub-samples is realised with appropriate MPI data-types.
-Similar, the {\it Signal} holds information on the `MR signal' consisting of the net magnetisation vector
-${\bf M}(t)=[M_x(t),M_y(t),M_t(t)]$ at every sampled time point. MPI functionality is implemented in the same way as
-for the {\it Sample} class. The {\it Model} class has the functionality for solving the physical problem.
-The {\it Sequence} class is the most complex part of the framework: it is represented as a left-right ordered tree.
-Fig.~\ref{fig:epitree} depicts by example how the different modules of an EPI sequence, loops and pulses, can be arranged in
-an ordered tree. Trees can be effectively accessed by recursion and they are very well suited for building as well as accessing
-values of the sequence. For this, a new object-oriented design pattern for MRI sequences is introduced which derives the basic parts,
-loops (branch nodes) and modules (leaf nodes), from an abstract sequence class. The modules play out the pulses and, therefore,
-have the functionality to set pulses of various types. The pulses themselves are defined in a separate class hierarchy.
-JEMRIS uses an XML representation of the sequence tree, i.e. sequences can be read from or written in XML files. The C++ Xerces XML parser
-provided by the Apache Software Foundation\footnote{\sf http://xml.apache.org/xerces-c/} is used for serialising or deserialising the sequence 
-object. Further, a GUI was implemented in MATLAB\footnote{\sf http://www.mathworks.com} which allows to interactively build
-the sequence tree, view the pulse diagram, and to perform the simulation. For the latter, MATLAB calls JEMRIS via {\sf ssh} on the remote HPC cluster.
+The software design of JEMRIS had to meet two competing
+premises: The object design had to obviously reflect the physical
+world. At the same time the objects and members were to remain highly
+maintainable, reusable and yet easy to handle.
+\\
+A simple reflection of the class hierarchy is presented in
+Fig.~\ref{fig:classes} reflects a simplified class hierarchy.
+model in JEMRIS is based on the definition of the four main
+classes: {\it Sample}, {\it Signal}, {\it Model}, and {\it Sequence},
+respectively. The {\it Sample} class describes the physical properties
+of the object, currently defined by the set $P=(M_0,T_1,T_2)$ at every
+spatial position ${\bf r}=(x,y,z)$ of the sample. Since MPI has no
+functionality for object serialisation, send/receive of sub-samples is
+realised with appropriate MPI data-types. Similar, the {\it Signal}
+holds information on the `MR signal' consisting of the net
+magnetisation vector ${\bf M}(t)=[M_x(t),M_y(t),M_t(t)]$ at every
+sampled time point. MPI functionality is implemented in the same way
+as for the {\it Sample} class. The {\it Model} class bears the
+functionality for solving the physical problem. 
+\\
+The {\it Sequence} design of the sequence class and its underlying
+sequence framework proved to be the a very demanding task. It supplies
+the most complex part of the simulator. For this a novel object
+orinted design pattern for MRI is introduced which derives the basic
+parts, loops (branch nodes) and modules (leaf nodes) from an abstract
+module class. To reduce the complexity in and
+promote the encapsulation of the objects in this part of the framework
+a prototypical approach is implemented as suggested by
+Gamma et al. 
+\\
+A sequence (object) is populated via an XML file during startup of the
+simulator to represent a left-right ordered
+tree. Fig.~\ref{fig:epitree} depicts by example how the different
+modules of an EPI sequence, loops (sequences) and pulses, can be arranged in an
+ordered tree. Trees can be effectively accessed by
+recursion and they are very well suited for building as well as
+accessing values of the sequence. The atomic sequences are containers
+for the pulses and, thus, beare the 
+the functionality to emit pulses of various types. The pulses
+themselves are defined in a seperate class hierarchy. 
+\\
+JEMRIS uses an XML representation of the suggested sequence tree, i.e.
+sequences can be read from or written to XML files. The C++ Xerces XML
+parser provided by the Apache Software Foundation\footnote{\sf
+http://xml.apache.org/xerces-c/} is used for serialising and
+deserialising the sequence object. Further, a GUI was implemented in
+MATLAB\footnote{\sf http://www.mathworks.com} which allows to
+interactively build the sequence tree, view the pulse diagram, and to
+perform the simulation. For the latter, MATLAB calls JEMRIS via {\sf
+ssh} on the remote HPC cluster.
 
 \epsfiguresv{fig/EPI_sketch.eps}{fig//EPI_tree.eps}{{\bf Top:} Sketch of a native EPI pulse sequence diagram,
                 consisting of an outer loop (e.g.~slices) in which
