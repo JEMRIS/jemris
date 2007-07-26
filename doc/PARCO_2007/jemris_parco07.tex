@@ -196,20 +196,18 @@ promote the encapsulation of the objects in this part of the framework,
 an abstract factory approach using prototypes is implemented as suggested by
 Gamma et al\cite{gamma}. 
 \\
-A sequence is populated via an XML file during startup of the
-simulator to represent a left-right ordered
-tree. Fig.~\ref{fig:epitree} depicts by example how the different
+A sequence represents a left-right ordered tree. Fig.~\ref{fig:epitree} depicts by example how the different
 modules of an EPI sequence, loops and pulses, can be arranged in an
 ordered tree. Trees can be effectively accessed by
 recursion and they are very well suited for building as well as
 accessing values of the sequence. The atomic sequences are containers
-for the pulses and, thus, beare the 
+for the pulses and, thus, display the 
 the functionality to emit pulses of various types. The pulses
-themselves are defined in a seperate class hierarchy. 
+themselves are defined in a seceded class hierarchy. 
 \\
-JEMRIS uses an XML representation of the suggested sequence tree, i.e.
-sequences can be read from or written to XML files. The C++ Xerces XML
-parser provided by the Apache Software Foundation\footnote{\sf
+The discussed tree is internally handled via XML. Thus sequences
+themselves in turn can be read from or written to XML files. 
+The Xerces C++ parser provided by the Apache Software Foundation\footnote{\sf
 http://xml.apache.org/xerces-c/} is used for serialising and
 deserialising the sequence object. Further, a GUI was implemented in
 MATLAB\footnote{\sf http://www.mathworks.com} which allows to
