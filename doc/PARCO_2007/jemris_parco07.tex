@@ -187,7 +187,7 @@ as for the {\it Sample} class. The {\it Model} class bears the
 functionality for solving the physical problem. 
 \\
 The design of the {\it Sequence} class and its underlying
-sequence framework proved to be the a very demanding task. It supplies
+sequence framework proved to be a very demanding task. It supplies
 the most complex part of the simulator. For this a novel object
 orinted design pattern for MRI is introduced which derives the basic
 parts, {\it Sequence}s (loopable branch nodes) and {\it Pulse}s (leaf
@@ -205,7 +205,7 @@ for the pulses and, thus, display the functionality to emit pulses of
 various types. The pulses themselves are defined in a seceded class hierarchy. 
 \\
 The sequence tree is internally handled via XML. Thus sequences
-themselves in turn can be read from or written to XML files. 
+themselves in turn can natively be read from or written to XML files. 
 The Xerces C++ parser provided by the Apache Software Foundation\footnote{\sf
 http://xml.apache.org/xerces-c/} is used for serialising and
 deserialising the sequence object. Further, a GUI was implemented in
