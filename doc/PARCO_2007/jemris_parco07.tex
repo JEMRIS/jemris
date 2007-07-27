@@ -48,8 +48,8 @@
 
 \begin{abstracts}
 High performance computer (HPC) simulations provide helpful insights to the process of magnetic resonance
-image (MRI) generation, e.g. for general pulse sequence design and optimization, artefact detection, validation of
-experimental results, hardware optimization, MRI sample development and for education purposes. This manuscript presents
+image (MRI) generation, e.g. for general pulse sequence design and optimisation, artefact detection, validation of
+experimental results, hardware optimisation, MRI sample development and for education purposes. This manuscript presents
 the recently developed simulator JEMRIS (Jülich Environment for Magnetic Resonance Imaging Simulation). JEMRIS is
 developed in C++, the message passing is realised with the MPI library. The approach provides generally valid numerical
 solutions for the case of classical MR spin physics governed by the Bloch equations. The framework already serves as a tool
@@ -385,7 +385,7 @@ one time segment with a constant RF pulse $(B_{1x},B_{1y})$. Then, within a loop
 a conjugate gradient search to minimise the difference between the target pattern and the excited magnetisation by varying 
 $(B_{1x},B_{1y})$. Thus, each slave repeatedly calculates its contribution to this difference each time with a new RF pulse
 at the current segment. Once a minimum is found, the master stores the result and continues with the next time step at which the
-slaves proceed with the final mangetisation state of the previous step.
+slaves proceed with the final magnetisation state of the previous step.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 \subsection{Benchmarks}
@@ -426,7 +426,7 @@ Examples of MRI artefact generation are given in Fig.~\ref{fig:artifacts}: a) EP
 yield the prominent fat-water shift in MRI; b) Malfunction MR scanner hardware simulation with a nonlinear gradient field results
 in a distorted EPI image; c) TrueFISP simulation including susceptibility-induced field inhomogeneity yield the well-known
 banding artefacts in the human brain; d) artefact in spin echo imaging due to a very long inversion pulse exciting transverse
-magnetisation. The correspoding calcuation times are given in Table \ref{tab:calctimes}. Note that the last example,
+magnetisation. The corresponding calculation times are given in Table \ref{tab:calctimes}. Note that the last example,
 Fig.~\ref{fig:artifacts} d), can not be realised with any simulator relying on analytical solutions of the Bloch
 equation due to disregarding of relaxation effects during the RF pulse. The exact simulation of the simultaneous occurrence of RF
 pulses and imaging gradients with JEMRIS is the basement for the derivation of new selective excitation pulses in the next section.
