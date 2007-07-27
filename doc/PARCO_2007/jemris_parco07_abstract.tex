@@ -15,15 +15,15 @@
 
 \section*{Abstract}
 High performance computer (HPC) simulations provide helpful insights to the process of magnetic resonance
-image (MRI) generation,  e.g. for general MRI pulse sequence design \cite{haacke} and optimization, MRI artefact detection,
-validation of experimental results, hardware optimization, MRI sample development and for education purposes. This abstract presents
+image (MRI) generation,  e.g. for general MRI pulse sequence design \cite{haacke} and optimisation, MRI artefact detection,
+validation of experimental results, hardware optimisation, MRI sample development and for education purposes. This abstract presents
 the recently developed simulator JEMRIS (J\"ulich Environment for Magnetic Resonance Imaging Simulation). JEMRIS is
 developed in C++ and the message passing is realised with the MPI library. In contrast to previous approaches known from the literature,
 JEMRIS provides generally valid numerical solutions for the case of classical MR spin physics governed by the Bloch equations.\\
 A new object-oriented design pattern for the rapid implementation of MRI
 sequences was developed. Here the sequence is defined by a set of interacting objects inserted into a left-right ordered tree structure. 
 The framework provides a GUI for the rapid development of the MRI sequence tree, which is stored in XML format and parsed into a
-C++ object for the simulation routines. Thus, the set-up of MR imaging sequences relying on the pre-defined modules is easily performed
+C++ object for the simulation routines. Thus, the set-up of MR imaging sequences relying on the predefined modules is easily performed
 without any programming.\\
 The parallel HPC implementation allows the treatment of huge spin ensembles
 resulting in realistic MR signals. On small HPC clusters, 2D simulations can be obtained in the order of minutes,
