@@ -34,7 +34,7 @@ if length(ax)==1;ax=[min(t) max(t)];end
 [dummy,i2]=min(abs(t-ax(2)));
 
 if moment_flag
-    A(:,[3 4])=cumtrapz(t,A(:,[3 4]));
+    A(:,[3 4 5])=cumtrapz(t,A(:,[3 4 5]));
     %set moment to zero after every RF pulse
     J=find(diff(A(:,1)));J=J(2:2:end);
     for j=1:length(J)
@@ -42,6 +42,7 @@ if moment_flag
         if abs(pi-trapz(t(J(j)-1:J(j)),A(J(j)-1:J(j),1)))<1e-4;fact=2;end
         A(J(j)+1:end,3)=A(J(j)+1:end,3)-fact*A(J(j),3);
         A(J(j)+1:end,4)=A(J(j)+1:end,4)-fact*A(J(j),4);
+        A(J(j)+1:end,5)=A(J(j)+1:end,5)-fact*A(J(j),5);
     end
     if kspace_flag
         for i=1:6;cla(hax{i},'reset');set(hax{i},'visible','off');end
