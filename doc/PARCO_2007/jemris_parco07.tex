@@ -53,45 +53,46 @@ experimental results, hardware optimisation, MRI sample development and for educ
 the recently developed simulator JEMRIS (Jülich Environment for Magnetic Resonance Imaging Simulation). JEMRIS is
 developed in C++, the message passing is realised with the MPI library. The approach provides generally valid numerical
 solutions for the case of classical MR spin physics governed by the Bloch equations. The framework already serves as a tool
-in research projects, as will be shown for the important example of multidimensional spatially selective excitation.
+in research projects, as will be shown for the important example of multidimensional, spatially-selective excitation.
 \end{abstracts}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 Bloch equation-based numerical simulation of MRI experiments is an essential tool for a variety of different research directions.
-In the field of pulse sequence optimisation, e.g.~for artefact detection and elimination, simulations allow to
-differentiate between effects related to principal physics and hardware imperfection. If the simulation environment
-is further able to simulate the hardware malfunction, then results may be used for the optimisation of the hardware
+In the field of pulse sequence optimisation, e.g.~for artefact detection and elimination, simulations allow one to
+differentiate between effects related to physics and hardware imperfection. Further, if the simulation environment
+is able to simulate the hardware malfunction, then results may be used for the optimisation of the hardware
 itself. Another prominent application is the design of specialised RF pulses which is often based on numerical simulations
 of the excitation process. In general, the interpretation and validation of experimental results benefit from comparisons
 to simulated data, which is especially important in the context of MRI sample development, e.g.~for the development of implants.
-Another important direction of application is image generation for the purpose of medical image processing -- here, the complete
-control on the properties of the input data allows a tailored design of image processing algorithms for certain applications.\\
+Another important direction of application is image generation for the purpose of image processing -- here, complete
+control of the properties of the input data allows a tailored design of image processing algorithms for certain applications.\\
 \ \\
-The numerical simulation of an MRI experiment is in its most general form a demanding task. This is due to the fact that a huge
-spin ensemble needs to be simulated in order to obtain realistic results. Therefore, several published approaches reduce the
-problem size in different ways. The most prominent method is to consider only cases in which analytical solutions to the
-problem exist \cite{benoit}. However, for the case of simultaneous RF excitation and time varying gradient fields no
-analytical solution exists and, thus, the important field of selective excitation can not be studied with such an approach.
-Apart from the computational demand, the complexity of the MRI imaging sequence is an obstacle. The difficulty of MRI
+The numerical simulation of an MRI experiment is, in its most general form, a demanding task. This is due to the fact that a huge
+spin ensemble needs to be simulated in order to obtain realistic results. As such, several published approaches have reduced the
+size of the problem in different ways. The most prominent method is to consider only cases in which analytical solutions to the
+problem exist \cite{benoit}. However, for the case of radiofrequency (RF) excitation in the presence of time varying gradient fields no
+analytical solution exists and, thus, the important field of selective excitation cannot be studied with such an approach.
+Apart from the computational demand, the complexity of the MRI imaging sequence is an additional obstacle. The difficulty of MRI
 sequence implementation using the software environments of commercial MRI scanner vendors -- painfully experienced by many
 researchers and pulse programmers -- can be significantly reduced with appropriate software design patterns.\\
 \ \\
 The JEMRIS project was initiated taking all the aforementioned considerations into account. It takes advantage of massive
 parallel programming on HPC (high performance computing) architectures.
 The aim of the project was to develop an MRI simulator which is general, flexible, and usable. In detail, it provides
-a general numerical solution of the Bloch Equations on a huge ensemble of classical spins in order to realistically simulate
+a general numerical solution of the Bloch equations on a huge ensemble of classical spins in order to realistically simulate
 the MRI measurement process. Further, it takes various important off-resonance effects into account.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Theory}
 \subsection{MR signal evolution}
 %{\it MR signal \medskip evolution and MR image generation}\\
-The present simulator is based on a classical description of MRI physics by means of the  Bloch equation, describing the sample by its
+The JEMRIS simulator is based on a classical description of MRI physics by means of the  Bloch equations, describing the sample by its
 physical properties of equilibrium magnetisation, $M_0$, and the longitudinal and transverse relaxation times, $T_1$ and $T_2$, respectively.
-It provides an exact description for the magnetisation vector, ${\bf M}({\bf r},t)$, of non-interacting spin-isochromates under the influence of
-an external magnetic field. For MRI, the field decomposes to the strong static component, $B_0$, a temporal and spatial varying field along
-the same direction (the imaging gradients ${\bf G}$) and the orthogonal components of the excitation radio-frequency (RF) field, $B_1$:
+It provides an exact description for the magnetisation vector, ${\bf M}({\bf r},t)$, of non-interacting spin isochromates under the influence of
+an external magnetic field. For MRI, the field decomposes to the strong static component, $B_0$, a temporally and spatially varying field along
+the same direction (the imaging gradients ${\bf G}$) and the orthogonal components of the RF excitation field, $B_1$.
+The total field is thus given by
 \begin{equation}\label{eq:field}
 	{\bf B}({\bf r},t)\;=\;[B_0+{\bf G}(t)\cdot{\bf r}]{\bf e}_z+B_{1x}({\bf r},t){\bf e}_x+B_{1y}({\bf r},t){\bf e}_y\;.
 \end{equation}
@@ -114,14 +115,16 @@ very well suited for a numerical implementation
 \end{equation}
 \end{small}
 \ \\
-where $\gamma$ is the gyromagnetic ratio of the inspected nuclei (usually protons). The complex MR signal is then described by the signal equation
+where $\gamma$ is the gyromagnetic ratio of the nuclei (usually protons) under consideration.
+The complex MR signal is then described by the signal equation
 \begin{equation}\label{eq:signal}
  S(t)\;\propto\;\int_{V}\,M_r({\bf r},t)\exp[\mbox{i}\varphi({\bf r},t)]\;d^{3}r
 \end{equation}
 which integrates all components within the RF coil volume, $V$. For the description of the MR measurement process, the time
-evolution of different spin isochromates is completely independent of each other and  the problem is ideally suited for a numerical treatment with
+evolution of each spin isochromate is completely other and the problem is ideally suited for numerical treatment with
 parallel processing. \\ In MRI, the measurement process is expressed by the MRI sequence \cite{haacke} which describes the timing of pulsed currents
-in the various coils to induce the RF field for excitation and the gradient field for encoding spatial information to the phase of the MR signal: 
+in various coils to produce the RF field for excitation and the gradient field for encoding spatial information to the phase/frequency of the MR
+signal: 
 $\varphi({\bf r},t)\,=\,\gamma \int {\bf G}(t)\,dt\cdot{\bf r}\,\equiv\,{\bf k}(t)\cdot{\bf r}$. Inserting this expression in Eq.~(\ref{eq:signal}) shows
 that the MR signal, $S(t)$, can be reordered as a function of the k-vector, $S({\bf k})$. Then, the MR image, $M_r({\bf r})$, is given by the Fourier
 transformation of the acquired signal. Thus, the timing of the gradient pulses defines the so called k-space trajectory, ${\bf k}(t)$, along which the
@@ -129,23 +132,23 @@ necessary information for image generation is acquired during the measurement. I
 $M_r({\bf r})=M_r(M_0({\bf r}),T_1({\bf r}),T_2({\bf r}))$, depends on the timing of the MRI sequence through the time evolution of the Bloch equation.
 In this way, images with various desirable properties such as soft-tissue contrast can be obtained. The image contrast is based on differences in the
 proton density, $M_0$, and/or the relaxation times, $T_1,T_2$, in biological tissue components; this unique feature provides a variety of medical
-imaging applications and it is the cause for the success of MRI in medicine.
+imaging applications and it is the basis for the success of MRI in medicine.
 
 %%%%%%%%%%%%%%
 \subsection{Selective excitation}
 %{\it Selective \medskip excitation}\\
-Multidimensional spatially selective excitation \cite{pauly} is an important concept of growing interest in MRI, e.g. in the field
-of in vivo spectroscopy or for the challenging task of correcting subject-induced $B_1$ field inhomogeneities at ultra high fields \cite{ibrahim}.
+Multidimensional, spatially-selective excitation \cite{pauly} is an important concept of growing interest in MRI, e.g. in the field
+of {\it in vivo} spectroscopy or for the challenging task of correcting subject-induced $B_1$ field inhomogeneities at ultra high fields \cite{ibrahim}.
 However, thus far the computation of these pulses is based on a simplified physical model neglecting relaxation and
-off-resonance effects during the pulse. Then, the calculation of the unknown RF pulse shape, $B_1$, from a
+off-resonance effects during the pulse. Under such conditions, the calculation of the unknown RF pulse shape, $B_1$, from a
 given target excitation pattern, $M_p$, reduces to a linear system:
 \begin{equation}\label{eq:selexcommon}
  M_{p}({\bf r})\;=\;\mbox{i}\gamma M_0({\bf r})\int_{0}^{T}\,B_1(t)\exp[\mbox{i}{\bf r}\cdot{\bf k}(t)]\;dt
 \end{equation}
-where $M_0$ is the equilibrium magnetisation, ${\bf k}(t)$ is a given k-space trajectory.
+where $M_0$ is the equilibrium magnetisation and ${\bf k}(t)$ is a given k-space trajectory.
 A spatially and temporally discrete version of Eq.~(\ref{eq:selexcommon}) can be solved for $B_1$ by suitable generalised matrix inversion
 methods.
-Instead, the present approach provides a numerical method to design selective pulses under realistic experimental
+In contrast, the present approach provides a numerical method to design selective pulses under realistic experimental
 conditions. The simulator computes the effective transverse magnetisation, $M_e({\bf r},t)$, which is used to correct the RF
 pulse in order to account for effects not governed by Eq.~(\ref{eq:selexcommon}). Thus, a minimisation problem is formulated and
 individually solved for all time steps $n\Delta t\;(n=1,…,N)$ , where $N\Delta t=T$ equals the pulse length:
@@ -153,7 +156,7 @@ individually solved for all time steps $n\Delta t\;(n=1,…,N)$ , where $N\Delta
  || M_{p}({\bf r})\,-\, M_e[M_0({\bf r}),T_1({\bf r}),T_2({\bf r}),\Delta\omega({\bf r}),B_1(t),{\bf k}(t)]\,||\;=\;\min_{B_1}
 \end{equation}
 Here, the difference between the desired magnetisation pattern and the effective magnetisation pattern is minimised
-with respect to the imaginary and the real part of $B_1= B_{1x} + \mbox{i}B_{1y}$. The starting point ($B_{1x},B_{1y}$) for each of
+with respect to the real and the imaginary parts of $B_1= B_{1x} + \mbox{i}B_{1y}$. The starting point ($B_{1x},B_{1y}$) for each of
 the $N$ consecutive 2D minimisation problems is taken from the solution of Eq.~(\ref{eq:selexcommon}). Note that the temporal sampling
 of $B_1$ is taken from the discrete version of Eq.~(\ref{eq:selexcommon}), whereas the time evolution of the effective magnetisation
 is computed with much higher accuracy by the simulator, i.e. within each interval $\Delta t$ the Bloch equation is individually solved
@@ -167,7 +170,7 @@ the RF pulse, the final magnetisation states are taken as the starting condition
 \epsfigure{fig/jemris-classes.eps}{Class hierarchy of the basic JEMRIS components, Sample, Signal, Model, and Sequence class,
                             respectively.}{fig:classes}{bp}{1.0}
 The software design of JEMRIS had to meet two competing
-premises: The object design had to obviously reflect the physical
+premises: Obviously, the object design had to reflect the physical
 world. At the same time the objects and members were to remain highly
 maintainable, reusable and yet easy to handle.
 \\
@@ -179,46 +182,46 @@ respectively. The {\it Sample} class describes the physical properties
 of the object, currently defined by the set $P=(M_0,T_1,T_2)$ at every
 spatial position ${\bf r}=(x,y,z)$ of the sample. Since MPI has no
 functionality for object serialisation, send/receive of sub-samples is
-realised with appropriate MPI data-types. Similar, the {\it Signal}
-holds information on the `MR signal' consisting of the net
+realised with appropriate MPI data-types. Similarly, the {\it Signal}
+holds information about the `MR signal' consisting of the net
 magnetisation vector ${\bf M}(t)=[M_x(t),M_y(t),M_t(t)]$ at every
 sampled time point. MPI functionality is implemented in the same way
-as for the {\it Sample} class. The {\it Model} class bears the
+as for the {\it Sample} class. The {\it Model} class contains the
 functionality for solving the physical problem. 
 \\
 The design of the {\it Sequence} class and its underlying
 sequence framework proved to be a very demanding task. It supplies
-the most complex part of the simulator. For this a novel object
-oriented design pattern for MRI is introduced which derives the basic
-parts, {\it Sequence}s (loop-able branch nodes) and {\it Pulse}s (leaf
-nodes) from an abstract {\it Module} class. To further reduce the complexity in and
-promote the encapsulation of the objects in this part of the framework,
+the most complex part of the simulator. For this a novel object-oriented
+design pattern for MRI is introduced which derives the basic
+parts, {\it Sequence}s (loopable branch nodes) and {\it Pulse}s (leaf
+nodes) from an abstract {\it Module} class. To further reduce the complexity in, and
+promote the encapsulation of, the objects in this part of the framework,
 an abstract factory approach using prototypes is implemented as suggested by
 Gamma et al\cite{gamma}. 
 \\
 A sequence represents a left-right ordered tree. Fig.~\ref{fig:epitree} depicts by example how the different
-modules of an EPI sequence, loops and pulses, can be arranged in an
+modules of the well-known EPI sequence \cite{haacke}, loops and pulses, can be arranged in an
 ordered tree. Trees can be effectively accessed by
 recursion and are very well suited for building as well as
 accessing values of the sequence. The atomic sequences are containers
 for the pulses and, thus, display the functionality to emit pulses of
 various types. The pulses themselves are defined in a seceded class hierarchy. 
 \\
-The sequence tree is internally handled via XML. Thus sequences
-themselves in turn can natively be read from or written to XML files. 
+The sequence tree is internally handled via XML. Thus, sequences
+themselves in turn can natively be read from, or written to, XML files. 
 The Xerces C++ parser provided by the Apache Software Foundation\footnote{\sf
 http://xml.apache.org/xerces-c/} is used for serialising and
 deserialising the sequence object. Further, a GUI was implemented in
-MATLAB\footnote{\sf http://www.mathworks.com} which allows to
+MATLAB\footnote{\sf http://www.mathworks.com} which allows one to
 interactively build as well as manipulate the sequence tree, view the pulse diagram, and
 perform the simulation. For the latter, MATLAB calls JEMRIS via {\sf
 ssh} on the remote HPC site.
 
 \epsfiguresv{fig/EPI_sketch.eps}{fig//EPI_tree.eps}{{\bf Top:} Sketch of a native EPI pulse sequence diagram,
                 consisting of an outer loop (e.g.~slices) in which
-		the RF excitation module, the dephasing gradients, dead-times, and the inner loop for the EPI readout are nested.
+		the RF excitation module, the dephasing gradients, dead times, and the inner loop for the EPI readout are nested.
 		{\bf Bottom:} Representation of the same diagram with a left-right ordered tree. Branching nodes represent loops
-		in which other modules are concatenated. Leaf nodes represent th modules in which the actual pulse shapes are
+		in which other modules are concatenated. Leaf nodes represent the modules in which the actual pulse shapes are
 		played out.}{fig:epitree}{tp}{0.85}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{algorithm}[t]
@@ -369,15 +372,15 @@ ssh} on the remote HPC site.
 \end{algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Parallel implementation}
-Pseudo code of the parallel workflow of JEMRIS is shown in the parallel algorithm diagram \ref{parcode1}. (Comments
-are written with a reduced fontsize.) The (mostly sleeping) master process subdivides the problem
-in the beginning and harvests the result in the end. The basic functionality of the slave processes is hidden
+Pseudo code of the parallel workflow of JEMRIS is shown in the parallel algorithm \ref{parcode1}. (Comments
+are written with a reduced font size.) The (mostly sleeping) master process subdivides the problem
+in the beginning and harvests the result at the end. The basic functionality of the slave processes is hidden
 in the {\it Solve()} method of the {\it Model} class, where the solution for each spin is obtained during a recursive
-travel through the sequence tree. All functionality on introducing off-resonance effects is hidden in the
+travel through the sequence tree. All functionality for introducing off-resonance effects is hidden in 
 lines {\footnotesize 9} and {\footnotesize 19} of the slave process. Settings about this functionality, as well the
 setting of the sample, is provided in the simulation XML file, which is parsed in the \medskip beginning.\\
 %%%
-The computation of selective excitation pulses utilising the simulator is shown in the parallel algorithm diagram \ref{parcode2}.
+The computation of selective excitation pulses utilising the simulator is shown in the parallel algorithm \ref{parcode2}.
 The input parameters for the discrete problem consisting of $N_t$ steps and the appendant solution of the linear problem  
 in Eq.~(\ref{eq:selexcommon}) is read from an XML file. After splitting the sample and the target pattern,
 the slave processes instantiate a sequence object which consists of a root node and $N_t$ child nodes, each representing
@@ -389,12 +392,12 @@ slaves proceed with the final magnetisation state of the previous step.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 \subsection{Benchmarks}
-The simulations were performed on a 16 dual-core CPU Opteron cluster. This can be seen as small-scale HPC, however, it is sufficient
-to perform 2D MRI simulations within minutes. Thus, the here presented simulations reduce to 2D examples, though the simulator
+The simulations were performed on a 16 dual-core CPU Opteron cluster. This can be seen as small-scale HPC; it is sufficient
+to perform 2D MRI simulations within minutes. Thus, the simulations presented here reduce to 2D examples, though the simulator
 is also able to treat 3D simulations. The performance of the simulator is depicted in Fig.~\ref{fig:performance}. The results from
-sequential program profiling show, that most of the time is spent in the highly optimised CVODE libraries, however, a significant
-amount of 28 \% is spent in the {\it Sequence.getValue()} function, leaving room for future optimisation of the data retrieval from
-the sequence tree. As expected, the parallel performance scales nearly perfectly, i.e.~the speed increases linearly with the number
+sequential program profiling show, that most of the time is spent in the highly optimised CVODE libraries. However, a significant
+amount of time, 28 \%, is spent in the {\it Sequence.getValue()} function, leaving room for future optimisation of data retrieval from
+the sequence tree. As expected, parallel performance scales nearly perfectly, i.e.~the speed increases linearly with the number
 of processors.
 %%%%%%%%%%%%%%%%
 \epsfigure{fig/performance.eps}{JEMRIS performance testing. {\bf Left:} Sequential profiling shows that $\approx$ 70 \% of the computing time
@@ -402,13 +405,13 @@ of processors.
 			     gain due to parallelisation (right) is close to optimal for large scale problems, as expected.}
 			{fig:performance}{bp}{1.0}
 \subsection{MRI simulation examples}
-\epsfigures{fig/GUI_seq_ex1.eps}{fig/GUI_sim_ex1.eps}{{\bf Left:}  Example of the JEMRIS GUI for sequence development: the EPI sequence
-			     already shown in Fig.~\ref{fig:epitree}. In the top left the sequence is interactively build and on the right
-			     the parameters of the individual nodes are set. In the bottom the corresponding sequence
+\epsfigures{fig/GUI_seq_ex1.eps}{fig/GUI_sim_ex1.eps}{{\bf Left:}  Example of the JEMRIS GUI for sequence development showing the EPI sequence
+			     already shown in Fig.~\ref{fig:epitree}. In the top left, the sequence is interactively built and on the right
+			     the parameters of the individual nodes are set. In the bottom, the corresponding sequence
 			     diagram is shown. Possible error output is given in the slider-window.
                              {\bf Right:} Example of the JEMRIS GUI for simulations: a simple three pulse sequence
-			     ( 60$^\circ$-90$^\circ$-90$^\circ$ at 0-10-25 ms) on a homogeneous sphere under strong field inhomogeneities
-			     results in the famous five echoes: three spin echoes, one reflected spin echo, and the stimulated
+			     ( 60$^\circ$-90$^\circ$-90$^\circ$ at 0-10-25 ms) applied to a homogeneous sphere under strong field inhomogeneities
+			     results in the well-established five echoes: three spin echoes, one reflected spin echo, and the stimulated
 			     echo.}{fig:gui}{tp}{0.45}
 \epsfigure{fig/simartex.eps}{Example of artefact simulations on a human head model: {\bf a} EPI with chemical shift.
                                {\bf b} EPI distortions due to a nonlinear read gradient. {\bf c} TrueFISP banding artefacts
@@ -416,20 +419,20 @@ of processors.
 				sequence with a long refocusing pulse in the order of $T_2$ of the
 				sample.}{fig:artifacts}{tp}{1.0}
 %%%%%%%%%%%%
-Fig.~\ref{fig:gui} shows an example of the GUI for sequence development, which allows an interactive
+Fig.~\ref{fig:gui} shows an example of the GUI for sequence development, which allows interactive
 building of the sequence tree and various representations of the corresponding pulse diagram. The right part of Fig.~\ref{fig:gui}
-depicts the simulation GUI, showing an example of a simple 3-pulse experiment without any gradients involved, however, strong
+depicts the simulation GUI, showing an example of a simple 3-pulse experiment without any gradients involved. However, strong
 random field variations are applied yielding a very strong $T_{2}^{*}$ effect, i.e.~signal decays rapidly to zero. The
-famous five MR echoes generated by such a three pulse experiment, are visible. The tracking of magnetisation can be accurately
+well-established five MR echoes generated by such a three pulse experiment are visible. The tracking of magnetisation can be accurately
 performed at any desired time scale also during the application of RF pulses, since a generally valid numerical solution is computed.
 Examples of MRI artefact generation are given in Fig.~\ref{fig:artifacts}: a) EPI simulation considering chemical shift effects
-yield the prominent fat-water shift in MRI; b) Malfunction MR scanner hardware simulation with a nonlinear gradient field results
-in a distorted EPI image; c) TrueFISP simulation including susceptibility-induced field inhomogeneity yield the well-known
+yield the prominent fat-water shift in MRI; b) malfunctioning MR scanner hardware simulation with a nonlinear gradient field results
+in a distorted EPI image; c) TrueFISP simulation including susceptibility-induced field inhomogeneity yields the well-known
 banding artefacts in the human brain; d) artefact in spin echo imaging due to a very long inversion pulse exciting transverse
 magnetisation. The corresponding calculation times are given in Table \ref{tab:calctimes}. Note that the last example,
-Fig.~\ref{fig:artifacts} d), can not be realised with any simulator relying on analytical solutions of the Bloch
-equation due to disregarding of relaxation effects during the RF pulse. The exact simulation of the simultaneous occurrence of RF
-pulses and imaging gradients with JEMRIS is the basement for the derivation of new selective excitation pulses in the next section.
+Fig.~\ref{fig:artifacts} d), cannot be realised with any simulator relying on analytical solutions of the Bloch
+equation due to neglect of relaxation effects during the RF pulse. The exact simulation of the simultaneous occurrence of RF
+pulses and imaging gradients with JEMRIS is the foundation for the derivation of new selective excitation pulses presented in the next section.
 \begin{small}
  \begin{table}[tp]
   {\footnotesize
@@ -454,8 +457,8 @@ pulses and imaging gradients with JEMRIS is the basement for the derivation of n
 %The calculation times for the shown examples are given in Table \ref{tab:calctimes}.
 %%%%%%%%%%%%
 \epsfigure{fig/Selex.eps}{Example of multidimensional excitation. {\bf Left Column:} 2D MR sample and the target pattern for selective
-			     excitation. {\bf Middle Column:} HF pulses computed with the common approach and with the newly proposed method,
-			     based on the JEMRIS framework. {\bf Right Column:} Simulation results, showing the excited spin
+			     excitation. {\bf Middle Column:} RF pulses computed with the common approach and with the proposed method
+			     based on the JEMRIS framework. {\bf Right Column:} Simulation results showing the excited spin
 			     system after applying the corresponding HF pulses.}{fig:selex}{bp}{0.7}
 \subsection{RF pulse design for selective excitation}
 For the demonstration of selective excitation, a homogeneous spherical object and a desired target
@@ -463,16 +466,16 @@ magnetisation pattern were defined and the RF pulses of the common model and the
 according to Eq.~(\ref{eq:selexcommon}) and (\ref{eq:selexnew}), respectively. Simulations were performed for $\approx$ 30,000 spins.
 The results are depicted in Fig.~\ref{fig:selex}. Note that the excitation patterns are not the result of a (simulated) imaging sequence
 but they are the effective patterns of excited spins directly after the pulse. In comparison, the optimised RF pulse
-sequence computed with the new approach shows less high spatial frequency components as with the common
+computed with the new approach shows fewer higher spatial frequency components than the common
 approach. This is a well-known problem of the common linear approach, leading to high frequency artefacts on
-selectively excited images, as also seen from the excited target pattern in Fig.~\ref{fig:selex}. In comparison, the new approach
-excites a more homogeneous target pattern.
+selectively excited images, as can be seen from the excited target pattern in Fig.~\ref{fig:selex}. In comparison, the new approach
+excites a pattern that better approximates the target pattern.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 JEMRIS performs (classically) general MRI simulations. It allows time tracking of the net magnetisation, separation
 of different effects, and therefore accurate investigation of MR samples (e.g. implants) and MRI sequences under a
-variety of experimental conditions. The parallel HPC implementation allows the treatment of huge spin ensembles
-resulting in realistic MR signals. On small HPC clusters, 2D simulations can be obtained in the order of minutes,
+variety of experimental conditions. The parallel HPC implementation allows for the treatment of huge spin ensembles
+resulting in realistic MR signals. On small HPC clusters, 2D simulations can be obtained on the order of minutes,
 whereas for 3D simulations it is recommended to use higher scaling HPC systems. As shown, the simulator can be
 applied to MRI research for the development of new pulse sequences. The impact of these newly designed pulses in real
 experiments has to be tested in the near future.
