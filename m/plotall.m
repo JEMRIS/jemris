@@ -114,8 +114,9 @@ if WHAT==1
  XYZ=round(A(:,[6:8])/d);
  X=XYZ(:,1);X=X+abs(min(X))+1;
  Y=XYZ(:,2);Y=Y+abs(min(Y))+1;
- Z=XYZ(:,3);Z=Z+abs(min(Z))+1;
- Nx=max(X);Ny=max(Y);Nz=max(Z);
+ Z=XYZ(:,3); if (min(Z)==max(Z)); Z=Z*0; end; Z=Z+abs(min(Z))+1;
+ Nx=max(X);Ny=max(Y); Nz=max(Z);
+     
  I=sub2ind([Nx Ny Nz],X,Y,Z);
  T={'M0','T1','T2','CS'};
 
