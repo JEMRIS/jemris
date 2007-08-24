@@ -1,9 +1,15 @@
 function writeSample(Sample)
 %
 
-[Nx,Ny,Nz]=size(Sample.M0);
-x=[1:Nx]-Nx/2; y=[1:Ny]-Ny/2; z=[1:Nz]-Nz/2;
-[X,Y,Z]=meshgrid(Sample.dx*x,Sample.dy*y,Sample.dz*z);
+N=size(Sample.M0);
+for i=1:3
+    if mod(N(i),2)
+        x{i}=[1:N(i)]-(N(i)-1)/2-1;
+    else
+        x{i}=[1:N(i)]-N(i)/2;
+    end
+end
+[X,Y,Z]=meshgrid(Sample.dx*x{1},Sample.dy*x{2},Sample.dz*x{3});
 
 I=find(Sample.M0);
 N=length(I);
