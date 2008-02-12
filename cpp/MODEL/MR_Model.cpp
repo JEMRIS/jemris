@@ -10,6 +10,11 @@
 //set the current spin of the sample
 void MR_Model::setSpin(int k){
 	initSolver();
+	double* dim = m_pSam->getSampleDim();
+	double d1=(dim[1]-dim[0]), d2=(dim[3]-dim[2]), d3=(dim[5]-dim[4]);
+        extern float gasdev(long *idum);
+	m_pSam->sSample.Xcoord[k] += 0.1*pow(d1*d2/m_pSam->sSample.NumberOfPoints,0.5)*gasdev(&m_i_rand_init);
+	m_pSam->sSample.Ycoord[k] += 0.1*pow(d1*d2/m_pSam->sSample.NumberOfPoints,0.5)*gasdev(&m_i_rand_init);
 	double dx=m_pSam->sSample.Xcoord[k];
 	double dy=m_pSam->sSample.Ycoord[k];
 	double dz=m_pSam->sSample.Zcoord[k];
