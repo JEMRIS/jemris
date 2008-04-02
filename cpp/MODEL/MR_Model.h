@@ -58,6 +58,8 @@ public:
   double* getMm() {return m_pSam->sSample.Mm;  };
   //! Get pointer to the current transverse phases of the sample
   double* getMp() {return m_pSam->sSample.Mp;  };
+  //! Get pointer to the current longitudinal magn. of the sample
+  double* getMl() {return m_pSam->sSample.Ml;  };
   //! Get pointer to the magnitude components, which where stored in the last call to Solve(cont,true,...)
   double* getMxy() {return m_pSam->sSample.Mxy;  };
   //! Get pointer to the phase components, which where stored in the last call to Solve(cont,true,...)
