@@ -28,7 +28,7 @@ public:
 	double dNumOfTPs;
 	fin.read((char *)(&(dNumOfTPs)), sizeof(double));
 	m_iNumberOfTimePoints = ((int) dNumOfTPs);
-	//cout << "  : Nt = " << m_iNumNLPs << endl;
+	//cout << "  : Nt = " << m_iNumberOfTimePoints << endl;
 	for (int i=0; i<m_iNumberOfTimePoints; ++i)
 	{
 		fin.read((char *)(&(m_dArrayOfNLPs[i])), sizeof(double));

@@ -33,26 +33,35 @@ class  GradientSpiralExtRfConcatSequence :public ConcatSequence {
 		//create concat sequences 
 		ConcatSequence* C = this;
 		C->setName(name);
+//cout << "GSERF bhhgng 1 " << endl;
 		
-		ExternalPulseShape* pRF = new ExternalPulseShape(filename);
-		int     iparts   = pRF->getNumOfNLPs();
-		double  ddur     = pRF->getDuration();
-		double* dRFamplt = pRF->getValArray1();//B1 amplitude
-		double* dRFphase = pRF->getValArray2();//phases in rad
+		ExternalPulseShape* pEPS = new ExternalPulseShape(filename);
+		int     iparts   = pEPS->getNumOfNLPs();
+		double  ddur     = pEPS->getDuration();
+		double* dRFamplt = pEPS->getValArray1();//B1 amplitude
+		double* dRFphase = pEPS->getValArray2();//phases in rad
 		double  dRFdur   = ddur/iparts;
 		
-		AtomicSequence* A_Parts[iparts];
+//cout << "GSERF bhhgng 2 " << iparts << endl;
+		AtomicSequence** A_Parts = new AtomicSequence*[iparts];
 		for (int i=0; i<iparts; ++i) {
+			//cout << "inserted part " << i ;
 			A_Parts[i] = new AtomicSequence("A_Segment");
+			//cout << "! " ;
 			A_Parts[i]->setPulse(new HardRfPulseShape(dRFamplt[i]*dRFdur*180.0/PI, dRFphase[i]*180.0/PI, dRFdur, "RF" ) );
 			A_Parts[i]->setPulse(new GradientSpiralPart(iparts, i+1, ddur, dturns, dtune, dres, AXIS_GX) );
 			A_Parts[i]->setPulse(new GradientSpiralPart(iparts, i+1, ddur, dturns, dtune, dres, AXIS_GY) );
+			//cout << "! " ;
 			if (i==0) { C->InsertChild(NULL,A_Parts[i]); }
 			else	  { C->InsertChild(A_Parts[i-1],A_Parts[i]); }
+			//cout << "! " ;
 			RfPulseShape* pRF = ((RfPulseShape*) A_Parts[i]->getPulse(0));
+			//cout << "! " << endl;
 			//cout << "inserted part " << i << " , dur = " << ((GradientSpiralPart*) (A_Parts[i]->getPulse(0)))->getDuration()
 			// << "   RF = (" << pRF->getFlipAngle() << "," << pRF->getPhase() << ")" << endl;
 		}
+		delete A_Parts; delete pEPS;
+//cout << "GSERF bhhgng 3 " << endl;
 		double dAreaX = ((GradientSpiralPart*) A_Parts[0]->getPulse(1))->getGS()->getArea();
 		double dAreaY = ((GradientSpiralPart*) A_Parts[0]->getPulse(2))->getGS()->getArea();
 		AtomicSequence* A_reph = new AtomicSequence("A_rephaser");
