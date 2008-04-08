@@ -35,7 +35,7 @@ for node=1:size(SD,1)
     else
     x=squeeze(A(2,1,:)); y=squeeze(A(3,1,:));
 	x=x/d;y=y/d;x=x+amx+1;y=y+amy+1;
-	I=sub2ind([Nx Ny],x,y);
+	I=sub2ind([Nx Ny],round(x),round(y));
     end
  	M(I,:,1)=squeeze(A(5,Is,:))';
 	M(I,:,2)=squeeze(A(6,Is,:))';
