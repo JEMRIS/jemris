@@ -2,7 +2,7 @@ ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
 CLUSTER_INSTALL_DIR = /srv/apps/prod/misc/bin
 
 CC     = g++
-CCOPTS = -O3 -D$(ARCH)
+CCOPTS = -O3 -D$(ARCH) -L/usr/lib64 -L/usr/lib
 CP     = /bin/cp
 
 #architecture check
@@ -10,7 +10,8 @@ ifeq ($(ARCH), i386)
 	MPICC=mpicxx
 endif
 ifeq ($(ARCH), x86_64)
-	MPICC=mpicxx.mpich-gcc64
+	MPICC = mpicxx.mpich-gcc64
+        CC    = g++-4.1
 endif
 ifeq ($(ARCH), ppc64)
 	MPICC = bgxlcxx_r
@@ -75,7 +76,7 @@ $(MOD)XmlSimulation.o : $(MOD)XmlSimulation.cpp
 
 #commands for main programs
 jemris : $(SFWOBJS) $(SEQH) $(MODOBJS) jemris.cpp
-	$(CC) -L/usr/lib $(CCOPTS) -I$(CVI) -L$(CVL) -L$(XRCL) -I$(XRCI) -I$(SFW) -I$(MOD) -o jemris $(SFWOBJS) $(MODOBJS) jemris.cpp -lm -lcvode -lxerces-c
+	$(CC) $(CCOPTS) -I$(CVI) -L$(CVL) -L$(XRCL) -I$(XRCI) -I$(SFW) -I$(MOD) -o jemris $(SFWOBJS) $(MODOBJS) jemris.cpp -lm -lcvode -lxerces-c
 pjemris : $(SFWOBJS) $(MODOBJS) $(SEQH) pjemris.cpp
 	$(MPICC) $(CCOPTS) -I$(CVI) -L$(CVL) -L$(XRCL) -I$(XRCI) -I$(SFW) -I$(MOD) -o pjemris $(SFWOBJS) $(MODOBJS) pjemris.cpp -lm -lcvode -lxerces-c
 
