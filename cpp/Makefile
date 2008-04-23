@@ -2,7 +2,7 @@ ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
 CLUSTER_INSTALL_DIR = /srv/apps/prod/misc/bin
 
 CC     = g++
-CCOPTS = -O3 -D$(ARCH) -L/usr/lib64 -L/usr/lib
+CCOPTS = -O0 -D$(ARCH)
 CP     = /bin/cp
 
 #architecture check
@@ -14,8 +14,8 @@ ifeq ($(ARCH), x86_64)
         CC    = g++-4.1
 endif
 ifeq ($(ARCH), ppc64)
-	MPICC = bgxlcxx_r
-	CC    = bgxlcxx_r
+	MPICC=mpixlcxx_r 
+	CC   =mpixlcxx_r
 endif
 
 #libraries source code directories
@@ -46,7 +46,7 @@ SEQH =  $(SFW)Parameter.h $(SFW)AllPulses.h $(SFW)EmptyPulse.h $(SFW)GradientPul
 	$(SFW)GradientSpiralExtRfConcatSequence.h
 
 #TO DO: all objects + main program
-all   : cvode $(SFWOBJS) $(MODOBJS) jemris pjemris
+all   : $(SFWOBJS) $(MODOBJS) jemris pjemris
 
 #commands for sequence framework
 $(SFW)Sequence.o : $(SFW)Sequence.cpp

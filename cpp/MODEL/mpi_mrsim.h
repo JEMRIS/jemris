@@ -18,6 +18,7 @@ using namespace std;
 #include <mpi++.h>
 #endif
 #ifdef ppc64
+#define MPICH_IGNORE_CXX_SEEK
 #include <mpi.h>
 #endif
 
