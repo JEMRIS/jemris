@@ -11,11 +11,14 @@
 #include<iostream>
 using namespace std;
 
-#ifdef I386
+#ifdef i386
 #include <mpi++.h>
 #endif
-#ifdef PPC64
+#ifdef x86_64
 #include <mpi++.h>
+#endif
+#ifdef ppc64
+#include <mpi.h>
 #endif
 
 #include "Model_MPI_Datatypes.h"	//definitions of MPI datatypes for signal and sample

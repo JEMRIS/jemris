@@ -1,8 +1,9 @@
-CC     = g++
-CCOPTS = -O3 -DARCH
-CP     = /bin/cp
 ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
 CLUSTER_INSTALL_DIR = /srv/apps/prod/misc/bin
+
+CC     = g++
+CCOPTS = -O3 -D$(ARCH)
+CP     = /bin/cp
 
 #architecture check
 ifeq ($(ARCH), i386)
@@ -31,7 +32,7 @@ XRCL = ../xerces-c/lib/
 XRCI = ../xerces-c/include/
 
 #objects to compile
-SFWOBJS=$(SFW)Sequence.o  $(SFW)AtomicSequence.o  $(SFW)ConcatSequence.o $(SFW)TGPS.o $(SFW)XmlSequence.o \
+SFWOBJS=$(SFW)Sequence.o  $(SFW)AtomicSequence.o  $(SFW)ConcatSequence.o $(SFW)TGPS.o $(SFW)XmlSequence.o
 MODOBJS=$(MOD)MR_Model.o $(MOD)BCV_MR_Model.o $(MOD)bloch.o  $(MOD)Sample.o $(MOD)Signal.o $(MOD)XmlSimulation.o
 
 #dependence on header files (add new sequences to this list)
