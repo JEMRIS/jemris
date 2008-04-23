@@ -1,6 +1,6 @@
 CC     = g++
-CCOPTS = -O2
-CP	 = /bin/cp
+CCOPTS = -O3 -DARCH
+CP     = /bin/cp
 ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
 CLUSTER_INSTALL_DIR = /srv/apps/prod/misc/bin
 
@@ -11,21 +11,27 @@ endif
 ifeq ($(ARCH), x86_64)
 	MPICC=mpicxx.mpich-gcc64
 endif
+ifeq ($(ARCH), ppc64)
+	MPICC = bgxlcxx_r
+	CC    = bgxlcxx_r
+endif
 
 #libraries source code directories
 SFW = ./SEQ_FRAMEWORK/
 MOD = ./MODEL/
-CVI = ./CVODE/include/
-CVL = ./CVODE/lib/
-CV  = ./CVODE
+CVI = ../CVODE/include/
+CVL = ../CVODE/lib/
+CV  = ../CVODE
+
+# On blue Gene xerces needs to be built statically using the following 
+# -plinux -cbgxlc_r -xbgxlcxx_r -minmem -nsocket -tnative -rpthread -s static
 
 #location of xerces-c
-XRCL = /apps/prod/misc/lib/
-XRCI = /apps/prod/misc/include/
+XRCL = ../xerces-c/lib/
+XRCI = ../xerces-c/include/
 
 #objects to compile
-SFWOBJS=$(SFW)Sequence.o  $(SFW)AtomicSequence.o  $(SFW)ConcatSequence.o \
-	$(SFW)TGPS.o $(SFW)XmlSequence.o
+SFWOBJS=$(SFW)Sequence.o  $(SFW)AtomicSequence.o  $(SFW)ConcatSequence.o $(SFW)TGPS.o $(SFW)XmlSequence.o \
 MODOBJS=$(MOD)MR_Model.o $(MOD)BCV_MR_Model.o $(MOD)bloch.o  $(MOD)Sample.o $(MOD)Signal.o $(MOD)XmlSimulation.o
 
 #dependence on header files (add new sequences to this list)
