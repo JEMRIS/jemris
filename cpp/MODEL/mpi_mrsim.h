@@ -17,10 +17,10 @@ using namespace std;
 #ifdef x86_64
 #include <mpi++.h>
 #endif
-#ifdef ppc64
+//#ifdef ppc64
 #define MPICH_IGNORE_CXX_SEEK
 #include <mpi.h>
-#endif
+//#endif
 
 #include "Model_MPI_Datatypes.h"	//definitions of MPI datatypes for signal and sample
 #include "Sample.h"

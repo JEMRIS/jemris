@@ -2,7 +2,7 @@ ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
 CLUSTER_INSTALL_DIR = /srv/apps/prod/misc/bin
 
 CC     = g++
-CCOPTS = -O0 -D$(ARCH)
+CCOPTS = -O3 #-D$(ARCH)
 CP     = /bin/cp
 
 #architecture check
@@ -14,8 +14,8 @@ ifeq ($(ARCH), x86_64)
         CC    = g++-4.1
 endif
 ifeq ($(ARCH), ppc64)
-	MPICC=mpixlcxx_r 
-	CC   =mpixlcxx_r
+	MPICC=scalasca -instrument mpixlcxx_r 
+	CC   =scalasca -instrument mpixlcxx_r
 endif
 
 #libraries source code directories
