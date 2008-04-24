@@ -2,7 +2,7 @@ ARCH  := $(shell uname -m | sed -e s/i.86/i386/)
 CLUSTER_INSTALL_DIR = /srv/apps/prod/misc/bin
 
 CC     = g++
-CCOPTS = -O3 #-D$(ARCH)
+CCOPTS = -O3 -DARCH$(ARCH)
 CP     = /bin/cp
 
 #architecture check

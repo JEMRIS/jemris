@@ -11,16 +11,16 @@
 #include<iostream>
 using namespace std;
 
-#ifdef i386
+#ifdef ARCHi386
 #include <mpi++.h>
 #endif
-#ifdef x86_64
+#ifdef ARCHx86_64
 #include <mpi++.h>
 #endif
-//#ifdef ppc64
+#ifdef ARCHppc64
 #define MPICH_IGNORE_CXX_SEEK
 #include <mpi.h>
-//#endif
+#endif
 
 #include "Model_MPI_Datatypes.h"	//definitions of MPI datatypes for signal and sample
 #include "Sample.h"
