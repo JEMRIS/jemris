@@ -7,7 +7,7 @@ CP     = /bin/cp
 
 #architecture check
 ifeq ($(ARCH), i386)
-	MPICC=mpicxx
+	MPICC=mpicxx.mpich
 endif
 ifeq ($(ARCH), x86_64)
 	MPICC = mpicxx.mpich-gcc64

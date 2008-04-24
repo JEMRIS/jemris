@@ -45,11 +45,18 @@ void  Sample::CreateSamplestruct(long NPoints)
    long N=sSample.NumberOfPoints;
    if (n >size || size>N) return NULL;
    
-   long k = N/size;
-   long l = N%size;
-   long  ibeg = (n-1)*k; 
-   long iend = n*k-1 + (n<size?0:l); 
+   if (size == 1)
+     size=2;
 
+   long k = N/(size-1);
+   long l = N%(size-1);
+   long ibeg = (n-1) * k;
+   long iend = n*k-1;
+
+   if (n == size) {
+     iend = N-1;
+   }
+     
    Sample *pSubSample;
    pSubSample = new Sample(iend-ibeg+1);
    for (long i=ibeg ,u=0;i<=iend;i++,u++)
