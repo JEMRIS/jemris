@@ -45,18 +45,24 @@ void  Sample::CreateSamplestruct(long NPoints)
    long N=sSample.NumberOfPoints;
    if (n >size || size>N) return NULL;
    
-   if (size == 1)
-     size=2;
+   long k = N/(size);
+   long l = N%(size);
+   long ibeg = 0;
+   long iend = 0;
+   long offs = l*(k+1);
 
-   long k = N/(size-1);
-   long l = N%(size-1);
-   long ibeg = (n-1) * k;
-   long iend = n*k-1;
+   cout << "process " << n << " of " << size << "\t";
 
-   if (n == size) {
-     iend = N-1;
+   if (n<=l) {
+     ibeg = (n-1) * (k+1);
+     iend =  n    * (k+1) - 1;
+   } else {
+     ibeg = offs  + (n-l-1) * k;
+     iend = offs  + (n-l)   * k - 1;
    }
-     
+
+   cout << "from:" << ibeg  << " to:"<< iend << endl;
+
    Sample *pSubSample;
    pSubSample = new Sample(iend-ibeg+1);
    for (long i=ibeg ,u=0;i<=iend;i++,u++)
