@@ -49,19 +49,16 @@ void  Sample::CreateSamplestruct(long NPoints)
    long l = N%(size);
    long ibeg = 0;
    long iend = 0;
-   long offs = l*(k+1);
+   long ot = l*(k+1); // first l processes.
+   long r  = n - ot;   // rest.
 
-   cout << "process " << n << " of " << size << "\t";
-
-   if (n<=l) {
+   if (n<=l) { // the first l processes get one spin more
      ibeg = (n-1) * (k+1);
      iend =  n    * (k+1) - 1;
-   } else {
-     ibeg = offs  + (n-l-1) * k;
-     iend = offs  + (n-l)   * k - 1;
+   } else {    // than the rest.
+     ibeg = (r-1) *  k        + ot;
+     iend =  r    *  k    - 1 + ot;
    }
-
-   cout << "from:" << ibeg  << " to:"<< iend << endl;
 
    Sample *pSubSample;
    pSubSample = new Sample(iend-ibeg+1);
