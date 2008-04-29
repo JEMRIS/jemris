@@ -45,20 +45,10 @@ void  Sample::CreateSamplestruct(long NPoints)
    long N=sSample.NumberOfPoints;
    if (n >size || size>N) return NULL;
    
-   long k = N/(size);
    long l = N%(size);
-   long ibeg = 0;
-   long iend = 0;
-   long ot = l*(k+1); // first l processes.
-   long r  = n - ot;   // rest.
-
-   if (n<=l) { // the first l processes get one spin more
-     ibeg = (n-1) * (k+1);
-     iend =  n    * (k+1) - 1;
-   } else {    // than the rest.
-     ibeg = (r-1) *  k        + ot;
-     iend =  r    *  k    - 1 + ot;
-   }
+   long k = N/(size)+(n>l?0:1);
+   long ibeg = (n-1) * k+ (n>l?l:0);
+   long iend =  n    * k - 1 + (n>l?l:0);
 
    Sample *pSubSample;
    pSubSample = new Sample(iend-ibeg+1);
