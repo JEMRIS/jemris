@@ -10,7 +10,7 @@ ifeq ($(ARCH), i386)
 	MPICC=mpicxx.mpich
 endif
 ifeq ($(ARCH), x86_64)
-	MPICC = mpicxx.mpich-gcc64
+	MPICC = mpicxx
         CC    = g++-4.1
 endif
 ifeq ($(ARCH), ppc64)
