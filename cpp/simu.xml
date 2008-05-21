@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<JMRI-SIM>
+   <Sample CS="0" Delta="0.78" M0="1" Radius="50" Shape="Sphere2D" T1="1000" T2="100"/>
+   <Model ChemicalShiftFactor="0" ConcomitantFields="-1" FieldFluctuations="2.5"/>
+</JMRI-SIM>
