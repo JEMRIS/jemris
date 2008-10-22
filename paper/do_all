@@ -1,9 +1,0 @@
-#!/bin/sh
-
-latex  jemris
-bibtex jemris
-latex  jemris
-latex  jemris
-
-dvips -t a4 jemris.dvi -o jemris.ps
-ps2pdf jemris.ps jemris.pdf
