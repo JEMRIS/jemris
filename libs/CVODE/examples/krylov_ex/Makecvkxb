@@ -1,0 +1,22 @@
+#----------------------------------------------------------------------------
+#          Makefile for the Krylov Example Program cvkxb.c
+#----------------------------------------------------------------------------
+
+
+COMPILER = gcc
+
+INC = ../../include
+
+LIB = ../../lib
+
+OPTS = -I$(INC)
+
+HDRS = $(INC)/llnltyps.h $(INC)/cvode.h $(INC)/iterativ.h $(INC)/cvspgmr.h \
+       $(INC)/cvbandpre.h $(INC)/band.h $(INC)/nvector.h $(INC)/llnlmath.h
+
+
+cvkxb: cvkxb.o
+	$(COMPILER) -L$(LIB) -o cvkxb cvkxb.o -lcvode -lm
+
+cvkxb.o: cvkxb.c $(HDRS)
+	$(COMPILER) $(OPTS) -c cvkxb.c

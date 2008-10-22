@@ -1,0 +1,22 @@
+#----------------------------------------------------------------------------
+#          Makefile for the Krylov Example Program cvkx.c
+#----------------------------------------------------------------------------
+
+
+COMPILER = gcc
+
+INC = ../../include
+
+LIB = ../../lib
+
+OPTS = -I$(INC)
+
+HDRS = $(INC)/llnltyps.h $(INC)/cvode.h $(INC)/iterativ.h $(INC)/cvspgmr.h \
+       $(INC)/dense.h $(INC)/nvector.h $(INC)/llnlmath.h
+
+
+cvkx: cvkx.o
+	$(COMPILER) -L$(LIB) -o cvkx cvkx.o -lcvode -lm
+
+cvkx.o: cvkx.c $(HDRS)
+	$(COMPILER) $(OPTS) -c cvkx.c
