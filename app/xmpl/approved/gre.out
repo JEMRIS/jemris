@@ -1,0 +1,17 @@
+dump of sequence tree
+                          TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
+                          ----------------------------------------------------------------- |  ---------------
+sequence-root-------->   CONCAT       CONCATSEQUENCE        R   384.000     1024      1503  |  Repetitions = 1
+  |_ child 1   ------>   CONCAT       CONCATSEQUENCE        C   384.000     1024      1503  |  Repetitions = 32
+    |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     0.100        0         1  | 
+      |_ child 1   -->    PULSE          HARDRFPULSE       P1     0.100        0         1  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel) = (20,0,1e+16,0) 
+    |_ child 2   ---->     ATOM  DELAYATOMICSEQUENCE       D1     2.501        0         1  |  DelayType = C2C  , StartSeq = A1 , StopSeq = A3
+      |_ child 1   -->    PULSE           EMPTYPULSE    eP_D1     2.501        0         1  |  Axis = none 
+    |_ child 3   ---->     ATOM       ATOMICSEQUENCE       A2     2.132        0         5  | 
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P2     2.132        0         3  |  Axis = GX  , Area = -1.13164
+      |_ child 2   -->    PULSE        TRAPGRADPULSE       P3     1.942        0         3  |  Axis = GY  , Area = 0.942478
+    |_ child 4   ---->     ATOM       ATOMICSEQUENCE       A3     6.634       32        39  | 
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     5.005       32        36  |  Axis = GX  , Area = 2.26328 , FlatTop: (Area,time)= (2.01062,4)
+      |_ child 2   -->    PULSE        TRAPGRADPULSE       P5     2.132        0         3  |  Axis = GX  , InitDelay = 4.50265 , Area = 1.13164
+    |_ child 5   ---->     ATOM  DELAYATOMICSEQUENCE       D2     0.633        0         1  |  DelayType = B2E  , StartSeq = A1
+      |_ child 1   -->    PULSE           EMPTYPULSE    eP_D2     0.633        0         1  |  Axis = none 

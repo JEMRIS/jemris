@@ -1,0 +1,373 @@
+ <html>
+<HEAD>
+<TITLE>VarArray Library</TITLE>
+<!-- Changed by: g.egerer,  2-Nov-2000 -->
+<style>
+PRE {
+  font-size : 103%;
+  background-color : #eeeeee;
+  margin-left : 0;
+  margin-right : 1.5cm;
+  padding-left : 1em;
+}
+</style>
+</HEAD>
+<BODY bgcolor=white>
+
+<A NAME="multi-dim-arrays">&#160;</A>
+<font face="Arial, Helvetica, sans-serif">
+<H2>Easy-to-Handle Variable Size Multi-Dimensional Arrays in C/C++</H2>
+
+<p>
+In C/C++, array sizes need to be known at compile time, since dimension
+bounds of build-in arrays must be specified by <em>constant</em> expressions.
+This is a problem for many applications where the array sizes are determined
+at run time.
+<p>
+Another consequence of restricting bounds to constant expressions is that you
+cannot declare a function parameter in such a way that arrays (with more than
+one dimension) of any size can be passed to it.
+<p>
+<em>Example:</em>
+<pre>
+#include &lt;stdio.h&gt;
+
+void printMatrix(int m[ ][3], int rowc)   // <em>The number of columns (specified by</em>
+{                                         // <em>the constant 3) cannot be omitted.</em>
+  /* ... */   m[i][j]   /* ... */
+}
+
+int main(void)
+{
+  int a1[2][3], a2[10][3], a3[6][10];
+  // ...
+  printMatrix(a1, 2);      // <em>OK, prints matrix with 2 rows and 3 columns</em>
+  printMatrix(a2, 10);     // <em>OK, prints matrix with 10 rows and 3 columns</em>
+  printMatrix(a3, 6);      // <em>error: wrong number of columns</em>
+  // ...
+}
+</pre>
+The <strong>VarArray</strong> library presented here provides easy-to-use
+macros and functions to overcome these restrictions. The advantages of VarArrays
+are:
+<ul>
+<li>Array sizes did not need to be known at compile time. An VarArray of any size
+can be created at any time by calling the appropriate
+<a HREF="#create"><em>vaCreate_...()</em></a> function.
+<p>
+<li>A parameter can be declared as VarArray with elements of type T, and an VarArray
+of that type, of any size, can be passed to the function.
+<p>
+<li>Dimension bounds of an VarArray can be queried with the function
+<a HREF="#query"><em>vaSize()</em></a>.
+</ul>
+<p>
+After replacing the build-in arrays with VarArrays, the example above will look like
+the following:
+<p>
+<em>Example using VarArrays:</em>
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;var_array.h&gt;
+// <em>Don't forget to link this program with the flag</em> -lvar_array.
+
+void printMatrix(vaArray_2d(int) m)
+{
+  int rowc = vaSize(m,1);     // number of rows
+  int colc = vaSize(m,2);     // number of columns
+
+  /* ... */   m[i][j]   /* ... */
+}
+
+int main(void)
+{
+  vaArray_2d(int) a1 = vaCreate_2d( 2,  3, int, NULL);
+  vaArray_2d(int) a2 = vaCreate_2d(10,  3, int, NULL);
+  vaArray_2d(int) a3 = vaCreate_2d( 6, 10, int, NULL);
+  // ...
+  printMatrix(a1);     // <em>OK, prints matrix with 2 rows and 3 columns</em>
+  printMatrix(a2);     // <em>OK, prints matrix with 10 rows and 3 columns</em>
+  printMatrix(a3);     // <em>OK, prints matrix with 6 rows and 10 columns</em>
+  // ...
+  vaDelete(a1);
+  vaDelete(a2);
+  vaDelete(a3);
+  // ...
+}
+</pre>
+
+<h3>Array Types</h3>
+The type of an VarArray includes its dimensionality (the number of its dimensions
+but not their size) and also the data type of the elements contained within the array.
+VarArray types are specified by macros that are defined in the header file
+<strong>&lt;var_array.h&gt;</strong>:
+<p>
+<table cellpadding="10" cellspacing="0" border="0">
+  <tr>
+    <td><b>vaArray_1d(</b><i>element_type</i><b>)</b><br>
+        <b>vaArray_2d(</b><i>element_type</i><b>)</b><br>
+        <b>vaArray_3d(</b><i>element_type</i><b>)</b><br>
+        <b>vaArray_4d(</b><i>element_type</i><b>)</b><br>
+        <b>vaArray_5d(</b><i>element_type</i><b>)</b>
+    </td>
+  </tr>
+</table>
+<p>
+<em>Example:</em>
+<pre>
+vaArray_3d(double) c;   // <em>c is an 3-dimensional array of doubles</em>
+</pre>
+Note that the statement above does not allocate any memory to contain the
+array elements. Memory space for an VarArray must be allocated by using the
+<em>vaCreate_...()</em> functions described in the section
+<a HREF="#create"><em>Creating Arrays</em></a>.
+<hr>
+<strong>Caution:</strong> Do not declare more than one VarArray per declarator list.
+This is necessary because each array type macro simply expands to text that specifies
+a pointer type.
+<p>
+For example, each of the following two lines (they are equivalent since
+<em>vaArray_1d(int)</em> expands to <em>int *</em>) declares
+only one VarArray, <em>a</em>, and a single scalar integer variable named <em>b</em>. 
+<pre>
+vaArray_1d(int) a, b;   // <em>This is equivalent to the following line:</em>
+int * a, b;             // <em>Note: b is a scalar variable of type "int" (not an VarArray)</em>
+</pre>
+
+Another way to deal with this restriction is to name array types via typedef:
+<pre>
+typedef vaArray_1d(int) intArray_1d;
+intArray_1d a, b;     // <em>a and b are both VarArrays (1-dimensional arrays of integers)</em>
+</pre>
+<hr>
+
+<h3>Working with VarArrays</h3>
+<a NAME="create"></a>
+<h4>Creating Arrays</h4>
+To allocate the storage for an VarArray, you have to call the appropriate
+<em>vaCreate_...()</em> function:
+<p>
+<table cellpadding="10" cellspacing="0" border="1">
+  <tr>
+    <td>
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top">vaArray_1d(<i>element_type</i>) <b>vaCreate_1d(</b>&nbsp;</td>
+          <td nowrap valign="top">int <i>dim1</i><b>, </b>//<em> number of elements</em></td>
+        </tr>
+        <tr>
+          <td nowrap align="right"></td>
+          <td nowrap><i>element_type</i><b>, </b>const void *<i>ptr_to_storage</i> <b>);</b></td>
+        </tr>
+        <tr>
+          <td colspan="2"><hr></td>
+        </tr>
+
+        <tr>
+          <td nowrap valign="top">vaArray_2d(<i>element_type</i>) <b>vaCreate_2d(</b>&nbsp;</td>
+          <td nowrap valign="top">int <i>dim1</i><b>, </b>//<em> number of rows</em></td>
+        </tr>
+        <tr>
+          <td nowrap align="right"></td>
+          <td nowrap>int <i>dim2</i><b>, </b>//<em> number of columns</em></td>
+        </tr>
+        <tr>
+          <td nowrap align="right"></td>
+          <td nowrap><i>element_type</i><b>, </b>const void *<i>ptr_to_storage</i> <b>);</b></td>
+        </tr>
+        <tr>
+          <td colspan="2"><hr></td>
+        </tr>
+
+        <tr>
+          <td nowrap valign="top">vaArray_3d(<i>element_type</i>) <b>vaCreate_3d(</b>&nbsp;</td>
+          <td nowrap valign="top">int <i>dim1</i><b>,</b> int <i>dim2</i><b>,</b> int <i>dim3</i><b>,</b></td>
+        </tr>
+        <tr>
+          <td nowrap align="right"></td>
+          <td nowrap><i>element_type</i><b>, </b>const void *<i>ptr_to_storage</i> <b>);</b></td>
+        </tr>
+        <tr>
+          <td colspan="2"><hr></td>
+        </tr>
+
+        <tr>
+          <td nowrap valign="top">vaArray_4d(<i>element_type</i>) <b>vaCreate_4d(</b>&nbsp;</td>
+          <td nowrap valign="top">int <i>dim1</i><b>,</b> int <i>dim2</i><b>,</b> int <i>dim3</i><b>,</b> int <i>dim4</i><b>,</b></td>
+        </tr>
+        <tr>
+          <td nowrap align="right"></td>
+          <td nowrap><i>element_type</i><b>, </b>const void *<i>ptr_to_storage</i> <b>);</b></td>
+        </tr>
+        <tr>
+          <td colspan="2"><hr></td>
+        </tr>
+
+        <tr>
+          <td nowrap valign="top">vaArray_5d(<i>element_type</i>) <b>vaCreate_5d(</b>&nbsp;</td>
+          <td nowrap valign="top">int <i>dim1</i><b>,</b> int <i>dim2</i><b>,</b> int <i>dim3</i><b>,</b> int <i>dim4</i><b>,</b> int <i>dim5</i><b>,</b></td>
+        </tr>
+        <tr>
+          <td nowrap align="right"></td>
+          <td nowrap><i>element_type</i><b>, </b>const void *<i>ptr_to_storage</i> <b>);</b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+
+</table>
+<table cellspacing="10" cellpadding="0" border="0">
+  <tr>
+    <td>
+     <b>Parameters:</b>
+     <table><tr VALIGN="TOP"><td NOWRAP="NOWRAP" ROWSPAN="1" COLSPAN="1">
+	       <i>dim</i>...</td>
+     <td ROWSPAN="1" COLSPAN="1">
+	                 Specifies the length of the corresponding dimension of the array.
+     </td></tr>
+
+     <tr VALIGN="TOP"><td NOWRAP="NOWRAP" ROWSPAN="1" COLSPAN="1">
+	       <i>element_type</i></td>
+     <td ROWSPAN="1" COLSPAN="1">
+	                 Data type of the array elements.
+     </td></tr>
+     <tr VALIGN="TOP"><td NOWRAP="NOWRAP" ROWSPAN="1" COLSPAN="1">
+	       <i>ptr_to_storage </i></td>
+     <td ROWSPAN="1" COLSPAN="1">
+                         Could be a pointer to a storage area large enough to hold all 
+                         elements of the array. This is useful if you want to convert a
+                         build-in array to an VarArray (see
+                         <a HREF="#print"><em>Printing Arrays</em></a> for a example).
+                         If a NULL pointer is passed, all memory for the VarArray will be
+                         allocated by the <em>vaCreate_...()</em> function.
+     </td></tr>
+     </table>
+    </td>
+  </tr>
+</table>
+Once you have assigned the return value of <em>vaCreate_...()</em> to a variable,
+you can then use that variable as your VarArray. To deallocate the storage, use
+<a HREF="#delete"><em>vaDelete()</em></a>.
+<h4>Accessing Elements</h4>
+The elements in an VarArray are accessed by means of the index operator [ ] (just like
+elements in an regular C/C++ build-in array). The number of indices may be less than
+the number of dimensions of the indexed VarArray. In this case, the result is itself 
+an VarArray containing all the dimensions which are not addressed by the indices.
+<p>
+<em>Example:</em>
+<pre>
+vaArray_3d(int) cube;   // <em>cube is an 3-dimensional array of integers</em>
+// ...
+printmatrix(cube[0]);   // <em>OK, cube[0] has type vaArray_2d(int)</em>
+</pre>
+<p>
+<a NAME="query"></a>
+<h4>Querying Array Bounds</h4>
+<table cellpadding="10" cellspacing="0" border="1">
+  <tr>
+    <td>
+      int <b>vaSize( </b><i>VarArray</i><b>, </b>int <i>dim</i><b> );</b>
+    </td>
+  </tr>
+
+</table>
+<p>
+The <em>vaSize()</em> function returns the length of the dimension specified by
+<i>dim</i>. For example, <em>vaSize(m,1)</em> returns the length of the first
+dimension of the VarArray <em>m</em>. For a 2-dimensional array, this is the
+number of rows. <em>vaSize()</em> returns -1 if the dimension to be queried does
+not exist.
+<p>
+<a NAME="delete"></a>
+<h4>Deleting Arrays</h4>
+<table cellpadding="10" cellspacing="0" border="1">
+  <tr>
+    <td>
+      void <b>vaDelete( </b><i>VarArray</i><b> );</b>
+    </td>
+  </tr>
+
+</table>
+<p>
+Deallocates the storage for the specified VarArray. The value passed as <em>VarArray</em>
+must have been returned by a previous call to one of the
+<a HREF="#create"><em>vaCreate_...()</em></a> functions.
+<p>
+<a NAME="print"></a>
+<h4>Printing Arrays (C++ only)</h4>
+<table cellpadding="10" cellspacing="0" border="1">
+  <tr>
+    <td>
+      std::ostream& <b>vaPrint( </b>std::ostream& <i>os</i><b>, </b> <i>VarArray</i><b>, </b> int <i>indent</i>=0<b> );</b>
+    </td>
+  </tr>
+
+</table>
+<p>
+After including <strong>&lt;var_array++.h&gt;</strong> (instead of
+<strong>&lt;var_array.h&gt;</strong>), you can use the <em>vaPrint()</em></a> function
+to print the contents of an VarArray to the given ostream. <em>indent</em> specifies
+the indentation (number of spaces) of the output.
+<p>
+<em>Example:</em>
+<pre>
+#include &lt;iostream&gt;
+#include &lt;var_array++.h&gt;
+
+int main(void)
+{
+  char ctab_[2][2] = {
+    { 'a', 'b' },
+    { 'c', 'd' }
+  };
+  // <em>the following code line makes the build-in array</em> ctab_
+  // <em>accessable as VarArray</em> ctab<em>:</em>
+  vaArray_2d(char) ctab = vaCreate_2d(2, 2, char, ctab_);
+
+  std::cout << "Matrix:" << std::endl;
+  vaPrint(std::cout, ctab);
+  std::cout << "First line of matrix:" << std::endl;
+  vaPrint(std::cout, ctab[0], 3);
+
+  vaDelete(ctab);
+}
+</pre>
+The program above produces the following output:
+<pre>
+Matrix:
+[ [0]: [ [0]: a
+         [1]: b
+       ]
+  [1]: [ [0]: c
+         [1]: d
+       ]
+]
+First line of matrix:
+   [ [0]: a
+     [1]: b
+   ]
+</pre>
+
+<h3>License</h3>
+This software is <strong>free</strong> but
+<strong>copyright</strong> &copy; 2003-2006 by <a href="http://www.fz-juelich.de/zam/en"
+class="footerlink">Forschungszentrum J&uuml;lich, ZAM</a>, Germany. By downloading and
+using this software you automatically agree to comply with the regulations as described
+in the <a href="LICENSE.html" title="view license">license agreement</a>.
+
+<p>For further information (in German) see:</p>
+
+<ul>
+
+<li> <b><a HREF=VarArray-talk.pdf>[PDF] Einfach benutzbare mehrdimensionale Felder variabler Gr&ouml;&szlig;e in C/C++</a></b><br>
+(Presentation given at FZJ/ZAM, January 24, 2005)</a>
+</li>
+
+</ul>
+<h3>Authors</h3>
+<p> G&uuml;nter Egerer, Annika Schiller, Forschungszentrum J&uuml;lich</p>
+<br>
+
+</body>
+</html>

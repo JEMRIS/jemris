@@ -1,0 +1,12 @@
+
+cd distribution
+make distclean
+./configure --prefix=$PWD/../ --exec-prefix=$PWD/../ --with-cppflags="-O3" --disable-fcmix --disable-mpi
+
+make
+make install
+cd ..
+
+
+
+

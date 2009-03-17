@@ -1,0 +1,33 @@
+$prefix=/usr
+$exec_prefix=/usr
+$bindir=${exec_prefix}/bin
+$datadir=/usr/share
+$docdir=${datadir}/doc/epm
+$libdir=/usr/lib
+$mandir=/usr/share/man
+$srcdir=.
+
+
+%product jemris
+%copyright 2008-2009 by Research Centre Juelich
+%vendor Research Centre Juelich
+%license COPYING
+%readme README
+%description Juelich Extensible Magnetic Resonance Imaging Simulator
+%version 2.0.1
+
+# Executables
+%system all
+f 0555 root sys ${bindir}/jemris jemris
+f 0555 root sys ${bindir}/pjemris pjemris
+f 0555 root sys ${bindir}/santityck santityck
+
+# Documentation
+%subpackage documentation
+%description Documentation for EPM
+f 0444 root sys ${docdir}/README $srcdir/README
+f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
+f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
+
+
+

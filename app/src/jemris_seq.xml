@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<PARAM>
+
+  <CONCAT Name="C1" Repetitions="1">
+    <ATOMIC Name="A1">
+      <PULSE Duration="1" FlipAngle="90" Name="P1" Type="RF_RECT"/>
+    </ATOMIC>
+    <ATOMIC ADCs="1024" Delay="500" DelayType="B2E" Name="D1">
+      <PULSE ADCs="1024" Axis="4" Duration="500" Name="eP_D1" Type="RO"/>
+    </ATOMIC>
+    <ATOMIC Name="A2">
+      <PULSE Duration="1" FlipAngle="180" Name="P2" Type="RF_RECT"/>
+    </ATOMIC>
+    <ATOMIC ADCs="2048" Delay="1000" DelayType="B2E" Name="D2">
+      <PULSE ADCs="2048" Axis="4" Duration="1000" Name="eP_D2" Type="RO"/>
+    </ATOMIC>
+    <ATOMIC Delay="1000" DelayType="B2E" Name="D2">
+      <PULSE Axis="4" Duration="1000" Name="eP_D2" Type="NONE"/>
+    </ATOMIC>
+  </CONCAT>
+
+</PARAM>
