@@ -87,11 +87,12 @@ void  Sequence::WriteSeqFile (ofstream* pfout, double& time) {
 	if (GetType() == MOD_ATOM) {
 
 		//write value to the binary file at each TPOI
-		for (int i=0; i<GetNumOfTPOIs(); ++i) {
+		for (int i=0; i<=GetNumOfTPOIs(); ++i) {
 
-			double dt = m_tpoi.GetTime(i);
+			double dt,dp;
+			if (i==0)	{ dt = GetDuration()/1e9; dp=-1.0; }
+			else		{ dt = m_tpoi.GetTime(i-1); dp = m_tpoi.GetPhase(i-1); }
 			double t  = time + dt;
-			double dp = m_tpoi.GetPhase(i);
 
 			pfout->write((char *)(&(t)),sizeof(t));
 			pfout->write((char *)(&(dp)),sizeof(dp));
