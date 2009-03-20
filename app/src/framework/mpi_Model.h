@@ -117,7 +117,7 @@ void mpi_devide_and_send_sample (Sample* pSam, int tag) {
 		int NextSpinToSend 	= 0;
 
 		//send half of sample to cpus the old way:
-		count = floor( TotalNoSpins/2/(size-1));
+		count = floor((float) TotalNoSpins/2/(size-1));
 		if (count > maxPaketSize) count = maxPaketSize;
 	//	if (count < minPaketSize) count = minPaketSize;
 		NextSpinToSend = count*(size-1);
@@ -166,7 +166,7 @@ void mpi_devide_and_send_sample (Sample* pSam, int tag) {
 			{
 				SpinsLeft = TotalNoSpins - NextSpinToSend;
 				// make spin packets smaller as the number of spins decreases:
-				NoSpins = floor (SpinsLeft/2/(size-1) );
+				NoSpins = floor ((float) SpinsLeft/2/(size-1) );
 				if (NoSpins > maxPaketSize) NoSpins = maxPaketSize;
 				if (NoSpins < minPaketSize)
 				{

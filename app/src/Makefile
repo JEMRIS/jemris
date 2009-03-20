@@ -14,8 +14,8 @@ ifeq ($(ARCH), x86_64)
     MPICC=mpicxx
 endif
 ifeq ($(ARCH), ppc64)
-    MPICC=mpixlcxx_r 
-    CC   =bgxlc++_r
+    MPICC=mpixlcxx
+    CC   =bgxlC
 endif
 ifeq ($(SYS), MINGW32_NT-5.1)
     MPICC=g++ 
@@ -28,7 +28,6 @@ SRC    = ./framework/
 MATLB  = ../matlab/
 
 # 3rd party libraries 
-#CVODE  = ../../libs/CVODE
 CVODE  = ../../libs/CVODE2.5
 
 RNG    = ../../libs/RNG
@@ -36,14 +35,15 @@ BOOST  = ../../libs/BOOST
 VARRY  = ../../libs/VARRY
 LOCAL  = ../../..
 CVLIB  = $(CVODE)/lib
-CVINC  = $(CVODE)/include
+CVINC  = $(CVODE)/distribution/include
+CVSRC  = $(CVODE)/distribution/src
 LOCALL = $(LOCAL)/lib
 LOCALI = $(LOCAL)/include
 VASRC  = $(VARRY)/src
 
 
 # Compiler option
-CCOPTS = -O3 -w $(W32_FLAGS) -D$(ARCH)$(SYS) -I$(LOCALI) -I$(RNG) -I$(CVINC) -I$(SRC) -I$(BOOST) -I$(VASRC)
+CCOPTS = -O3 -w $(W32_FLAGS) -D$(ARCH)$(SYS) -I$(LOCALI) -I$(RNG) -I$(CVINC) -I$(CVSRC) -I$(SRC) -I$(BOOST) -I$(VASRC)
 
 #Linker options
 LDOPTS = $(W32_FLAGS) -L$(CVLIB) -L$(LOCALL) -L$(VASRC) $(RNG)/rng.o -lxerces-c -lm  -lginac -lcln -lvar_array -lsundials_cvode -lsundials_nvecserial
