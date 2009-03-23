@@ -41,7 +41,7 @@ repositories. The installation then is straightforward:
 \li \c <b>"# sudo aptitude install libginac-dev"</b>
 
 The provided version numbers for your flavor may differ. The above
-will install Xerces libraries version 2.8 and GiNAC version 1.4.
+will install Xerces libraries version 2.8 and GiNAC version 1.4 (Ginac 1.5 is not yet compatible with JEMRIS!).
 
 \section ug_install_mpi Install MPICH if desired
 
@@ -65,20 +65,29 @@ depending on distribution and version.
 
 \section ug_install_compilation Compile JEMRIS 2
 
-Download the jemris package from [http://www.jemris.org/jemris/jemris-2.0.tgz]
+Download the jemris package from [http://www.jemris.org/jemris/jemris-2.1.tgz]
 
 The unpacked tar ball will contain two directories: libs and app. The
 next step is to descend in libs/RNG and build it. RNG is a random
 number generator used in some modules of JEMRIS. 
 
-\li \c <b>"# cd jemris-2.0"</b>
+\li \c <b>"# cd jemris-2.1"</b>
 \li \c <b>"# cd libs/RNG"</b>
 \li \c <b>"# make"</b>
 
 Now leave the RNG directory and compile the variable time stepping
 solver CVODE developed at the Lawrence Livermore National Libraries.
 
-\li \c <b>"# cd ../CVODE"</b>
+\li \c <b>"# cd ../CVODE2.5"</b>
+
+And run the following command twice for the initial compile run.
+
+\li \c <b>"# ./script_install_cvode2.5"</b>
+
+Next compile the VarArray library [http://www.fz-juelich.de/jsc/cv/tools/VarArray]:
+
+\li \c <b>"# cd ../VARRY</b>
+\li \c <b>"# ./configure"</b>
 \li \c <b>"# make"</b>
 
 The third library of which parts are used is the Boost C++
@@ -108,7 +117,7 @@ If you have made it so far, you have succeeded in compiling JEMRIS.
 
 Finally, to run JEMRIS  from Matlab, add the path
  
-\li \c <b>"<cwd>/jemris-2.0/app/matlab"</b>
+\li \c <b>"<cwd>/jemris-2.1/app/matlab"</b>
 
 to your Matlab search path, where \c <b>"<cwd>"</b> denotes the directory in which
 you extracted the archive.
@@ -600,7 +609,7 @@ will be called <b>\c work_dir</b> hereafter.
     <b> \c >> \c cd \c work_dir</b>
 \li Add the path to the directory with the JEMRIS matlab code to your
 MATLAB runtime
-    <b> \c >> \c addpath \c ../jemris-2.0/app/matlab</b>
+    <b> \c >> \c addpath \c ../jemris-2.1/app/matlab</b>
 \li Start up the <b>Sequence GUI</b> with the following command<br>
     <b> \c >> \c JEMRIS_seq</b>
 \image html /doc/pics/jemris_sequence.png
