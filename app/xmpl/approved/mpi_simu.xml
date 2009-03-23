@@ -4,7 +4,7 @@
    <RXcoilarray uri="../xmpl/approved/uniform.xml"/>
    <TXcoilarray uri="../xmpl/approved/uniform.xml"/>
    <parameter PositionRandomness="0"/>
-   <sequence name="epi" uri="epi.xml"/>
+   <sequence name="epi" uri="../xmpl/epi.xml"/>
    <model name="Bloch" type="CVODE"/>
 </simulate>
 
