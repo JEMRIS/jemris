@@ -2,26 +2,27 @@
 <JEMRIS_MODULES>
 
   <CONCATS>
-    <CONCATSEQUENCE Aux1="0" Aux2="0" Aux3="0" CounterHIDDEN="0" DurationHIDDEN="0" Name="CONCATSEQUENCE" Observe="" Repetitions="1" Vector=""/>
+    <CONCATSEQUENCE Aux1="-2.22195e-146" Aux2="-2.22195e-146" Aux3="-2.22195e-146" CounterHIDDEN="dynamic" DurationHIDDEN="dynamic" DurationHIDDENValues="" Name="CONCATSEQUENCE" Observe="" Repetitions="1" Vector=""/>
   </CONCATS>
 
   <ATOMS>
-    <ATOMICSEQUENCE Aux1="0" Aux2="0" Aux3="0" Azimut="0" DurationHIDDEN="0" Inclination="0" Name="ATOMICSEQUENCE" Observe="" RotAngle="0" Vector=""/>
-    <DELAYATOMICSEQUENCE ADCs="0" Aux1="0" Aux2="0" Aux3="0" Delay="0" DelayType="B2E" DurationHIDDEN="0" Name="DELAYATOMICSEQUENCE" Observe="" PhaseLock="0" StartSeq="" StopSeq="" Vector=""/>
+    <ATOMICSEQUENCE Aux1="2.78134e-309" Aux2="5.55963e-312" Aux3="8.48805e-314" Azimut="0" DurationHIDDEN="dynamic" DurationHIDDENValues="" Inclination="0" Name="ATOMICSEQUENCE" Observe="" RotAngle="0" Vector=""/>
+    <DELAYATOMICSEQUENCE ADCs="0" Aux1="5.51719e-312" Aux2="8.48805e-314" Aux3="2.78147e-309" Delay="0" DelayType="B2E" DurationHIDDEN="dynamic" DurationHIDDENValues="" Name="DELAYATOMICSEQUENCE" Observe="" PhaseLock="0" StartSeq="" StopSeq="" Vector=""/>
   </ATOMS>
 
   <PULSES>
     <ANALYTICGRADPULSE ADCs="0" AreaHIDDEN="0" Axis="1" Constants="" Diff="" Duration="0" InitialDelay="0" NLG_field="0" Name="ANALYTICGRADPULSE" Observe="" PhaseLock="0" Shape="0" TPOIs="0" Vector=""/>
     <ANALYTICRFPULSE ADCs="0" Bandwidth="0" Channel="0" Constants="" Diff="" Duration="0" FlipAngleHIDDEN="0" Frequency="0" InitialDelay="0" InitialPhase="0" Name="ANALYTICRFPULSE" Observe="" PhaseLock="0" Shape="0" TPOIs="0" Vector=""/>
-    <CONSTANTGRADPULSE ADCs="0" Amplitude="0" AreaHIDDEN="0" Axis="1" Duration="0" InitialDelay="0" NLG_field="0" Name="CONSTANTGRADPULSE" Observe="" PhaseLock="0" Vector=""/>
+    <CONSTANTGRADPULSE ADCs="0" Amplitude="0" AreaHIDDEN="dynamic" AreaHIDDENValues="" Axis="1" Duration="0" InitialDelay="0" NLG_field="0" Name="CONSTANTGRADPULSE" Observe="" PhaseLock="0" Vector=""/>
     <EMPTYPULSE ADCs="0" Axis="4" Duration="0" InitialDelay="0" Name="EMPTYPULSE" Observe="" PhaseLock="0" Vector=""/>
-    <EXTERNALGRADPULSE ADCs="0" Area="nan" Axis="1" Duration="0" Filename="" InitialDelay="0" MaxAmpl="0" NLG_field="0" Name="EXTERNALGRADPULSE" Observe="" PhaseLock="0" Scale="1" SlewRate="0" Vector=""/>
+    <EXTERNALGRADPULSE ADCs="0" Area="nan" Axis="1" Duration="0" Filename="" InitialDelay="0" MaxAmpl="1.08858e-311" NLG_field="0" Name="EXTERNALGRADPULSE" Observe="" PhaseLock="0" Scale="1" SlewRate="8.48798e-314" Vector=""/>
     <EXTERNALRFPULSE ADCs="0" Channel="0" Duration="0" Filename="" FlipAngle="0" Frequency="0" InitialDelay="0" InitialPhase="0" Name="EXTERNALRFPULSE" Observe="" PhaseLock="0" Scale="1" Vector=""/>
     <GAUSSIANRFPULSE ADCs="0" Bandwidth="0" Channel="0" Duration="0" FlipAngle="0" Frequency="0" InitialDelay="0" InitialPhase="0" Name="GAUSSIANRFPULSE" Observe="" PhaseLock="0" Vector=""/>
     <HARDRFPULSE ADCs="0" Channel="0" Duration="0" FlipAngle="0" Frequency="0" InitialDelay="0" InitialPhase="0" Name="HARDRFPULSE" Observe="" PhaseLock="0" Vector=""/>
-    <LISSAJOUSGRADPULSE ADCs="0" AreaHIDDEN="0" Axis="1" Duration="0" InitialDelay="0" NLG_field="0" Name="LISSAJOUSGRADPULSE" Observe="" PhaseLock="0" Radius="0.05" TurnsA="20" TurnsD="21" Vector=""/>
-    <LTARFPULSE A="0" ADCs="0" Alpha="0" Bandwidth="0" Beta="0" Channel="0" Duration="0" FlipAngle="0" Frequency="0" Gamma="0" InitialDelay="0" InitialPhase="0" N="0" Name="LTARFPULSE" Observe="" PhaseLock="0" TPOIs="0" Vector=""/>
-    <LTASPIRALGRADPULSE A="0" ADCs="0" Area="0" Axis="1" Duration="0" InitialDelay="0" MaxAmpl="0" N="0" NLG_field="0" Name="LTASPIRALGRADPULSE" Observe="" PhaseLock="0" SlewRate="0" Vector=""/>
+    <LISSAJOUSGRADPULSE ADCs="0" AreaHIDDEN="dynamic" AreaHIDDENValues="" Axis="1" Duration="0" InitialDelay="0" NLG_field="0" Name="LISSAJOUSGRADPULSE" Observe="" PhaseLock="0" Radius="0.05" TurnsA="20" TurnsD="21" Vector=""/>
+    <LTARFPULSE A="1.2732e-313" ADCs="0" Alpha="5.49597e-312" Bandwidth="0" Beta="2.72889e-311" Channel="0" Duration="0" FlipAngle="0" Frequency="0" Gamma="2.72676e-311" InitialDelay="0" InitialPhase="0" N="6" Name="LTARFPULSE" Observe="" PhaseLock="0" TPOIs="0" Vector=""/>
+    <LTASPIRALGRADPULSE A="-2.22195e-146" ADCs="0" Area="-2.22195e-146" Axis="1" Duration="0" InitialDelay="0" MaxAmpl="-2.22195e-146" N="-1582186029" NLG_field="0" Name="LTASPIRALGRADPULSE" Observe="" PhaseLock="0" SlewRate="-2.22195e-146" Vector=""/>
+    <SECHRFPULSE ADCs="0" BandwidthHIDDEN="0" Channel="0" Duration="5.12" FlipAngle="210" FrequencyHIDDEN="0" InitialDelay="0" InitialPhase="0" Name="SECHRFPULSE" Observe="" PhaseLock="0" Vector=""/>
     <SINCRFPULSE ADCs="0" Apodization="0.5" Bandwidth="10" Channel="0" DurationHIDDEN="0.6" FlipAngle="90" Frequency="0" InitialDelay="0" InitialPhase="0" Name="SINCRFPULSE" Observe="" PhaseLock="0" Vector="" Zeros="3"/>
     <SPIRALGRADPULSE ADCs="0" Alpha="0" Area="0" Axis="1" Duration="0" InitialDelay="0" MaxAmpl="1" NLG_field="0" Name="SPIRALGRADPULSE" Observe="" PhaseLock="0" Pitch="0" SlewRate="1" Vector=""/>
     <STARFPULSE A="0" ADCs="0" Alpha="0" Bandwidth="0" Beta="0" Channel="0" Duration="0" FlipAngle="0" Frequency="0" Gamma="0" InitialDelay="0" InitialPhase="0" N="0" Name="STARFPULSE" Observe="" PhaseLock="0" TPOIs="0" Vector=""/>
