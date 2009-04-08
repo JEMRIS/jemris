@@ -26,24 +26,16 @@
 #define _MPI_MODEL_H_
 
 #include<iostream>
+#include "config.h"
 
 using namespace std;
 #define MPICH_IGNORE_CXX_SEEK
 
-#ifdef i386Linux
+#ifdef HAVE_MPI_H
+    #include <mpi.h>
+#endif
+#ifdef HAVE_MPI___H
     #include <mpi++.h>
-#endif
-#ifdef i386Darwin
-    #include <mpi.h>
-#endif
-#ifdef x86_64Linux
-    #include <mpi++.h>
-#endif
-#ifdef ppc64Linux
-    #include <mpi.h>
-#endif
-#ifdef i386MINGW32_NT-5.1
-    #include <mpi.h>
 #endif
 
 #include "Sample.h"

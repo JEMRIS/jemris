@@ -16,21 +16,21 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-SHELL          = /bin/sh
+SHELL          = @SHELL@
 
-prefix         = /usr/local
+prefix         = @prefix@
 
 INSTALL        = @INSTALL@
 INSTALL_PROG   = @INSTALL_PROGRAM@
 INSTALL_HEADER = @INSTALL_DATA@
 
-MPICXX         = mpicxx
-CXX            = g++
-CFLAGS         = -g -O2
-LDFLAGS        = 
-LIBS           = -lvar_array -lsundials_nvecserial -lsundials_cvode -lm -lginac -lcln 
-BUILD          = i386-apple-darwin9.6.0
-HOST           = i386-apple-darwin9.6.0
+MPICXX         = @MPICXX@
+CXX            = @CXX@
+CFLAGS         = @CFLAGS@
+LDFLAGS        = @LDFLAGS@
+LIBS           = @LIBS@
+BUILD          = @build@
+HOST           = @host@
 
 
 HOME := $(SHELL echo $HOME)
@@ -46,17 +46,11 @@ MATLB  = ../matlab/
 
 # 3rd party libraries 
 
-BOOST  = ../../libs/BOOST
-LOCAL  = ../../..
-LOCALL = $(LOCAL)/lib
-LOCALI = $(LOCAL)/include
-
-
 # Compiler option
-CCOPTS = -O3 -w $(W32_FLAGS) -I$(LOCALI) -I$(SRC) -I$(BOOST) 
+CCOPTS = -O3 -w $(W32_FLAGS)  -I$(SRC)
 
 #Linker options
-LDOPTS = $(W32_FLAGS) -L$(LOCALL) -lxerces-c -lm  -lginac -lcln -lvar_array -lsundials_cvode -lsundials_nvecserial
+LDOPTS = $(W32_FLAGS) $(LD_FLAGS) -lxerces-c -lm  -lginac -lcln -lvar_array -lsundials_cvode -lsundials_nvecserial
 
 OBS := $(patsubst $(SRC)%.cpp,$(BUILD)%.o,$(wildcard $(SRC)*.cpp))
 INC := $(wildcard $(SRC)*.h)
