@@ -26,7 +26,7 @@ INSTALL_HEADER = @INSTALL_DATA@
 
 MPICXX         = @MPICXX@
 CXX            = @CXX@
-CFLAGS         = @CFLAGS@
+CXXFLAGS       = @CXXFLAGS@
 LDFLAGS        = @LDFLAGS@
 LIBS           = @LIBS@
 BUILD          = @build@
@@ -47,10 +47,10 @@ MATLB  = ../matlab/
 # 3rd party libraries 
 
 # Compiler option
-CCOPTS = -O3 -w $(W32_FLAGS)  -I$(SRC)
+CCOPTS = -O3 -w $(W32_FLAGS) $(CXXFLAGS) -I$(SRC)
 
 #Linker options
-LDOPTS = $(W32_FLAGS) $(LD_FLAGS) -lxerces-c -lm  -lginac -lcln -lvar_array -lsundials_cvode -lsundials_nvecserial
+LDOPTS = $(W32_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(LIBS)
 
 OBS := $(patsubst $(SRC)%.cpp,$(BUILD)%.o,$(wildcard $(SRC)*.cpp))
 INC := $(wildcard $(SRC)*.h)

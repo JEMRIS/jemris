@@ -26,9 +26,9 @@ INSTALL_HEADER = @INSTALL_DATA@
 
 MPICXX         = mpicxx
 CXX            = g++
-CFLAGS         = -g -O2
+CXXFLAGS       = 
 LDFLAGS        = 
-LIBS           = -lvar_array -lsundials_nvecserial -lsundials_cvode -lm -lginac -lcln 
+LIBS           = -lxerces-c -lvar_array -lsundials_nvecserial -lsundials_cvode -lm  -lginac
 BUILD          = i386-apple-darwin9.6.0
 HOST           = i386-apple-darwin9.6.0
 
@@ -46,17 +46,11 @@ MATLB  = ../matlab/
 
 # 3rd party libraries 
 
-BOOST  = ../../libs/BOOST
-LOCAL  = ../../..
-LOCALL = $(LOCAL)/lib
-LOCALI = $(LOCAL)/include
-
-
 # Compiler option
-CCOPTS = -O3 -w $(W32_FLAGS) -I$(LOCALI) -I$(SRC) -I$(BOOST) 
+CCOPTS = -O3 -w $(W32_FLAGS) $(CXXFLAGS) -I$(SRC)
 
 #Linker options
-LDOPTS = $(W32_FLAGS) -L$(LOCALL) -lxerces-c -lm  -lginac -lcln -lvar_array -lsundials_cvode -lsundials_nvecserial
+LDOPTS = $(W32_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(LIBS)
 
 OBS := $(patsubst $(SRC)%.cpp,$(BUILD)%.o,$(wildcard $(SRC)*.cpp))
 INC := $(wildcard $(SRC)*.h)

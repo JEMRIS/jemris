@@ -1,16 +1,27 @@
 /* framework/config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 if you have the <boost/math/special_functions/ellint_1.hpp>
+   header file. */
+#undef HAVE_BOOST_MATH_SPECIAL_FUNCTIONS_ELLINT_1_HPP
+
+/* Define to 1 if you have the <boost/math/special_functions/ellint_2.hpp>
+   header file. */
+#undef HAVE_BOOST_MATH_SPECIAL_FUNCTIONS_ELLINT_2_HPP
+
+/* Define to 1 if you have the <cln/cln.h> header file. */
+#undef HAVE_CLN_CLN_H
+
 /* Define to 1 if you have the <cvode/cvode.h> header file. */
 #undef HAVE_CVODE_CVODE_H
 
 /* Define to 1 if you have the `floor' function. */
 #undef HAVE_FLOOR
 
+/* Define to 1 if you have the <ginac/ginac.h> header file. */
+#undef HAVE_GINAC_GINAC_H
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the `cln' library (-lcln). */
-#undef HAVE_LIBCLN
 
 /* Define to 1 if you have the `ginac' library (-lginac). */
 #undef HAVE_LIBGINAC
@@ -74,11 +85,21 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the <var_array++.h> header file. */
+#undef HAVE_VAR_ARRAY___H
+
+/* Define to 1 if you have the <xercesc/dom/DOM.hpp> header file. */
+#undef HAVE_XERCESC_DOM_DOM_HPP
+
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
 /* Define to 1 if you have the </usr/lib/mpich/include/mpi.h> header file. */
 #undef HAVE__USR_LIB_MPICH_INCLUDE_MPI_H
+
+/* Define to 1 if you have the </usr/lpp/ppe.poe/include/mpi.h> header file.
+   */
+#undef HAVE__USR_LPP_PPE_POE_INCLUDE_MPI_H
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
