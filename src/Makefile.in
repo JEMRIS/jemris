@@ -20,7 +20,7 @@ SHELL          = @SHELL@
 
 prefix         = @prefix@
 
-INSTALL        = @INSTALL@
+INSTALL        = @INSTALL@                                                                                                                                   
 INSTALL_PROG   = @INSTALL_PROGRAM@
 INSTALL_HEADER = @INSTALL_DATA@
 
