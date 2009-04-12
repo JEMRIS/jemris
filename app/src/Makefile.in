@@ -95,10 +95,15 @@ mpi_check :
 	@echo
 
 check :  seqdiag_check simulation_check coil_check mpi_check 
+
 #clean up
 remove-objects :
 	rm -f $(BUILD)*.o *.o 
 remove-binaries :
 	rm -f jemris pjemris sanityck
+remove-conf :
+	rm -f config.log config.status config.cache framework/config.h Makefile mod.xml
+
 clean : remove-objects remove-binaries
+dist-clean : remove-objects remove-binaries remove-conf
 
