@@ -26,11 +26,12 @@ INSTALL_HEADER = @INSTALL_DATA@
 
 MPICXX         = mpicxx
 CXX            = g++
-CXXFLAGS       = 
+CXXFLAGS       = -g -O2
 LDFLAGS        = 
 LIBS           = -lxerces-c -lvar_array -lsundials_nvecserial -lsundials_cvode -lm  -lginac
 BUILD          = i386-apple-darwin9.6.0
 HOST           = i386-apple-darwin9.6.0
+PJEMRIS        = pjemris
 
 
 HOME := $(SHELL echo $HOME)
@@ -56,7 +57,7 @@ OBS := $(patsubst $(SRC)%.cpp,$(BUILD)%.o,$(wildcard $(SRC)*.cpp))
 INC := $(wildcard $(SRC)*.h)
 
 #TO DO: all objects + main program
-all   : jemris pjemris sanityck
+all   : jemris sanityck $(PJEMRIS)
 
 # commands for model framework
 $(BUILD)%.o       : $(SRC)%.cpp

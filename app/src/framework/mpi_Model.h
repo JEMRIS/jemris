@@ -31,12 +31,7 @@
 using namespace std;
 #define MPICH_IGNORE_CXX_SEEK
 
-#ifdef HAVE_MPI_H
-    #include <mpi.h>
-#endif
-#ifdef HAVE_MPI___H
-    #include <mpi++.h>
-#endif
+#include <mpi.h>
 
 #include "Sample.h"
 #include "Signal.h"

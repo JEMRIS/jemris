@@ -14,6 +14,21 @@ AC_CANONICAL_HOST
 AC_PROG_CXX
 
 # Check for required headers.
+AC_CHECK_HEADERS([cstdlib],                                   [], [AC_MSG_ERROR([cannot find cstdlib, bailing out])])
+AC_CHECK_HEADERS([ctime],                                     [], [AC_MSG_ERROR([cannot find ctime, bailing out])])
+AC_CHECK_HEADERS([cmath],                                     [], [AC_MSG_ERROR([cannot find cmath, bailing out])])
+AC_CHECK_HEADERS([climits],                                   [], [AC_MSG_ERROR([cannot find climits, bailing out])])
+AC_CHECK_HEADERS([vector],                                    [], [AC_MSG_ERROR([cannot find vector, bailing out])])
+AC_CHECK_HEADERS([iostream],                                  [], [AC_MSG_ERROR([cannot find iostream, bailing out])])
+AC_CHECK_HEADERS([sstream],                                   [], [AC_MSG_ERROR([cannot find sstream, bailing out])])
+AC_CHECK_HEADERS([fstream],                                   [], [AC_MSG_ERROR([cannot find fstream, bailing out])])
+AC_CHECK_HEADERS([iomanip],                                   [], [AC_MSG_ERROR([cannot find iomanip, bailing out])])
+AC_CHECK_HEADERS([map],                                       [], [AC_MSG_ERROR([cannot find map, bailing out])])
+AC_CHECK_HEADERS([typeinfo],                                  [], [AC_MSG_ERROR([cannot find typeinfo, bailing out])])
+AC_CHECK_HEADERS([cctype],                                    [], [AC_MSG_ERROR([cannot find cctype, bailing out])])
+AC_CHECK_HEADERS([algorithm],                                 [], [AC_MSG_ERROR([cannot find algorithm, bailing out])])
+AC_CHECK_HEADERS([math.h],                                    [], [AC_MSG_ERROR([cannot find math.h, bailing out])])
+AC_CHECK_HEADERS([stdexcept],                                 [], [AC_MSG_ERROR([cannot find stdexcept, bailing out])])
 AC_CHECK_HEADERS([cvode/cvode.h],                             [], [AC_MSG_ERROR([cannot find cvode/cvode.h, bailing out])])
 AC_CHECK_HEADERS([nvector/nvector_serial.h],                  [], [AC_MSG_ERROR([cannot find nvector/nvector_serial.h, bailing out])])
 AC_CHECK_HEADERS([var_array++.h],                             [], [AC_MSG_ERROR([cannot find vararray++.h, bailing out])])
@@ -28,6 +43,8 @@ AC_CHECK_LIB([m],                   [cos],                    , [AC_MSG_ERROR([c
 AC_CHECK_LIB([sundials_cvode],      [CVodeCreate],            , [AC_MSG_ERROR([cannot find libsundials_cvode, bailing out])])
 AC_CHECK_LIB([sundials_nvecserial], [N_VNew_Serial],          , [AC_MSG_ERROR([cannot find libsundials_nvecserial, bailing out])])
 AC_CHECK_LIB([var_array],           [vaDelete],               , [AC_MSG_ERROR([cannot find libvararray, bailing out])])
+
+# Checks for C++ libraries with name spaces
 m4_include(ac_check_lib_xercesc.m4)
 m4_include(ac_check_lib_ginac.m4)
 
@@ -42,9 +59,9 @@ AC_STRUCT_TM
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_MALLOC
 AC_TYPE_SIGNAL
-AC_CHECK_FUNCS([floor pow sqrt])
+AC_CHECK_FUNCS([floor pow sqrt round])
 
-AC_CHECK_HEADERS([mpi.h mpi++.h /usr/lib/mpich/include/mpi.h /usr/lpp/ppe.poe/include/mpi.h])
+#m4_include(ac_check_headers_mpi.m4)
 m4_include(ac_prog_mpicxx.m4)
 AC_PROG_MPICXX($mpicxx_list)
 

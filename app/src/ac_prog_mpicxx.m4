@@ -1,5 +1,6 @@
 AC_DEFUN([AC_PROG_MPICXX], [
-AC_ARG_VAR([MPICXX], [MPI C++ compiler command])
+AC_ARG_VAR([MPICXX],  [MPI C++ compiler command])
+AC_ARG_VAR([PJEMRIS], [Parallel JEMRIS target])
 
 # find compiler and characteristics
 AC_CHECK_PROGS([MPICXX], [$1], [none])
@@ -7,11 +8,20 @@ if test x$MPICXX = xnone; then
   AC_MSG_ERROR([MPI C++ compiler not found])
 fi
 
+# find compiler and characteristics
+ AC_MSG_CHECKING(for mpi.h)
+  AC_PREPROC_IFELSE(
+  [AC_LANG_SOURCE([[#include <mpi.h>]])],
+  [ 
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(HAVE_MPI_H,1,[define that mpi is being used])
+  ],[AC_MSG_RESULT(no)])
+
 cat >>conftest.cpp <<_ACEOF
 #include <mpi.h>
 int main(int argc, char** argv) {
-  MPI_Init(&argc, &argv);
-  MPI_Finalize();
+  MPI::Init(argc, argv);
+  MPI::Finalize();
   return 0;
 }
 _ACEOF
@@ -23,6 +33,7 @@ if test $? -ne 0; then
   AC_MSG_FAILURE([failed!])
 else
   AC_MSG_RESULT([yes])
+  PJEMRIS=pjemris
 fi
 
 ic_mpirun_found=no

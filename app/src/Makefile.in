@@ -31,6 +31,7 @@ LDFLAGS        = @LDFLAGS@
 LIBS           = @LIBS@
 BUILD          = @build@
 HOST           = @host@
+PJEMRIS        = @PJEMRIS@
 
 
 HOME := $(SHELL echo $HOME)
@@ -56,7 +57,7 @@ OBS := $(patsubst $(SRC)%.cpp,$(BUILD)%.o,$(wildcard $(SRC)*.cpp))
 INC := $(wildcard $(SRC)*.h)
 
 #TO DO: all objects + main program
-all   : jemris pjemris sanityck
+all   : jemris sanityck $(PJEMRIS)
 
 # commands for model framework
 $(BUILD)%.o       : $(SRC)%.cpp
