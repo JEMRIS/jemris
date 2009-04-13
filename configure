@@ -707,6 +707,8 @@ host_cpu
 host_vendor
 host_os
 LIBOBJS
+MPI_TRUE
+MPI_FALSE
 MPICXX
 PJEMRIS
 MPIRUN
@@ -1308,6 +1310,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
+  --enable-mpi    Turn on parallel jemris
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -10883,6 +10886,28 @@ fi
 done
 
 
+# Check whether --enable-mpi was given.
+if test "${enable_mpi+set}" = set; then
+  enableval=$enable_mpi; case "${enableval}" in
+       yes) mpi=true ;;
+       no)  mpi=false ;;
+       *) { { echo "$as_me:$LINENO: error: bad value ${enableval} for --enable-mpi" >&5
+echo "$as_me: error: bad value ${enableval} for --enable-mpi" >&2;}
+   { (exit 1); exit 1; }; } ;;
+     esac
+else
+  mpi=true
+fi
+
+      if test x$mpi = xtrue; then
+  MPI_TRUE=
+  MPI_FALSE='#'
+else
+  MPI_TRUE='#'
+  MPI_FALSE=
+fi
+
+
 
 
 case "$host" in
@@ -11050,7 +11075,7 @@ See \`config.log' for more details." >&2;}
 else
   { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-  PJEMRIS=pjemris
+  PJEMRIS=true
 fi
 
 ic_mpirun_found=no
@@ -11241,6 +11266,13 @@ if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"am__fastdepCC\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 echo "$as_me: error: conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${MPI_TRUE}" && test -z "${MPI_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"MPI\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"MPI\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -11871,10 +11903,10 @@ host_cpu!$host_cpu$ac_delim
 host_vendor!$host_vendor$ac_delim
 host_os!$host_os$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
+MPI_TRUE!$MPI_TRUE$ac_delim
+MPI_FALSE!$MPI_FALSE$ac_delim
 MPICXX!$MPICXX$ac_delim
 PJEMRIS!$PJEMRIS$ac_delim
-MPIRUN!$MPIRUN$ac_delim
-MPIRUN_PROC_OPT!$MPIRUN_PROC_OPT$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -11916,10 +11948,12 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+MPIRUN!$MPIRUN$ac_delim
+MPIRUN_PROC_OPT!$MPIRUN_PROC_OPT$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 1; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 3; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

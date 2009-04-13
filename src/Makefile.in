@@ -32,7 +32,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = jemris$(EXEEXT) sanityck$(EXEEXT)
+bin_PROGRAMS = jemris$(EXEEXT) sanityck$(EXEEXT) $(am__EXEEXT_1)
+CXXLD = $(CXX)
+@MPI_TRUE@am__append_1 = pjemris
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/config.h.in
@@ -43,6 +45,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
+@MPI_TRUE@am__EXEEXT_1 = pjemris$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
@@ -69,6 +72,9 @@ am__objects_1 = AnalyticGradPulse.$(OBJEXT) AnalyticRFPulse.$(OBJEXT) \
 am_jemris_OBJECTS = $(am__objects_1) jemris.$(OBJEXT)
 jemris_OBJECTS = $(am_jemris_OBJECTS)
 jemris_LDADD = $(LDADD)
+am_pjemris_OBJECTS = $(am__objects_1) pjemris.$(OBJEXT)
+pjemris_OBJECTS = $(am_pjemris_OBJECTS)
+pjemris_LDADD = $(LDADD)
 am_sanityck_OBJECTS = $(am__objects_1) sanityck.$(OBJEXT)
 sanityck_OBJECTS = $(am_sanityck_OBJECTS)
 sanityck_LDADD = $(LDADD)
@@ -77,14 +83,14 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(jemris_SOURCES) $(sanityck_SOURCES)
+DIST_SOURCES = $(jemris_SOURCES) $(pjemris_SOURCES) \
+	$(sanityck_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -188,6 +194,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+@MPI_TRUE@CXXLD = @MPICXX@
 SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 	AnalyticRFPulse.cpp AnalyticRFPulse.h AtomicSequence.cpp \
 	AtomicSequence.h BiotSavartLoop.cpp BiotSavartLoop.h \
@@ -219,6 +226,7 @@ SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 	ginac_functions.h rng.h rng.cpp
 jemris_SOURCES = $(SOURCES) jemris.cpp
 sanityck_SOURCES = $(SOURCES) sanityck.cpp
+pjemris_SOURCES = $(SOURCES) mpi_Model.h pjemris.cpp
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -296,6 +304,9 @@ clean-binPROGRAMS:
 jemris$(EXEEXT): $(jemris_OBJECTS) $(jemris_DEPENDENCIES) 
 	@rm -f jemris$(EXEEXT)
 	$(CXXLINK) $(jemris_OBJECTS) $(jemris_LDADD) $(LIBS)
+pjemris$(EXEEXT): $(pjemris_OBJECTS) $(pjemris_DEPENDENCIES) 
+	@rm -f pjemris$(EXEEXT)
+	$(CXXLINK) $(pjemris_OBJECTS) $(pjemris_LDADD) $(LIBS)
 sanityck$(EXEEXT): $(sanityck_OBJECTS) $(sanityck_DEPENDENCIES) 
 	@rm -f sanityck$(EXEEXT)
 	$(CXXLINK) $(sanityck_OBJECTS) $(sanityck_LDADD) $(LIBS)
@@ -355,6 +366,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/World.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLRead.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jemris.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pjemris.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rng.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sanityck.Po@am__quote@
 
@@ -549,7 +561,6 @@ uninstall-am: uninstall-binPROGRAMS
 	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-binPROGRAMS
 
-#pjemris_SOURCES = $(SOURCES) mpi_Model.h pjemris.cpp
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

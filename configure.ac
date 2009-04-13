@@ -174,6 +174,15 @@ AC_FUNC_MALLOC
 AC_TYPE_SIGNAL
 AC_CHECK_FUNCS([floor pow sqrt round])
 
+AC_ARG_ENABLE([mpi],
+     [  --enable-mpi    Turn on parallel jemris],
+     [case "${enableval}" in
+       yes) mpi=true ;;
+       no)  mpi=false ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-mpi]) ;;
+     esac],[mpi=true])
+     AM_CONDITIONAL([MPI], [test x$mpi = xtrue])
+
 AC_DEFUN([AC_PROG_MPICXX], [
 AC_ARG_VAR([MPICXX],  [MPI C++ compiler command])
 AC_ARG_VAR([PJEMRIS], [Parallel JEMRIS target])
@@ -209,7 +218,7 @@ if test $? -ne 0; then
   AC_MSG_FAILURE([failed!])
 else
   AC_MSG_RESULT([yes])
-  PJEMRIS=pjemris
+  PJEMRIS=true
 fi
 
 ic_mpirun_found=no
