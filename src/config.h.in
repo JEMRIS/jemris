@@ -3,6 +3,9 @@
 /* Define to 1 if you have the <algorithm> header file. */
 #undef HAVE_ALGORITHM
 
+/* boost is available */
+#undef HAVE_BOOST
+
 /* Define to 1 if you have the <boost/math/special_functions/ellint_1.hpp>
    header file. */
 #undef HAVE_BOOST_MATH_SPECIAL_FUNCTIONS_ELLINT_1_HPP

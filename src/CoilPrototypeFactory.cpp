@@ -21,9 +21,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "config.h"
 #include "CoilPrototypeFactory.h"
 
-#include "BiotSavartLoop.h"
+#ifdef HAVE_BOOST 
+    #include "BiotSavartLoop.h"
+#endif
 #include "IdealCoil.h"
 #include "ExternalCoil.h"
 #include "StrX.h"
@@ -31,7 +34,9 @@
 /***********************************************************/
 CoilPrototypeFactory::CoilPrototypeFactory () {
 
-	m_Clonables.insert( pair<string,Coil*>( "BIOTSAVARTLOOP", new BiotSavartLoop() ));
+	#ifdef HAVE_BOOST 
+	    m_Clonables.insert( pair<string,Coil*>( "BIOTSAVARTLOOP", new BiotSavartLoop() ));
+	#endif
 	m_Clonables.insert( pair<string,Coil*>( "IDEALCOIL"     , new IdealCoil()      ));
 	m_Clonables.insert( pair<string,Coil*>( "EXTERNALCOIL"  , new ExternalCoil()   ));
 

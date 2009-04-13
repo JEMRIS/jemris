@@ -42,7 +42,7 @@ am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = config.h $(top_builddir)/config.h
+CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 @MPI_TRUE@am__EXEEXT_1 = pjemris$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
@@ -77,7 +77,7 @@ pjemris_LDADD = $(LDADD)
 am_sanityck_OBJECTS = $(am__objects_1) sanityck.$(OBJEXT)
 sanityck_OBJECTS = $(am_sanityck_OBJECTS)
 sanityck_LDADD = $(LDADD)
-DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
+DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -222,9 +222,9 @@ SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 	TPOI.h TrapGradPulse.cpp TrapGradPulse.h TxRxPhase.cpp \
 	TxRxPhase.h World.cpp World.h XMLRead.cpp XMLRead.h \
 	ginac_functions.h rng.h rng.cpp
-jemris_SOURCES = $(SOURCES) jemris.cpp
-sanityck_SOURCES = $(SOURCES) sanityck.cpp
-pjemris_SOURCES = $(SOURCES) mpi_Model.h pjemris.cpp
+jemris_SOURCES = $(SOURCES) $(BOOSTSOURCES) jemris.cpp
+sanityck_SOURCES = $(SOURCES) $(BOOSTSOURCES) sanityck.cpp
+pjemris_SOURCES = $(SOURCES) $(BOOSTSOURCES) mpi_Model.h pjemris.cpp
 TESTS = test.sh
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

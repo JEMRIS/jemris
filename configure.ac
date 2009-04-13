@@ -5,7 +5,6 @@ AC_PREREQ(2.61)
 AC_INIT(JEMRIS, 2.2, k.vahedipour@fz-juelich.de)
 AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
-AC_CONFIG_HEADER([config.h])
 
 AC_LANG(C++)
 
@@ -41,8 +40,20 @@ AC_CHECK_HEADERS([var_array++.h],                             [], [AC_MSG_ERROR(
 AC_CHECK_HEADERS([ginac/ginac.h],                             [], [AC_MSG_ERROR([cannot find ginac/ginac.h, bailing out])])
 AC_CHECK_HEADERS([cln/cln.h],                                 [], [AC_MSG_ERROR([cannot find cln/cln.h, bailing out])])
 AC_CHECK_HEADERS([xercesc/dom/DOM.hpp],                       [], [AC_MSG_ERROR([cannot find xercesc/dom/DOM.hpp, bailing out])])
-AC_CHECK_HEADERS([boost/math/special_functions/ellint_1.hpp], [], [AC_MSG_ERROR([cannot find boost/math/special_functions/ellint_1.hpp, bailing out])])
-AC_CHECK_HEADERS([boost/math/special_functions/ellint_2.hpp], [], [AC_MSG_ERROR([cannot find boost/math/special_functions/ellint_2.hpp, bailing out])])
+
+AC_ARG_ENABLE([boost],
+     [  --enable-boost          turn on boost C++ library support (default: yes)],
+     [case "${enableval}" in
+       yes) boost=true ;;
+       no)  boost=false ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-boost]) ;;
+     esac],[boost=true])
+     AM_CONDITIONAL([BOOST], [test x$boost = xtrue])
+
+AC_CHECK_HEADERS(
+	[boost/math/special_functions/ellint_1.hpp boost/math/special_functions/ellint_2.hpp],
+	[AC_DEFINE(HAVE_BOOST,1,[boost is available])],
+    [AC_MSG_RESULT([cannot find boost ellint_1.hpp and/or ellint_2.hpp, Biot-Savart-Loop not available])])
 
 # Checks for libraries.
 AC_CHECK_LIB([m],                   [cos],                    , [AC_MSG_ERROR([cannot find libm, bailing out])])
@@ -168,7 +179,7 @@ AC_TYPE_SIGNAL
 AC_CHECK_FUNCS([floor pow sqrt round])
 
 AC_ARG_ENABLE([mpi],
-     [  --enable-mpi    Turn on parallel jemris],
+     [  --enable-mpi            turn on parallel jemris (default: yes) ],
      [case "${enableval}" in
        yes) mpi=true ;;
        no)  mpi=false ;;
