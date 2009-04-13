@@ -1,4 +1,7 @@
-/* framework/config.h.in.  Generated from configure.ac by autoheader.  */
+/* src/config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if you have the <algorithm> header file. */
+#undef HAVE_ALGORITHM
 
 /* Define to 1 if you have the <boost/math/special_functions/ellint_1.hpp>
    header file. */
@@ -8,8 +11,23 @@
    header file. */
 #undef HAVE_BOOST_MATH_SPECIAL_FUNCTIONS_ELLINT_2_HPP
 
+/* Define to 1 if you have the <cctype> header file. */
+#undef HAVE_CCTYPE
+
+/* Define to 1 if you have the <climits> header file. */
+#undef HAVE_CLIMITS
+
 /* Define to 1 if you have the <cln/cln.h> header file. */
 #undef HAVE_CLN_CLN_H
+
+/* Define to 1 if you have the <cmath> header file. */
+#undef HAVE_CMATH
+
+/* Define to 1 if you have the <cstdlib> header file. */
+#undef HAVE_CSTDLIB
+
+/* Define to 1 if you have the <ctime> header file. */
+#undef HAVE_CTIME
 
 /* Define to 1 if you have the <cvode/cvode.h> header file. */
 #undef HAVE_CVODE_CVODE_H
@@ -17,14 +35,20 @@
 /* Define to 1 if you have the `floor' function. */
 #undef HAVE_FLOOR
 
+/* Define to 1 if you have the <fstream> header file. */
+#undef HAVE_FSTREAM
+
 /* Define to 1 if you have the <ginac/ginac.h> header file. */
 #undef HAVE_GINAC_GINAC_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `ginac' library (-lginac). */
-#undef HAVE_LIBGINAC
+/* Define to 1 if you have the <iomanip> header file. */
+#undef HAVE_IOMANIP
+
+/* Define to 1 if you have the <iostream> header file. */
+#undef HAVE_IOSTREAM
 
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
@@ -43,14 +67,17 @@
    to 0 otherwise. */
 #undef HAVE_MALLOC
 
+/* Define to 1 if you have the <map> header file. */
+#undef HAVE_MAP
+
+/* Define to 1 if you have the <math.h> header file. */
+#undef HAVE_MATH_H
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define to 1 if you have the <mpi.h> header file. */
+/* define that mpi is being used */
 #undef HAVE_MPI_H
-
-/* Define to 1 if you have the <mpi++.h> header file. */
-#undef HAVE_MPI___H
 
 /* Define to 1 if you have the <nvector/nvector_serial.h> header file. */
 #undef HAVE_NVECTOR_NVECTOR_SERIAL_H
@@ -58,11 +85,20 @@
 /* Define to 1 if you have the `pow' function. */
 #undef HAVE_POW
 
+/* Define to 1 if you have the `round' function. */
+#undef HAVE_ROUND
+
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT
 
+/* Define to 1 if you have the <sstream> header file. */
+#undef HAVE_SSTREAM
+
 /* Define to 1 if stdbool.h conforms to C99. */
 #undef HAVE_STDBOOL_H
+
+/* Define to 1 if you have the <stdexcept> header file. */
+#undef HAVE_STDEXCEPT
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -82,11 +118,17 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* Define to 1 if you have the <typeinfo> header file. */
+#undef HAVE_TYPEINFO
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
 /* Define to 1 if you have the <var_array++.h> header file. */
 #undef HAVE_VAR_ARRAY___H
+
+/* Define to 1 if you have the <vector> header file. */
+#undef HAVE_VECTOR
 
 /* Define to 1 if you have the <xercesc/dom/DOM.hpp> header file. */
 #undef HAVE_XERCESC_DOM_DOM_HPP
@@ -94,12 +136,8 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
-/* Define to 1 if you have the </usr/lib/mpich/include/mpi.h> header file. */
-#undef HAVE__USR_LIB_MPICH_INCLUDE_MPI_H
-
-/* Define to 1 if you have the </usr/lpp/ppe.poe/include/mpi.h> header file.
-   */
-#undef HAVE__USR_LPP_PPE_POE_INCLUDE_MPI_H
+/* Name of package */
+#undef PACKAGE
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -124,6 +162,24 @@
 
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
+
+/* Version number of package */
+#undef VERSION
+
+/* Description */
+#undef XSEC_XERCES_FORMATTER_REQUIRES_VERSION
+
+/* Description */
+#undef XSEC_XERCES_HAS_BOOLSETIDATTRIBUTE
+
+/* Description */
+#undef XSEC_XERCES_HAS_SETIDATTRIBUTE
+
+/* Description */
+#undef XSEC_XERCES_REQUIRES_MEMMGR
+
+/* Description */
+#undef XSEC_XERCES_XMLSTRING_HAS_RELEASE
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
