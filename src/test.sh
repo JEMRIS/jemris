@@ -1,3 +1,3 @@
-./sanityck 1 ../xmpl
-./sanityck 2 ../xmpl
-./sanityck 3 ../xmpl
+./sanityck ../xmpl 1
+./sanityck ../xmpl 2
+./sanityck ../xmpl 3
