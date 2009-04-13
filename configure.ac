@@ -9,13 +9,6 @@ AC_CONFIG_HEADER([config.h])
 
 AC_LANG(C++)
 
-# Check for the host type
-#AC_CANONICAL_HOST
-
-# Checks for programs.
-AC_PROG_CXX
-AC_PROG_CC
-
 # Check standard headers
 AC_HEADER_STDC
 
@@ -185,7 +178,6 @@ AC_ARG_ENABLE([mpi],
 
 AC_DEFUN([AC_PROG_MPICXX], [
 AC_ARG_VAR([MPICXX],  [MPI C++ compiler command])
-AC_ARG_VAR([PJEMRIS], [Parallel JEMRIS target])
 
 # find compiler and characteristics
 AC_CHECK_PROGS([MPICXX], [$1], [none])
@@ -218,7 +210,6 @@ if test $? -ne 0; then
   AC_MSG_FAILURE([failed!])
 else
   AC_MSG_RESULT([yes])
-  PJEMRIS=true
 fi
 
 ic_mpirun_found=no
@@ -311,8 +302,12 @@ case "$host" in
     ;;
 esac
 
+if test x$mpi = xtrue; then
+  AC_PROG_MPICXX($mpicxx_list)
+  CXX=$MPICXX
+fi
 
-AC_PROG_MPICXX($mpicxx_list)
+
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile])
