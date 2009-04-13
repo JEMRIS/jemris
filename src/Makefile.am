@@ -1,6 +1,7 @@
 bin_PROGRAMS = jemris sanityck
 if MPI
   CXXLD = @MPICXX@
+  CXX   = @MPICXX@
   bin_PROGRAMS += pjemris
 endif
 
