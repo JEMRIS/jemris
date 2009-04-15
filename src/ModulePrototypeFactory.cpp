@@ -35,15 +35,11 @@
 #include "AnalyticRFPulse.h"
 #include "TrapGradPulse.h"
 #include "SpiralGradPulse.h"
-#include "LissajousGradPulse.h"
 #include "ExternalGradPulse.h"
 #include "ConcatSequence.h"
 #include "AtomicSequence.h"
 #include "DelayAtomicSequence.h"
-#include "STASpiralGradPulse.h"
-#include "STARFPulse.h"
-#include "LTASpiralGradPulse.h"
-#include "LTARFPulse.h"
+
 
 #include "StrX.h"
 
@@ -69,15 +65,10 @@ ModulePrototypeFactory::ModulePrototypeFactory () {
 	m_Clonables.insert( pair<string,Module*>( "ANALYTICGRADPULSE",   new AnalyticGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "ANALYTICRFPULSE",     new AnalyticRFPulse     () ));
 	m_Clonables.insert( pair<string,Module*>( "SPIRALGRADPULSE",     new SpiralGradPulse     () ));
-	m_Clonables.insert( pair<string,Module*>( "LISSAJOUSGRADPULSE",  new LissajousGradPulse  () ));
 	m_Clonables.insert( pair<string,Module*>( "EXTERNALGRADPULSE",   new ExternalGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "CONCATSEQUENCE",      new ConcatSequence      () ));
 	m_Clonables.insert( pair<string,Module*>( "ATOMICSEQUENCE",      new AtomicSequence      () ));
 	m_Clonables.insert( pair<string,Module*>( "DELAYATOMICSEQUENCE", new DelayAtomicSequence () ));
-	m_Clonables.insert( pair<string,Module*>( "STASPIRALGRADPULSE",  new STASpiralGradPulse  () ));
-	m_Clonables.insert( pair<string,Module*>( "STARFPULSE",          new STARFPulse          () ));
-	m_Clonables.insert( pair<string,Module*>( "LTASPIRALGRADPULSE",  new LTASpiralGradPulse  () ));
-	m_Clonables.insert( pair<string,Module*>( "LTARFPULSE",          new LTARFPulse          () ));
 
 };
 

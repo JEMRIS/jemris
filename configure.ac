@@ -227,7 +227,6 @@ ic_mpirun_found=no
 if test x$2 = xyes; then
   AC_MSG_CHECKING([for MPI run command])
   case "$MPICXX" in
-#    *mpCC*)
     *mpCC_r*)
       mpirun="poe"
       mpirun_proc_opt="-procs"
@@ -240,7 +239,6 @@ if test x$2 = xyes; then
       mpirun="mpiexec"
       mpirun_proc_opt="-n"
       ;;
-#    *tmCC*)
     *mpCC*)
       mpirun="mprun"
       mpirun_proc_opt="-np"
@@ -317,7 +315,6 @@ if test x$mpi = xtrue; then
   AC_PROG_MPICXX($mpicxx_list)
   CXX=$MPICXX
 fi
-
 
 
 AC_CONFIG_FILES([Makefile
