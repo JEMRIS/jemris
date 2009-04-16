@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -28,12 +28,12 @@ bool STARFPulse::Prepare  (PrepareMode mode) {
 
     bool btag = true;
 
-    ATTRIBUTE("Gamma", &m_Gamma);
-    ATTRIBUTE("Alpha", &m_Alpha);
-    ATTRIBUTE("A"    , &m_A);
-	ATTRIBUTE("Beta" , &m_Beta);
-	ATTRIBUTE("N"    , &m_N);
-	ATTRIBUTE("TPOIs", &m_more_tpois ); //number of TPOIs along the analytical expression
+    ATTRIBUTE("Gamma", m_Gamma);
+    ATTRIBUTE("Alpha", m_Alpha);
+    ATTRIBUTE("A"    , m_A);
+	ATTRIBUTE("Beta" , m_Beta);
+	ATTRIBUTE("N"    , m_N);
+	ATTRIBUTE("TPOIs", m_more_tpois ); //number of TPOIs along the analytical expression
 
 
     if ( mode == PREP_VERBOSE) {

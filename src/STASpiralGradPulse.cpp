@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -46,8 +46,8 @@ bool              STASpiralGradPulse::Prepare     (PrepareMode mode)   {
 
     bool btag = true;
 
-    ATTRIBUTE("A" , &m_A);
-    ATTRIBUTE("N" , &m_N);
+    ATTRIBUTE("A" , m_A);
+    ATTRIBUTE("N" , m_N);
 
     if ( mode == PREP_VERBOSE) {
 

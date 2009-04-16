@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -36,8 +36,6 @@ Module::Module() {
 	m_seq_tree      = NULL ;
 	m_duration      = 0.0  ;
 	m_calls         = 0    ;
-	m_imag_part     = 0.0  ;
-	m_has_imag_part = false;
 	m_world         = World::instance();
 
 };
@@ -45,6 +43,7 @@ Module::Module() {
 /***********************************************************/
 Module::~Module() {
 
+/*
 	map<void*,void*>::iterator istate;
 
 	for( istate = m_subject_state.begin(); istate != m_subject_state.end(); istate++ ) 	{
@@ -60,7 +59,7 @@ Module::~Module() {
 		if ( itype->second == typeid(PulseAxis*).name()   ) delete ((PulseAxis*)    istate->second);
 
 	}
-
+*/
 };
 
 /***********************************************************/
@@ -84,15 +83,15 @@ void            Module::Initialize (DOMNode* node) {
 /***********************************************************/
 bool Module::Prepare  (PrepareMode mode){
 
-	ATTRIBUTE("Duration", &m_duration);
-	ATTRIBUTE("Observe" , NULL);		//special case of observing attributes
+	ATTRIBUTE("Duration", m_duration);
+	//ATTRIBUTE("Observe" , NULL);		//special case of observing attributes
 
 	return Prototype::Prepare(mode);
 
 };
 
 /***********************************************************/
-Module* Module::GetModuleByAttributeValue(string name, string attrib) {
+Module* Module::GetPrototypeByAttributeValue(string name, string attrib) {
 	return m_seq_tree->GetModuleByAttributeValue(name,attrib);
 }
 
@@ -162,6 +161,38 @@ bool            Module::AddDOMattribute    (const string attribute, const string
 /***********************************************************/
 void           Module::AddAllDOMattributes (bool show_hidden){
 
+	map<string,Attribute*>::iterator iter;
+
+	for(iter = m_attributes.begin(); iter != m_attributes.end(); iter++) {
+
+		string attrib_name = iter->first;
+		Attribute* attrib = iter->second;
+
+		//do not take hidden and unobservable attributes into account
+		if (!attrib->IsObservable() && !attrib->IsPublic()) continue;
+		//mark hidden attributes
+		if (!attrib->IsPublic()) attrib_name +="HIDDEN";
+
+		stringstream sstr;
+		if (attrib->IsObservable()) {
+			void* p = attrib->GetAddress() ;
+			if (attrib->GetTypeID()==typeid(  double*).name()) sstr << (*((double*)   p));
+			if (attrib->GetTypeID()==typeid(     int*).name()) sstr << (*((int*)      p));
+			if (attrib->GetTypeID()==typeid(    long*).name()) sstr << (*((long*)     p));
+			if (attrib->GetTypeID()==typeid(unsigned*).name()) sstr << (*((unsigned*) p));
+			if (attrib->GetTypeID()==typeid(    bool*).name()) sstr << (*((bool*)     p));
+			if (attrib->GetTypeID()==typeid(  string*).name()) sstr << (*((string*)   p));
+		}
+
+		//some exceptions (ugly): Constants in Analytic Pulses, Modules in DelayAtoms, NLG field terms in Gradients
+		if ( attrib_name.find("Constant",0) != string::npos && !attrib->IsPublic() ) continue;
+		if ( attrib_name.find("Module"  ,0) != string::npos && !attrib->IsPublic() ) continue;
+		if ( attrib_name.find("NLG_"    ,0) != string::npos && !attrib->IsPublic() ) continue;
+
+		AddDOMattribute( attrib_name, sstr.str() );
+	}
+
+	/*
 	map<string, void*>::iterator it;
 
 	for( it = m_attrib_addr.begin(); it != m_attrib_addr.end(); it++ ) {
@@ -226,6 +257,7 @@ void           Module::AddAllDOMattributes (bool show_hidden){
 
 		}
 	}
+*/
 };
 
 /***********************************************************/
@@ -306,17 +338,6 @@ void    Module::DumpTree (string file, Module* mod,int ichild, int level) {
 };
 
 /***********************************************************/
-void           Module::HideAttribute (string attrib, bool observable){
-
-	map<string,bool>::iterator it1 = m_attrib_xml.find(attrib);
-	if (it1 != m_attrib_xml.end()) it1->second=false;
-
-	map<string,bool>::iterator it2 = m_attrib_observable.find(attrib);
-	if (it2 != m_attrib_observable.end()) it2->second=observable;
-
-};
-
-/***********************************************************/
 bool           Module:: WriteStaticXML(string xml_file){
 
 	DOMImplementation* impl    =  DOMImplementationRegistry::getDOMImplementation(StrX("Core").XMLchar() );
@@ -359,7 +380,7 @@ bool           Module:: WriteStaticXML(string xml_file){
 
 /***********************************************************/
 bool Module::StaticDOM(DOMDocument* doc, DOMNode* node, bool append){
-
+/*
 	DOMNode* backup_node = m_node;
 	bool ret = true;
 	DOMElement* elem;
@@ -451,5 +472,6 @@ bool Module::StaticDOM(DOMDocument* doc, DOMNode* node, bool append){
 	}
 
 	return ret;
+*/
 };
 

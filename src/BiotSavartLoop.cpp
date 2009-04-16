@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -21,20 +21,15 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
-
 #include "BiotSavartLoop.h"
-
-#ifdef HAVE_BOOST
-    #include <boost/math/special_functions/ellint_2.hpp>
-    #include <boost/math/special_functions/ellint_1.hpp>
-#endif
+#include <boost/math/special_functions/ellint_2.hpp>
+#include <boost/math/special_functions/ellint_1.hpp>
 
 bool BiotSavartLoop::Prepare (PrepareMode mode) {
 
 	bool success = true;
 
-    ATTRIBUTE("Radius" , &m_radius);
+    ATTRIBUTE("Radius" , m_radius);
     success   = Coil::Prepare(mode);
 	m_maxsens = 0.0;
 	m_havemax = false;
@@ -101,15 +96,11 @@ double BiotSavartLoop::GetSensitivity(double* position) {
         double k     = 1/pow(sin(sqrt(4.0*alpha/Q)),2);
         if (k >= 1.0) k = 0.99;
 
-        double Kk    = 0.0;
-		double Ek    = 0.0;
-		
-		#ifdef HAVE_BOOST
-            // Complete elliptical integral function of first  kind
-		    Kk = boost::math::ellint_1(k, boost::math::policies::ignore_error);
-            // Complete elliptical integral function of second kind
-            Ek = boost::math::ellint_2(k,  boost::math::policies::ignore_error);
-		#endif
+        // Complete elliptical integral function of first  kind
+        double Kk    = boost::math::ellint_1(k, boost::math::policies::ignore_error);
+
+        // Complete elliptical integral function of second kind
+        double Ek    = boost::math::ellint_2(k,  boost::math::policies::ignore_error);
 
         double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*a) + Kk)         / (PI * sqrt(Q));
         double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*a) - Kk) * gamma / (PI * sqrt(Q));

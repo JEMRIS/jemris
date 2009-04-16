@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -62,6 +62,19 @@ class Pulse :public Module {
      *  @brief  see Module::Prepare()
      */
     virtual bool Prepare   (PrepareMode mode) ;
+
+    /**
+     *  @brief  Does the Preparation of the "Shape" Attribute for
+     *  derived analytic Pulses.
+     *
+     *  This is a bit ugly: Instead for the derived classes Pulse<-RfPulse<-AnalyticRfPulse and
+     *  Pulse<-GradientPulse<-AnalyticGradientPulse a multiple inherited base class AnalyticPulse
+     *  would be nice.
+     *
+     * @param mode the PrepareMode
+     * @return success/failure of operation
+     */
+    bool PrepareAnalytic   (PrepareMode mode) ;
 
     /**
      * @brief Get the duration of this pulse.

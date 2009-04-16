@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 /***********************************************************/
 AnalyticGradPulse::AnalyticGradPulse  (const AnalyticGradPulse&) {
 
-	SetExceptionalAttrib("Shape");
+	//SetExceptionalAttrib("Shape");
 
 };
 
@@ -41,10 +41,10 @@ bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
 	// T stands for the time, c1, c2,... for the constants Const1, ..., Const5 defined
 	// for this AnalyticGradPulse, and a1, a2, etc for further linked attributes from
 	// other modules, as usual.
-	ATTRIBUTE("Shape"    , &m_analytic_value );
-	ATTRIBUTE("TPOIs"    , &m_more_tpois     ); // Number of TPOIs along the analytical expression.
-	ATTRIBUTE("Constants", NULL              ); // Constants.
-	ATTRIBUTE("Diff"     , NULL              ); // If attribute value = 1, then d/dT of the expression is calculated.
+	ATTRIBUTE("Shape"    , m_analytic_value );
+	ATTRIBUTE("TPOIs"    , m_more_tpois     ); // Number of TPOIs along the analytical expression.
+	UNOBSERVABLE_ATTRIBUTE("Diff"     ); // Number of TPOIs along the analytical expression.
+	UNOBSERVABLE_ATTRIBUTE("Constants");
 
 	// Base class Prepare; the GiNaC expression for Shape is set from Pulse::Prepare
 	btag = (GradPulse::Prepare(mode) && btag && m_analytic);
@@ -58,7 +58,7 @@ bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
 
 				// special case: diff=1
 				// => area equals the anti-derivative computed from Pulse::prepare
-				string sdiff; GetAttribute(sdiff,"Diff");
+				string sdiff = GetDOMattribute("Diff");
 
 				if (sdiff=="1") {
 					m_area      = m_analytic_integral;
@@ -90,7 +90,7 @@ inline double AnalyticGradPulse::GetGradient (double const time) {
 
  	if (!m_analytic) return 0.0;
 	m_analytic_time = time;
-	EvalExpressions("Shape",PREP_UPDATE);
+	GetAttribute("Shape")->EvalExpression();
 
 	return m_analytic_value;
 
@@ -99,13 +99,12 @@ inline double AnalyticGradPulse::GetGradient (double const time) {
 /***********************************************************/
 string          AnalyticGradPulse::GetInfo() {
 
-	string val;
-	GetAttribute(val,"Shape");
+	string val=GetDOMattribute("Shape");
 
 	stringstream s;
 	s << GradPulse::GetInfo() << " , Shape = ";
 
-	if ( HasDOMattribute("Diff") ) s << " d/DT ";
+	if ( HasDOMattribute("Diff") ) s << " d/dT ";
 
 	s <<  val;
 

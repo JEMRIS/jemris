@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -49,13 +49,13 @@ TrapGradPulse* TrapGradPulse::Clone () const  { return (new TrapGradPulse(*this)
 /***********************************************************/
 bool TrapGradPulse::Prepare  (PrepareMode mode) {
 
-	ATTRIBUTE("FlatTopArea"         , &m_flat_top_area   );
-	ATTRIBUTE("FlatTopTime"         , &m_flat_top_time   );
-	ATTRIBUTE("Asymetric"           , &m_asym_sr         );
-	HIDDEN_ATTRIBUTE("Amplitude"    , &m_amplitude       );
-	HIDDEN_ATTRIBUTE("RampUpTime"   , &m_ramp_up_time    );
-	HIDDEN_ATTRIBUTE("RampDnTime"   , &m_ramp_dn_time    );
-	HIDDEN_ATTRIBUTE("EndOfFlatTop" , &m_time_to_ramp_dn ); //for convinience: m_time_to_ramp_dn = m_ramp_up_time + m_flat_top_time
+	ATTRIBUTE("FlatTopArea"         , m_flat_top_area   );
+	ATTRIBUTE("FlatTopTime"         , m_flat_top_time   );
+	ATTRIBUTE("Asymetric"           , m_asym_sr         );
+	HIDDEN_ATTRIBUTE("Amplitude"    , m_amplitude       );
+	HIDDEN_ATTRIBUTE("RampUpTime"   , m_ramp_up_time    );
+	HIDDEN_ATTRIBUTE("RampDnTime"   , m_ramp_dn_time    );
+	HIDDEN_ATTRIBUTE("EndOfFlatTop" , m_time_to_ramp_dn ); //for convinience: m_time_to_ramp_dn = m_ramp_up_time + m_flat_top_time
 
 	if ( mode != PREP_UPDATE )
 	{
@@ -65,21 +65,21 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
     		m_has_duration    = HasDOMattribute("Duration");    // local boolean are defined (speed)
 		if ( m_has_duration && m_has_flat_top_time )
 		{
-			if ( mode == PREP_VERBOSE) 
+			if ( mode == PREP_VERBOSE)
 				cout	<< GetName() << "::Prepare() error: set only one of "
 					<< "'Duration' and 'FlatTopTime' for a TrapGradPulse\n";
 			return false;
 		}
 		if ( HasDOMattribute("Area") && m_has_flat_top_area )
 		{
-			if ( mode == PREP_VERBOSE) 
+			if ( mode == PREP_VERBOSE)
 				cout	<< GetName() << "::Prepare() error: set only one of "
 					<< "'Area' and 'FlatTopArea' for a TrapGradPulse\n";
 			return false;
 		}
 		if ( m_has_flat_top_time && !m_has_flat_top_area )
 		{
-			if ( mode == PREP_VERBOSE) 
+			if ( mode == PREP_VERBOSE)
 				cout	<< GetName() << "::Prepare() error: 'FlatTopTime' needs "
 					<< "also 'FlatTopArea' for a TrapGradPulse\n";
 			return false;
@@ -108,7 +108,7 @@ inline bool    TrapGradPulse::SetShape  (bool verbose){
 	//predefined duration or flat-top time
 	if ( m_has_duration || m_has_flat_top_time )
 	{
-		//Prepare in shortest time first and check if requested time is possible	
+		//Prepare in shortest time first and check if requested time is possible
 		double requested    = (m_has_duration?m_duration:m_flat_top_time);
 		SetTrapezoid();
 		double min_possible = (m_has_duration?m_duration:m_flat_top_time);
@@ -138,14 +138,14 @@ inline bool    TrapGradPulse::SetShape  (bool verbose){
 	}
 
 	//standard case: Calculate trapezoid in shortest possible time
-	SetTrapezoid();	
+	SetTrapezoid();
 	return true;
 };
 
 /***********************************************************/
 inline void    TrapGradPulse::SetTrapezoid  (){
 
-	if (m_area ==0.0) 
+	if (m_area ==0.0)
 	{
 		m_ramp_up_time  = 0.0; m_flat_top_time  = 0.0; m_ramp_dn_time = 0.0;
         	m_slope_up = 0.0;  m_slope_dn = 0.0; m_amplitude   = 0.0;

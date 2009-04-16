@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,8 @@
 //! Base class and prototype for all gradient pulses
 
 class GradPulse : public Pulse {
-    
- public:    
+
+ public:
 
     /**
      * Public Contructor
@@ -41,7 +41,7 @@ class GradPulse : public Pulse {
      * Public Destructor
      */
     virtual ~GradPulse ();
-    
+
     /**
      * Copy constructor.
      */
@@ -49,7 +49,7 @@ class GradPulse : public Pulse {
 
     // @brief see Module::GetValue()
     virtual void GetValue (double * dAllVal, double const time);
-    
+
     /**
      * @brief Get the value of the gradient pulse at time t.
      *
@@ -64,8 +64,15 @@ class GradPulse : public Pulse {
     virtual bool Prepare  (PrepareMode mode);
 
     /**
+     * @brief Preparation of Nonlinear Gradient fields
+     *
+     * @param mode for preparation
+     */
+    virtual bool PrepareNLGfield  (PrepareMode mode);
+
+    /**
      * @brief get the area of this gradient pulse by numerical integration.
-     * 
+     *
      * @param steps The number of steps for integration.
      * @return The gradient area.
      */
@@ -89,8 +96,8 @@ class GradPulse : public Pulse {
     void SetNonLinGradField(double const time);
 
     /**
-     * @brief Check, whether this gradient is nonlinear 
-     * 
+     * @brief Check, whether this gradient is nonlinear
+     *
      * @return True, if a nonlinear gradient
      */
     bool          HasNonLinGrad(){return m_non_lin_grad; };

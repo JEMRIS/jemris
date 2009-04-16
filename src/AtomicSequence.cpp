@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -37,9 +37,9 @@ AtomicSequence::AtomicSequence  (const AtomicSequence& as) {
 /***********************************************************/
 bool    AtomicSequence::Prepare(PrepareMode mode) {
 
-	ATTRIBUTE("RotAngle"       , &m_alpha );
-	ATTRIBUTE("Inclination"    , &m_theta );
-	ATTRIBUTE("Azimut"         , &m_phi   );
+	ATTRIBUTE("RotAngle"       , m_alpha );
+	ATTRIBUTE("Inclination"    , m_theta );
+	ATTRIBUTE("Azimut"         , m_phi   );
 
 	if (mode != PREP_UPDATE) m_type = MOD_ATOM;
 
@@ -63,7 +63,7 @@ double     AtomicSequence::GetDuration  () {
 	DEBUG_PRINT("  AtomicSequence::GetDuration() of " << GetName() <<
 		    " calculates duration = " << dDuration << endl;)
 
-	Notify(&m_duration);
+	Notify(m_duration);
 
 	return( dDuration );
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -40,11 +40,11 @@ RFPulse::RFPulse  () {
 bool RFPulse::Prepare  (PrepareMode mode) {
 
 	//every RFPulse might have FlipAngle, InitialPhase, Bandwidth, and Frequncy offset
-	ATTRIBUTE("FlipAngle"    , &m_flip_angle   );
-	ATTRIBUTE("InitialPhase" , &m_initial_phase);
-	ATTRIBUTE("Bandwidth"    , &m_bw           );
-	ATTRIBUTE("Frequency"    , &m_frequency    );
-	ATTRIBUTE("Channel"      , &m_channel      );
+	ATTRIBUTE("FlipAngle"    , m_flip_angle   );
+	ATTRIBUTE("InitialPhase" , m_initial_phase);
+	ATTRIBUTE("Bandwidth"    , m_bw           );
+	ATTRIBUTE("Frequency"    , m_frequency    );
+	ATTRIBUTE("Channel"      , m_channel      );
 
     if (mode != PREP_UPDATE)
         insertGetPhaseFunction( &TxRxPhase::getLinearPhase );

@@ -1,9 +1,9 @@
 /** @file sanityck.cpp
- *  @brief Implementation of JEMRIS unit test (santity-check) 
+ *  @brief Implementation of JEMRIS unit test (santity-check)
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -122,7 +122,7 @@ int main (int argc, char *argv[]) {
 	seq.push_back("sli_sel.xml");
 
 	vector<string> coils;
-	
+
 	coils.push_back("8chheadcyl.xml");
 	coils.push_back("1chext.xml");
 
@@ -170,7 +170,7 @@ int main (int argc, char *argv[]) {
 				CS->DumpTree(path+outfile);
 				printf("%15s (tree-dump) ",outfile.c_str());
 
-				if (compare_text_files(path+outfile,path+"approved/"+outfile)) 
+				if (compare_text_files(path+outfile,path+"approved/"+outfile))
 					cout << "is ok " << endl;
 				else {
 					status = false;

@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,8 @@
 #include "SechRFPulse.h"
 
 SechRFPulse::SechRFPulse  (const SechRFPulse&) {
-	   m_flip_angle = 210.0;
-	   m_duration   = 5.12;
+	   m_flip_angle = 210.0; // siemens ...
+	   m_duration   = 5.12;  // ... Values (?)
 };
 
 /***********************************************************/

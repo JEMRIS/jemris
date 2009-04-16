@@ -49,8 +49,9 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 = AnalyticGradPulse.$(OBJEXT) AnalyticRFPulse.$(OBJEXT) \
-	AtomicSequence.$(OBJEXT) BiotSavartLoop.$(OBJEXT) \
-	Bloch_CV_Model.$(OBJEXT) Coil.$(OBJEXT) CoilArray.$(OBJEXT) \
+	AtomicSequence.$(OBJEXT) Attribute.$(OBJEXT) \
+	BiotSavartLoop.$(OBJEXT) Bloch_CV_Model.$(OBJEXT) \
+	Coil.$(OBJEXT) CoilArray.$(OBJEXT) \
 	CoilPrototypeFactory.$(OBJEXT) ConcatSequence.$(OBJEXT) \
 	ConstantGradPulse.$(OBJEXT) DOMTreeErrorReporter.$(OBJEXT) \
 	DelayAtomicSequence.$(OBJEXT) EmptyPulse.$(OBJEXT) \
@@ -64,7 +65,8 @@ am__objects_1 = AnalyticGradPulse.$(OBJEXT) AnalyticRFPulse.$(OBJEXT) \
 	SechRFPulse.$(OBJEXT) Sequence.$(OBJEXT) \
 	SequenceTree.$(OBJEXT) Signal.$(OBJEXT) Simulator.$(OBJEXT) \
 	SincRFPulse.$(OBJEXT) SpiralGradPulse.$(OBJEXT) StrX.$(OBJEXT) \
-	TPOI.$(OBJEXT) TrapGradPulse.$(OBJEXT) TxRxPhase.$(OBJEXT) \
+	TPOI.$(OBJEXT) TrapGradPulse.$(OBJEXT) \
+	TriangleGradPulse.$(OBJEXT) TxRxPhase.$(OBJEXT) \
 	World.$(OBJEXT) XMLRead.$(OBJEXT) rng.$(OBJEXT)
 am_jemris_OBJECTS = $(am__objects_1) jemris.$(OBJEXT)
 jemris_OBJECTS = $(am_jemris_OBJECTS)
@@ -193,9 +195,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 	AnalyticRFPulse.cpp AnalyticRFPulse.h AtomicSequence.cpp \
-	AtomicSequence.h BiotSavartLoop.cpp BiotSavartLoop.h \
-	Bloch_CV_Model.cpp Bloch_CV_Model.h Coil.cpp Coil.h \
-	CoilArray.cpp CoilArray.h CoilPrototypeFactory.cpp \
+	AtomicSequence.h Attribute.cpp Attribute.h BiotSavartLoop.cpp \
+	BiotSavartLoop.h Bloch_CV_Model.cpp Bloch_CV_Model.h Coil.cpp \
+	Coil.h CoilArray.cpp CoilArray.h CoilPrototypeFactory.cpp \
 	CoilPrototypeFactory.h ConcatSequence.cpp ConcatSequence.h \
 	ConstantGradPulse.cpp ConstantGradPulse.h \
 	DOMTreeErrorReporter.cpp DOMTreeErrorReporter.h Debug.h \
@@ -213,9 +215,9 @@ SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 	SequenceTree.cpp SequenceTree.h Signal.cpp Signal.h \
 	Simulator.cpp Simulator.h SincRFPulse.cpp SincRFPulse.h \
 	SpiralGradPulse.cpp SpiralGradPulse.h StrX.cpp StrX.h TPOI.cpp \
-	TPOI.h TrapGradPulse.cpp TrapGradPulse.h TxRxPhase.cpp \
-	TxRxPhase.h World.cpp World.h XMLRead.cpp XMLRead.h \
-	ginac_functions.h rng.h rng.cpp
+	TPOI.h TrapGradPulse.cpp TrapGradPulse.h TriangleGradPulse.cpp \
+	TriangleGradPulse.h TxRxPhase.cpp TxRxPhase.h World.cpp \
+	World.h XMLRead.cpp XMLRead.h ginac_functions.h rng.h rng.cpp
 jemris_SOURCES = $(SOURCES) jemris.cpp
 sanityck_SOURCES = $(SOURCES) sanityck.cpp
 pjemris_SOURCES = $(SOURCES) mpi_Model.h pjemris.cpp
@@ -313,6 +315,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AnalyticGradPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AnalyticRFPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AtomicSequence.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Attribute.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BiotSavartLoop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bloch_CV_Model.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Coil.Po@am__quote@
@@ -350,6 +353,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StrX.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TPOI.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrapGradPulse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TriangleGradPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TxRxPhase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/World.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLRead.Po@am__quote@

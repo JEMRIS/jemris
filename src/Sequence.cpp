@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -28,9 +28,9 @@
 /***********************************************************/
 bool    Sequence::Prepare(PrepareMode mode){
 
-	ATTRIBUTE("Aux1"     , &m_aux1 );
-	ATTRIBUTE("Aux2"     , &m_aux2 );
-	ATTRIBUTE("Aux3"     , &m_aux3 );
+	ATTRIBUTE("Aux1"     , m_aux1 );
+	ATTRIBUTE("Aux2"     , m_aux2 );
+	ATTRIBUTE("Aux3"     , m_aux3 );
 
 	bool btag = Module::Prepare(mode);
 

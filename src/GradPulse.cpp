@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -35,20 +35,65 @@ GradPulse::GradPulse  () {
 	m_nlg_pz	= 0.0;
 	m_nlg_val	= 0.0;
 
-	SetExceptionalAttrib("NLG_field");
+	//SetExceptionalAttrib("NLG_field");
 
 	//get defaults from the single instance of Parameters
 	Parameters* P = Parameters::instance();
 	if ( P->IsPrepared() )
 	{
-		m_slew_rate = *((double*) P->GetAttribAddress("GradSlewRate"));
-		m_max_ampl  = *((double*) P->GetAttribAddress("GradMaxAmpl"));
+		m_slew_rate = *((double*) P->GetAttribute("GradSlewRate")->GetAddress());
+		m_max_ampl  = *((double*) P->GetAttribute("GradMaxAmpl")->GetAddress());
 	}
 
 };
 
 GradPulse::~GradPulse  () {};
 
+/***********************************************************/
+bool GradPulse::PrepareNLGfield  (PrepareMode mode) {
+
+	GetAttribute("NLG_field")->SetObservable(true);
+
+	if (!m_non_lin_grad) {
+		string val=GetDOMattribute("NLG_field");
+		//attributes for the current spin positions, and the gradient value
+		HIDDEN_ATTRIBUTE("NLG_posX", m_nlg_px  );
+		Observe(GetAttribute("NLG_field"),GetName(),"NLG_posX", mode == PREP_VERBOSE);
+		stringstream sX; sX << "a" << m_obs_attribs.size();
+		ReplaceString(val,"X",sX.str());
+		HIDDEN_ATTRIBUTE("NLG_posY", m_nlg_py  );
+		Observe(GetAttribute("NLG_field"),GetName(),"NLG_posY", mode == PREP_VERBOSE);
+		stringstream sY; sY << "a" << m_obs_attribs.size();
+		ReplaceString(val,"Y",sY.str());
+		HIDDEN_ATTRIBUTE("NLG_posZ", m_nlg_pz  );
+		Observe(GetAttribute("NLG_field"),GetName(),"NLG_posZ", mode == PREP_VERBOSE);
+		stringstream sZ; sZ << "a" << m_obs_attribs.size();
+		ReplaceString(val,"Z",sZ.str());
+		HIDDEN_ATTRIBUTE("NLG_value",m_nlg_val );
+		Observe(GetAttribute("NLG_field"),GetName(),"NLG_value", mode == PREP_VERBOSE);
+		stringstream sG; sG << "a" << m_obs_attribs.size();
+		ReplaceString(val,"G",sG.str());
+		//set the GiNaC expression and mark this gradient as nonlinear
+		m_non_lin_grad = GetAttribute("NLG_field")->SetMember(val, m_obs_attribs, mode == PREP_VERBOSE);
+		//mark the parent AtomicSequence of this gradient as nonlinear
+		if (GetParent() != NULL ) ((AtomicSequence*) GetParent())->SetNonLinGrad(m_non_lin_grad);
+	}
+
+	//test GiNaC evaluation of the Shape expression
+	if (m_non_lin_grad) {
+		try {
+			GetAttribute("NLG_field")->EvalExpression();
+		} catch (exception &p) {
+			if (mode == PREP_VERBOSE) {
+				cout	<< "Warning in " << GetName() << ": attribute NLG_field"
+						<< " can not evaluate its GiNaC expression"
+						<< " Reason: " << p.what() << endl;
+			}
+		}
+	}
+
+	return m_non_lin_grad;
+};
 
 /***********************************************************/
 bool GradPulse::Prepare  (PrepareMode mode) {
@@ -57,64 +102,19 @@ bool GradPulse::Prepare  (PrepareMode mode) {
         if (!btag && mode == PREP_VERBOSE)
 		cout << GetName() << ": error in GradPulse::Prepare(). Wrong Axis for this gradient pulse." << endl;
 
-	ATTRIBUTE("SlewRate"       , &m_slew_rate);
-	ATTRIBUTE("MaxAmpl"        , &m_max_ampl);
-	ATTRIBUTE("Area"           , &m_area);
+	ATTRIBUTE("SlewRate"       , m_slew_rate);
+	ATTRIBUTE("MaxAmpl"        , m_max_ampl);
+	ATTRIBUTE("Area"           , m_area);
 
 	//attributes for nonlinear-gradient (NLG) field evaluation
-        ATTRIBUTE             ("NLG_field"   , &m_nlg_field );
-        UNOBSERVABLE_ATTRIBUTE("NLG_posX"    , &m_nlg_px    );
-        UNOBSERVABLE_ATTRIBUTE("NLG_posY"    , &m_nlg_py    );
-        UNOBSERVABLE_ATTRIBUTE("NLG_posZ"    , &m_nlg_pz    );
-        UNOBSERVABLE_ATTRIBUTE("NLG_value"   , &m_nlg_val   );
+    ATTRIBUTE       ("NLG_field", m_nlg_field );
 
-	//set the LNG expression
-	if ( mode !=PREP_UPDATE && HasDOMattribute("NLG_field") )
-	{
-		string val;
-		GetAttribute(val,"NLG_field");
-		//apend attribute to which the current spin X-position is copied
-		m_observed_modules.push_back(this);
-		m_observed_attribs.push_back("NLG_posX");
-		stringstream sX; sX << "a" << m_observed_modules.size();
-		ReplaceString(val,"X",sX.str());
-		//apend attribute to which the current spin Y-position is copied
-		m_observed_modules.push_back(this);
-		m_observed_attribs.push_back("NLG_posY");
-		stringstream sY; sY << "a" << m_observed_modules.size();
-		ReplaceString(val,"Y",sY.str());
-		//apend attribute to which the current spin Z-position is copied
-		m_observed_modules.push_back(this);
-		m_observed_attribs.push_back("NLG_posZ");
-		stringstream sZ; sZ << "a" << m_observed_modules.size();
-		ReplaceString(val,"Z",sZ.str());
-		//apend an attribute to which the current gradient value is copied
-		m_observed_modules.push_back(this);
-		m_observed_attribs.push_back("NLG_value");
-		stringstream sG; sG << "a" << m_observed_modules.size();
-		ReplaceString(val,"G",sG.str());
-		//set the GiNaC expression and mark this gradient as nonlinear
-		m_non_lin_grad = SetExpression("NLG_field",val,mode);
-		//test evaluation
-		try { EvalExpressions("NLG_field",mode); }
-		catch (exception &p)
-		{
-			if ( mode == PREP_VERBOSE )
-			{
-				cout	<< "Warning in " << GetName() << ": attribute NLG_field"
-					<< " can not evaluate its GiNaC expression";
-        			map<string,string>::iterator iex = m_attrib_expr_str.find("NLG_field");
-				if (iex != m_attrib_expr_str.end() ) cout << " E = " << iex->second  << ".";
-				cout   << " Reason: " << p.what() << endl;
-			}
-			btag = m_non_lin_grad = false;
-		}
-		//mark the parent AtomicSequence of this gradient as nonlinear
-		if (GetParent() != NULL ) ((AtomicSequence*) GetParent())->SetNonLinGrad(m_non_lin_grad);
-
-	}
+    // avoid Prototype::Prepare of the "NLG_field" attribute
+	if (mode !=PREP_UPDATE && HasDOMattribute("NLG_field")) GetAttribute("NLG_field")->SetObservable(false);
 
 	btag = (Pulse::Prepare(mode) && btag);
+
+	if ( mode !=PREP_UPDATE && HasDOMattribute("NLG_field") )	btag = (PrepareNLGfield(mode) && btag);
 
         if (!btag && mode == PREP_VERBOSE)
                 cout << "\n warning in Prepare(1) of GRADPULSE " << GetName() << endl;
@@ -141,7 +141,7 @@ void GradPulse::SetNonLinGradField(double const time){
 	//current gradient value for analytic evaluation of the NLG field
 	m_nlg_val = GetGradient(time);
 	//evaluate NLG field and add it to the World
-	EvalExpressions("NLG_field",PREP_UPDATE);
+	GetAttribute("NLG_field")->EvalExpression();
 	m_world->NonLinGradField += m_nlg_field;
 	return;
 }
@@ -168,12 +168,9 @@ string          GradPulse::GetInfo() {
 
 	stringstream s;
 	s << Pulse::GetInfo() << " , Area = " << m_area;
+
 	if ( HasDOMattribute("NLG_field") )
-	{
-		string val;
-		GetAttribute(val,"NLG_field");
-		s << " , " << "NLG_field = " << val;
-	}
+		s << " , " << "NLG_field = " << GetDOMattribute("NLG_field");
 
 	return s.str();
 };

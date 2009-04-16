@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -21,12 +21,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
 #include "CoilPrototypeFactory.h"
 
-#ifdef HAVE_BOOST 
-    #include "BiotSavartLoop.h"
-#endif
+#include "BiotSavartLoop.h"
 #include "IdealCoil.h"
 #include "ExternalCoil.h"
 #include "StrX.h"
@@ -34,9 +31,7 @@
 /***********************************************************/
 CoilPrototypeFactory::CoilPrototypeFactory () {
 
-	#ifdef HAVE_BOOST 
-	    m_Clonables.insert( pair<string,Coil*>( "BIOTSAVARTLOOP", new BiotSavartLoop() ));
-	#endif
+	m_Clonables.insert( pair<string,Coil*>( "BIOTSAVARTLOOP", new BiotSavartLoop() ));
 	m_Clonables.insert( pair<string,Coil*>( "IDEALCOIL"     , new IdealCoil()      ));
 	m_Clonables.insert( pair<string,Coil*>( "EXTERNALCOIL"  , new ExternalCoil()   ));
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -113,20 +113,20 @@ bool Coil::Prepare  (PrepareMode mode) {
 
 	bool success = false;
 
-   	ATTRIBUTE("Name"   , &m_name);
-	ATTRIBUTE("XPos"   , &m_position [XC]);
-	ATTRIBUTE("YPos"   , &m_position [YC]);
-	ATTRIBUTE("ZPos"   , &m_position [ZC]);
-	ATTRIBUTE("XDir"   , &m_direction[XC]);
-    ATTRIBUTE("YDir"   , &m_direction[YC]);
-    ATTRIBUTE("ZDir"   , &m_direction[ZC]);
-    ATTRIBUTE("XSize"  , &m_volume   [XC]);
-    ATTRIBUTE("YSize"  , &m_volume   [YC]);
-    ATTRIBUTE("ZSize"  , &m_volume   [ZC]);
-    ATTRIBUTE("XMatrix", &m_matrx_res[XC]);
-    ATTRIBUTE("YMatrix", &m_matrx_res[YC]);
-    ATTRIBUTE("ZMatrix", &m_matrx_res[ZC]);
-    ATTRIBUTE("Channel", &m_channel);
+   	ATTRIBUTE("Name"   , m_name);
+	ATTRIBUTE("XPos"   , m_position [XC]);
+	ATTRIBUTE("YPos"   , m_position [YC]);
+	ATTRIBUTE("ZPos"   , m_position [ZC]);
+	ATTRIBUTE("XDir"   , m_direction[XC]);
+    ATTRIBUTE("YDir"   , m_direction[YC]);
+    ATTRIBUTE("ZDir"   , m_direction[ZC]);
+    ATTRIBUTE("XSize"  , m_volume   [XC]);
+    ATTRIBUTE("YSize"  , m_volume   [YC]);
+    ATTRIBUTE("ZSize"  , m_volume   [ZC]);
+    ATTRIBUTE("XMatrix", m_matrx_res[XC]);
+    ATTRIBUTE("YMatrix", m_matrx_res[YC]);
+    ATTRIBUTE("ZMatrix", m_matrx_res[ZC]);
+    ATTRIBUTE("Channel", m_channel);
 
     m_mode          = mode;
     m_world         = World::instance();

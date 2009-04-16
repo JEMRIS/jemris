@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 AnalyticRFPulse::AnalyticRFPulse  (const AnalyticRFPulse& hrfp) {
 
 	m_analytic_phase = 0.0;
-	SetExceptionalAttrib("Shape");
+	//SetExceptionalAttrib("Shape");
 
 };
 
@@ -42,10 +42,10 @@ bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
 	//T stands for the time, c1, c2,... for the constants Const1, ..., Const5 defined
 	//for this AnalyticRFPulse, and a1, a2, etc for further linked attributes from
 	//other modules, as usual.
-	ATTRIBUTE("Shape"    , &m_analytic_value );
-	ATTRIBUTE("TPOIs"    , &m_more_tpois ); //number of TPOIs along the analytical expression
-	ATTRIBUTE("Constants",NULL ); //the constants
-	ATTRIBUTE("Diff"     ,NULL ); //if attribute value = 1, then d(Shape)/dT is assigned to m_flip_angle !!
+	ATTRIBUTE("Shape"    , m_analytic_value );
+	ATTRIBUTE("TPOIs"    , m_more_tpois     ); // Number of TPOIs along the analytical expression.
+	UNOBSERVABLE_ATTRIBUTE("Diff"     ); // Number of TPOIs along the analytical expression.
+	UNOBSERVABLE_ATTRIBUTE("Constants");
 
 	//base class Prepare; the GiNaC expression for Shape is set from Pulse::Prepare
 	btag = (RFPulse::Prepare(mode) && btag && m_analytic);
@@ -59,7 +59,7 @@ bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
 
             // special case: diff=1
             // => area equals the anti-derivative computed from Pulse::prepare
-            string sdiff; GetAttribute(sdiff,"Diff");
+            string sdiff = GetDOMattribute("Diff");
 
             if (sdiff=="1") {
                 m_flip_angle = (180.0/PI)*m_analytic_integral;
@@ -82,22 +82,25 @@ bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
 
 /***********************************************************/
 inline double  AnalyticRFPulse::GetMagnitude  (double const time){
- 	if (!m_analytic) return 0.0;
+
+	if (!m_analytic) return 0.0;
 	m_analytic_time = time;
-	EvalExpressions("Shape",PREP_UPDATE);
-	if ( m_has_imag_part )
+	GetAttribute("Shape")->EvalExpression();
+
+	if ( GetAttribute("Shape")->IsComplex() )
 	{
-		m_analytic_phase = atan2(m_imag_part,m_analytic_value);
-		return sqrt(pow(m_imag_part,2)+pow(m_analytic_value,2)) ;
+		double imag = GetAttribute("Shape")->GetImaginary();
+		m_analytic_phase = atan2(imag,m_analytic_value);
+		return sqrt(pow(imag,2)+pow(m_analytic_value,2)) ;
 	}
+
 	return m_analytic_value;
 };
 
 /***********************************************************/
 string          AnalyticRFPulse::GetInfo() {
 
-	string val;
-	GetAttribute(val,"Shape");
+	string val = GetDOMattribute("Shape");
 
 	stringstream s;
 	s << RFPulse::GetInfo() << " , Shape = ";

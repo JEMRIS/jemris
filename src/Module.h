@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -164,7 +164,7 @@ class Module : public Prototype {
      */
     bool InsertChild (string name);
 
-	virtual Module* GetModuleByAttributeValue (string name, string attrib);
+	virtual Module* GetPrototypeByAttributeValue (string name, string attrib);
 
     /**
      * @brief Add attribute and value to the DOM node of this module
@@ -196,19 +196,6 @@ class Module : public Prototype {
      * @param level  More elaborate description
      */
       void  DumpTree (string file="", Module* mod=NULL,int ichild=0, int level=0);
-
-    /**
-     * @brief Hide an attribute.
-     *
-     * Attributes, which were declared with the ATTRIBUTE command in a base class
-     * will be declared as invisible, i.e. they can not be set through XML.
-     * This method has to called in the particular Prepare function of a method, however,
-     * after the baseclass Prepare call.
-     *
-     * @param attrib       Name of the attribute to hide
-     * @param observable   Keep this attribute still observable? (default: true)
-     */
-      void  HideAttribute (string attrib, bool observable = true);
 
     /**
      * @brief Rewrite XML-tree where all expressions are evaluated (for IDEA)

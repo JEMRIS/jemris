@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -46,12 +46,12 @@ bool DelayAtomicSequence::Prepare (PrepareMode mode) {
 
     bool b=true;
 
-    ATTRIBUTE("Delay"    , &m_await_time);
-    ATTRIBUTE("ADCs"     , &m_adc       );
-    ATTRIBUTE("PhaseLock", &m_phase_lock);
-    ATTRIBUTE("StartSeq" , &m_start     );
-    ATTRIBUTE("StopSeq"  , &m_stop      );
-    ATTRIBUTE("DelayType", &m_delay_type);
+    ATTRIBUTE("Delay"    , m_await_time);
+    ATTRIBUTE("ADCs"     , m_adc       );
+    ATTRIBUTE("PhaseLock", m_phase_lock);
+    ATTRIBUTE("StartSeq" , m_start     );
+    ATTRIBUTE("StopSeq"  , m_stop      );
+    ATTRIBUTE("DelayType", m_delay_type);
 
     //insert pulse and module-attributes for observation only once
     if (mode == PREP_INIT) {
@@ -60,11 +60,11 @@ bool DelayAtomicSequence::Prepare (PrepareMode mode) {
         if (GetNumberOfChildren()==0)
 			b =InsertChild("EmptyPulse");
 
-		//add atributes to link with durations of other modules
+		//add attributes to link with durations of other modules
 		for (int i=0;i<20;i++) {
 			char modules[10];
 			sprintf( modules, "Module%02d", i ) ;
-			UNOBSERVABLE_ATTRIBUTE(modules, &m_durations[i] );
+			HIDDEN_ATTRIBUTE(modules, m_durations[i] );
 		}
     }
 
@@ -126,10 +126,13 @@ double DelayAtomicSequence::GetDelay(PrepareMode mode) {
 	iS2pos = (iMYpos>iS2pos)?iMYpos:iS2pos;
 
 	//Observe these sequences
+	int j = 0;
 	for (int i=iS1pos;i<=iS2pos;++i)
 		if (i!=iMYpos && mode == PREP_VERBOSE) {
-			stringstream module; module << "Module" << i;
-			Observe("Duration",pMod->GetChild(i),module.str() );
+			char modules[10];
+			sprintf( modules, "Module%02d", j ) ;
+			Observe( GetAttribute(modules), pMod->GetChild(i)->GetName(),"Duration", mode == PREP_VERBOSE );
+			j++;
 		}
 
 	//subtract duration of other sequences between pModStart, myself, and pModStop

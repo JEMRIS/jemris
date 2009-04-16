@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,10 +34,8 @@ bool ConstantGradPulse::Prepare  (PrepareMode mode) {
 
 	bool btag = true;
 
-	// Automatically set a GiNaC expression for GetValue(T)
-	ATTRIBUTE("Amplitude"    , &m_amplitude       );
+	ATTRIBUTE("Amplitude"    , m_amplitude       );
 
-	// Base class Prepare; the GiNaC expression for Shape is set from Pulse::Prepare
 	btag = ( GradPulse::Prepare(mode) && btag );
 
 	SetArea( m_amplitude*GetDuration() );
@@ -65,16 +63,8 @@ inline double ConstantGradPulse::GetGradient (double const time) {
 /***********************************************************/
 string          ConstantGradPulse::GetInfo() {
 
-	string val;
-	GetAttribute(val,"Shape");
-
 	stringstream s;
-	s << GradPulse::GetInfo() << " , Shape = ";
-
-	if ( HasDOMattribute("Diff") ) s << " d/DT ";
-
-	s <<  val;
-
+	s << GradPulse::GetInfo() << " , Amplitude = " << m_amplitude ;
 	return s.str();
 
 };

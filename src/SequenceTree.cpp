@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -213,7 +213,7 @@ int        SequenceTree::RunTree (DOMNode* node, void* ptr, unsigned int (*fun) 
 
 			depth++;
 			m_depth = (depth>m_depth?depth:m_depth);
-			
+
 			for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
 			{
 				RunTree(child,ptr,fun,depth);
@@ -348,7 +348,7 @@ void          SequenceTree::SerializeModules(string xml_file){
 		if (module->GetType() == MOD_ATOM  )   atoms->appendChild(node);
 		if (module->GetType() == MOD_PULSE )  pulses->appendChild(node);
 		if (module->GetType() == MOD_VOID  ) topnode->appendChild(node);
-
+cout << module->GetClassType() << endl;
 	}
 
 	XMLFormatTarget *myFormTarget;

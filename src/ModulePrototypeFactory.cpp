@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,12 +34,12 @@
 #include "ConstantGradPulse.h"
 #include "AnalyticRFPulse.h"
 #include "TrapGradPulse.h"
+#include "TriangleGradPulse.h"
 #include "SpiralGradPulse.h"
 #include "ExternalGradPulse.h"
 #include "ConcatSequence.h"
 #include "AtomicSequence.h"
 #include "DelayAtomicSequence.h"
-
 
 #include "StrX.h"
 
@@ -61,6 +61,7 @@ ModulePrototypeFactory::ModulePrototypeFactory () {
 	m_Clonables.insert( pair<string,Module*>( "SECHRFPULSE",         new SechRFPulse         () ));
 	m_Clonables.insert( pair<string,Module*>( "SINCRFPULSE",         new SincRFPulse         () ));
 	m_Clonables.insert( pair<string,Module*>( "TRAPGRADPULSE",       new TrapGradPulse       () ));
+	m_Clonables.insert( pair<string,Module*>( "TRIANGLEGRADPULSE",   new TriangleGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "CONSTANTGRADPULSE",   new ConstantGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "ANALYTICGRADPULSE",   new AnalyticGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "ANALYTICRFPULSE",     new AnalyticRFPulse     () ));

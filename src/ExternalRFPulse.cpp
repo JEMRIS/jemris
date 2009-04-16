@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -36,8 +36,8 @@ bool ExternalRFPulse::Prepare  (PrepareMode mode) {
 
 	m_bw  = 1e16;
 
-	ATTRIBUTE("Filename", &m_fname );
-	ATTRIBUTE("Scale"   , &m_scale );
+	ATTRIBUTE("Filename", m_fname );
+	ATTRIBUTE("Scale"   , m_scale );
 
 
         //read file only once !

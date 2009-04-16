@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,8 @@ bool    ConcatSequence::Prepare(PrepareMode mode){
 
 	m_type = MOD_CONCAT;
 
-	ATTRIBUTE("Repetitions", &m_repetitions);
-	HIDDEN_ATTRIBUTE("Counter"     , &m_counter);
+	       ATTRIBUTE("Repetitions", m_repetitions);
+	HIDDEN_ATTRIBUTE("Counter"    , m_counter    );
 
 	if (mode != PREP_UPDATE) SetRepCounter(0);
 
@@ -46,7 +46,7 @@ bool    ConcatSequence::Prepare(PrepareMode mode){
 void   ConcatSequence::SetRepCounter  (unsigned int val,bool record){
 	m_counter=val;
 	if ( m_counter != GetMyRepetitions() )
-		Notify("Counter",record); //always notify, i.e. no Newstate() check
+		Notify(m_counter);
 } ;
 
 /***********************************************************/
@@ -68,7 +68,7 @@ double     ConcatSequence::GetDuration  (){
 	m_duration = duration;
 	DEBUG_PRINT("  ConcatSequence::GetDuration() of " << GetName() << " calculates  duration = " << duration << endl;)
 
-	Notify(&m_duration);
+	Notify(m_duration);
 
 	return duration;
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -117,7 +117,7 @@ class ConcatSequence : public Sequence {
      *
      * @return The first repetition iterator.
      */
-    inline RepIter begin() {m_counter=0; Notify("Counter"); return RepIter(this,0);}
+    inline RepIter begin() {m_counter=0; Notify(m_counter); return RepIter(this,0);}
 
     /**
      * Get the final iterator for counting repetitions.

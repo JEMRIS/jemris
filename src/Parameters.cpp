@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -68,49 +68,48 @@ bool    Parameters::Prepare(PrepareMode mode) {
 	m_prepared = true;
 
 	//Parameters, intended for XML declaration in Params and reference in other modules
-	ATTRIBUTE("TE",           &m_te);
-	ATTRIBUTE("TR",           &m_tr);
-	ATTRIBUTE("TI",           &m_ti);
-	ATTRIBUTE("TD",           &m_td);
+	ATTRIBUTE("TE",           m_te);
+	ATTRIBUTE("TR",           m_tr);
+	ATTRIBUTE("TI",           m_ti);
+	ATTRIBUTE("TD",           m_td);
 
-	ATTRIBUTE("FOVx",         &m_fov_x);
-	ATTRIBUTE("FOVy",         &m_fov_y);
-	ATTRIBUTE("FOVz",         &m_fov_z);
+	ATTRIBUTE("FOVx",         m_fov_x);
+	ATTRIBUTE("FOVy",         m_fov_y);
+	ATTRIBUTE("FOVz",         m_fov_z);
 
-	ATTRIBUTE("Nx",           &m_iNx);
-	ATTRIBUTE("Ny",           &m_iNy);
-	ATTRIBUTE("Nz",           &m_iNz);
+	ATTRIBUTE("Nx",           m_iNx);
+	ATTRIBUTE("Ny",           m_iNy);
+	ATTRIBUTE("Nz",           m_iNz);
 
-	ATTRIBUTE("GradSlewRate", &m_grad_slew_rate);
-	ATTRIBUTE("GradMaxAmpl" , &m_grad_max_ampl);
+	ATTRIBUTE("GradSlewRate", m_grad_slew_rate);
+	ATTRIBUTE("GradMaxAmpl" , m_grad_max_ampl);
 
 	//Parameters, intended for reference from other modules only
 	m_delta_x = m_fov_x/m_iNx;
 	m_delta_y = m_fov_y/m_iNy;
 	m_delta_z = m_fov_z/m_iNz;
-	HIDDEN_ATTRIBUTE("Dx",    &m_delta_x);
-	HIDDEN_ATTRIBUTE("Dy",    &m_delta_y);
-	HIDDEN_ATTRIBUTE("Dz",    &m_delta_z);
+	HIDDEN_ATTRIBUTE("Dx",    m_delta_x);
+	HIDDEN_ATTRIBUTE("Dy",    m_delta_y);
+	HIDDEN_ATTRIBUTE("Dz",    m_delta_z);
 
 	m_kmax_x = PARAM_PI/m_delta_x;
 	m_kmax_y = PARAM_PI/m_delta_y;
 	m_kmax_z = PARAM_PI/m_delta_z;
-	HIDDEN_ATTRIBUTE("KMAXx", &m_kmax_x);
-	HIDDEN_ATTRIBUTE("KMAXy", &m_kmax_y);
-	HIDDEN_ATTRIBUTE("KMAXz", &m_kmax_z);
+	HIDDEN_ATTRIBUTE("KMAXx", m_kmax_x);
+	HIDDEN_ATTRIBUTE("KMAXy", m_kmax_y);
+	HIDDEN_ATTRIBUTE("KMAXz", m_kmax_z);
 
 	m_delta_kx = 2*m_kmax_x/m_iNx;
 	m_delta_ky = 2*m_kmax_y/m_iNy;
 	m_delta_kz = 2*m_kmax_z/m_iNz;
-	HIDDEN_ATTRIBUTE("DKx"    ,&m_delta_kx);
-	HIDDEN_ATTRIBUTE("DKy"    ,&m_delta_ky);
-	HIDDEN_ATTRIBUTE("DKz"   ,&m_delta_kz);
+	HIDDEN_ATTRIBUTE("DKx"    ,m_delta_kx);
+	HIDDEN_ATTRIBUTE("DKy"    ,m_delta_ky);
+	HIDDEN_ATTRIBUTE("DKz"    ,m_delta_kz);
 
     // Prepare up the chain
 	Module::Prepare(mode);
 
 	//hide XML attributes which were set by Module::Prepare()
-	HideAttribute("Duration",false);
 	HideAttribute("Observe", false);
 	HideAttribute("Vector",  false);
 
