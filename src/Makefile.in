@@ -216,9 +216,9 @@ SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 	TPOI.h TrapGradPulse.cpp TrapGradPulse.h TxRxPhase.cpp \
 	TxRxPhase.h World.cpp World.h XMLRead.cpp XMLRead.h \
 	ginac_functions.h rng.h rng.cpp
-jemris_SOURCES = $(SOURCES) $(BOOSTSOURCES) jemris.cpp
-sanityck_SOURCES = $(SOURCES) $(BOOSTSOURCES) sanityck.cpp
-pjemris_SOURCES = $(SOURCES) $(BOOSTSOURCES) mpi_Model.h pjemris.cpp
+jemris_SOURCES = $(SOURCES) jemris.cpp
+sanityck_SOURCES = $(SOURCES) sanityck.cpp
+pjemris_SOURCES = $(SOURCES) mpi_Model.h pjemris.cpp
 TESTS = test.sh
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

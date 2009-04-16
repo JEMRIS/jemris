@@ -7681,8 +7681,8 @@ if test `eval echo '${'$as_ac_Header'}'` = yes; then
 _ACEOF
 
 else
-  { { echo "$as_me:$LINENO: error: cannot find vararray++.h, bailing out" >&5
-echo "$as_me: error: cannot find vararray++.h, bailing out" >&2;}
+  { { echo "$as_me:$LINENO: error: cannot find vararray++.h, bailing out. Get it from http://www.fz-juelich.de/jsc/cv/tools/VarArray" >&5
+echo "$as_me: error: cannot find vararray++.h, bailing out. Get it from http://www.fz-juelich.de/jsc/cv/tools/VarArray" >&2;}
    { (exit 1); exit 1; }; }
 fi
 
@@ -8128,8 +8128,8 @@ if test `eval echo '${'$as_ac_Header'}'` = yes; then
 _ACEOF
 
 else
-  { { echo "$as_me:$LINENO: error: cannot find xercesc/dom/DOM.hpp, bailing out" >&5
-echo "$as_me: error: cannot find xercesc/dom/DOM.hpp, bailing out" >&2;}
+  { { echo "$as_me:$LINENO: error: cannot find xercesc/dom/DOM.hpp, bailing out. Get it from http://xerces.apache.org/xerces-c." >&5
+echo "$as_me: error: cannot find xercesc/dom/DOM.hpp, bailing out. Get it from http://xerces.apache.org/xerces-c." >&2;}
    { (exit 1); exit 1; }; }
 fi
 

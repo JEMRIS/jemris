@@ -36,10 +36,10 @@ AC_CHECK_HEADERS([math.h],                                    [], [AC_MSG_ERROR(
 AC_CHECK_HEADERS([stdexcept],                                 [], [AC_MSG_ERROR([cannot find stdexcept, bailing out])])
 AC_CHECK_HEADERS([cvode/cvode.h],                             [], [AC_MSG_ERROR([cannot find cvode/cvode.h, bailing out])])
 AC_CHECK_HEADERS([nvector/nvector_serial.h],                  [], [AC_MSG_ERROR([cannot find nvector/nvector_serial.h, bailing out])])
-AC_CHECK_HEADERS([var_array++.h],                             [], [AC_MSG_ERROR([cannot find vararray++.h, bailing out])])
+AC_CHECK_HEADERS([var_array++.h],                             [], [AC_MSG_ERROR([cannot find vararray++.h, bailing out. Get it from http://www.fz-juelich.de/jsc/cv/tools/VarArray])])
 AC_CHECK_HEADERS([ginac/ginac.h],                             [], [AC_MSG_ERROR([cannot find ginac/ginac.h, bailing out])])
 AC_CHECK_HEADERS([cln/cln.h],                                 [], [AC_MSG_ERROR([cannot find cln/cln.h, bailing out])])
-AC_CHECK_HEADERS([xercesc/dom/DOM.hpp],                       [], [AC_MSG_ERROR([cannot find xercesc/dom/DOM.hpp, bailing out])])
+AC_CHECK_HEADERS([xercesc/dom/DOM.hpp],                       [], [AC_MSG_ERROR([cannot find xercesc/dom/DOM.hpp, bailing out. Get it from http://xerces.apache.org/xerces-c.])])
 
 AC_ARG_ENABLE([boost],
      [  --enable-boost          turn on boost C++ library support (default: yes)],
