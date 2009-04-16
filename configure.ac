@@ -218,7 +218,7 @@ int main(int argc, char** argv) {
 _ACEOF
 
 AC_MSG_CHECKING([whether the MPI C++ compiler works])
-echo "$MPICXX -o conftest conftest.cpp" >&5
+echo "$MPICXX $CXXFLAGS -o conftest conftest.cpp" >&5
 $MPICXX -o conftest conftest.cpp 2>&5
 if test $? -ne 0; then
   AC_MSG_FAILURE([failed!])
