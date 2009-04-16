@@ -8632,7 +8632,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 int
 main ()
 {
-GiNaC::ex::ex(); return 0;
+GiNaC::ex* mex = new GiNaC::ex();
   ;
   return 0;
 }

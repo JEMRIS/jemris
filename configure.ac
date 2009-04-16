@@ -69,7 +69,7 @@ OLD_LIBS=$LIBS
 LIBS="${LIBS} -lginac"
 
 AC_TRY_LINK([#include <ginac/ginac.h>],
-   [GiNaC::ex::ex(); return 0; ],
+   [GiNaC::ex* mex = new GiNaC::ex();],
    [AC_MSG_RESULT([ginac])]
    ginac_found=yes,
    [LIBS=$OLD_LIBS])
