@@ -34,7 +34,7 @@ bool BiotSavartLoop::Prepare (PrepareMode mode) {
 
 	bool success = true;
 
-    ATTRIBUTE("Radius" , &m_radius);
+    ATTRIBUTE("Radius" , m_radius);
     success   = Coil::Prepare(mode);
 	m_maxsens = 0.0;
 	m_havemax = false;
