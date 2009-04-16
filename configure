@@ -8158,6 +8158,7 @@ else
 fi
 
 
+if test x$boost = xtrue; then
 
 
 for ac_header in boost/math/special_functions/ellint_1.hpp boost/math/special_functions/ellint_2.hpp
@@ -8311,6 +8312,7 @@ fi
 
 done
 
+fi
 
 # Checks for libraries.
 

@@ -50,10 +50,12 @@ AC_ARG_ENABLE([boost],
      esac],[boost=true])
      AM_CONDITIONAL([BOOST], [test x$boost = xtrue])
 
-AC_CHECK_HEADERS(
-	[boost/math/special_functions/ellint_1.hpp boost/math/special_functions/ellint_2.hpp],
-	[AC_DEFINE(HAVE_BOOST,1,[boost is available])],
-    [AC_MSG_RESULT([cannot find boost ellint_1.hpp and/or ellint_2.hpp, Biot-Savart-Loop not available])])
+if test x$boost = xtrue; then
+	AC_CHECK_HEADERS(
+		[boost/math/special_functions/ellint_1.hpp boost/math/special_functions/ellint_2.hpp],
+		[AC_DEFINE(HAVE_BOOST,1,[boost is available])],
+    	[AC_MSG_RESULT([cannot find boost ellint_1.hpp and/or ellint_2.hpp, Biot-Savart-Loop not available])])
+fi
 
 # Checks for libraries.
 AC_CHECK_LIB([m],                   [cos],                    , [AC_MSG_ERROR([cannot find libm, bailing out])])
@@ -186,6 +188,7 @@ AC_ARG_ENABLE([mpi],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-mpi]) ;;
      esac],[mpi=true])
      AM_CONDITIONAL([MPI], [test x$mpi = xtrue])
+
 
 AC_DEFUN([AC_PROG_MPICXX], [
 AC_ARG_VAR([MPICXX],  [MPI C++ compiler command])
