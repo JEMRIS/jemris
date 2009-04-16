@@ -10154,7 +10154,7 @@ _ACEOF
 { echo "$as_me:$LINENO: checking whether the MPI C++ compiler works" >&5
 echo $ECHO_N "checking whether the MPI C++ compiler works... $ECHO_C" >&6; }
 echo "$MPICXX $CXXFLAGS -o conftest conftest.cpp" >&5
-$MPICXX -o conftest conftest.cpp 2>&5
+$MPICXX $CXXFLAGS -o conftest conftest.cpp 2>&5
 if test $? -ne 0; then
   { { echo "$as_me:$LINENO: error: failed!
 See \`config.log' for more details." >&5
