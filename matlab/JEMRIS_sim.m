@@ -2,7 +2,7 @@ function varargout = JEMRIS_sim(varargin)
 %GUI for jemris simulation visualisation
 
 %
-%  JEMRIS Copyright (C) 2007-2008  Tony Stcker, Kaveh Vahedipour
+%  JEMRIS Copyright (C) 2007-2009  Tony Stcker, Kaveh Vahedipour
 %                                  Forschungszentrum Jlich, Germany
 %
 %  This program is free software; you can redistribute it and/or modify
