@@ -101,8 +101,8 @@ double BiotSavartLoop::GetSensitivity(double* position) {
         double k     = 1/pow(sin(sqrt(4.0*alpha/Q)),2);
         if (k >= 1.0) k = 0.99;
 
-        double Kk    = 0.0;
-		double Ek    = 0.0;
+        double Kk    = 1.0;
+		double Ek    = 1.0;
 		
 		#ifdef HAVE_BOOST
             // Complete elliptical integral function of first  kind
