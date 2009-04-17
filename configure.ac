@@ -323,6 +323,7 @@ fi
 
 
 AC_CONFIG_FILES([Makefile
+				doc/Makefile
                  src/Makefile])
 
 AC_OUTPUT
