@@ -2244,7 +2244,7 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 cat >>confdefs.h <<\_ACEOF
-#define SVN_REVISION "1164:1167"
+#define SVN_REVISION "1169:1170M"
 _ACEOF
 
 
@@ -10233,7 +10233,7 @@ rm -f conftest.*
 fi
 
 
-ac_config_files="$ac_config_files Makefile doc/Makefile share/Makefile share/examples/Makefile share/matlab/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile doc/Makefile share/Makefile share/examples/Makefile share/matlab/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -10844,6 +10844,7 @@ do
     "src/config.h") CONFIG_HEADERS="$CONFIG_HEADERS src/config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "share/Makefile") CONFIG_FILES="$CONFIG_FILES share/Makefile" ;;
     "share/examples/Makefile") CONFIG_FILES="$CONFIG_FILES share/examples/Makefile" ;;
