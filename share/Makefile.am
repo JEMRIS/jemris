@@ -1,1 +1,1 @@
-SUBDIRS = exmaples matlab
+SUBDIRS = examples matlab
