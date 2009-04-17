@@ -30,6 +30,10 @@
 #include "ConcatSequence.h"
 #include "config.h"
 
+#ifndef SVN_REVISION
+	#define SVN_REVISION "unkown"
+#endif
+
 using namespace std;
 
 /**

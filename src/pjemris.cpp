@@ -31,6 +31,10 @@ using namespace std;
 #include "mpi_Model.h"
 #include "config.h"
 
+#ifndef SVN_REVISION
+	#define SVN_REVISION "unkown"
+#endif
+
 
 int main (int argc, char *argv[]) {
 
