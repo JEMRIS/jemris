@@ -73,7 +73,8 @@ AC_TRY_LINK([#include <ginac/ginac.h>],
    [GiNaC::ex* mex = new GiNaC::ex();],
    [AC_MSG_RESULT([ginac])]
    ginac_found=yes,
-   [LIBS=$OLD_LIBS])
+   [LIBS=$OLD_LIBS]
+   [AC_MSG_ERROR([cannot find libginac, bailing out])])
 
 if test -z $ginac_found; then
     LIBS="${LIBS} -lginac"

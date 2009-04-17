@@ -47,7 +47,6 @@ void usage () {
 
 void do_simu (Simulator* sim) {
 	World* pW = World::instance();
-	cout << "\nJEMRIS \nVersion " << VERSION << "\n\n";
 	cout << "Model    : " << sim->GetAttr(sim->GetElem("model"),  "name")<< "\t  , solver = "
 			      << sim->GetAttr(sim->GetElem("model"), "type")  << endl;
 	cout << "Sample   : " << sim->GetAttr(sim->GetElem("sample"), "name")<< "\t  , spins  = " << pW->TotalSpinNumber  << endl;
@@ -62,6 +61,8 @@ void do_simu (Simulator* sim) {
 
 int main (int argc, char *argv[]) {
 	//print usage
+	cout << "\nJEMRIS \nVersion " << VERSION << "\n\n";
+
 	if (argc==1) {
 		usage();
 		return 0;
