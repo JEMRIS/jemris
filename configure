@@ -2244,7 +2244,7 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 cat >>confdefs.h <<\_ACEOF
-#define SVN_REVISION "1161:1163M"
+#define SVN_REVISION "1164:1165M"
 _ACEOF
 
 
@@ -10233,7 +10233,7 @@ rm -f conftest.*
 fi
 
 
-ac_config_files="$ac_config_files Makefile doc/Makefile data/Makefile data/xmpl/Makefile data/matlab/Makefile src/Makefile"
+ac_config_files="$ac_config_files Makefile doc/Makefile share/Makefile share/xmpl/Makefile share/matlab/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -10845,10 +10845,9 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
-    "data/Makefile") CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
-    "data/xmpl/Makefile") CONFIG_FILES="$CONFIG_FILES data/xmpl/Makefile" ;;
-    "data/matlab/Makefile") CONFIG_FILES="$CONFIG_FILES data/matlab/Makefile" ;;
-    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+    "share/Makefile") CONFIG_FILES="$CONFIG_FILES share/Makefile" ;;
+    "share/xmpl/Makefile") CONFIG_FILES="$CONFIG_FILES share/xmpl/Makefile" ;;
+    "share/matlab/Makefile") CONFIG_FILES="$CONFIG_FILES share/matlab/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

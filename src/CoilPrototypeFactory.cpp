@@ -21,11 +21,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "CoilPrototypeFactory.h"
 
-#include "BiotSavartLoop.h"
+#include "CoilPrototypeFactory.h"
 #include "IdealCoil.h"
 #include "ExternalCoil.h"
+#include "BiotSavartLoop.h"
+
 #include "StrX.h"
 
 /***********************************************************/
