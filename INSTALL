@@ -1,0 +1,38 @@
+JEMRIS - Juelich Extensible MRI Simulator
+This software package contains a general MRI simulator.
+
+Prerequisites
+-------------
+
+CLN 1.2.X         http://ginac.de/CLN
+GiNaC 1.4.X       http://ginac.de
+Xerces C++ 2.8.0  http://xerces.apache.org/xerces-c
+VarArray 1.0      http://www.fz-juelich.de/jsc/cv/tools/VarArray  
+
+Please provide all the above packages. 
+
+Optional
+--------
+
+If provided with an MPI implementation with C++ bindings, a parallel version of
+JEMRIS is built. Indicate the location of mpi.h with the appropriate configure 
+flags.
+
+If povided with the boost C++ libraries, a loop coil obeying to the Biot-Savart 
+law will be built.
+
+Installation
+------------
+
+Run the following commands:
+
+./configure
+make 
+make check
+make install
+
+Documentation
+-------------
+
+More detailed installation and developers documentation may be found under 
+http://jemris.org/. 
