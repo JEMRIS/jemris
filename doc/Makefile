@@ -214,7 +214,6 @@ all-am: Makefile
 installdirs:
 install: install-am
 install-exec: install-exec-am
-install-data: install-data-am
 uninstall: uninstall-am
 
 install-am: all-am
@@ -302,6 +301,7 @@ uninstall-am:
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am
 
+install-data : /usr/local/jemris/doc
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
