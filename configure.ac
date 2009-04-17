@@ -324,6 +324,6 @@ if test x$mpi = xtrue; then
 fi
 
 
-AC_CONFIG_FILES([Makefile doc/Makefile share/Makefile share/xmpl/Makefile share/matlab/Makefile])
+AC_CONFIG_FILES([Makefile doc/Makefile share/Makefile share/examples/Makefile share/matlab/Makefile])
 
 AC_OUTPUT

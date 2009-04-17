@@ -1,1 +1,1 @@
-SUBDIRS = xmpl matlab
+SUBDIRS = exmaples matlab
