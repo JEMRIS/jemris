@@ -2,7 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(JEMRIS, 2.2, k.vahedipour@fz-juelich.de)
+define([svnversion], esyscmd([sh -c "svnversion|tr -d '\n'"]))dnl
+AC_INIT(JEMRIS, [2.2 svnrevision svnversion], k.vahedipour@fz-juelich.de)
 AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
 

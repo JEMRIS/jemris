@@ -28,6 +28,7 @@
 #include "Simulator.h"
 #include "SequenceTree.h"
 #include "ConcatSequence.h"
+#include "config.h"
 
 using namespace std;
 
@@ -46,7 +47,7 @@ void usage () {
 
 void do_simu (Simulator* sim) {
 	World* pW = World::instance();
-	cout << "\nJEMRIS\n\n";
+	cout << "\nJEMRIS \nVersion " << VERSION << "\n\n";
 	cout << "Model    : " << sim->GetAttr(sim->GetElem("model"),  "name")<< "\t  , solver = "
 			      << sim->GetAttr(sim->GetElem("model"), "type")  << endl;
 	cout << "Sample   : " << sim->GetAttr(sim->GetElem("sample"), "name")<< "\t  , spins  = " << pW->TotalSpinNumber  << endl;
