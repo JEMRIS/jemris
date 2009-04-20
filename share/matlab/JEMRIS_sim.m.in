@@ -72,7 +72,7 @@ else    % a BASH
     handles.PJemrisCall = ['LD_LIBRARY_PATH=""; mpirun -np 5 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
 end
 %CLUSTER call works only, if the CWD belongs to cluster
-cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/data/home/',cwd(n:end)];
+cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/data/home/',cwd(n:end)]
 handles.ClusterCall=sprintf('ssh mrcluster "cd %s; qsub /apps/prod/misc/share/jemris/pbs_script.sh"',cwd);
 
 %default is sequential computing
