@@ -1,9 +1,11 @@
+
 JEMRIS - Juelich Extensible MRI Simulator
 This software package contains a general MRI simulator.
 
 Prerequisites
 -------------
 
+CVODE 2.5         http://www.llnl.gov/casc/sundials
 CLN 1.2.X         http://ginac.de/CLN
 GiNaC 1.4.X       http://ginac.de
 Xerces C++ 2.8.0  http://xerces.apache.org/xerces-c

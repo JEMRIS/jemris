@@ -43,12 +43,21 @@ CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+<<<<<<< .mine
+ACLOCAL = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run aclocal-1.10
+AMTAR = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run tar
+AUTOCONF = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run autoconf
+AUTOHEADER = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run autoheader
+AUTOMAKE = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run automake-1.10
+AWK = awk
+=======
 ACLOCAL = ${SHELL} /opt/kvlocal/JEMRIS/missing --run aclocal-1.10
 AMTAR = ${SHELL} /opt/kvlocal/JEMRIS/missing --run tar
 AUTOCONF = ${SHELL} /opt/kvlocal/JEMRIS/missing --run autoconf
 AUTOHEADER = ${SHELL} /opt/kvlocal/JEMRIS/missing --run autoheader
 AUTOMAKE = ${SHELL} /opt/kvlocal/JEMRIS/missing --run automake-1.10
 AWK = gawk
+>>>>>>> .r1174
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -74,9 +83,15 @@ INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
 LIBS = -lxerces-c -lvar_array -lsundials_nvecserial -lsundials_cvode -lm  -lginac
+<<<<<<< .mine
+LTLIBOBJS =  ${LIBOBJDIR}error$U.lo
+MAKEINFO = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run makeinfo
+MKDIR_P = .././install-sh -c -d
+=======
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /opt/kvlocal/JEMRIS/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
+>>>>>>> .r1174
 MPICXX = mpicxx
 MPIRUN = 
 MPIRUN_PROC_OPT = 
@@ -92,10 +107,17 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = 
 VERSION = 2.2
+<<<<<<< .mine
+abs_builddir = /Users/kvahed/JEMRIS/trunk/doc
+abs_srcdir = /Users/kvahed/JEMRIS/trunk/doc
+abs_top_builddir = /Users/kvahed/JEMRIS/trunk
+abs_top_srcdir = /Users/kvahed/JEMRIS/trunk
+=======
 abs_builddir = /opt/kvlocal/JEMRIS/doc
 abs_srcdir = /opt/kvlocal/JEMRIS/doc
 abs_top_builddir = /opt/kvlocal/JEMRIS
 abs_top_srcdir = /opt/kvlocal/JEMRIS
+>>>>>>> .r1174
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 am__include = include
@@ -123,7 +145,11 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
+<<<<<<< .mine
+install_sh = $(SHELL) /Users/kvahed/JEMRIS/trunk/install-sh
+=======
 install_sh = $(SHELL) /opt/kvlocal/JEMRIS/install-sh
+>>>>>>> .r1174
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
