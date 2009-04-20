@@ -27,7 +27,7 @@ BrainSample.RES = handles.sample.DxDy;
 interp_factor   = 1./BrainSample.RES;
 add_susceptiblity = handles.sample.Suscept;
 
-load(fullfile(handles.JemrisPath,'MNIbrain.mat'))
+load(fullfile(handles.JemrisShare,'MNIbrain.mat'))
 
 if length(slices)==1;slices=[slices slices];end
 if isempty(slices);slices=[1 size(BRAIN,3)];end
@@ -37,7 +37,7 @@ BRAIN=permute(BRAIN,[d(1) d(2) dim]);
 BRAIN=BRAIN(:,:,slices(1):slices(2));
 
 if add_susceptiblity
-  load(fullfile(handles.JemrisPath,'MNIdeltaB.mat'))
+  load(fullfile(handles.JemrisShare,'MNIdeltaB.mat'))
   DB=DB(:,:,round([slices(1):slices(2)]/2));
   Nx=size(DB,1); x=([0:Nx-1]-Nx/2+0.5);
   Ny=size(DB,2); y=([0:Ny-1]-Ny/2+0.5);
