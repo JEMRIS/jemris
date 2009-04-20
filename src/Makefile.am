@@ -9,4 +9,4 @@ jemris_SOURCES   = $(SOURCES) jemris.cpp
 sanityck_SOURCES = $(SOURCES) sanityck.cpp
 pjemris_SOURCES  = $(SOURCES) mpi_Model.h pjemris.cpp
 
-TESTS = test.sh
+TESTS = testsequences.sh testsignals.sh testcoils.sh
