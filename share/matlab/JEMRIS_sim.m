@@ -59,7 +59,8 @@ handles.hax=hax;
 handles.epil=0;
 handles.epir=0;
 handles.CWD=pwd;
-handles.JemrisPath=fileparts(which('JEMRIS_sim'));
+handles.JemrisPath='/usr/local/bin';
+handles.JemrisShare='/usr/local/share/jemris/matlab';
 
 %define how to call jemris / pjemris
 [s,w]=system('setenv');
@@ -141,7 +142,7 @@ function handles=write_simu_xml(handles,redraw)
      td =handles.txadir ; n=strfind(td,s(1:end-1)) ; td =['/data/home/',td(n:end)] ;
      rd =handles.rxadir ; n=strfind(rd,s(1:end-1)) ; rd =['/data/home/',rd(n:end)] ;    
  else
-     jp=handles.JemrisPath;
+     jp=handles.JemrisShare;
      cwd=pwd; sd=handles.seqdir; td=handles.txadir; rd=handles.rxadir;
  end
  %

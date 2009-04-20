@@ -2244,7 +2244,7 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 cat >>confdefs.h <<\_ACEOF
-#define SVN_REVISION "1171M"
+#define SVN_REVISION "1176M"
 _ACEOF
 
 
@@ -10233,7 +10233,7 @@ rm -f conftest.*
 fi
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile doc/Makefile share/Makefile share/examples/Makefile share/matlab/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile doc/Makefile share/Makefile share/examples/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m"
 
 
 cat >confcache <<\_ACEOF
@@ -10849,6 +10849,8 @@ do
     "share/Makefile") CONFIG_FILES="$CONFIG_FILES share/Makefile" ;;
     "share/examples/Makefile") CONFIG_FILES="$CONFIG_FILES share/examples/Makefile" ;;
     "share/matlab/Makefile") CONFIG_FILES="$CONFIG_FILES share/matlab/Makefile" ;;
+    "share/matlab/JEMRIS_sim.m") CONFIG_FILES="$CONFIG_FILES share/matlab/JEMRIS_sim.m" ;;
+    "share/matlab/JEMRIS_seq.m") CONFIG_FILES="$CONFIG_FILES share/matlab/JEMRIS_seq.m" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

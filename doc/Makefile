@@ -29,8 +29,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-unknown-linux-gnu
-host_triplet = x86_64-unknown-linux-gnu
+build_triplet = i386-apple-darwin9.6.0
+host_triplet = i386-apple-darwin9.6.0
 subdir = doc
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -43,21 +43,12 @@ CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-<<<<<<< .mine
 ACLOCAL = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run aclocal-1.10
 AMTAR = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run tar
 AUTOCONF = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run autoconf
 AUTOHEADER = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run autoheader
 AUTOMAKE = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run automake-1.10
 AWK = awk
-=======
-ACLOCAL = ${SHELL} /opt/kvlocal/JEMRIS/missing --run aclocal-1.10
-AMTAR = ${SHELL} /opt/kvlocal/JEMRIS/missing --run tar
-AUTOCONF = ${SHELL} /opt/kvlocal/JEMRIS/missing --run autoconf
-AUTOHEADER = ${SHELL} /opt/kvlocal/JEMRIS/missing --run autoheader
-AUTOMAKE = ${SHELL} /opt/kvlocal/JEMRIS/missing --run automake-1.10
-AWK = gawk
->>>>>>> .r1174
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -69,29 +60,23 @@ CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
-ECHO_C = 
-ECHO_N = -n
+ECHO_C = \c
+ECHO_N = 
 ECHO_T = 
-EGREP = /bin/grep -E
+EGREP = /usr/bin/grep -E
 EXEEXT = 
-GREP = /bin/grep
+GREP = /usr/bin/grep
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
-LIBOBJS = 
+LIBOBJS =  ${LIBOBJDIR}error$U.o
 LIBS = -lxerces-c -lvar_array -lsundials_nvecserial -lsundials_cvode -lm  -lginac
-<<<<<<< .mine
 LTLIBOBJS =  ${LIBOBJDIR}error$U.lo
 MAKEINFO = ${SHELL} /Users/kvahed/JEMRIS/trunk/missing --run makeinfo
 MKDIR_P = .././install-sh -c -d
-=======
-LTLIBOBJS = 
-MAKEINFO = ${SHELL} /opt/kvlocal/JEMRIS/missing --run makeinfo
-MKDIR_P = /bin/mkdir -p
->>>>>>> .r1174
 MPICXX = mpicxx
 MPIRUN = 
 MPIRUN_PROC_OPT = 
@@ -104,20 +89,13 @@ PACKAGE_TARNAME = jemris
 PACKAGE_VERSION = 2.2
 PATH_SEPARATOR = :
 SET_MAKE = 
-SHELL = /bin/bash
+SHELL = /bin/sh
 STRIP = 
 VERSION = 2.2
-<<<<<<< .mine
 abs_builddir = /Users/kvahed/JEMRIS/trunk/doc
 abs_srcdir = /Users/kvahed/JEMRIS/trunk/doc
 abs_top_builddir = /Users/kvahed/JEMRIS/trunk
 abs_top_srcdir = /Users/kvahed/JEMRIS/trunk
-=======
-abs_builddir = /opt/kvlocal/JEMRIS/doc
-abs_srcdir = /opt/kvlocal/JEMRIS/doc
-abs_top_builddir = /opt/kvlocal/JEMRIS
-abs_top_srcdir = /opt/kvlocal/JEMRIS
->>>>>>> .r1174
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 am__include = include
@@ -126,36 +104,32 @@ am__quote =
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-unknown-linux-gnu
+build = i386-apple-darwin9.6.0
 build_alias = 
-build_cpu = x86_64
-build_os = linux-gnu
-build_vendor = unknown
+build_cpu = i386
+build_os = darwin9.6.0
+build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-unknown-linux-gnu
+host = i386-apple-darwin9.6.0
 host_alias = 
-host_cpu = x86_64
-host_os = linux-gnu
-host_vendor = unknown
+host_cpu = i386
+host_os = darwin9.6.0
+host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-<<<<<<< .mine
 install_sh = $(SHELL) /Users/kvahed/JEMRIS/trunk/install-sh
-=======
-install_sh = $(SHELL) /opt/kvlocal/JEMRIS/install-sh
->>>>>>> .r1174
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
-mkdir_p = /bin/mkdir -p
+mkdir_p = $(top_builddir)/./install-sh -c -d
 oldincludedir = /usr/include
 pdfdir = ${docdir}
 prefix = /usr/local

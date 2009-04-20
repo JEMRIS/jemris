@@ -1,3 +1,3 @@
-EXTRA_DIST = 1chext.xml 8chheadcyl.xml Makefile.am SM1.bin ThreePulses.xml analytic.xml approved epi.xml gre.xml radial.xml rand_grad_pulse.bin rand_rf_pulse.bin sli_sel.xml tse.xml
-examplesdir = $(datadir)/examples/matlab
+EXTRA_DIST = 1chext.xml 8chheadcyl.xml Makefile.am SM1.bin ThreePulses.xml analytic.xml approved epi.xml gre.xml radial.xml rand_grad_pulse.bin rand_rf_pulse.bin sli_sel.xml tse.xml uniform.xml
+examplesdir = $(datadir)/jemris/examples
 examples_DATA = $(EXTRA_DIST)

@@ -60,7 +60,8 @@ handles.dm=0;
 handles.cd=0;
 handles.ax=0;
 handles.CWD=pwd;
-handles.JemrisPath=fileparts(which('JEMRIS_seq'));
+handles.JemrisPath='/usr/local/bin';
+handles.JemrisShare='/usr/local/share/jemris/matlab';
 [s,w]=system('setenv');
 if s==0 % a TCSH
     handles.JemrisCall=['setenv LD_LIBRARY_PATH ""; ',fullfile(handles.JemrisPath,'jemris')];
@@ -68,7 +69,7 @@ else    % a BASH
      handles.JemrisCall=['LD_LIBRARY_PATH=""; ',fullfile(handles.JemrisPath,'jemris')];
 end
 %get all modules + attributes which are currently supported by JEMRIS
-[Modules,Params]=getAllModules(handles.JemrisCall,handles.JemrisPath);
+[Modules,Params]=getAllModules(handles.JemrisCall,handles.CWD);
 for i=1:length(Modules)
     handles.ModType{i}   = Modules(i).type; 
     handles.Modules{i}   = Modules(i).name; 
@@ -113,7 +114,7 @@ INSERT_MODULE_NUMBER=0;
 MODULE_TYPE_COUNTER=[0 0 0 0];
 
 %create the toolbar
-handles.icons=load(fullfile(handles.JemrisPath,'ModuleIcons'));
+handles.icons=load(fullfile(handles.JemrisShare,'ModuleIcons'));
 handles.hpt=seqcad_uitoolbar(hObject,handles);
 
 guidata(hObject, handles);
@@ -150,6 +151,7 @@ function call_jemris(hObject,handles)
 function update_Callback(hObject, eventdata, handles)
 writeXMLseq(handles,handles.Seq,fullfile(handles.seqdir,handles.seqfile));
 set(handles.SeqNameTag,'String',['Sequence: ',handles.seqfile])
+handles.CWD=pwd;
 for i=1:length(handles.hpt);
     set(handles.hpt{i},'State','off'); 
 end
