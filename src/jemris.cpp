@@ -65,7 +65,7 @@ void do_simu (Simulator* sim) {
 
 int main (int argc, char *argv[]) {
 	//print usage
-	cout << "\nJEMRIS " << VERSION << ", revision "<< SVN_REVISION <<"\n\n";
+	cout << "\nJEMRIS " << VERSION << " r"<< SVN_REVISION <<"\n\n";
 
 	if (argc==1) {
 		usage();
