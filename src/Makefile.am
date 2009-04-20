@@ -1,3 +1,5 @@
+
+
 bin_PROGRAMS = jemris sanityck
 if MPI
   bin_PROGRAMS += pjemris
@@ -9,4 +11,5 @@ jemris_SOURCES   = $(SOURCES) jemris.cpp
 sanityck_SOURCES = $(SOURCES) sanityck.cpp
 pjemris_SOURCES  = $(SOURCES) mpi_Model.h pjemris.cpp
 
-TESTS = testsequences.sh testsignals.sh testcoils.sh
+EXTRA_DIST = testsequences.sh testsignals.sh testcoils.sh
+TESTS = $(EXTRA_DIST)

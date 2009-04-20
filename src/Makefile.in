@@ -221,7 +221,8 @@ SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 jemris_SOURCES = $(SOURCES) jemris.cpp
 sanityck_SOURCES = $(SOURCES) sanityck.cpp
 pjemris_SOURCES = $(SOURCES) mpi_Model.h pjemris.cpp
-TESTS = testsequences.sh testsignals.sh testcoils.sh
+EXTRA_DIST = testsequences.sh testsignals.sh testcoils.sh
+TESTS = $(EXTRA_DIST)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
