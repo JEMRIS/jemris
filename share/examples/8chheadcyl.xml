@@ -1,12 +1,12 @@
-<?Xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <CoilArray type="Cylinder" radius="10">
-  <BiotSavartLoop Name="1" Radius="20" XPos="0"   YPos="10"  ZPos="0" XDir="0"  YDir="-10" ZDir="0" XMatrix="8" YMatrix="8" ZMatrix="8" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Name="2" Radius="20" XPos="7"   YPos="7"   ZPos="0" XDir="-7" YDir="-7" ZDir="0" XMatrix="8" YMatrix="8" ZMatrix="8" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Name="3" Radius="20" XPos="10"  YPos="0"   ZPos="0" XDir="-10" YDir="0"  ZDir="0" XMatrix="8" YMatrix="8" ZMatrix="8" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Name="4" Radius="20" XPos="7"   YPos="-7"  ZPos="0" XDir="-7" YDir="7"  ZDir="0" XMatrix="8" YMatrix="8" ZMatrix="8" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Name="5" Radius="20" XPos="0"   YPos="-10" ZPos="0" XDir="0"  YDir="10"  ZDir="0" XMatrix="8" YMatrix="8" ZMatrix="8" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Name="6" Radius="20" XPos="-7"  YPos="-7"  ZPos="0" XDir="7"  YDir="7"  ZDir="0" XMatrix="8" YMatrix="8" ZMatrix="8" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Name="7" Radius="20" XPos="-10" YPos="0"   ZPos="0" XDir="10"  YDir="0"  ZDir="0" XMatrix="8" YMatrix="8" ZMatrix="8" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Name="8" Radius="20" XPos="-7"  YPos="7"   ZPos="0" XDir="7"  YDir="-7" ZDir="0" XMatrix="8" YMatrix="8" ZMatrix="8" XSize="100" YSize="100" ZSize="100"/>
+  <BiotSavartLoop Channel="0" Name="TX1" Radius="20" XPos="0"   YPos="40"  ZPos="0" XDir="0"  YDir="-40" ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
+  <BiotSavartLoop Channel="1" Name="TX2" Radius="20" XPos="28"   YPos="28"   ZPos="0" XDir="-28" YDir="-28" ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
+  <BiotSavartLoop Channel="2" Name="TX3" Radius="20" XPos="40"  YPos="0"   ZPos="0" XDir="-40" YDir="0"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
+  <BiotSavartLoop Channel="3" Name="TX4" Radius="20" XPos="28"   YPos="-28"  ZPos="0" XDir="-28" YDir="28"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
+  <BiotSavartLoop Channel="4" Name="TX5" Radius="20" XPos="0"   YPos="-40" ZPos="0" XDir="0"  YDir="40"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
+  <BiotSavartLoop Channel="5" Name="TX6" Radius="20" XPos="-28"  YPos="-28"  ZPos="0" XDir="28"  YDir="28"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
+  <BiotSavartLoop Channel="6" Name="TX7" Radius="20" XPos="-40" YPos="0"   ZPos="0" XDir="40"  YDir="0"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
+  <BiotSavartLoop Channel="7" Name="TX8" Radius="20" XPos="-28"  YPos="28"   ZPos="0" XDir="28"  YDir="-28" ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
 </CoilArray>
 
