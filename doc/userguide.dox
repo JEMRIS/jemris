@@ -21,27 +21,29 @@ A short <a href="userguide.html">User-Guide</a> to Jemris
 * \li <a href="ug_JEMRIS_idt_thr.html">%In depth tutorial - Part 3</a>
 */
 
-/**
-**************************************************
-* \page ug_install Installation
-\section ug_install_pre Prerequisites
-JEMRIS relies on three libraries, which need to be downloaded and installed prior to its compilation:
-\li Xerces-C++ XML Parser (Version 2.8) [http://xerces.apache.org/xerces-c]
-\li CLN, CLass library for Numbers [http://www.ginac.de/CLN]
-\li GiNaC library for symbolic mathematics: [http://www.ginac.de]
+/** 
+************************************************** 
+* \page ug_install Installation 
+
+\section ug_install_pre Prerequisites JEMRIS
+relies on three libraries, which need to be downloaded and installed
+prior to its compilation:
+
+\li CVODE 2.5: [http://computation.llnl.gov/casc/sundials]
+\li Xerces-C++ XML Parser 2.8: [http://xerces.apache.org/xerces-c]
+\li CLN, CLass Library for Numbers Version 1.2.X: [http://www.ginac.de/CLN]
+\li GiNaC library for symbolic mathematics 1.4.X: [http://www.ginac.de]
+\li VarArray library 1.X: [http://www.fz-juelich.de/jsc/cv/tools/VarArray]
 
 The developers of Xerces provide precompiled packages for a variety of
-operating systems. CLN as well as GiNAC need to be compiled and
+operating systems. CLN, GiNAC and VarArray need to be compiled and
 installed. If you are using a debian flavour, such as ubuntu, you will
-find precompiled packages for your linux in the according
-repositories. The installation then is straightforward:
-
-\li \c <b>"# sudo aptitude install libxerces28-dev"</b>
-\li \c <b>"# sudo aptitude install libcln-dev"</b>
-\li \c <b>"# sudo aptitude install libginac-dev"</b>
+find precompiled CLN, GiNaC and Xerces-C packages for your linux in
+the according repositories.
 
 The provided version numbers for your flavor may differ. The above
-will install Xerces libraries version 2.8 and GiNAC version 1.4 (Ginac 1.5 is not yet compatible with JEMRIS!).
+will install Xerces libraries version 2.8 and GiNAC version 1.4
+(!Ginac 1.5 is not yet compatible with JEMRIS!).
 
 \section ug_install_mpi Install MPICH if desired
 
@@ -63,66 +65,32 @@ simple:
 Again version numbers may differ for your particular installation
 depending on distribution and version.
 
+\section ug_install_boost Install Boost C++ libraries if desired
+
+The boost C++ libraries are used for the evaluation of elliptical
+integration terms of the Biot-Savart law. JEMRIS is operational
+without the boost libraries while Biot-Savart-Loops behave like ideal
+coils.
+
 \section ug_install_compilation Compile JEMRIS 2
 
-Download the jemris package from [http://www.jemris.org/jemris/jemris-2.1.tgz]
+Download the jemris package from [http://www.jemris.org/jemris/jemris-2.2.tar.gz]
 
-The unpacked tar ball will contain two directories: libs and app. The
-next step is to descend in libs/RNG and build it. RNG is a random
-number generator used in some modules of JEMRIS. 
+The unpacked tar ball. JEMRIS is built in a similiar way as many open
+source software packages..
 
-\li \c <b>"# cd jemris-2.1"</b>
-\li \c <b>"# cd libs/RNG"</b>
-\li \c <b>"# make"</b>
-
-Now leave the RNG directory and compile the variable time stepping
-solver CVODE developed at the Lawrence Livermore National Libraries.
-
-\li \c <b>"# cd ../CVODE2.5"</b>
-
-And run the following command twice for the initial compile run.
-
-\li \c <b>"# ./script_install_cvode2.5"</b>
-
-Next compile the VarArray library [http://www.fz-juelich.de/jsc/cv/tools/VarArray]:
-
-\li \c <b>"# cd ../VARRY</b>
+\li \c <b>"# cd jemris-2.2"</b>
 \li \c <b>"# ./configure"</b>
 \li \c <b>"# make"</b>
-
-The third library of which parts are used is the Boost C++
-library. This library consists only of headers and needs not to be
-compiled. The next step is to build JEMRIS:
-
-\li \c <b>"# cd ../../app/src"</b>
-\li \c <b>"# make"</b>
-
-After successful compilation you will find three binaries.
-
-\li <b>jemris</b>: Sequential simulator and validator for the XML files for
-sequences and coils.
-\li <b>pjemris</b>: Parallel simulator (requires a working MPI implementation)
-\li <b>sanityck</b>: Sanity check for the functionality of jemris and pjemris.
-
-To run the sanity check, execute 
-
 \li \c <b>"# make check"</b>
+\li \c <b>"# make install"</b>
 
-This will test the creation and the simulation of several MRI sequences which are located
-in the directory \c <b>"app/xmpl"</b>
+The last step will only work if you have write access to
+<b>/usr/local/bin</b> and <b>/usr/local/share</b>. The binaries jemris
+and if available pjemris, matlab GUI files and a bouquet example files are
+installed.
 
-If you have made it so far, you have succeeded in compiling JEMRIS. 
-
-\section ug_install_matlab Running JEMRIS from Matlab
-
-Finally, to run JEMRIS  from Matlab, add the path
- 
-\li \c <b>"<cwd>/jemris-2.1/app/matlab"</b>
-
-to your Matlab search path, where \c <b>"<cwd>"</b> denotes the directory in which
-you extracted the archive.
-
-Now you may run the Matlab GUIs for sequence design, coil layout, and simulation
+Now you may run the Matlab GUIs for sequence design and simulation
 (see \ref ug_JEMRIS_seq and \ref ug_JEMRIS_sim).
 
 Here, you may start by loading one of the example sequences in the directory \c <b>"app/xmpl"</b>.
@@ -609,7 +577,7 @@ will be called <b>\c work_dir</b> hereafter.
     <b> \c >> \c cd \c work_dir</b>
 \li Add the path to the directory with the JEMRIS matlab code to your
 MATLAB runtime
-    <b> \c >> \c addpath \c ../jemris-2.1/app/matlab</b>
+    <b> \c >> \c addpath \c /usr/local/share/jemris/matlab</b>
 \li Start up the <b>Sequence GUI</b> with the following command<br>
     <b> \c >> \c JEMRIS_seq</b>
 \image html /doc/pics/jemris_sequence.png
@@ -901,8 +869,8 @@ For this tutorial, the simulator output revealed the following information:
 PARALLEL JEMRIS<br/><br/>
 Model    : Bloch		  , solver = CVODE<br/>
 Sample   : 2D sphere	    , spins  = 7825<br/>
-TxArray  : /opt/kvahed/workspace/JEMRIS/app/matlab/uniform.xml<br/>
-RxArray  : /opt/kvahed/workspace/JEMRIS/app/matlab/uniform.xml<br/>
+TxArray  : /usr/local/share/jemris/matlab/uniform.xml<br/>
+RxArray  : /usr/local/share/jemris/matlab/uniform.xml<br/>
 Sequence : /data/mr_cluster/home/kvahed/JEMRIS2/app/src/MyEPI.xml<br/><br/>
 nmrpc03 -> Master Process: send MR sample (7825 spins) to 4 slave(s)<br/><br/>
 nmrpc03 -> slave  1:  received 1957 spins for simulation ...<br/>

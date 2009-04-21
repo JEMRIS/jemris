@@ -36,8 +36,6 @@ ExternalCoil* ExternalCoil::Clone() const {
 /***********************************************************/
 double ExternalCoil::GetSensitivity(double* position) {
 
-	cout << "i: " << (int)round(position[ZC]/m_space_res[ZC])+m_matrx_res[ZC]/2 << ", j: " << (int)round(position[YC]/m_space_res[YC])+m_matrx_res[YC]/2 << ", k: " << (int)round(position[XC]/m_space_res[XC])+m_matrx_res[XC]/2 << endl;
-
     return m_smap [(int)round(position[ZC]/m_space_res[ZC])+m_matrx_res[ZC]/2-1]
                   [(int)round(position[YC]/m_space_res[YC])+m_matrx_res[YC]/2]
                   [(int)round(position[XC]/m_space_res[XC])+m_matrx_res[XC]/2];
