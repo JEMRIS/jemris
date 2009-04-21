@@ -24,6 +24,9 @@
 #include "Simulator.h"
 #include "Declarations.h"
 #include "SequenceTree.h"
+//#include "Trajectory.h"
+
+
 
 /**********************************************************/
 Simulator::Simulator() {
@@ -70,6 +73,7 @@ Simulator::Simulator (string fname, string fsample, string frxarray, string ftxa
 			SetModel(fmodel);
 			SetParameter();
 		}
+
 
 	} catch (const XMLException& e) {
 
@@ -183,6 +187,13 @@ void Simulator::SetParameter      () {
 			m_world->m_useLoadBalancing = false;
 		}
 	}
+
+	string  VarT2Prime = GetAttr(element, "VarT2PrimeFile");
+	if (!VarT2Prime.empty()) {
+		m_world->m_VarT2Prime = new Trajectory();
+		m_world->m_VarT2Prime->ReadFile(VarT2Prime);
+	}
+
 
 }
 

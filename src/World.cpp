@@ -24,6 +24,7 @@
 #include "World.h"
 #include "Model.h"
 
+
 World* World::m_instance = 0;
 
 /***********************************************************/
@@ -61,6 +62,7 @@ World* World::instance() {
 
         m_instance->m_myRank		  = -1;
         m_instance->m_useLoadBalancing= false;
+        m_instance->m_VarT2Prime	  = NULL;
 
 
     }

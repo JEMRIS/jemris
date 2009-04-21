@@ -24,12 +24,15 @@
 #ifndef SIMULATOR_H_
 #define SIMULATOR_H_
 
+#include "Trajectory.h"
 #include "ConcatSequence.h"
 #include "XMLRead.h"
 #include "World.h"
 #include "Sample.h"
 #include "CoilArray.h"
 #include "Bloch_CV_Model.h"
+
+
 
 /**
  * @brief The simulator

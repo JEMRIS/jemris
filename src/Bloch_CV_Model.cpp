@@ -22,13 +22,14 @@
  */
 
 #include "Bloch_CV_Model.h"
+#include "Trajectory.h"
 
 /**********************************************************/
 static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
 
 	t = (double) t;
     double Mxy,phi,Mz; /*cylndrical components of mangetization*/
-    double s,c,Mx,My,Mx_dot,My_dot,Mz_dot;
+    double s,c,Mx,My,Mx_dot,My_dot,Mz_dot,DeltaB;
     Mz_dot = 0.0;
 
     World* pW = (World*) pWorld;
@@ -53,8 +54,16 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     //Gradient field
     Bz = pW->Values[XC]*d_SeqVal[GRAD_X]+ pW->Values[YC]*d_SeqVal[GRAD_Y]+ pW->Values[ZC]*d_SeqVal[GRAD_Z];
 
+    DeltaB = pW->deltaB;
+    // Variable T2Prime:
+    if (pW->m_VarT2Prime != NULL) {
+    	//deltab == 0.001*m_val[DB] + tan(PI*(m_rng.uniform()-.5))*m_r2prime
+    	double dummy = 0.001*pW->Values[DB];
+    	DeltaB = (DeltaB - dummy)/ pW->m_VarT2Prime->GetData(pW->total_time + t) + dummy;
+    }
+
     //other off-resonance contributions
-    Bz += pW->deltaB + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;
+    Bz += DeltaB + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;
 
     //NV_Ith_S is the solution magn. vector with components AMPL,PHASE,ZC
     //important: restrict phase to [0, 2*PI]

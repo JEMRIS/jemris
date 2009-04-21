@@ -186,6 +186,11 @@ function handles=write_simu_xml(handles,redraw)
  PARA.Name='parameter'  ; PARA.Data=''; PARA.Children=[]; 
  NAMES = {'R2Prime','EvolutionSteps','EvolutionPrefix','ConcomitantFields','RandomNoise'};
  VALUES= {num2str(sim.R2P),num2str(sim.INC),'evol',num2str(sim.CF),num2str(sim.RN)};
+ % check for variable T2Prime:
+ if ~strcmp(get(handles.SetVarT2Prime,'String'),'false')
+	NAMES{end+1}  = 'VarT2PrimeFile';
+	VALUES{end+1} = fullfile(cwd,'.T2primeTimeCourse.dat');
+end
  for i=1:length(NAMES); PARA.Attributes(i).Name=NAMES{i}; PARA.Attributes(i).Value=VALUES{i}; end
  %build simu-structure and write simu xml file 
  SIMU.Name='simulate';  SIMU.Attributes(1).Name='name'; SIMU.Attributes(1).Value='JEMRIS'; SIMU.Data='';
@@ -539,11 +544,37 @@ end
 handles.sim.R2P=1/p;
 guidata(hObject, handles);
 
+function SetVarT2Prime_Callback(hObject, eventdata, handles)
+st=get(hObject,'String');
+reset=false;
+if evalin('base',['exist(''',st,''',''var'')'])
+    p=evalin('base',st);
+    if numel(size(squeeze(p)))~=2
+        reset=true;
+    else
+        s=size(squeeze(p));
+        if (s(1) == 2 || s(2) == 2 )
+            if (s(1) == 2) p = p'; end
+            save .T2primeTimeCourse.dat p -ASCII            
+        else
+           reset = true; 
+        end        
+    end % size == 2?
+else
+	reset = true;
+end
+if reset
+    set(hObject,'String','false');
+end
+
+
 % --- Executes during object creation, after setting all properties.
 function setT2Prime_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+function SetVarT2Prime_CreateFcn(hObject, eventdata, handles)
 
 function setConcField_Callback(hObject, eventdata, handles)
 handles.sim.CF=str2num(get(hObject,'String'));
