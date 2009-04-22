@@ -24,8 +24,6 @@
 #include "Simulator.h"
 #include "Declarations.h"
 #include "SequenceTree.h"
-//#include "Trajectory.h"
-
 
 
 /**********************************************************/
@@ -189,10 +187,6 @@ void Simulator::SetParameter      () {
 	}
 
 	string  VarT2Prime = GetAttr(element, "VarT2PrimeFile");
-	if (!VarT2Prime.empty()) {
-		m_world->m_VarT2Prime = new Trajectory();
-		m_world->m_VarT2Prime->ReadFile(VarT2Prime);
-	}
 
 
 }

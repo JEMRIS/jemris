@@ -36,7 +36,6 @@
 using namespace std;
 
 class AtomicSequence;
-class Trajectory;
 
 //! The simulated reality
 
@@ -96,8 +95,6 @@ class World {
 
     int 			  m_myRank;				/**< @brief MPI rank of this process. if m_myRank<0 process is serial jemris */
     bool			  m_useLoadBalancing;	/**< @brief use load balancing (send sample in small packages top slaves) */
-
-    Trajectory*		  m_VarT2Prime;			/**< @brief factor by which T2Prime is scaled over time */
 
 
  private:

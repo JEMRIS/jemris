@@ -22,7 +22,6 @@
  */
 
 #include "Bloch_CV_Model.h"
-#include "Trajectory.h"
 
 /**********************************************************/
 static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
@@ -55,12 +54,6 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     Bz = pW->Values[XC]*d_SeqVal[GRAD_X]+ pW->Values[YC]*d_SeqVal[GRAD_Y]+ pW->Values[ZC]*d_SeqVal[GRAD_Z];
 
     DeltaB = pW->deltaB;
-    // Variable T2Prime:
-    if (pW->m_VarT2Prime != NULL) {
-    	//deltab == 0.001*m_val[DB] + tan(PI*(m_rng.uniform()-.5))*m_r2prime
-    	double dummy = 0.001*pW->Values[DB];
-    	DeltaB = (DeltaB - dummy)/ pW->m_VarT2Prime->GetData(pW->total_time + t) + dummy;
-    }
 
     //other off-resonance contributions
     Bz += DeltaB + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;

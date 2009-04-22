@@ -24,7 +24,6 @@
 #ifndef SIMULATOR_H_
 #define SIMULATOR_H_
 
-#include "Trajectory.h"
 #include "ConcatSequence.h"
 #include "XMLRead.h"
 #include "World.h"
