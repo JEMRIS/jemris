@@ -1,1 +1,1 @@
-SUBDIRS = src doc share
+SUBDIRS = src doc  share
