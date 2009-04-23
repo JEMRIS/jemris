@@ -93,7 +93,7 @@ class Prototype {
      *
      * @return Parent module.
      */
-    virtual Prototype* GetParent   () {};
+    virtual Prototype* GetParent   () {return NULL;};
 
     /**
      * @brief Clone a prototype.
