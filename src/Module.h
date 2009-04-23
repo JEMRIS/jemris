@@ -90,7 +90,7 @@ class Module : public Prototype {
      * @param time    represents the time of invocation.
      * @param pos     represents the position in x, y, z.
      */
-    virtual void GetValue  (double * dAllVal, double const time, double * pos[3]) {};
+    //virtual void GetValue  (double * dAllVal, double const time, double * pos[3]) {};
 
     /**
      * @brief Prepare this pulse.
