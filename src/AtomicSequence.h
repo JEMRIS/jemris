@@ -86,7 +86,7 @@ class AtomicSequence : public Sequence {
     /**
      * @brief See Module::GetValue
      */
-    virtual void    GetValue          (double * dAllVal, double const time, double * pos[3]) {};
+    //virtual void    GetValue          (double * dAllVal, double const time, double * pos[3]) {};
 
     /**
      * @brief Perform a Rotation of the gradients.
