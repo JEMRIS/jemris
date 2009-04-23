@@ -88,7 +88,7 @@ inline ulong ULONG32(slong x) { return (ulong(x) & 0xfffffffful); }
 inline ulong ULONG32(ulong x) { return (x & 0xfffffffful); }
 inline ulong ULONG32(double x) { return (ulong(x) & 0xfffffffful); }
 inline slong UL32toSL32(ulong x)
-  { return (x < 0x80000000ul ? slong(x) : -1 * (0x80000000ul - (x & 0x7ffffffful))); }
+  { return (x < 0x80000000ul ? slong(x) : 0xFFFFFFFF * (0x80000000ul - (x & 0x7ffffffful))); }
 #endif
 
 class RNG
@@ -110,15 +110,15 @@ class RNG
 
 #if ULONG_MAX == 4294967295ul
   // 32 bit unsigned longs
-  ulong znew() 
+  ulong znew()
     { return (z = 36969 * (z & 0xfffful) + (z >> 16)); }
-  ulong wnew() 
+  ulong wnew()
     { return (w = 18000 * (w & 0xfffful) + (w >> 16)); }
-  ulong MWC()  
+  ulong MWC()
     { return ((znew() << 16) + wnew()); }
   ulong SHR3()
     { jsr ^= (jsr << 17); jsr ^= (jsr >> 13); return (jsr ^= (jsr << 5)); }
-  ulong CONG() 
+  ulong CONG()
     { return (jcong = 69069 * jcong + 1234567); }
   ulong rand_int32()       // [0,2^32-1]
     { return ((MWC() ^ CONG()) + SHR3()); }
@@ -130,16 +130,16 @@ class RNG
 #endif
   // 64-bit unsigned longs
   // This is not as elegant and fast as it could be, but it works.
-  ulong znew() 
+  ulong znew()
     { return (z = ((36969 * (z & 0xfffful) + (z >> 16)) & 0xfffffffful)); }
-  ulong wnew() 
+  ulong wnew()
     { return (w = ((18000 * (w & 0xfffful) + (w >> 16)) & 0xfffffffful)); }
-  ulong MWC()  
+  ulong MWC()
     { return (((znew() << 16) + wnew()) & 0xfffffffful); }
   ulong SHR3()
     { jsr ^= (jsr << 17); jsr ^= (jsr >> 13);
       return (jsr = ((jsr ^= (jsr << 5)) & 0xfffffffful)); }
-  ulong CONG() 
+  ulong CONG()
     { return (jcong = ((69069 * jcong + 1234567) & 0xfffffffful)); }
   ulong rand_int32()         // [0,2^32-1]
     { return (((MWC() ^ CONG()) + SHR3()) & 0xfffffffful); }

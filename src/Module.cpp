@@ -380,9 +380,10 @@ bool           Module:: WriteStaticXML(string xml_file){
 
 /***********************************************************/
 bool Module::StaticDOM(DOMDocument* doc, DOMNode* node, bool append){
+	bool ret = true;
 /*
 	DOMNode* backup_node = m_node;
-	bool ret = true;
+
 	DOMElement* elem;
 
 
@@ -471,7 +472,8 @@ bool Module::StaticDOM(DOMDocument* doc, DOMNode* node, bool append){
 		}
 	}
 
-	return ret;
+
 */
+	return ret;
 };
 

@@ -159,9 +159,9 @@ int main (int argc, char *argv[]) {
 					cout << "is NOT ok (#TPOIS differs!) | ";
 				} else if (d > 0.1 ) {
 					status = false;
-					printf("is NOT ok (e=%7.4f\%)       | ",d);
+					printf("is NOT ok (e=%7.4f ppm)       | ",d*10);
 				} else
-					printf("is ok (e=%7.4f\%)           | ",d);
+					printf("is ok (e=%7.4f ppm)           | ",d*10);
 					//cout << "is ok ";
 
 				//sequence-tree
@@ -233,9 +233,9 @@ int main (int argc, char *argv[]) {
 				cout << "is NOT ok (#ADCs differs!)" << endl;
 			} else if (d > 1.0 ) {
 				status = false;
-				printf("is NOT ok (e=%7.4f\%) \n",d);
+				printf("is NOT ok (e=%7.4f ppm) \n",d*10);
 			} else
-				printf("is ok (e=%7.4f\%) \n",d);
+				printf("is ok (e=%7.4f ppm) \n",d*10);
 
 		}
 
@@ -289,9 +289,9 @@ int main (int argc, char *argv[]) {
 				cout << "is NOT ok (#ADCs differs!)" << endl;
 			} else if (d > 1.0 ) {
 				status = false;
-				printf("is NOT ok (e=%7.4f\%) \n",d);
+				printf("is NOT ok (e=%7.4f ppm) \n",d*10);
 			} else
-			printf("is ok (e=%7.4f\%) \n",d);
+			printf("is ok (e=%7.4f ppm) \n",d*10);
 
 			}
 
