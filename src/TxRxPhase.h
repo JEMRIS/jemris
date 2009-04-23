@@ -47,7 +47,7 @@ public:
     /**
      * @brief Get phase of this pulse.
      */
-    virtual double  GetPhase    (double time)  { return 0.0; };
+    //virtual double  GetPhase    (double time)  { return 0.0; };
 
     /**
      * @brief Set phase of this pulse.
