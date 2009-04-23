@@ -186,8 +186,6 @@ void Simulator::SetParameter      () {
 		}
 	}
 
-	string  VarT2Prime = GetAttr(element, "VarT2PrimeFile");
-
 
 }
 
