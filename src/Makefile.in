@@ -34,6 +34,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = jemris$(EXEEXT) sanityck$(EXEEXT) $(am__EXEEXT_1)
 @MPI_TRUE@am__append_1 = pjemris
+@MPI_TRUE@am__append_2 = testmpi.sh
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/config.h.in
@@ -65,7 +66,7 @@ am__objects_1 = AnalyticGradPulse.$(OBJEXT) AnalyticRFPulse.$(OBJEXT) \
 	SechRFPulse.$(OBJEXT) Sequence.$(OBJEXT) \
 	SequenceTree.$(OBJEXT) Signal.$(OBJEXT) Simulator.$(OBJEXT) \
 	SincRFPulse.$(OBJEXT) SpiralGradPulse.$(OBJEXT) StrX.$(OBJEXT) \
-	TPOI.$(OBJEXT) TrapGradPulse.$(OBJEXT) \
+	TPOI.$(OBJEXT) Trajectory.$(OBJEXT) TrapGradPulse.$(OBJEXT) \
 	TriangleGradPulse.$(OBJEXT) TxRxPhase.$(OBJEXT) \
 	World.$(OBJEXT) XMLRead.$(OBJEXT) rng.$(OBJEXT)
 am_jemris_OBJECTS = $(am__objects_1) jemris.$(OBJEXT)
@@ -193,6 +194,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+TESTS = testsequences.sh testsignals.sh testcoils.sh $(am__append_2)
 SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 	AnalyticRFPulse.cpp AnalyticRFPulse.h AtomicSequence.cpp \
 	AtomicSequence.h Attribute.cpp Attribute.h BiotSavartLoop.cpp \
@@ -215,14 +217,14 @@ SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 	SequenceTree.cpp SequenceTree.h Signal.cpp Signal.h \
 	Simulator.cpp Simulator.h SincRFPulse.cpp SincRFPulse.h \
 	SpiralGradPulse.cpp SpiralGradPulse.h StrX.cpp StrX.h TPOI.cpp \
-	TPOI.h TrapGradPulse.cpp TrapGradPulse.h TriangleGradPulse.cpp \
-	TriangleGradPulse.h TxRxPhase.cpp TxRxPhase.h World.cpp \
-	World.h XMLRead.cpp XMLRead.h ginac_functions.h rng.h rng.cpp
+	TPOI.h Trajectory.cpp Trajectory.h TrapGradPulse.cpp \
+	TrapGradPulse.h TriangleGradPulse.cpp TriangleGradPulse.h \
+	TxRxPhase.cpp TxRxPhase.h World.cpp World.h XMLRead.cpp \
+	XMLRead.h ginac_functions.h rng.h rng.cpp
 jemris_SOURCES = $(SOURCES) jemris.cpp
 sanityck_SOURCES = $(SOURCES) sanityck.cpp
 pjemris_SOURCES = $(SOURCES) mpi_Model.h pjemris.cpp
-EXTRA_DIST = testsequences.sh testsignals.sh testcoils.sh
-TESTS = $(EXTRA_DIST)
+EXTRA_DIST = testsequences.sh testsignals.sh testcoils.sh testmpi.sh
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -353,6 +355,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpiralGradPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StrX.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TPOI.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Trajectory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrapGradPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TriangleGradPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TxRxPhase.Po@am__quote@
