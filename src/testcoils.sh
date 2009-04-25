@@ -1,1 +1,1 @@
-./sanityck ../share/examples 3
+time ./sanityck ../share/examples 3
