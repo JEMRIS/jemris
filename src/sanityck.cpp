@@ -183,11 +183,10 @@ int main (int argc, char *argv[]) {
 		}
 
 		if ( status )
-			cout << endl << "Success. Gratulations!" << endl << endl;
+			return 0;
 		else
-			cout << endl << "Errors occured!! Check carefully!!" << endl << endl;
+			return 1;
 
-		return 0;
 	}
 
 	//CASE 2: perform simulations with all sequences
@@ -240,11 +239,10 @@ int main (int argc, char *argv[]) {
 		}
 
 		if ( status )
-			cout << endl << "Success. Gratulations!" << endl << endl;
+			return 0;
 		else
-			cout << endl << "Errors occured!! Check carefully!!" << endl << endl;
+			return 1;
 
-		return 0;
 	}
 
 	if (input == "3") {
@@ -296,11 +294,10 @@ int main (int argc, char *argv[]) {
 			}
 
 		if ( status )
-			cout << endl << "Success. Gratulations!" << endl << endl;
+			return 0;
 		else
-			cout << endl << "Errors occured!! Check carefully!!" << endl << endl;
+			return 1;
 
-		return 0;
 	}
 
 	return 0;
