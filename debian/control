@@ -1,0 +1,15 @@
+Source: jemris
+Section: main/science
+Priority: extra
+Maintainer: Kaveh Vahedipour <k.vahedipour@fz-juelich.de>
+Build-Depends: debhelper (>= 7), autotools-dev, root-system-common, libc6 (>= 2.8~20080505-0ubuntu9 ), libattr1 (>= 1 ), libc6 (>= 2.8~20080505-0ubuntu9 ), libc6-dev (>= 2.8~20080505-0ubuntu9 ), libc6-i686 (>= 2.8~20080505-0ubuntu9 ), libcln5 (>= 1.2.2-2 ), libcln-dev (>= 1.2.2-2 ), libgcc1 (>= 1 ), libginac1.4 (>= 1.4.3-1 ), libginac-dev (>= 1.4.3-1 ), libgmp3c2 (>= 2 ), libicu38 (>= 3.8.1-2ubuntu0.1 ), libmpfr1ldbl (>= 2.3.2.dfsg.1-1ubuntu1 ), libmpich1.0-dev (>= 1.2.7-8 ), libncurses5 (>= 5.6+20071124-1ubuntu2 ), libpcre3 (>= 7.6-2.1ubuntu1 ), libselinux1 (>= 2.0.65-2 ), libstdc++6 (>= 4.3.2-1ubuntu12 ), libstdc++6-4.3-dev (>= 4.3.2-1ubuntu12 ), libxerces-c28 (>= 2.8.0-2 ), libxerces-c2-dev (>= 2.8.0-2 ), linux-libc-dev (>= 2.6.27-11.31 ), locales (>= 2.7.9-5 ), root-system-common (>= 5.18.00-2ubuntu1 ), zlib1g (>= 1 )
+Standards-Version: 3.7.3
+Homepage: http://www.jemris.org
+
+Package: jemris
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Juelich Extensible MRI Simulator
+ JEMRIS, which stands for "Juelich Extensible MRI Simulator", is a general MRI simulator. Visit http://www.jemris.org for more details. 
+
+
