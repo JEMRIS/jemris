@@ -1,1 +1,2 @@
-SUBDIRS = src doc  share
+EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL NEWS README 
+SUBDIRS = src doc share
