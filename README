@@ -1,11 +1,20 @@
+/****************************************************************************
+**  JEMRIS      http://www.jemris.org/                                     **
+*****************************************************************************
+**                                                                         **
+**  Forschungszentrum Juelich                                              **
+**  Institute of Neuroscience and Medicine                                 **
+**  Medical Imaging Physics                                                **
+**                                                                         **
+**  This software package contains a general MRI simulator.                **
+**                                                                         **
+**  See the file COPYING in the package base directory for details         **
+****************************************************************************/
+
 JEMRIS - Juelich Extensible MRI Simulator
-This software package contains a general MRI simulator.
 
 Please find the build, install, developer and user documentation 
 under  http://www.jemris.org.
-
-JEMRIS Copyright (C) 2007-2009  Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder
-                                Forschungszentrum Juelich, Germany
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
