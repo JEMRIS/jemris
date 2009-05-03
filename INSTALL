@@ -28,10 +28,10 @@ Installation
 
 Run the following commands:
 
-./configure
-make 
-make check
-make install
+# ./configure
+# make 
+# make check
+# make install
 
 Documentation
 -------------
