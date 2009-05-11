@@ -88,7 +88,7 @@ inline ulong ULONG32(slong x) { return (ulong(x) & 0xfffffffful); }
 inline ulong ULONG32(ulong x) { return (x & 0xfffffffful); }
 inline ulong ULONG32(double x) { return (ulong(x) & 0xfffffffful); }
 inline slong UL32toSL32(ulong x)
-  { return (x < 0x80000000ul ? slong(x) : 0xFFFFFFFF * (0x80000000ul - (x & 0x7ffffffful))); }
+  { return (x < 0x80000000ul ? slong(x) : -1 * (0x80000000ul - (x & 0x7ffffffful))); }
 #endif
 
 class RNG
