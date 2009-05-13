@@ -43,25 +43,28 @@ bool TriangleGradPulse::Prepare  (PrepareMode mode) {
 
 	UNOBSERVABLE_ATTRIBUTE("TriangleType");
 
-	if ( !HasDOMattribute("Duration") ) {
-		m_duration  = ( fabs(m_amplitude)>0.0 ? fabs(m_amplitude)/m_slew_rate : 1e-5 );
-	} else {
-		if (m_duration  < (m_amplitude/m_slew_rate) && mode == PREP_VERBOSE)
-			cout << "Warning in in TRIANGLEGRADPULSE " << GetName()
-			     << "duration too short (slew-rate conflict)" << endl;
+	if ( mode != PREP_UPDATE) {
+		if (!HasDOMattribute("Duration") ) {
+			m_duration  = ( fabs(m_amplitude)>0.0 ? fabs(m_amplitude)/m_slew_rate : 1e-5 );
+		} else {
+			if (m_duration  < (m_amplitude/m_slew_rate) && mode == PREP_VERBOSE)
+				cout << "Warning in in TRIANGLEGRADPULSE " << GetName()
+					 << "duration too short (slew-rate conflict)" << endl;
+		}
 	}
-
 
 	SetArea( 0.5*m_amplitude*GetDuration() );
 
 	btag = ( GradPulse::Prepare(mode) && btag );
 
-	if ( HasDOMattribute("TriangleType") ) {
-		string type = GetDOMattribute("TriangleType");
-		if (type == "UP") m_triangle_type = TRIANGLE_UP;
-		if (type == "DN") m_triangle_type = TRIANGLE_DN;
-	} else {
-		AddDOMattribute("TriangleType","UP");
+	if ( mode != PREP_UPDATE) {
+		if (HasDOMattribute("TriangleType") ) {
+			string type = GetDOMattribute("TriangleType");
+			if (type == "UP") m_triangle_type = TRIANGLE_UP;
+			if (type == "DN") m_triangle_type = TRIANGLE_DN;
+		} else {
+			AddDOMattribute("TriangleType","UP");
+		}
 	}
 
     if (!btag && mode == PREP_VERBOSE)
