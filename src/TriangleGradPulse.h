@@ -52,7 +52,7 @@ public:
     /**
      * @brief Default destructor.
      */
-    virtual ~TriangleGradPulse () {};
+    ~TriangleGradPulse () {};
 
     /**
      * See Module::clone
