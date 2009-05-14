@@ -85,9 +85,9 @@ fi
 AC_MSG_CHECKING([for Xerces 2.x or 3.x library naming convention])
 OLD_LIBS=$LIBS
 if test -z xerces_lib_base; then
-  LIBS="${LIBS} -lxerces-c"
+  LIBS="${LIBS} -lxerces-c -DXML_LIBRARY"
 else
-  LIBS="-lxerces-c ${LIBS}"
+  LIBS="-lxerces-c ${LIBS} -DXML_LIBRARY"
 fi
 
 AC_TRY_LINK([#include <xercesc/util/PlatformUtils.hpp>],
@@ -98,7 +98,7 @@ AC_TRY_LINK([#include <xercesc/util/PlatformUtils.hpp>],
 
 if test -z $xerceslib_found; then
   if test -z xerces_lib_base; then
-    LIBS="${LIBS} -lxerces-3.0"
+    LIBS="${LIBS} -lxerces-3.0 "
   else
     LIBS="-L${xerces_lib_base}/lib -lxerces-3.0 ${LIBS}"
   fi

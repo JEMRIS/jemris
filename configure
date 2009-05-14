@@ -2244,7 +2244,7 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 cat >>confdefs.h <<\_ACEOF
-#define SVN_REVISION "1286M"
+#define SVN_REVISION "1286:1288M"
 _ACEOF
 
 
@@ -8685,9 +8685,9 @@ fi
 echo $ECHO_N "checking for Xerces 2.x or 3.x library naming convention... $ECHO_C" >&6; }
 OLD_LIBS=$LIBS
 if test -z xerces_lib_base; then
-  LIBS="${LIBS} -lxerces-c"
+  LIBS="${LIBS} -lxerces-c -DXML_LIBRARY"
 else
-  LIBS="-lxerces-c ${LIBS}"
+  LIBS="-lxerces-c ${LIBS} -DXML_LIBRARY"
 fi
 
 cat >conftest.$ac_ext <<_ACEOF
@@ -8738,7 +8738,7 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
 
 if test -z $xerceslib_found; then
   if test -z xerces_lib_base; then
-    LIBS="${LIBS} -lxerces-3.0"
+    LIBS="${LIBS} -lxerces-3.0 "
   else
     LIBS="-L${xerces_lib_base}/lib -lxerces-3.0 ${LIBS}"
   fi
