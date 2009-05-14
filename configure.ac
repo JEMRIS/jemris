@@ -69,7 +69,7 @@ AC_CHECK_LIB([var_array],           [vaDelete],               , [AC_MSG_ERROR([c
 # Checks for C++ libraries with name spaces
 AC_MSG_CHECKING([for GiNaC library])
 OLD_LIBS=$LIBS
-LIBS="${LIBS} -lginac"
+LIBS="${LIBS} -lginac -lcln"
 
 AC_TRY_LINK([#include <ginac/ginac.h>],
    [GiNaC::ex* mex = new GiNaC::ex();],
@@ -79,7 +79,7 @@ AC_TRY_LINK([#include <ginac/ginac.h>],
    [AC_MSG_ERROR([cannot find libginac, bailing out])])
 
 if test -z $ginac_found; then
-    LIBS="${LIBS} -lginac"
+    LIBS="${LIBS} -lginac -lcln"
 fi
 
 AC_MSG_CHECKING([for Xerces 2.x or 3.x library naming convention])

@@ -2244,7 +2244,7 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 cat >>confdefs.h <<\_ACEOF
-#define SVN_REVISION "1213M"
+#define SVN_REVISION "1286M"
 _ACEOF
 
 
@@ -8626,7 +8626,7 @@ fi
 { echo "$as_me:$LINENO: checking for GiNaC library" >&5
 echo $ECHO_N "checking for GiNaC library... $ECHO_C" >&6; }
 OLD_LIBS=$LIBS
-LIBS="${LIBS} -lginac"
+LIBS="${LIBS} -lginac -lcln"
 
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -8678,7 +8678,7 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
 
 if test -z $ginac_found; then
-    LIBS="${LIBS} -lginac"
+    LIBS="${LIBS} -lginac -lcln"
 fi
 
 { echo "$as_me:$LINENO: checking for Xerces 2.x or 3.x library naming convention" >&5
