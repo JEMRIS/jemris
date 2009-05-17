@@ -79,7 +79,7 @@ am_sanityck_OBJECTS = $(am__objects_1) sanityck.$(OBJEXT)
 sanityck_OBJECTS = $(am_sanityck_OBJECTS)
 sanityck_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@
-depcomp = $(SHELL) $(top_srcdir)/depcomp
+depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
