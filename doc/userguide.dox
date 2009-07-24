@@ -893,7 +893,7 @@ back to \ref toc.
 ***************************************************
 * \page ug_JEMRIS_idt_one %In depth tutorial - Part 1
 
-In the following, a 2D spatially-selective excitation exteriment
+In the following, a 2D spatially-selective excitation experiment
 [Pauly 1989] will be demontrated in detail in three different
 ways. The first will reflect the flexibility of the symbolic
 mathematics evaluation capabilities of JEMRIS. In the second part, the
