@@ -63,9 +63,6 @@
    (-lsundials_nvecserial). */
 #undef HAVE_LIBSUNDIALS_NVECSERIAL
 
-/* Define to 1 if you have the `var_array' library (-lvar_array). */
-#undef HAVE_LIBVAR_ARRAY
-
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
 #undef HAVE_MALLOC
@@ -126,9 +123,6 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
-
-/* Define to 1 if you have the <var_array++.h> header file. */
-#undef HAVE_VAR_ARRAY___H
 
 /* Define to 1 if you have the <vector> header file. */
 #undef HAVE_VECTOR
@@ -199,15 +193,6 @@
 /* Define to rpl_malloc if the replacement function should be used. */
 #undef malloc
 
-/* Define to the equivalent of the C99 'restrict' keyword, or to
-   nothing if this is not supported.  Do not define if restrict is
-   supported directly.  */
+/* Define to equivalent of C99 restrict keyword, or to nothing if this is not
+   supported. Do not define if restrict is supported directly. */
 #undef restrict
-/* Work around a bug in Sun C++: it does not support _Restrict, even
-   though the corresponding Sun C compiler does, which causes
-   "#define restrict _Restrict" in the previous line.  Perhaps some future
-   version of Sun C++ will work with _Restrict; if so, it'll probably
-   define __RESTRICT, just as Sun C does.  */
-#if defined __SUNPRO_CC && !defined __RESTRICT
-# define _Restrict
-#endif

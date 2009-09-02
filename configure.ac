@@ -40,7 +40,6 @@ AC_CHECK_HEADERS([math.h],                                    [], [AC_MSG_ERROR(
 AC_CHECK_HEADERS([stdexcept],                                 [], [AC_MSG_ERROR([cannot find stdexcept, bailing out])])
 AC_CHECK_HEADERS([cvode/cvode.h],                             [], [AC_MSG_ERROR([cannot find cvode/cvode.h, bailing out])])
 AC_CHECK_HEADERS([nvector/nvector_serial.h],                  [], [AC_MSG_ERROR([cannot find nvector/nvector_serial.h, bailing out])])
-AC_CHECK_HEADERS([var_array++.h],                             [], [AC_MSG_ERROR([cannot find vararray++.h, bailing out. Get it from http://www.fz-juelich.de/jsc/cv/tools/VarArray])])
 AC_CHECK_HEADERS([ginac/ginac.h],                             [], [AC_MSG_ERROR([cannot find ginac/ginac.h, bailing out])])
 AC_CHECK_HEADERS([cln/cln.h],                                 [], [AC_MSG_ERROR([cannot find cln/cln.h, bailing out])])
 AC_CHECK_HEADERS([xercesc/dom/DOM.hpp],                       [], [AC_MSG_ERROR([cannot find xercesc/dom/DOM.hpp, bailing out. Get it from http://xerces.apache.org/xerces-c.])])
@@ -65,7 +64,6 @@ fi
 AC_CHECK_LIB([m],                   [cos],                    , [AC_MSG_ERROR([cannot find libm, bailing out])])
 AC_CHECK_LIB([sundials_cvode],      [CVodeCreate],            , [AC_MSG_ERROR([cannot find libsundials_cvode, bailing out])])
 AC_CHECK_LIB([sundials_nvecserial], [N_VNew_Serial],          , [AC_MSG_ERROR([cannot find libsundials_nvecserial, bailing out])])
-AC_CHECK_LIB([var_array],           [vaDelete],               , [AC_MSG_ERROR([cannot find libvararray, bailing out])])
 
 # Checks for C++ libraries with name spaces
 AC_MSG_CHECKING([for GiNaC library])
