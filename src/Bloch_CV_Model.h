@@ -25,10 +25,23 @@
 #define BLOCH_CV_MODEL_H_
 
 #include "Model.h"
+#include "config.h"
 
 //CVODE2.5 includes:
-#include "cvode/cvode.h"
-#include "nvector/nvector_serial.h"
+#ifdef HAVE_CVODE_CVODE_H
+    #include "cvode/cvode.h"
+#endif
+#ifdef HAVE_CVODE_H
+    #include "cvode.h"
+#endif
+#ifdef HAVE_NVECTOR_NVECTOR_SERIAL_H
+    #include "nvector/nvector_serial.h"
+#endif
+#ifdef HAVE_NVECTOR_SERIAL_H
+    #include "nvector_serial.h"
+#endif
+
+
 
 
 #define NEQ   3                   // number of equations
