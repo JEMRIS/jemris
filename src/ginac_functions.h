@@ -76,6 +76,38 @@ DECLARE_FUNCTION_2P(equal)
 REGISTER_FUNCTION(equal, evalf_func(equal_evalf))
 
 /**
+ * @brief greater_than routine.
+ *
+ * Returns 1 if expression x > y, 0 otherwise.
+ */
+static GiNaC::ex gt_evalf(const GiNaC::ex &x, const GiNaC::ex &y){
+	if (!GiNaC::is_a<GiNaC::numeric>(x) || !GiNaC::is_a<GiNaC::numeric>(y)) return 0;
+	GiNaC::ex xn = GiNaC::ex_to<GiNaC::numeric>(x);
+	GiNaC::ex yn = GiNaC::ex_to<GiNaC::numeric>(y);
+	int b = ((int) (	GiNaC::ex_to<GiNaC::numeric>(xn).to_double()
+			>	GiNaC::ex_to<GiNaC::numeric>(yn).to_double() ) );
+	return b;
+}
+DECLARE_FUNCTION_2P(gt)
+REGISTER_FUNCTION(gt, evalf_func(gt_evalf))
+
+/**
+ * @brief less_than routine.
+ *
+ * Returns 1 if expression x < y, 0 otherwise.
+ */
+static GiNaC::ex lt_evalf(const GiNaC::ex &x, const GiNaC::ex &y){
+	if (!GiNaC::is_a<GiNaC::numeric>(x) || !GiNaC::is_a<GiNaC::numeric>(y)) return 0;
+	GiNaC::ex xn = GiNaC::ex_to<GiNaC::numeric>(x);
+	GiNaC::ex yn = GiNaC::ex_to<GiNaC::numeric>(y);
+	int b = ((int) (	GiNaC::ex_to<GiNaC::numeric>(xn).to_double()
+			<	GiNaC::ex_to<GiNaC::numeric>(yn).to_double() ) );
+	return b;
+}
+DECLARE_FUNCTION_2P(lt)
+REGISTER_FUNCTION(lt, evalf_func(lt_evalf))
+
+/**
  * @brief IfThenElse routine.
  *
  * if a==b returns x, otherwise y.
