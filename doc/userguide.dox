@@ -501,6 +501,8 @@ Several predefined mathematical expressions may be used:
 	<TR> <TD> floor(x)      </TD> <TD> round to integer	</TD> </TR>
 	<TR> <TD> mod(x,y)      </TD> <TD> Modulo	</TD> </TR>
 	<TR> <TD> equal(x,y)    </TD> <TD> returns 1, if x equals y, otherwise returns zero 	</TD> </TR>
+	<TR> <TD> gt(x,y)    </TD> <TD> returns 1, if x is greater than y, otherwise returns zero 	</TD> </TR>
+    <TR> <TD> lt(x,y)    </TD> <TD> returns 1, if x is less than y, otherwise returns zero 	</TD> </TR>
 	<TR> <TD> ite(x,y,a,b)  </TD> <TD> returns a, if x equals y, otherwise returns b 	</TD> </TR>
 </TABLE>
 
