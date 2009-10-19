@@ -94,19 +94,25 @@ void  Sequence::WriteSeqFile (ofstream* pfout, double& time) {
 			else		{ dt = m_tpoi.GetTime(i-1); dp = m_tpoi.GetPhase(i-1); }
 			double t  = time + dt;
 
-			pfout->write((char *)(&(t)),sizeof(t));
-			pfout->write((char *)(&(dp)),sizeof(dp));
+			// two time-points at each TPOI, one slightly shifted, to
+			// ensure proper display of the pulse diagram in all cases
+			int km = ((i>0&&i<GetNumOfTPOIs())?2:1);
+			for (int k=0;k<km;k++) {
 
-			double val[5] = {0.0,0.0,0.0,0.0,0.0};
+				pfout->write((char *)(&(t)),sizeof(t));
+				pfout->write((char *)(&(dp)),sizeof(dp));
 
-			//here, nonlinear gradients are not taken into account for GetValue
-			bool rem  = ((AtomicSequence*) this)->HasNonLinGrad();
-			((AtomicSequence*) this)->SetNonLinGrad(false);
-			GetValue(val,dt);
-			((AtomicSequence*) this)->SetNonLinGrad(rem);
+				double val[5] = {0.0,0.0,0.0,0.0,0.0};
 
-			for (unsigned int j=0;j<5;++j)
-				pfout->write((char *)(&(val[j])),sizeof(val[j]));
+				//here, nonlinear gradients are not taken into account for GetValue
+				bool rem  = ((AtomicSequence*) this)->HasNonLinGrad();
+				((AtomicSequence*) this)->SetNonLinGrad(false);
+				GetValue(val,dt+k*GetDuration()/1e9);
+				((AtomicSequence*) this)->SetNonLinGrad(rem);
+
+				for (unsigned int j=0;j<5;++j)
+					pfout->write((char *)(&(val[j])),sizeof(val[j]));
+			}
 
 		}
 
