@@ -44,7 +44,7 @@
 void Attribute::AttachObserver (Attribute* attrib){
 
 	if ( !IsObservable() ) return;
-	m_symbol = GiNaC::realsymbol(m_prototype->GetName()+"_"+m_name);
+	m_symbol_name = m_prototype->GetName()+"x"+m_name;
 	for (int i=0; i<m_observers.size(); i++) if ( attrib == m_observers.at(i) ) return;
 	m_observers.push_back(attrib);
 	attrib->AttachSubject(this);
@@ -73,8 +73,7 @@ void Attribute::UpdatePrototype (Prototype* prot){
 bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, bool verbose){
 
 	//set my own symbol
-	m_symbol = GiNaC::realsymbol(m_prototype->GetName()+"_"+m_name);
-
+	m_symbol_name = m_prototype->GetName()+"x"+m_name;
 	//attribute represents a string
 	if (GetTypeID()==typeid(string*).name()) { WriteMember(expr); return true; }
 
@@ -92,20 +91,33 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 	if (expr.find("I", 0)!=string::npos) m_complex = true;
 
 	m_subjects.clear();
-    GiNaC::lst symlist;
+	GiNaC::lst symlist;
+	GiNaC::symbol d(m_sym_diff);
     //loop over all possibly observed subjects
 	for (int i=0; i<obs_attribs.size() ; i++) {
 		//convert string "a1","a2", ... to the matching symbol name
 		Attribute* subject_attrib = obs_attribs.at(i);
-		string  SymbolName = subject_attrib->GetPrototype()->GetName() + "_" + subject_attrib->GetName();
+		string  SymbolName = subject_attrib->GetPrototype()->GetName() + "x" + subject_attrib->GetName();
         stringstream key; key << "a" << i+1;
         if (!Prototype::ReplaceString(expr,key.str(),SymbolName)) continue;
-        //still here? the attribute was in the expression
+        //still here? the attribute was in the expression, so it is an observed subject
         AttachSubject( subject_attrib );
-        symlist.append( subject_attrib->GetSymbol() );
+		GiNaC::symbol x(SymbolName);
+		if (m_diff>0 && SymbolName==m_sym_diff)
+			symlist.append( d );
+		else
+			symlist.append( x );
 	}
 
 	m_expression = expr;
+
+	//differentiation of expression?
+	if (m_diff>0) {
+		GiNaC::ex e(m_expression,symlist);
+		e = e.diff(d,m_diff);
+		stringstream se; se << e;
+		m_expression = se.str();
+	}
 
 	//test the expression evaluation once
 	try {
@@ -123,7 +135,6 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
             }
         return false;
 	}
-
     return true;
 };
 
@@ -137,7 +148,8 @@ void Attribute::EvalExpression () {
 	GiNaC::lst numlist;
 	for (int i=0; i<m_subjects.size() ; i++) {
 		Attribute* a = m_subjects.at(i);
-		symlist.append( a->GetSymbol() );
+		GiNaC::symbol x(a->GetSymbol());
+		symlist.append( x );
 		if (a->GetTypeID()==typeid(  double*).name()) { numlist.append(a->GetMember  <double>() ); continue; }
 		if (a->GetTypeID()==typeid(     int*).name()) { numlist.append(a->GetMember     <int>() ); continue; }
 		if (a->GetTypeID()==typeid(    long*).name()) { numlist.append(a->GetMember    <long>() ); continue; }
@@ -147,8 +159,6 @@ void Attribute::EvalExpression () {
 
 	//numeric evaluation of GiNaC expression
 	GiNaC::ex e(m_expression,symlist);
-	//differentiation of expression?
-	if (m_diff>0) {  e = e.diff(m_sym_diff,m_diff);  }
 	e = e.subs(symlist,numlist);
 	m_static_vector = m_prototype->GetVector(); // static pointer to evaluate the Vector function
 	e = GiNaC::evalf(e);
@@ -164,7 +174,6 @@ void Attribute::EvalExpression () {
 	if (m_datatype==typeid(    long*).name() ) WriteMember((long)     d );
 	if (m_datatype==typeid(unsigned*).name() ) WriteMember((unsigned) d );
 	if (m_datatype==typeid(    bool*).name() ) WriteMember((bool)     d );
-
 };
 
 

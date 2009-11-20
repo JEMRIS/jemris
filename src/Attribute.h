@@ -75,10 +75,10 @@ class Attribute {
         m_dynamic       = false;
         m_name  		= name;
         m_prototype     = proto;
-        m_symbol        = GiNaC::realsymbol(m_name);
+        m_symbol_name   = "m_name";
         m_expression    = "";
         m_diff 			= 0;
-        m_sym_diff      = GiNaC::realsymbol("diff");
+        m_sym_diff      = "diff";
         m_complex       = false;
         m_imaginary		= 0.0;
         m_address       = NULL;
@@ -162,7 +162,7 @@ class Attribute {
      *
      * @param val The order of the derrivative
      */
-    void SetDiff(int val=0, GiNaC::symbol sym=GiNaC::realsymbol("diff"))    { m_diff = val; m_sym_diff = sym; }
+    void SetDiff(int val=0, string sym="diff")    { m_diff = val; m_sym_diff = sym; }
 
     /**
      * @brief Get the name of the attribute.
@@ -197,7 +197,7 @@ class Attribute {
      *
      * return the GiNaC symbol
      */
-    GiNaC::symbol	GetSymbol() { return m_symbol; };
+    string	GetSymbol() { return m_symbol_name; };
 
     /**
      * @brief Set the Prototype's private member represented by this attribute.
@@ -238,7 +238,7 @@ class Attribute {
         for (int i=0; i<m_observers.size(); i++) {
         	m_observers.at(i)->EvalExpression();
             UpdatePrototype( m_observers.at(i)->GetPrototype() );
-            //cout << "DEBUG " << m_symbol << " notified " <<  m_observers.at(i)->GetSymbol() << endl;
+            //cout << "DEBUG " << m_name << " notified " <<  m_observers.at(i)->GetSymbol() << endl;
         }
 
     	return true;
@@ -318,10 +318,10 @@ class Attribute {
         m_dynamic       = false;
         m_name  		= name;
         m_prototype     = proto;
-        m_symbol        = GiNaC::realsymbol(m_name);
+        m_symbol_name   = "x";
         m_expression    = "";
         m_diff 			= 0;
-        m_sym_diff      = GiNaC::realsymbol("diff");
+        m_sym_diff      = "diff";
         m_complex       = false;
         m_imaginary		= 0.0;
         m_address       = ((void*) &val);
@@ -338,10 +338,10 @@ class Attribute {
 	string     		m_datatype;		/**< @brief Type of the Prototype member variable, which is represented by this attribute.  */
 	void*      		m_backup;		/**< @brief Backup value of the Prototype member variable, which is represented by this attribute.  */
     Prototype*		m_prototype;	/**< @brief Pointer to the Prototype object, which instantiated this attribute.  */
-    GiNaC::symbol	m_symbol;		/**< @brief GiNaC symbol of the attribute.*/
+    string			m_symbol_name;	/**< @brief GiNaC symbol name of the attribute.*/
+    string			m_sym_diff;		/**< @brief GiNaC symbol name for symbolic derivative.*/
 	string     		m_expression;	/**< @brief Mathematical expression of the attribute (in XML) for GiNaC evaluation.*/
 	int				m_diff;			/**< @brief Number of symbolic differentiations of the attribute's expression.*/
-	GiNaC::symbol 	m_sym_diff;		/**< @brief symbol for differentiation*/
 	bool            m_complex;      /**< @brief If symbolic expressions are complex, the imaginary part is considered */
     double          m_imaginary;    /**< @brief The imaginary part of complex expression evaluation.*/
     vector<Attribute*> m_subjects;  /**< @brief Vector of attributes under observation by this attribute */

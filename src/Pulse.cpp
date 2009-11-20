@@ -90,19 +90,13 @@ bool Pulse::PrepareAnalytic  (PrepareMode mode) {
 				ReplaceString(val,c.str(),a.str());
 			}
 		}
-		m_analytic = GetAttribute("Shape")->SetMember(val, m_obs_attribs, mode == PREP_VERBOSE);
-	}
-
-	//set the GiNaC Expression and evaluate GetValue
-	if (m_analytic) {
-
-		//store the anti-derivative (Momentum or Flip Angle) in case of a differentiated pulse shape
-		if (HasDOMattribute("Diff")) {
+		if (HasDOMattribute("Diff")){
+			GetAttribute("Shape")->SetDiff(0);
+			m_analytic = GetAttribute("Shape")->SetMember(val, m_obs_attribs, mode == PREP_VERBOSE);
 			string sdiff = GetDOMattribute("Diff");
 			int dif = atoi(sdiff.c_str());
 			if (dif == 1) {
 				try {
-					GetAttribute("Shape")->SetDiff(0);
 					m_analytic_time      = GetDuration();
 					GetAttribute("Shape")->EvalExpression();
 					m_analytic_integral  = m_analytic_value;
@@ -112,11 +106,14 @@ bool Pulse::PrepareAnalytic  (PrepareMode mode) {
 				} catch (exception &p) {
 				    if( mode == PREP_VERBOSE ) cout << "Error evaluating integral\n";
 				}
+				GetAttribute("Shape")->SetDiff(dif,GetAttribute("AnalyticTime")->GetSymbol() );
 			}
-			//set the order and the variable for differentiation
-			GetAttribute("Shape")->SetDiff(dif,GetAttribute("AnalyticTime")->GetSymbol() );
 		}
+		m_analytic = GetAttribute("Shape")->SetMember(val, m_obs_attribs, mode == PREP_VERBOSE);
+	}
 
+	//set the GiNaC Expression and evaluate GetValue
+	if (m_analytic) {
 		//test GiNaC evaluation of the Shape expression
 		try {
 			GetAttribute("Shape")->EvalExpression();
