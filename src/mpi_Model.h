@@ -43,11 +43,11 @@ MPI_Datatype  MPIspindata() {
 
 	Spin_data data;
 
-	const int NUM_DATA = 8;
+	const int NUM_DATA = 9;
 
     MPI_Datatype MPI_SPINDATA ;
-    MPI_Datatype type[NUM_DATA] = {MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE};
-    int          blocklen[NUM_DATA] = {1, 1, 1, 1, 1, 1, 1, 1};
+    MPI_Datatype type[NUM_DATA] = {MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE};
+    int          blocklen[NUM_DATA] = {1, 1, 1, 1, 1, 1, 1, 1, 1};
     MPI_Aint     disp[NUM_DATA];
     MPI_Aint          base;
 
@@ -57,8 +57,9 @@ MPI_Datatype  MPIspindata() {
     MPI_Address(&(data.m0), disp+3);
     MPI_Address(&(data.r1), disp+4);
     MPI_Address(&(data.r2), disp+5);
-    MPI_Address(&(data.db), disp+6);
-    MPI_Address(&(data.nn), disp+7);
+    MPI_Address(&(data.r2s),disp+6);
+    MPI_Address(&(data.db), disp+7);
+    MPI_Address(&(data.nn), disp+8);
 
     base = disp[0];
 

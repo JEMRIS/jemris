@@ -61,6 +61,7 @@ struct Spin_data {
     double m0;   /**< equilibrium magnetisation                 */
     double r1;   /**< longitudinal relaxation rate              */
     double r2;   /**< transverse relaxation rate                */
+    double r2s;  /**< effective transverse relaxation rate      */
     double db;   /**< 'Delta B' - any off-resoance at this spin */
     double nn;   /**< not-known (free purpose parameter)        */
 

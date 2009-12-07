@@ -53,14 +53,15 @@ void Sample::CreateSpins(long size) {
     spins.data = new Spin_data[size];
 
     for (long i = 0; i < size; i++) {
-		spins.data[i].x = 0.0;
-		spins.data[i].y = 0.0;
-		spins.data[i].z = 0.0;
-		spins.data[i].m0= 0.0;
-		spins.data[i].r1= 0.0;
-		spins.data[i].r2= 0.0;
-		spins.data[i].db= 0.0;
-		spins.data[i].nn= 0.0;
+		spins.data[i].x  = 0.0;
+		spins.data[i].y  = 0.0;
+		spins.data[i].z  = 0.0;
+		spins.data[i].m0 = 0.0;
+		spins.data[i].r1 = 0.0;
+		spins.data[i].r2 = 0.0;
+		spins.data[i].r2s= 0.0;
+		spins.data[i].db = 0.0;
+		spins.data[i].nn = 0.0;
     }
 
 }
@@ -128,8 +129,9 @@ void Sample::Populate (ifstream* fin) {
 	            fin->read((char*)(&(spins.data[pos].m0)), sizeof(double));
 	            fin->read((char*)(&(spins.data[pos].r1)), sizeof(double));
 	            fin->read((char*)(&(spins.data[pos].r2)), sizeof(double));
+	            fin->read((char*)(&(spins.data[pos].r2s)),sizeof(double));
 	            fin->read((char*)(&(spins.data[pos].db)), sizeof(double));
-	            fin->read((char*)(&(spins.data[pos].nn)), sizeof(double));
+	            //fin->read((char*)(&(spins.data[pos].nn)), sizeof(double));
 
 	            spins.data[pos].x = (x-0.5*(m_index[XC]-1))*m_res[XC]+m_offset[XC];
 	            spins.data[pos].y = (y-0.5*(m_index[YC]-1))*m_res[YC]+m_offset[YC];
@@ -151,8 +153,9 @@ void Sample::Populate (ifstream* fin) {
                fin->read((char*)(&(spins.data[pos].m0)), sizeof(double));
                fin->read((char*)(&(spins.data[pos].r1)), sizeof(double));
                fin->read((char*)(&(spins.data[pos].r2)), sizeof(double));
+               fin->read((char*)(&(spins.data[pos].r2s)),sizeof(double));
                fin->read((char*)(&(spins.data[pos].db)), sizeof(double));
-               fin->read((char*)(&(spins.data[pos].nn)), sizeof(double));
+               //fin->read((char*)(&(spins.data[pos].nn)), sizeof(double));
 
         }
 
@@ -181,6 +184,7 @@ Sample* Sample::GetSubSample (int n, long size){
          subSample->spins.data[u].m0 = spins.data[i].m0;
          subSample->spins.data[u].r1 = spins.data[i].r1;
          subSample->spins.data[u].r2 = spins.data[i].r2;
+         subSample->spins.data[u].r2s= spins.data[i].r2s;
          subSample->spins.data[u].db = spins.data[i].db;
          subSample->spins.data[u].nn = spins.data[i].nn;
    }
@@ -204,6 +208,7 @@ double* Sample::GetValues (long l) {
          m_val[M0]  = spins.data[l].m0;
          m_val[R1]  = spins.data[l].r1;
          m_val[R2]  = spins.data[l].r2;
+         m_val[R2S] = spins.data[l].r2s;
          m_val[DB]  = spins.data[l].db;
          m_val[NN]  = spins.data[l].nn;
 
@@ -222,7 +227,8 @@ double  Sample::GetDeltaB (long pos) {
 	if (pos>=0) GetValues(pos);
 
 	//get off-resonance : convert m_val from [Hz] to [kHz] and add the Lorentzian random offset
-	return ( 0.001*m_val[DB] + tan(PI*(m_rng.uniform()-.5))*m_r2prime );
+	double r2prime = ((m_val[R2S]>m_val[R2])?(m_val[R2S]-m_val[R2]):0.0);
+	return ( 0.001*m_val[DB] + tan(PI*(m_rng.uniform()-.5))*r2prime );
 }
 
 

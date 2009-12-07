@@ -37,6 +37,7 @@ enum fields {
     M0,                 /**< @brief Equilibrium magnetisation */
     R1,                 /**< @brief Relaxation rate 1: 1/T1   */
     R2,                 /**< @brief Relaxation rate 2: 1/T2   */
+    R2S,                /**< @brief Relaxation rate 2: 1/T2S   */
     DB,                 /**< @brief Delta B (e.g. chemical-shift + susceptiblity-induced, ...) */
     NN                  /**< @brief Not-Named (unused so far) */
 };
