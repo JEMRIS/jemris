@@ -22,16 +22,14 @@
  */
 
 #include "Bloch_CV_Model.h"
+#include "DynamicVariables.h"
+#include "Trajectory.h"
 
 /**********************************************************/
 static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
-
-	t = (double) t;
-    double Mxy,phi,Mz; /*cylndrical components of mangetization*/
-    double s,c,Mx,My,Mx_dot,My_dot,Mz_dot,DeltaB;
-    Mz_dot = 0.0;
-
     World* pW = (World*) pWorld;
+    DynamicVariables* dv = DynamicVariables::instance();
+	t = (double) t;
 
     //get current B-field values from the sequence
     if (t<0.0 || t>pW->pAtom->GetDuration()) {
@@ -40,6 +38,27 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     	NV_Ith_S(ydot,AMPL) = 0; NV_Ith_S(ydot,PHASE) = 0; NV_Ith_S(ydot,ZC) = 0;
     	return 0;
     }
+
+	double time = pW->total_time+t;
+    double Mxy,phi,Mz; /*cylndrical components of mangetization*/
+    double s,c,Mx,My,Mx_dot,My_dot,Mz_dot;
+    Mz_dot = 0.0;
+
+    //sample variables:
+    double r1 = pW->Values[R1];
+    double r2 = pW->Values[R2];
+    double m0 = pW->Values[M0];
+    double position[3];
+    position[0]=pW->Values[XC];position[1]=pW->Values[YC];position[2]=pW->Values[ZC];
+    double DeltaB = pW->deltaB;
+
+    // update sample variables if they are dynamic:
+    dv->m_Motion->GetValue(time,position);
+    dv->m_T2prime->GetValue(time,&DeltaB );
+    dv->m_R1->GetValue(time,&r1 );
+    dv->m_R2->GetValue(time,&r2 );
+    dv->m_M0->GetValue(time,&m0 );
+
 
     double  d_SeqVal[5]={0.0,0.0,0.0,0.0,0.0}; //[B1magn,B1phase,Gx,Gy,Gz]
     pW->pAtom->GetValue( d_SeqVal, t );        // calculates also pW->NonLinGradField
@@ -50,10 +69,10 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     Bx = d_SeqVal[RF_AMP]*cos(d_SeqVal[RF_PHS]);
     By = d_SeqVal[RF_AMP]*sin(d_SeqVal[RF_PHS]);
 
-    //Gradient field
-    Bz = pW->Values[XC]*d_SeqVal[GRAD_X]+ pW->Values[YC]*d_SeqVal[GRAD_Y]+ pW->Values[ZC]*d_SeqVal[GRAD_Z];
 
-    DeltaB = pW->deltaB;
+    //Gradient field
+    Bz = position[0]*d_SeqVal[GRAD_X]+ position[1]*d_SeqVal[GRAD_Y]+ position[2]*d_SeqVal[GRAD_Z];
+
 
     //other off-resonance contributions
     Bz += DeltaB + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;
@@ -71,8 +90,8 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
         NV_Ith_S(ydot,AMPL) = 0; NV_Ith_S(ydot,PHASE) = 0;
 
         //further, longit. magnetisation already fully relaxed
-        if (fabs(pW->Values[M0] - Mz)<ATOL3) {
-	    NV_Ith_S(y,ZC)    = pW->Values[M0]; NV_Ith_S(ydot,ZC) = 0;
+        if (fabs(m0 - Mz)<ATOL3) {
+	    NV_Ith_S(y,ZC)    = m0; NV_Ith_S(ydot,ZC) = 0;
             return 0;
         }
 
@@ -85,8 +104,8 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
         My = s*Mxy;
 
         //compute bloch equations
-        Mx_dot = -pW->Values[R2]*Mx + Bz*My                                              - By*Mz;
-        My_dot = -Bz*Mx             - pW->Values[R2]*My                                  + Bx*Mz;
+        Mx_dot = -r2*Mx + Bz*My                                              - By*Mz;
+        My_dot = -Bz*Mx             - r2*My                                  + Bx*Mz;
         Mz_dot =  By*Mx             - Bx*My ;
 
     	//compute derivatives in cylindrical coordinates
@@ -95,7 +114,7 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     }
 
     //longitudinal relaxation
-    Mz_dot +=  pW->Values[R1]*(pW->Values[M0] - Mz);
+    Mz_dot +=  r1*(m0 - Mz);
     NV_Ith_S(ydot,ZC)    = Mz_dot;
 
     return 0;

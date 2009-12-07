@@ -8,39 +8,24 @@
 #ifndef TRAJECTORY_H_
 #define TRAJECTORY_H_
 
-//#include "SequenceTree.h"
-#include <vector>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <stdlib.h>
-
-
+#include <string>
 using namespace std;
+class TrajectoryInterface;
 
+
+/*
+ * Context class for trajectories (design pattern: Strategy)
+ */
 class Trajectory {
+private:
+	TrajectoryInterface *m_strategy;
+
 public:
-	Trajectory();
-	virtual ~Trajectory();
+	Trajectory(TrajectoryInterface *strategy):m_strategy(strategy) {}
 
-	virtual void ReadFile(const string filename);
+	void GetValue(double time, double *value);
 
-	double GetData(const double time);
-
-
-protected:
-	/**
-	 * @brief find data index for interpolation
-	 * get lower index for given timepoint using hunt search algorithm.
-	 */
-	int GetLowerIndex(const double time);
-
-	int m_LastHuntIndex;
-
-	vector<double> m_time;
-	vector<double> m_data;
-
-
+	void LoadFile(string filename);
 };
 
 #endif /* TRAJECTORY_H_ */

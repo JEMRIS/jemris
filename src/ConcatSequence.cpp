@@ -27,6 +27,7 @@
 /***********************************************************/
 ConcatSequence::ConcatSequence  (const ConcatSequence& cs ) {
     m_repetitions = 1;
+    m_counter = 0;
 };
 
 /***********************************************************/

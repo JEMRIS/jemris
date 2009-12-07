@@ -24,6 +24,8 @@
 #include "Simulator.h"
 #include "Declarations.h"
 #include "SequenceTree.h"
+#include "DynamicVariables.h"
+#include "Trajectory.h"
 
 
 /**********************************************************/
@@ -186,6 +188,31 @@ void Simulator::SetParameter      () {
 		}
 	}
 
+	// load trajectories for dynamic variables:
+	DynamicVariables *dynVar = DynamicVariables::instance();
+
+	string     Motion = GetAttr(GetElem("sample"), "MotionTrajectory");
+	if (!Motion.empty()) {
+		dynVar->m_Motion->LoadFile(Motion);
+	}
+
+	string     T2prime = GetAttr(GetElem("sample"), "T2primeTrajectory");
+	if (!T2prime.empty()) {
+		dynVar->m_T2prime->LoadFile(T2prime);
+	}
+
+	string     T1 = GetAttr(GetElem("sample"), "R1Trajectory");
+	if (!T1.empty()) {
+		dynVar->m_R1->LoadFile(T1);
+	}
+	string     T2 = GetAttr(GetElem("sample"), "R2Trajectory");
+	if (!T2.empty()) {
+		dynVar->m_R2->LoadFile(T2);
+	}
+	string     M0 = GetAttr(GetElem("sample"), "M0Trajectory");
+	if (!M0.empty()) {
+		dynVar->m_M0->LoadFile(M0);
+	}
 
 }
 
