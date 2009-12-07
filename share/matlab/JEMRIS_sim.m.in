@@ -59,8 +59,8 @@ handles.hax=hax;
 handles.epil=0;
 handles.epir=0;
 handles.CWD=pwd;
-handles.JemrisPath='@prefix@/bin';
-handles.JemrisShare='@prefix@/share/jemris/matlab';
+handles.JemrisPath='@prefix@/bin';                                      
+handles.JemrisShare='@prefix@/share/jemris/matlab';                     
 
 %define how to call jemris / pjemris
 [s,w]=system('setenv');
@@ -93,12 +93,12 @@ end
 %
 sample.file='sample.bin';
 sample.name='2D sphere';
-sample.T1=1000; sample.T2=100; sample.M0=1; sample.CS=0; sample.Suscept=0;
+sample.T1=1000; sample.T2=100; sample.T2S=100; sample.M0=1; sample.CS=0; sample.Suscept=0;
 sample.R=50;sample.DxDy=1; sample.gamBo=63.87;
 handles.sample=sample;
 handles.UserSample=[];
 handles.maxM0=1;
-sim.R2P=0; sim.CSF=0; sim.CF=0; sim.RN=0; sim.INC=0; 
+sim.CSF=0; sim.CF=0; sim.RN=0; sim.INC=0; 
 handles.sim=sim;
 handles.img_num=1;
 %set(gcf,'color',[.88 .88 .88])
@@ -152,10 +152,10 @@ function handles=write_simu_xml(handles,redraw)
  SAMP.Attributes(2).Name='uri';  SAMP.Attributes(2).Value=fullfile(cwd,sample.file);
  %write binary sample file
  if isempty(handles.UserSample)
-    T1=handles.sample.T1; T2=handles.sample.T2;
+    T1=handles.sample.T1; T2=handles.sample.T2;  T2S=handles.sample.T2S;
     M0=handles.sample.M0; CS=handles.sample.CS;
     R=handles.sample.R;  res=handles.sample.DxDy;
-    handles.maxM0=writeSample(sample.name,round(2*R/res),res,0,M0,T1,T2,CS,0,sample.file);
+    handles.maxM0=writeSample(sample.name,round(2*R/res),res,0,M0,T1,T2,T2S,CS,0,sample.file);
  else
     handles.maxM0=writeSample(handles.UserSample);
  end       
@@ -183,8 +183,8 @@ function handles=write_simu_xml(handles,redraw)
  MODE.Attributes(2).Name='type'; MODE.Attributes(2).Value='CVODE';
  %parameter section
  PARA.Name='parameter'  ; PARA.Data=''; PARA.Children=[]; 
- NAMES = {'R2Prime','EvolutionSteps','EvolutionPrefix','ConcomitantFields','RandomNoise'};
- VALUES= {num2str(sim.R2P),num2str(sim.INC),'evol',num2str(sim.CF),num2str(sim.RN)};
+ NAMES = {'EvolutionSteps','EvolutionPrefix','ConcomitantFields','RandomNoise'};
+ VALUES= {num2str(sim.INC),'evol',num2str(sim.CF),num2str(sim.RN)};
  for i=1:length(NAMES); PARA.Attributes(i).Name=NAMES{i}; PARA.Attributes(i).Value=VALUES{i}; end
  %build simu-structure and write simu xml file 
  SIMU.Name='simulate';  SIMU.Attributes(1).Name='name'; SIMU.Attributes(1).Value='JEMRIS'; SIMU.Data='';
@@ -224,40 +224,41 @@ function Sample_Callback(hObject, eventdata, handles)
  switch Nsample
     case 1 %sphere
         bv1='on';bv2='on';
-        handles.sample.T1=1000;handles.sample.T2=100;handles.sample.CS=0;
+        handles.sample.T1=1000;handles.sample.T2=100;handles.sample.T2S=100;handles.sample.CS=0;
         handles.sample.M0=1;handles.sample.R=50;handles.sample.DxDy=1;
         handles.sim.R2P=0;handles.sim.CSF=1;
-        M0str='M0'; CSstr='CS [Hz]'; SSstr='Radius'; T1str='T1 [ms]';  T2str='T2 [ms]';
+        M0str='M0'; CSstr='CS [Hz]'; SSstr='Radius'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
     case 2 %2spheres
         bv1='on';bv2='on';
-        handles.sample.T1=[100 50];handles.sample.T2=[100 50];handles.sample.CS=[0 0];
+        handles.sample.T1=[100 50];handles.sample.T2=[100 50];handles.sample.T2S=[100 50];handles.sample.CS=[0 0];
         handles.sample.M0=[1 1];handles.sample.R=[50 25];handles.sample.DxDy=1;
         handles.sim.R2P=0;handles.sim.CSF=1;
-        M0str='M0'; CSstr='CS [Hz]'; SSstr='Radius'; T1str='T1 [ms]';  T2str='T2 [ms]';
+        M0str='M0'; CSstr='CS [Hz]'; SSstr='Radius'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
    case 3 %brain
         bv1='off';bv2='on';
         set(handles.SusceptTag,'Value',0,'Visible','on');
-        handles.sample.T1=1;handles.sample.T2=1;handles.sample.CS=1;
+        handles.sample.T1=1;handles.sample.T2=1;handles.sample.T2S=1;handles.sample.CS=1;
         handles.sample.M0=1;handles.sample.R=90;handles.sample.DxDy=1;
-        M0str='M0 x'; CSstr='CS x'; SSstr='slice(s) [1st,last]'; T1str='T1 x';  T2str='T2 x';
+        M0str='M0 x'; CSstr='CS x'; SSstr='slice(s) [1st,last]'; T1str='T1 x';  T2str='T2 x'; T2Sstr='T2* x';
    case 4 %user defined
        bv1='off';bv2='off';
-       M0str=''; CSstr=''; SSstr=''; T1str='';  T2str='';
+       M0str=''; CSstr=''; SSstr=''; T1str='';  T2str=''; T2Sstr='';
  end
 
  set(handles.text10,'String',T1str,'Visible',bv2);
  set(handles.text11,'String',T2str,'Visible',bv2); 
+ set(handles.textT2s,'String',T2Sstr,'Visible',bv2); 
  set(handles.text12,'String',M0str,'Visible',bv2); 
  set(handles.text13,'String',SSstr,'Visible',bv2); 
  set(handles.text16,'Visible',bv2);
  set(handles.text17,'String',CSstr,'Visible',bv2); 
  set(handles.setT1,'String',num2str(handles.sample.T1),'Visible',bv2);
  set(handles.setT2,'String',num2str(handles.sample.T2),'Visible',bv2);
+ set(handles.setT2s,'String',num2str(handles.sample.T2S),'Visible',bv2);
  set(handles.setM0,'String',num2str(handles.sample.M0),'Visible',bv2);
  set(handles.setChemShift,'String',num2str(handles.sample.CS),'visible',bv2);
  set(handles.setRadius,'String',num2str(handles.sample.R),'Visible',bv2);
  set(handles.setGrid,'String',num2str(handles.sample.DxDy),'Visible',bv2);
- set(handles.setT2Prime,'String','inf');
  
  %user defined sample
  if Nsample==4;
@@ -424,6 +425,22 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function setT2s_Callback(hObject, eventdata, handles)
+handles.sample.T2S=str2num(get(hObject,'String'));
+if strcmp(handles.sample.name,'brain')
+ handles.UserSample=brainSample(handles);
+else
+ handles.UserSample=[];
+end
+write_simu_xml(handles,1);
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function setT2s_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
 function setM0_Callback(hObject, eventdata, handles)
 handles.sample.M0=str2num(get(hObject,'String'));
 if strcmp(handles.sample.name,'brain')
@@ -525,21 +542,6 @@ guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function setIncTag_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-function setT2Prime_Callback(hObject, eventdata, handles)
-p=str2num(get(hObject,'String'));
-if p==0
-    p=inf;
-    set(hObject,'String','inf');
-end
-handles.sim.R2P=1/p;
-guidata(hObject, handles);
-
-% --- Executes during object creation, after setting all properties.
-function setT2Prime_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -799,5 +801,8 @@ function saveMagEvolTag_Callback(hObject, eventdata, handles)
  [M,t]=readEvol(handles.sample.file,'evol',0);
  save(FileName,'t','M');
  
+
+
+
 
 

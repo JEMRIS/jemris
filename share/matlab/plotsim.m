@@ -75,12 +75,12 @@ if ( WHAT>2 ) %& mod(size(M,1),res.^2)==0 )
   S=[];
   for i=1:length(I)-1
    J=[I(i)+1:I(i+1)]';%[i length(J)]
-   if (i>1 & ~isequal(size(J),size(S(:,1))) ),disp('error ... not an imaging sequence'),return,end
+   if (i>1 && ~isequal(size(J),size(S(:,1))) ),disp('error ... not an imaging sequence'),return,end
    S(:,i)=M(J,1)+sqrt(-1)*M(J,2);
   end
   
   %check for multiple images
-  if ( size(S,2)>size(S,1) & mod(size(S,2),size(S,1)) == 0  ) 
+  if ( size(S,2)>size(S,1) && mod(size(S,2),size(S,1)) == 0  ) 
       Nimg = size(S,2)/size(S,1);
       S=reshape(S,size(S,1),size(S,1),Nimg);
       S=S(:,:,handles.img_num);
@@ -152,6 +152,14 @@ if WHAT==1
   B=zeros(N);
   B=A(:,:,:,i);
   if (i==2 || i==3) B(I)=1./B(I); end
+  if (i==4)
+      B=A(:,:,:,5);
+      R2=A(:,:,:,3); R2S=A(:,:,:,4); 
+      dBT2s = tan(pi*(rand(length(I),1)-.5)).*(R2S(I)-R2(I));
+      a=max(R2S(I)-R2(I));
+      dBT2s(abs(dBT2s)>2*a)=0;dBT2s((R2S(I)-R2(I))<0)=0;
+      B(I) = B(I) + dBT2s;
+  end
   axes(handles.hax{2+i})
   if N(3)>1;
       if i==1

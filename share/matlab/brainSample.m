@@ -72,7 +72,7 @@ end
 
 %tissuse parameters
 %        T1  T2 T2*[ms]  M0 CS[Hz]      Label
-tissue=[2569 329   58   1.00   0    ;  % 1 = CSF
+tissue=[2569 329  158   1.00   0    ;  % 1 = CSF
          833  83   69   0.86   0    ;  % 2 = GM
          500  70   61   0.77   0    ;  % 3 = WM
          350  70   58   1.00 220    ;  % 4 = Fat
@@ -83,11 +83,11 @@ tissue=[2569 329   58   1.00   0    ;  % 1 = CSF
          500  70   61   0.77   0    ;];% 9 = Meat
 
 %parameter maps
-PARAMS={'M0','T1','T2','DB'};
-fact=[handles.sample.M0 handles.sample.T1 handles.sample.T2 handles.sample.CS];
-INDEX =[  4   1    2     5];
+PARAMS={'M0','T1','T2','T2S','DB'};
+fact=[handles.sample.M0 handles.sample.T1 handles.sample.T2 handles.sample.T2S handles.sample.CS];
+INDEX =[4 1 2 3 5];
 for i=1:9
- for j=1:4
+ for j=1:5
   if i==1,eval(['BrainSample.',PARAMS{j},'=zeros(size(BRAIN));']);end
   I   = find(BRAIN==i);
   ind = INDEX(j);

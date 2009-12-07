@@ -56,8 +56,9 @@ if ~isfield(Sample,'FNAME') , Sample.FNAME = 'sample.bin'; end
 if ~isfield(Sample,{'M0','T1','T2'})
     error('fields missing in input structure')
 end
-if ~isfield(Sample,'DB'), Sample.DB=zeros(size(Sample.M0)); end
-if ~isfield(Sample,'NN'), Sample.NN=zeros(size(Sample.M0)); end
+if ~isfield(Sample,'T2S'),Sample.T2S=Sample.T2; end
+if ~isfield(Sample,'DB'), Sample.DB =zeros(size(Sample.M0)); end
+if ~isfield(Sample,'NN'), Sample.NN =zeros(size(Sample.M0)); end
 
 
 %write binary file
@@ -73,12 +74,13 @@ for i=1:3;
 end
 
 A(:,:,:,1)=Sample.M0;
-I=find(Sample.T1); R1=zeros(size(Sample.T1)); R1(I)=1./Sample.T1(I);
-I=find(Sample.T2); R2=zeros(size(Sample.T2)); R2(I)=1./Sample.T2(I);
+I=find(Sample.T1); R1 =zeros(size(Sample.T1));  R1(I) =1./Sample.T1(I);
+I=find(Sample.T2); R2 =zeros(size(Sample.T2));  R2(I) =1./Sample.T2(I);
+I=find(Sample.T2S);R2S=zeros(size(Sample.T2S)); R2S(I)=1./Sample.T2S(I);
 A(:,:,:,2)=R1;
 A(:,:,:,3)=R2;
-A(:,:,:,4)=Sample.DB;
-A(:,:,:,5)=Sample.NN;
+A(:,:,:,4)=R2S;
+A(:,:,:,5)=Sample.DB;
 
 %save 4D data array for JEMRIS in the order (type , X, Y, Z)
 A=permute(A,[4 1 2 3]); 
@@ -93,13 +95,13 @@ return;
 %%%
 function Sample=getShape(VA)
 %try
-        if length(VA)==10, fname=VA{10}; end
+        if length(VA)==11, fname=VA{11}; end
         dim    = VA{2};
         A      = zeros(max(dim));
         [nx,ny,nz]=size(A);
         [I,J,K]=meshgrid(1:nx,1:ny,1:nz); 
         M0=1;T1=1000;T2=1000;DB=0;NN=0;
-        S={'M0','T1','T2','DB','NN'};
+        S={'M0','T1','T2','T2S','DB','NN'};
         switch(lower(VA{1}))
             case '2d sphere'
                 R=dim(1)/2;
@@ -109,13 +111,13 @@ function Sample=getShape(VA)
                     L=find((I-R).^2+(J-R).^2 < R^2);
                 end
                 A(L)=1;
-                for i=1:5
+                for i=1:6
                  if length(VA)>3+i
                  eval([S{i},'=VA{4+i}(1);']);
                  end
                  eval([S{i},'=',S{i},'*A;']);
                 end
-               if length(VA)<10, fname=sprintf('sphere_%d.bin',length(L)); end
+               if length(VA)<11, fname=sprintf('sphere_%d.bin',length(L)); end
             case '2d 2-spheres'
                 %outer sphere
                 R=max(dim)/2;
@@ -125,7 +127,7 @@ function Sample=getShape(VA)
                     L=find((I-R).^2+(J-R).^2 < R^2);
                 end
                 A(L)=1;
-                for i=1:5
+                for i=1:6
                  if length(VA)>3+i
                  eval([S{i},'=VA{4+i}(1);']);
                  end
@@ -138,24 +140,23 @@ function Sample=getShape(VA)
                 else
                     L=find((I-R).^2+(J-R).^2 < Ri^2);
                 end
-                for i=1:5
+                for i=1:6
                  if length(VA)>3+i
                   s=VA{4+i}(min([2 length(VA{4+i})]));
                   eval([S{i},'(L)=s;']);
                  end
                 end
-                if length(VA)<10, fname=sprintf('sphere_%d.bin',length(L)); end
+                if length(VA)<11, fname=sprintf('sphere_%d.bin',length(L)); end
             otherwise
                 error('unkown pre-defined sample string')
         end
 
         res    = VA{3};
         offset = VA{4};
-        
     %catch
     %    error('input is neither a sample-structure, nor a pre-defined sample')
     %end
  
-    Sample=struct('M0',M0,'T1',T1,'T2',T2,'DB',DB,'NN',NN,'RES',res,'OFFSET',offset,'FNAME',fname);
+    Sample=struct('M0',M0,'T1',T1,'T2',T2,'T2S',T2S,'DB',DB,'NN',NN,'RES',res,'OFFSET',offset,'FNAME',fname);
 
 return;
