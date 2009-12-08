@@ -106,7 +106,7 @@ if ( WHAT>2 ) %& mod(size(M,1),res.^2)==0 )
    wx=.5*(1 - cos(2*pi*(1:Nx/16)'/(Nx+1))); wx = [wx; ones(Nx*7/8,1); wx(end:-1:1)];
    wy=.5*(1 - cos(2*pi*(1:Ny/16)'/(Ny+1))); wy = [wy; ones(Nx*7/8,1); wy(end:-1:1)];
    %FS=abs(fftshift(fft2(((wx*wy').*S)')));
-   FS=fftshift(fft2(S'));
+   FS=fft2(ifftshift(S'));
    if size(FS,1)==1
        dt=t(2)-t(1);
        f=[0:.5/dt/(size(FS,2)/2):.5/dt];
@@ -120,8 +120,8 @@ if ( WHAT>2 ) %& mod(size(M,1),res.^2)==0 )
        xlabel('frequency [kHz]','fontsize',12,'fontweight','bold')
        ylabel(YL,'fontsize',12,'fontweight','bold')
    else
-       if WHAT==5;imagesc(abs(fliplr(FS)));end
-       if WHAT==6;imagesc(angle(fliplr(FS)));end
+       if WHAT==5;imagesc(fftshift(abs(FS)));end
+       if WHAT==6;imagesc(fftshift(angle(FS)));end
        axis image,set(gca,'xtick',[],'ytick',[])
        xlabel('Readout (Freq. Enc.)','fontsize',12,'fontweight','bold')
        ylabel('Phase Encode','fontsize',12,'fontweight','bold')
