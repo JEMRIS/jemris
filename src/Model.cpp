@@ -25,7 +25,7 @@
 #include "Sample.h"
 #include "CoilArray.h"
 #include "RFPulse.h"
-
+#include "DynamicVariables.h"
 
 /**************************************************/
 Model::Model() {
@@ -73,6 +73,10 @@ void Model::Solve() {
 
         //get current spin properties
         m_world->Values = m_sample->GetValues(lSpin);
+
+        //check for activation
+        DynamicVariables*  dynvar = DynamicVariables::instance();
+        dynvar->SetActivation();
 
         //start with equilibrium solution
         m_world->solution[0]=0.0;

@@ -26,6 +26,8 @@ public:
 	void GetValue(double time, double *value);
 
 	void LoadFile(string filename);
+
+	void SetStrategy(TrajectoryInterface *new_strategy) {m_strategy = new_strategy;};
 };
 
 #endif /* TRAJECTORY_H_ */

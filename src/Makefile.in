@@ -223,8 +223,8 @@ SOURCES = AnalyticGradPulse.cpp AnalyticGradPulse.h \
 	Simulator.cpp Simulator.h SincRFPulse.cpp SincRFPulse.h \
 	SpiralGradPulse.cpp SpiralGradPulse.h StrX.cpp StrX.h TPOI.cpp \
 	TPOI.h Trajectory.cpp Trajectory.h Trajectory1D.cpp \
-	Trajectory1D.h TrajectoryT2s.cpp TrajectoryT2s.h \
-	TrajectoryInterface.cpp TrajectoryInterface.h \
+	Trajectory1D.h TrajectoryEmpty.h TrajectoryT2s.cpp \
+	TrajectoryT2s.h TrajectoryInterface.cpp TrajectoryInterface.h \
 	TrajectoryMotion.cpp TrajectoryMotion.h TrapGradPulse.cpp \
 	TrapGradPulse.h TriangleGradPulse.cpp TriangleGradPulse.h \
 	TxRxPhase.cpp TxRxPhase.h World.cpp World.h XMLRead.cpp \

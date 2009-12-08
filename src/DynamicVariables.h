@@ -8,10 +8,21 @@
 #ifndef DYNAMICVARIABLES_H_
 #define DYNAMICVARIABLES_H_
 
+using namespace std;
+#include <vector>
+
 class TrajectoryMotion;
 class TrajectoryT2s;
 class Trajectory1D;
+class TrajectoryEmpty;
 class Trajectory;
+
+struct Circle{
+	double x;
+	double y;
+	double z;
+	double r;
+};
 
 class DynamicVariables {
 
@@ -26,6 +37,10 @@ class DynamicVariables {
      * @brief Get sole instance of DynamicVariables
      */
     static DynamicVariables*  instance      ();
+
+    void SetActivation();
+
+    void AddActiveCircle(double pos[3],double radius);
 
     Trajectory* m_Motion;
     Trajectory* m_T2prime;
@@ -44,6 +59,13 @@ class DynamicVariables {
 
     static DynamicVariables*    m_instance;           /**< @brief Pointer to the sole instance of this implementation */
 
+    // upon activation: change T2 and/or T2prime?
+    bool m_changeT2prime;
+    bool m_changeT2;
+
+    vector<Circle> m_Circles;
+
+
     /**
      * pool of available Trajectories to use with copy constructor of context class "Trajectory"
      */
@@ -52,6 +74,8 @@ class DynamicVariables {
     Trajectory1D* stub_r1;
     Trajectory1D* stub_r2;
     Trajectory1D* stub_m0;
+    TrajectoryEmpty* stub_empty;
+
 
 };
 

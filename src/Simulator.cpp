@@ -214,6 +214,19 @@ void Simulator::SetParameter      () {
 		dynVar->m_M0->LoadFile(M0);
 	}
 
+	string active = GetAttr(GetElem("sample"), "ActiveCircles");
+	if (!active.empty()) {
+	    stringstream ss(active); // Insert the string into a stream
+	    double pos[3];
+	    double r;
+	    while (ss >> pos[0]) {
+	        if (!(ss >> pos[1])) {cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; exit;}
+	        if (!(ss >> pos[2])) {cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; exit;}
+	        if (!(ss >> r)) {cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; exit;}
+	        dynVar->AddActiveCircle(pos,r);
+	    }
+	}
+
 }
 
 /**********************************************************/
