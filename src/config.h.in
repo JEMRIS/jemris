@@ -82,6 +82,9 @@
 /* define that mpi is being used */
 #undef HAVE_MPI_H
 
+/* define that mpi supports threads */
+#undef HAVE_MPI_THREADS
+
 /* Define to 1 if you have the <nvector/nvector_serial.h> header file. */
 #undef HAVE_NVECTOR_NVECTOR_SERIAL_H
 

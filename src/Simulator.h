@@ -99,7 +99,7 @@ class Simulator {
 	/**
 	 * @brief Start the simulation after every necessary credentials have been set
 	 */
-	void        Simulate     (bool bDumpSignal = true, bool bInitSignal = true);
+	void        Simulate     (bool bDumpSignal = true);
 
 	/**
 	 * @brief Set my sample from XML
@@ -183,8 +183,15 @@ class Simulator {
 	 */
 	void      SetParameter   ();
 
+	/**
+	 * @brief Checks if restart files present; sets jemris state
+	 */
+	void	 CheckRestart();
 
  private:
+
+	void	 DeleteTmpFiles();
+	void  	 MoveTmpFiles();
 
 	bool                     m_state;             /**< @brief My status                   */
 	int                      m_evol;              /**< @brief Evolution steps             */

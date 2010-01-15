@@ -81,26 +81,28 @@ void Signal::ReadFrom (char* fname) {
 }
 
 /**********************************************************/
-void Signal::DumpTo   (string fname) {
+void Signal::DumpTo   (string fname, bool normalize) {
 
 	ofstream fout(fname.c_str() , ios::binary);
 	World* pw = World::instance();
 
 	for (long i = 0; i < repository.size; i++) {
 
-		repository.mx[i] /= pw->TotalSpinNumber;
-		repository.my[i] /= pw->TotalSpinNumber;
-		repository.mz[i] /= pw->TotalSpinNumber;
+		if (normalize) {
+			repository.mx[i] /= pw->TotalSpinNumber;
+			repository.my[i] /= pw->TotalSpinNumber;
+			repository.mz[i] /= pw->TotalSpinNumber;
 
-		//dwelltime-weighted random noise
-		if (pw->RandNoise > 0.0)
-		{
-			double dt =  1;
-			if (i>0)					dt = repository.tp[i]-repository.tp[i-1];
-			else if (repository.size>1)	dt = repository.tp[i+1]-repository.tp[i];
-			//definition: Gaussian has std-dev pw->RandNoise at a dwell-time of 0.01 ms
-			repository.mx[i] += pw->RandNoise*m_rng.normal()*0.1/sqrt(dt);
-			repository.my[i] += pw->RandNoise*m_rng.normal()*0.1/sqrt(dt);
+			//dwelltime-weighted random noise
+			if (pw->RandNoise > 0.0)
+			{
+				double dt =  1;
+				if (i>0)					dt = repository.tp[i]-repository.tp[i-1];
+				else if (repository.size>1)	dt = repository.tp[i+1]-repository.tp[i];
+				//definition: Gaussian has std-dev pw->RandNoise at a dwell-time of 0.01 ms
+				repository.mx[i] += pw->RandNoise*m_rng.normal()*0.1/sqrt(dt);
+				repository.my[i] += pw->RandNoise*m_rng.normal()*0.1/sqrt(dt);
+			}
 		}
 
 		fout.write((char*)(&(repository.tp[i])), sizeof(repository.tp[i]));

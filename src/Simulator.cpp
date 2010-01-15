@@ -26,6 +26,9 @@
 #include "SequenceTree.h"
 #include "DynamicVariables.h"
 #include "Trajectory.h"
+#include <cstdio>
+#include <sstream>
+
 
 
 /**********************************************************/
@@ -72,6 +75,7 @@ Simulator::Simulator (string fname, string fsample, string frxarray, string ftxa
 			//setting of model and simulaton-parameters
 			SetModel(fmodel);
 			SetParameter();
+			m_sample->ReorderSample();
 		}
 
 
@@ -94,6 +98,7 @@ void Simulator::SetSample         (string fsample) {
 	if (fsample.empty()) fsample = GetAttr(GetElem("sample"), "uri");
 	m_sample = new Sample (fsample);
 	m_world->TotalSpinNumber = m_sample->GetSize();
+	m_sample->ReorderSample();
 }
 
 /**********************************************************/
@@ -182,10 +187,11 @@ void Simulator::SetParameter      () {
 	string 	   LoadBal = GetAttr(element, "LoadBalancing");
 	if (!LoadBal.empty() && (atof(LoadBal.c_str()) == 1)) {
 		m_world->m_useLoadBalancing  = true;
-		if (m_world->saveEvolStepSize > 0) {
-			cout << "Storing magnetization evolution does currently not work together with load balancing. Load balancing is switching off." << endl;
-			m_world->m_useLoadBalancing = false;
-		}
+	}
+
+	string 	   reorderSamp = GetAttr(element, "SampleReorder");
+	if (!reorderSamp.empty()) {
+		m_sample->SetReorderStrategy(reorderSamp);
 	}
 
 	// load trajectories for dynamic variables:
@@ -240,11 +246,15 @@ DOMElement* Simulator::GetElem    (string name) {
 }
 
 /**********************************************************/
-void Simulator::Simulate          (bool bDumpSignal, bool InitSignal) {
+void Simulator::Simulate          (bool bDumpSignal) {
 
-	if (InitSignal)  m_rx_coil_array->InitializeSignals( m_sequence->GetNumOfADCs() );
+	m_rx_coil_array->InitializeSignals( m_sequence->GetNumOfADCs() );
+	if (bDumpSignal) CheckRestart();
 	m_model->Solve();
-	if (bDumpSignal) m_rx_coil_array->DumpSignals();
+	if (bDumpSignal) {
+		m_rx_coil_array->DumpSignals();
+		DeleteTmpFiles();
+	}
 
 }
 
@@ -279,5 +289,40 @@ Simulator::~Simulator             () {
 	//the simulator deletes the singletons !
 	if (m_world != NULL) delete m_world;
 	delete SequenceTree::instance();
+
+}
+/**********************************************************/
+void Simulator::DeleteTmpFiles(){
+	remove(".spins_state.dat");
+	for (unsigned int i=0; i<m_rx_coil_array->GetSize(); i++) {
+		stringstream sstr;
+		sstr << ".tmp_sig" << setw(2) << setfill('0') << i+1 << ".bin";
+		remove(sstr.str().c_str());
+	}
+}
+/**********************************************************/
+void Simulator::CheckRestart(){
+	int sampstate = m_sample->ReadSpinsState();
+	if (sampstate == -1) MoveTmpFiles();
+	if (sampstate == 0) {
+		int sigstate=m_rx_coil_array->ReadRestartSignal();
+		if (sigstate == 0) {
+			cout << "Restart files found. Resuming calculation." << endl;
+			return;
+		}
+		MoveTmpFiles();
+		m_sample->ClearSpinsState();
+	}
+}
+/**********************************************************/
+void Simulator::MoveTmpFiles(){
+	cout << "Restart file does not fit to current simulation. move .spins_state.dat to spins_state.bak; .tmp_sig*.bin to tmp_sig.bak. " << endl;
+	rename(".spins_state.dat","spins_state.bak");
+	for (int j=0;j<m_rx_coil_array->GetSize();j++) {
+	    stringstream sstr1,sstr2;
+		sstr1 << ".tmp_sig" << setw(2) << setfill('0') << j+1 << ".bin";
+		sstr2 << "tmp_sig" << setw(2) << setfill('0') << j+1 << ".bak";
+		rename(sstr1.str().c_str(),sstr2.str().c_str());
+	}
 
 }

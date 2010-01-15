@@ -23,21 +23,38 @@
 
 #include "Sample.h"
 #include <math.h>
+#include "World.h"
+#include "SampleReorderStrategyInterface.h"
+#include "SampleReorderShuffle.h"
+#include "CoilArray.h"
 
 
 /**********************************************************/
-Sample::Sample () {
-
+void Sample::Init(){
     spins.size = 0;
     m_r2prime = 0.0;
     m_pos_rand_perc = 1.0;
     for (int i=0;i<8;++i) m_val[i] = 0.0;
     for (int i=0;i<3;++i) { m_res[i] = 0.0; m_offset[i] = 0.0; }
 
+    m_reorder_strategy=NULL;
+
+    m_max_paket_size=100;
+    m_min_paket_size=10;
+    m_next_spin_to_send=0;
+
+}
+/**********************************************************/
+Sample::Sample () {
+	Init();
 }
 
 /**********************************************************/
-Sample::~Sample() { ClearSpins(); }
+Sample::~Sample() {
+	ClearSpins();
+	if (m_reorder_strategy != NULL)
+		delete m_reorder_strategy;
+}
 
 /**********************************************************/
 void Sample::ClearSpins() {
@@ -62,29 +79,22 @@ void Sample::CreateSpins(long size) {
 		spins.data[i].r2s= 0.0;
 		spins.data[i].db = 0.0;
 		spins.data[i].nn = 0.0;
+		spins.data[i].index = 0.0;
     }
-
 }
 
 /**********************************************************/
 Sample::Sample (long size) {
-
-    m_r2prime = 0.0;
-    m_pos_rand_perc = 1.0;
-    for (int i=0;i<8;++i) m_val[i] = 0.0;
-    for (int i=0;i<3;++i) { m_res[i] = 0.0; m_offset[i] = 0.0; m_index[i] = 0.0; }
+	Init();
 
     CreateSpins(size);
 }
 
 /**********************************************************/
 Sample::Sample (string fname) {
+    Init();
 
     InitRandGenerator();
-    m_r2prime = 0.0;
-    m_pos_rand_perc = 1.0;
-    for (int i=0;i<8;++i) m_val[i] = 0.0;
-    for (int i=0;i<3;++i) { m_res[i] = 0.0; m_offset[i] = 0.0; }
 
     // create new array of spins and new multiarray for spacial distribution
     ifstream fin (fname.c_str(), ios::binary);
@@ -160,6 +170,11 @@ void Sample::Populate (ifstream* fin) {
         }
 
     }
+    for (int i=0; i<spins.size; i++){
+    	spins.data[i].index=(double) i;
+    	m_spin_state.push_back(0);
+    }
+
 
 }
 
@@ -187,6 +202,8 @@ Sample* Sample::GetSubSample (int n, long size){
          subSample->spins.data[u].r2s= spins.data[i].r2s;
          subSample->spins.data[u].db = spins.data[i].db;
          subSample->spins.data[u].nn = spins.data[i].nn;
+         subSample->spins.data[u].index = spins.data[i].index;
+
    }
 
    return (subSample);
@@ -211,6 +228,7 @@ double* Sample::GetValues (long l) {
          m_val[R2S] = spins.data[l].r2s;
          m_val[DB]  = spins.data[l].db;
          m_val[NN]  = spins.data[l].nn;
+         m_val[ID]  = spins.data[l].index;
 
 	//add position randomness of spin position
 	m_val[XC] += m_rng.normal()*m_res[XC]*m_pos_rand_perc/100.0;
@@ -231,4 +249,117 @@ double  Sample::GetDeltaB (long pos) {
 	return ( 0.001*m_val[DB] + tan(PI*(m_rng.uniform()-.5))*r2prime );
 }
 
+/**********************************************************/
+void  Sample::ReorderSample() {
+	if (m_reorder_strategy != NULL) {
+		m_reorder_strategy->Execute(&spins);
+	}
+}
+/**********************************************************/
+void Sample::SetReorderStrategy(string strat){
+	if (m_reorder_strategy!=NULL) delete m_reorder_strategy;
 
+	if (strat=="shuffle") m_reorder_strategy = new SampleReorderShuffle();
+
+}
+/**********************************************************/
+void  Sample::GetScatterVectors(int *sendcount, int *displs, int size) {
+	World* pw = World::instance();
+
+	if (pw->m_useLoadBalancing) {
+		int count = floor((float) GetSize()/2/(size-1));
+		if (count > m_max_paket_size) count = m_max_paket_size;
+
+		displs[0]	= 0;
+		sendcount[0]= 0;
+
+		for (int i=1;i<size;i++) {
+			sendcount[i] 	= count;
+			displs[i]=displs[i-1]+sendcount[i-1];
+		}
+		m_next_spin_to_send = count*(size-1);
+
+	} else {
+		// send all at once:
+		int count = (int) (( (double) GetSize() ) / ((double) (size - 1) ) + 0.01);
+		int rest  = (int) (fmod((double) GetSize() , (double) (size - 1) ) + 0.01);
+
+		// no spin data for master:
+		displs[0]	= 0;
+		sendcount[0]= 0;
+
+		for (int i=1;i<size;i++) {
+			sendcount[i] 	= count;
+			if (rest > 0) {
+				sendcount[i]++;
+				rest--;
+			}
+			displs[i]=displs[i-1]+sendcount[i-1];
+		}
+		m_next_spin_to_send = GetSize();
+	}
+
+
+}
+
+/**********************************************************/
+void Sample::GetNextPacket(int &NoSpins, int &NextSpinToSend, int size) {
+	// spins left to send?
+	if (GetSize() != m_next_spin_to_send) {
+		int SpinsLeft = GetSize() - m_next_spin_to_send;
+		// make spin packets smaller as the number of spins decreases:
+		NoSpins = floor ((float) SpinsLeft/2/(size-1) );
+		if (NoSpins > m_max_paket_size) NoSpins = m_max_paket_size;
+		if (NoSpins < m_min_paket_size)	{
+			NoSpins = m_min_paket_size;
+			if (NoSpins > SpinsLeft) NoSpins = SpinsLeft;
+		}
+	} else {
+		NoSpins = 0;
+	}
+	NextSpinToSend=m_next_spin_to_send;
+	m_next_spin_to_send += NoSpins;
+}
+
+/**********************************************************/
+void Sample::DumpRestartInfo(CoilArray* RxCA) {
+	RxCA->DumpSignals(".tmp_sig", false);
+
+	string fname(".spins_state.dat");
+	ofstream fout(fname.c_str() , ios::binary);
+	fout.write(m_spin_state.data(), sizeof(char)*m_spin_state.size());
+	fout.close();
+}
+
+/**********************************************************/
+int Sample::ReadSpinsState() {
+	char sdat;
+	ifstream spinsFile(".spins_state.dat", ifstream::binary);
+
+	if (!spinsFile.is_open()) return (-2);
+	// get length of file:
+	spinsFile.seekg (0, ios::end);
+	int length = spinsFile.tellg();
+	if (length != m_spin_state.size()) {spinsFile.close();  return (-1);}
+	spinsFile.seekg (0, ios::beg);
+	// allocate memory:
+	spinsFile.read (m_spin_state.data(),length);
+	spinsFile.close();
+
+	//serial jemris:
+	World* pw = World::instance();
+	long start=0;
+	while (m_spin_state[start]==2) start++;
+	for (int i=start; i<m_spin_state.size(); i++) {
+		if (m_spin_state[i]==1) m_spin_state[i]==0;
+	}
+	pw->m_startSpin = start;
+
+	return (0);
+}
+/**********************************************************/
+void Sample::ClearSpinsState() {
+	World* pw = World::instance();
+	pw->m_startSpin = 0;
+	for (int i=0; i<m_spin_state.size();i++) m_spin_state[i]=0;
+}

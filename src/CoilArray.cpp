@@ -140,15 +140,24 @@ void CoilArray::Receive (long lADC){
 };
 
 /**********************************************************/
-void CoilArray::DumpSignals () {
+void CoilArray::DumpSignals (string prefix, bool normalize) {
+	string tmp;
+	if (prefix != "") {
+		tmp = m_signal_prefix;
+		m_signal_prefix = prefix;
+	}
 
 	for (unsigned int i=0; i<GetSize(); i++) {
-
 	    stringstream sstr;
 		sstr << m_signal_prefix << setw(2) << setfill('0') << i+1 << ".bin";
-		m_coils[i]->GetSignal()->DumpTo(sstr.str());
-
+		m_coils[i]->GetSignal()->DumpTo(sstr.str(),normalize);
 	}
+
+	if (prefix != "") {
+		m_signal_prefix = tmp;
+	}
+
+
 }
 
 /**********************************************************/
@@ -173,4 +182,38 @@ Coil* CoilArray::GetCoil(unsigned channel) {
 		return m_coils[channel];
 	else
 		return NULL;
+}
+
+/**********************************************************/
+int CoilArray::ReadRestartSignal(){
+	bool fail = false;
+	for (int i=0; i<GetSize();i++) {
+		double data;
+		Repository rep = m_coils[i]->GetSignal()->repository;
+		ifstream tmp;
+	    stringstream sstr;
+		sstr << ".tmp_sig" << setw(2) << setfill('0') << i+1 << ".bin";
+		tmp.open(sstr.str().c_str(), ifstream::binary);
+		if (!tmp.is_open()) {
+			if (i==0) return (-2); else fail=true;
+		}
+
+		tmp.seekg (0, ios::end);
+		int length = tmp.tellg()/sizeof(double)/4;
+		if (length != rep.size) fail=true;
+		tmp.seekg (0, ios::beg);
+		for (int k=0; k<length;k++) {
+			tmp.read ((char*) &(rep.tp[k]),sizeof(double));
+			tmp.read ((char*) &(rep.mx[k]),sizeof(double));
+			tmp.read ((char*) &(rep.my[k]),sizeof(double));
+			tmp.read ((char*) &(rep.mz[k]),sizeof(double));
+		}
+		if (fail) {
+			for (int j=0;j<GetSize();j++) {
+				m_coils[j]->InitSignal(rep.size);
+			}
+			return (-1);
+		}
+	}
+	return (0);
 }

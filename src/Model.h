@@ -114,8 +114,8 @@ class Model {
 	void RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* module);
 
     World*          m_world;	        /**< @brief Simulation world                             */
-    CoilArray*      m_rx_coil_array;    /**< @brief Transmit coil array                          */
-    CoilArray*      m_tx_coil_array;    /**< @brief Receive coil array                           */
+    CoilArray*      m_rx_coil_array;    /**< @brief Receive coil array                          */
+    CoilArray*      m_tx_coil_array;    /**< @brief Transmit coil array                           */
     ConcatSequence* m_concat_sequence;  /**< @brief Top node of the sequence tree for simulation */
     Sample*         m_sample;           /**< @brief Sample                                       */
 
@@ -125,6 +125,15 @@ class Model {
 
     bool            m_aux; //for debugging
 
+    /**
+     * updates process counter file
+     */
+    void UpdateProcessCounter(long lSpin);
+
+    /**
+     * dumps restart information(serial jemris.)
+     */
+    void DumpRestartInfo(long lSpin);
 
 
 

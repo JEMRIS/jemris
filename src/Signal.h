@@ -72,7 +72,7 @@ class Signal {
 	 *
 	 * @param fname File name
 	 */
-	void    DumpTo      (string fname);
+	void    DumpTo      (string fname, bool normalize=true);
 
 	/**
 	 * Read in binary data from file

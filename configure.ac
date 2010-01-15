@@ -220,6 +220,15 @@ int main(int argc, char** argv) {
 }
 _ACEOF
 
+cat >>conftest2.cpp <<_ACEOF2
+#include <mpi.h>
+int main(int argc, char** argv) {
+  MPI::Init_thread(MPI_THREAD_MULTIPLE);
+  MPI::Finalize();
+  return 0;
+}
+_ACEOF2
+
 AC_MSG_CHECKING([whether the MPI C++ compiler works])
 echo "$MPICXX $CXXFLAGS -o conftest conftest.cpp" >&5
 $MPICXX $CXXFLAGS -o conftest conftest.cpp 2>&5
@@ -228,6 +237,18 @@ if test $? -ne 0; then
 else
   AC_MSG_RESULT([yes])
 fi
+
+AC_MSG_CHECKING([whether MPI supports threads])
+echo "$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp" >&5
+$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp 2>&5
+if test $? -ne 0; then
+  AC_MSG_RESULT([no])
+else
+  AC_MSG_RESULT([yes])
+  AC_DEFINE(HAVE_MPI_THREADS,1,[define that mpi supports threads])
+fi
+rm -f conftest2.*
+
 
 ic_mpirun_found=no
 if test x$2 = xyes; then

@@ -107,7 +107,7 @@ class CoilArray  {
      * @brief Dump all signals
      * Dump the signals from all coils to discrete files.
      */
-    void DumpSignals       ();
+    void DumpSignals       (string tmp_prefix = "", bool normalize = true);
 
     /**
      * @brief Dump all sensitivities
@@ -144,6 +144,11 @@ class CoilArray  {
      * @brief
      */
     void setMode (unsigned short mode) { m_mode = mode; }
+
+    /**
+     * @brief reads restart signal.
+     */
+    int ReadRestartSignal();
 
  private:
 

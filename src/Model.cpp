@@ -26,18 +26,18 @@
 #include "CoilArray.h"
 #include "RFPulse.h"
 #include "DynamicVariables.h"
+#include "config.h"
+#ifdef HAVE_MPI_THREADS
+	#include "mpi.h"
+#endif
+#include "time.h"
 
 /**************************************************/
 Model::Model() {
 
     m_world            = World::instance();
     m_aux              = false;
-    // for parallel jemris with load balancing master has to dump progress
-    if ((m_world->m_myRank == -1) || (m_world->m_useLoadBalancing == false)) {
-    	m_do_dump_progress = true;
-    } else {
-    	m_do_dump_progress = false;
-    }
+   	m_do_dump_progress = true;
 
 }
 
@@ -58,11 +58,8 @@ void Model::Solve() {
     m_world->TotalSpinNumber = m_sample->GetSize();
     m_world->TotalADCNumber  = m_concat_sequence->GetNumOfADCs();
 
-    //progress counter
-    int progress_percent = -1;
-
     //obtain solution for each spin in the sample
-    for (long lSpin=0; lSpin<m_world->TotalSpinNumber ; lSpin++) {
+    for (long lSpin=m_world->m_startSpin; lSpin<m_world->TotalSpinNumber ; lSpin++) {
 
         m_world->SpinNumber = lSpin;
         double dTime  = 0.0;
@@ -87,19 +84,13 @@ void Model::Solve() {
         m_world->deltaB = m_sample->GetDeltaB();
 
         //update progress counter
-		int progr = (100*(lSpin+1)/m_world->TotalSpinNumber);
-
-		if (m_do_dump_progress && progr != progress_percent) {
-			progress_percent = progr;
-			ofstream fout(".jemris_progress.out" , ios::out);
-			fout << progr;
-			fout.close();
-		}
-
+        UpdateProcessCounter(lSpin);
 
         //Solve while running down the sequence tree
         RunSequenceTree(dTime, lIndex, m_concat_sequence);
 
+        //dump restart info:
+        DumpRestartInfo(lSpin);
     }
 
 }
@@ -255,4 +246,59 @@ void Model::saveEvolution (long index, bool close_files) {
 
     return;
 
+}
+/*************************************************************************/
+void Model::DumpRestartInfo(long lSpin){
+	// serial jemris only:
+	if (m_world->m_myRank < 0) {
+		static long lastspin=0;
+		static time_t lasttime=time(NULL);;
+		int WaitTime=10; //dump restart info every 10s.
+
+		if ((time(NULL)-lasttime)>WaitTime ){
+			m_sample->ReportSpinDone(lastspin,lSpin);
+			m_sample->DumpRestartInfo(m_rx_coil_array);
+			lastspin=lSpin+1;
+			lasttime=time(NULL);
+		}
+	}
+}
+/*************************************************************************/
+void Model::UpdateProcessCounter(long lSpin) {
+#ifdef HAVE_MPI_THREADS
+	if ((m_world->m_myRank >= 0 )){
+		//update progress counter (parallel jemris)
+		static time_t lasttime=time(NULL);
+		static long lastspin=lSpin-1;
+		int spinsDone =0;
+		int WaitTime=2; //update progress every 2s
+
+		if (((time(NULL)-lasttime)>WaitTime ) || (lSpin + 1 == m_world->TotalSpinNumber )) {
+			spinsDone = lSpin - lastspin;
+			MPI::COMM_WORLD.Send(&spinsDone,1,MPI_INT,0,SPINS_PROGRESS);
+
+			if (lSpin + 1 == m_world->TotalSpinNumber )
+				lastspin = -1;
+			else
+				lastspin = lSpin;
+
+			lasttime = time(NULL);
+		}
+	} else {
+#else
+       	{
+#endif
+		//progress counter
+		static int progress_percent = -1;
+
+		//update progress counter (serial jemris/pjemris without threads support)
+		int progr = (100*(lSpin+1)/m_world->TotalSpinNumber);
+
+		if (m_do_dump_progress && progr != progress_percent) {
+			progress_percent = progr;
+			ofstream fout(".jemris_progress.out" , ios::out);
+			fout << progr;
+			fout.close();
+		}
+	}
 }

@@ -30,6 +30,7 @@ using namespace std;
 #include "Simulator.h"
 #include "mpi_Model.h"
 #include "config.h"
+#include "Mpi2Evolution.h"
 
 #ifndef SVN_REVISION
 	#define SVN_REVISION "unkown"
@@ -39,7 +40,11 @@ using namespace std;
 int main (int argc, char *argv[]) {
 
 	//init MPI
+#ifdef HAVE_MPI_THREADS
+	MPI::Init_thread(MPI_THREAD_MULTIPLE);
+#else
 	MPI::Init(argc, argv);
+#endif
 	int my_rank = MPI::COMM_WORLD.Get_rank();
 	World* pW = World::instance();
 	pW->m_myRank = my_rank;
@@ -76,44 +81,33 @@ int main (int argc, char *argv[]) {
 		cout << "TxArray  : " << psim->GetAttr(psim->GetElem("TXcoilarray"), "uri") << endl;
 		cout << "RxArray  : " << psim->GetAttr(psim->GetElem("RXcoilarray"), "uri") << endl;
 		cout << "Sequence : " << psim->GetAttr(psim->GetElem("sequence"),"uri")<< endl;
-		mpi_devide_and_send_sample( psim->GetSample() , tag );
-
-	}
-
-	mpiEvolution Evolution;
-	//SLAVES: receives the (sub)sample, Simulate model, then sends (sub)signal(s) of each coil
-	if ( my_rank != master) {
-
-		psim->SetSample( mpi_receive_sample(master, tag) );
-		psim->GetSample()->InitRandGenerator( my_rank );
-		mpiEvolution SlaveEvolutionSender();
-		Evolution.send();
-		psim->Simulate(false); //false = do not Dump signal to binary file !
-		if (pW->m_useLoadBalancing) {
-			bool SpinsLeft = true;
-			while (SpinsLeft) {
-				SpinsLeft = mpi_recieve_sample_paket(psim->GetSample());
-				psim->Simulate(false,false); // false,false = neither dump nor init signal
-			}
-		}// end use load balancing
-
-		//send signal of all RxCoils
-		CoilArray* RxCA = psim->GetRxCoilArray();
-		for (int i=0; i < RxCA->GetSize(); i++)
-			mpi_send_signal(RxCA->GetCoil(i)->GetSignal(), master, tag);
-
-	}
-
-	//MASTER: receives (and sums) signals of each coil, then writes results to files
-	if ( my_rank == master) {
 		CoilArray* RxCA = psim->GetRxCoilArray();
 		RxCA->InitializeSignals( psim->GetSequence()->GetNumOfADCs() );
-		Evolution.Receive();
-		for (int i=0; i < RxCA->GetSize(); i++)
-			mpi_receive_and_sum_signal(tag, RxCA->GetCoil(i)->GetSignal() );
+		Mpi2Evolution::OpenFiles();
+		// returns when last spin is simulated; collects signals:
+		mpi_devide_and_send_sample( psim->GetSample(), psim->GetRxCoilArray() );
 		RxCA->DumpSignals();
 	}
 
+	//SLAVES: receives the (sub)sample, Simulate model, then sends (sub)signal(s) of each coil
+	if ( my_rank != master) {
+		Sample* dummy = new Sample(0);
+		psim->SetSample(dummy);
+		Mpi2Evolution::OpenFiles();
+		pW->saveEvolFunPtr = &Mpi2Evolution::saveEvolution;
+		psim->SetSample( mpi_receive_sample(master, tag) );
+		psim->GetSample()->InitRandGenerator( my_rank );
+		psim->Simulate(false); //false = do not Dump signal to binary file !
+		bool SpinsLeft = true;
+		while (true) {
+			SpinsLeft = mpi_recieve_sample_paket(psim->GetSample(),	psim->GetRxCoilArray());
+			if (!SpinsLeft)
+				break;
+			psim->Simulate(false); // false = do not Dump signal to binary file !
+		}
+	}
+
+	Mpi2Evolution::CloseFiles();
 	delete psim;
 
 	//finished

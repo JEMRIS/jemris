@@ -36,6 +36,9 @@
 
 #include "Declarations.h"
 
+class SampleReorderStrategyInterface;
+class CoilArray;
+
 using std::string;
 using std::ofstream;
 
@@ -55,15 +58,16 @@ enum fType  {
  */
 
 struct Spin_data {
-    double x;    /**< x-position of the spin                    */
-    double y;    /**< x-position of the spin                    */
-    double z;    /**< x-position of the spin                    */
-    double m0;   /**< equilibrium magnetisation                 */
-    double r1;   /**< longitudinal relaxation rate              */
-    double r2;   /**< transverse relaxation rate                */
-    double r2s;  /**< effective transverse relaxation rate      */
-    double db;   /**< 'Delta B' - any off-resoance at this spin */
-    double nn;   /**< not-known (free purpose parameter)        */
+    double x;    /**< x-position of the spin                    		*/
+    double y;    /**< x-position of the spin                    		*/
+    double z;    /**< x-position of the spin                    		*/
+    double m0;   /**< equilibrium magnetisation                 		*/
+    double r1;   /**< longitudinal relaxation rate              		*/
+    double r2;   /**< transverse relaxation rate                		*/
+    double r2s;  /**< effective transverse relaxation rate      		*/
+    double db;   /**< 'Delta B' - any off-resoance at this spin 		*/
+    double nn;   /**< not-known (free purpose parameter)        		*/
+    double index;/** the spin id; needed for pjemris (e.g. save evol)	*/
 
 };
 
@@ -71,8 +75,6 @@ struct Spin {
     long    size; 		/**< Data size    */
     Spin_data *data;	/**< array of spins */
 };
-
-
 
 /*
  *  @brief  Persistent MR sample cointaining the spins
@@ -110,6 +112,12 @@ class Sample {
      * Destructor
      */
     virtual ~Sample                     ();
+
+    /**
+     * init variables which are same for all constructors
+     *
+     */
+    void Init();
 
     /**
      * @brief delete the spin structure
@@ -196,8 +204,57 @@ class Sample {
      */
     void Populate (string file);
 
-
+    /**
+     * returns pointer to sample data (needed for MPI send/receive)
+     */
     Spin_data* GetSpinsData() {return spins.data;};
+
+    /**
+     * can set a method to reorder the sample (do nothing, shuffle sample,... )
+     */
+    void SetReorderStrategy(string strat);
+
+    /**
+     * executes sample reordering
+     */
+    void ReorderSample();
+
+    /**
+     * @brief Utility function for restart:
+     * dump information to restart jemris after crash
+     */
+    void DumpRestartInfo(CoilArray* RxCA);
+
+    /**
+     * @brief Utility function for restart:
+     * mark spins which have been calculated.
+     */
+    void ReportSpinDone(int beg,int end) {for (int i=beg; i<=end; i++) m_spin_state[i] = 2;}
+
+    /**
+     * @brief Utility function for restart:
+     * Read restart file after crash
+     */
+    int ReadSpinsState();
+
+    /**
+     * @brief Utility function for restart:
+     * mark all spins as not simulated.
+     */
+    void ClearSpinsState();
+
+    /**
+     * @brief utility function to send sample in parallel mode:
+     * initial samples are send via mpi_scatterv; get needed vectors to scatter data.
+     */
+    void GetScatterVectors(int *sendcount, int *displ,int size);
+
+    /**
+     * @brief utility function to send sample in parallel mode:
+     * get next spin packet to be sent. (beginning index + no_spins to send)
+     */
+    void GetNextPacket(int &noSpins, int &NextSpinToSend, int size);
+
 
  private:
     Spin         spins;      /** < My private spins structure          */
@@ -210,7 +267,7 @@ class Sample {
      */
     void    Populate                    (ifstream* fin) ;
 
-    double       m_val   [8];  /** < Copy of the spin properties asked for by GetValues */
+    double       m_val   [10];  /** < Copy of the spin properties asked for by GetValues */
     long         m_index [3];  /** < Sample dimension       */
     double       m_res   [3];  /** < Sample resolution [mm] */
     double       m_offset[3];  /** < Sample offeset to {0,0,0} origin */
@@ -219,7 +276,15 @@ class Sample {
     double       m_r2prime;      /** < R2-Prime == shaping parameter of the Lorentzian distribution */
     double       m_pos_rand_perc;/** < Percantage (of cartesian resolution) randomness in spin position .*/
 
+    SampleReorderStrategyInterface *m_reorder_strategy;
 
+// data for sending sample in parallel mode:
+    int m_max_paket_size;		/** maximal no of spins to send */
+    int m_min_paket_size;		/** minimal no of spins to send */
+    int m_next_spin_to_send;
+
+// bookkeeping for restart:
+    vector<char>  m_spin_state;	/** keeps track whether spin is not touched (==0), sent (==1) or calculated (==2) */
 
 };
 

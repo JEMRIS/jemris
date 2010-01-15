@@ -39,7 +39,8 @@ enum fields {
     R2,                 /**< @brief Relaxation rate 2: 1/T2   */
     R2S,                /**< @brief Relaxation rate 2: 1/T2S   */
     DB,                 /**< @brief Delta B (e.g. chemical-shift + susceptiblity-induced, ...) */
-    NN                  /**< @brief Not-Named (unused so far) */
+    NN,                 /**< @brief Not-Named (unused so far) */
+    ID				    /**< @brief Index of spin			  */
 };
 
 /**
@@ -100,6 +101,11 @@ enum MpiTag {
 	REQUEST_SPINS=66,
 	SEND_NO_SPINS,
 	SEND_SAMPLE,
+	SPINS_PROGRESS,
+	SIG_TP,
+	SIG_MX,
+	SIG_MY,
+	SIG_MZ,
 };
 
 #endif /*DECLARATIONS_H_*/
