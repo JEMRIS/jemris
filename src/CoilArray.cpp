@@ -186,6 +186,7 @@ Coil* CoilArray::GetCoil(unsigned channel) {
 
 /**********************************************************/
 int CoilArray::ReadRestartSignal(){
+	// return: 0, if files sucessfully read; -2 if no files preesent; -1 if wrong restart files.
 	bool fail = false;
 	for (int i=0; i<GetSize();i++) {
 		double data;
@@ -197,10 +198,16 @@ int CoilArray::ReadRestartSignal(){
 		if (!tmp.is_open()) {
 			if (i==0) return (-2); else fail=true;
 		}
-
 		tmp.seekg (0, ios::end);
 		int length = tmp.tellg()/sizeof(double)/4;
 		if (length != rep.size) fail=true;
+		if (fail) {
+			tmp.close();
+			for (int j=0;j<GetSize();j++) {
+				m_coils[j]->InitSignal(rep.size);
+			}
+			return (-1);
+		}
 		tmp.seekg (0, ios::beg);
 		for (int k=0; k<length;k++) {
 			tmp.read ((char*) &(rep.tp[k]),sizeof(double));
@@ -208,12 +215,7 @@ int CoilArray::ReadRestartSignal(){
 			tmp.read ((char*) &(rep.my[k]),sizeof(double));
 			tmp.read ((char*) &(rep.mz[k]),sizeof(double));
 		}
-		if (fail) {
-			for (int j=0;j<GetSize();j++) {
-				m_coils[j]->InitSignal(rep.size);
-			}
-			return (-1);
-		}
+		tmp.close();
 	}
 	return (0);
 }
