@@ -36,7 +36,7 @@ public:
     /**
      * @brief Default constructor.
      */
-    Sequence () {};
+    Sequence () {m_aux1=0;m_aux2=0;m_aux3=0;};
 
     /**
      * @brief Default destructor.
