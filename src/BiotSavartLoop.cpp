@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@ double BiotSavartLoop::GetSensitivity(double* position) {
 
         double Kk    = 1.0;
 		double Ek    = 1.0;
-		
+
 		#ifdef HAVE_BOOST
             // Complete elliptical integral function of first  kind
 		    Kk = boost::math::ellint_1(k, boost::math::policies::ignore_error);

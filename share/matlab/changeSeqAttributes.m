@@ -4,7 +4,7 @@ function Seq=changeSeqAttributes(AttrName,AttrVal,Seq,handles)
 %
 
 %
-%  JEMRIS Copyright (C) 2007-2009  Tony Stöcker, Kaveh Vahedipour
+%  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
 %                                  Forschungszentrum Jülich, Germany
 %
 %  This program is free software; you can redistribute it and/or modify
