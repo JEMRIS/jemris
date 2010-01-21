@@ -11,7 +11,9 @@
 #include "config.h"
 
 // init variables:
+#ifdef HAVE_MPI_THREADS
 vector<MPI::File> 		Mpi2Evolution::m_files;
+#endif
 vector<bool>			Mpi2Evolution::m_first_write;
 
 

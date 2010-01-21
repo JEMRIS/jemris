@@ -9,6 +9,7 @@
 #define MPI2EVOLUTION_H_
 #include "mpi.h"
 #include <vector>
+#include "config.h"
 
 using namespace std;
 
@@ -43,7 +44,9 @@ public:
 	 */
 	static void SetSaveFunction();
 
+#ifdef HAVE_MPI_THREADS
 	static vector<MPI::File> 	m_files;
+#endif
 	static vector<bool>			m_first_write;
 
 };
