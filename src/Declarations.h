@@ -28,10 +28,15 @@
 const double TIME_ERR_TOL = 1e-6; // Avoid CVODE warnings. Doesn't affect physics.
 
 /**
+ * number of spin properties:
+ */
+//const int NO_SPIN_PROPERTIES = 10;
+
+/**
  * Spin fields
  */
 enum fields {
-    XC,                 /**< @brief X location                */
+    XC=0,               /**< @brief X location                */
     YC,                 /**< @brief Y location                */
     ZC,                 /**< @brief Z location                */
     M0,                 /**< @brief Equilibrium magnetisation */
@@ -40,7 +45,8 @@ enum fields {
     R2S,                /**< @brief Relaxation rate 2: 1/T2S   */
     DB,                 /**< @brief Delta B (e.g. chemical-shift + susceptiblity-induced, ...) */
     NN,                 /**< @brief Not-Named (unused so far) */
-    ID				    /**< @brief Index of spin			  */
+    ID,				    /**< @brief Index of spin			  */
+    NO_SPIN_PROPERTIES  /**< @brief counts number of entries to enum fields. must stay last element, other entries to 'fields' may not be assigned to a value!*/
 };
 
 /**

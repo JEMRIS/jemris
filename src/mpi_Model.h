@@ -41,19 +41,21 @@ using namespace std;
 	#include <pthread.h>
 #endif
 
-void mpi_send_paket_signal(Signal* pSig);
-void mpi_recv_paket_signal(Signal* pSig,int SlaveID);
+void mpi_send_paket_signal(Signal* pSig,int CoilID);
+void mpi_recv_paket_signal(Signal* pSig,int SlaveID,int CoilID);
 
 /*****************************************************************************/
 MPI_Datatype  MPIspindata() {
 
 	Spin_data data;
 
-	const int NUM_DATA = 10;
+	const int NUM_DATA = NO_SPIN_PROPERTIES;
 
     MPI_Datatype MPI_SPINDATA ;
-    MPI_Datatype type[NUM_DATA] = {MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE};
-    int          blocklen[NUM_DATA] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    MPI_Datatype type[NUM_DATA];// = {MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE};
+    for (int i=0;i<NUM_DATA; i++) type[i] =MPI_DOUBLE;
+    int          blocklen[NUM_DATA];// = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    for (int i=0;i<NUM_DATA; i++) blocklen[i] = 1;
     MPI_Aint     disp[NUM_DATA];
     MPI_Aint          base;
 
@@ -85,8 +87,7 @@ MPI_Datatype  MPIspindata() {
 #ifdef HAVE_MPI_THREADS
 void *CountProgress(void * arg) {
 	int TotalNoSpins  = *((int *) arg);
-
-	int SpinsDone = 0;
+	int SpinsDone = TotalNoSpins - *(((int *) arg )+1);
 	int NowDone=0;
 	int progress_percent = -1;
 
@@ -114,11 +115,14 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	pthread_t counter_thread;
 	int errcode;                                /* holds pthread error code */
 
-	int noSpins 	= pSam->GetSize();
+	int buffer[2];
+	buffer[0] = pSam->GetSize();
+	buffer[1] = pSam->SpinsLeft();
+
     if (errcode=pthread_create(&counter_thread,	/* thread struct             */
                     NULL,                      	/* default thread attributes */
                     CountProgress,              /* start routine             */
-                    (void *) &noSpins)) {       /* arg to routine            */
+                    (void *) &buffer)) {       /* arg to routine            */
     	cout << "thread creation failed !! exit."<< endl;
     	exit (-1);
     }
@@ -160,6 +164,9 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	// broadcast resolution:
 	MPI::COMM_WORLD.Bcast(pSam->GetResolution(),3,MPI_DOUBLE,0);
 
+	delete[] sendcount;
+	delete[] displs;
+
 	// now listen for paket requests:
 	int SlavesDone=0;
 	while (SlavesDone < size -1)
@@ -173,14 +180,14 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 		MPI::COMM_WORLD.Recv(&SlaveID,1,MPI_INT,MPI_ANY_SOURCE,REQUEST_SPINS);
 
 		//get next spin paket to send:
-		pSam->GetNextPacket(NoSpins,NextSpinToSend,size);
+		pSam->GetNextPacket(NoSpins,NextSpinToSend,SlaveID);
 
 		if (NoSpins == 0)
 			SlavesDone++;
 
 		// receive signal
 		for (int i=0; i < RxCA->GetSize(); i++)
-			mpi_recv_paket_signal(RxCA->GetCoil(i)->GetSignal(),SlaveID);
+			mpi_recv_paket_signal(RxCA->GetCoil(i)->GetSignal(),SlaveID,i);
 
 		// dump temp signal
 		pSam->DumpRestartInfo(RxCA);
@@ -191,9 +198,6 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 			MPI::COMM_WORLD.Send(&(spindata[NextSpinToSend]),NoSpins,MPI_SPINDATA,SlaveID,SEND_SAMPLE);
 
 	}  // end while (SlavesDone < size -1)
-
-	delete[] sendcount;
-	delete[] displs;
 
 #ifdef HAVE_MPI_THREADS
 	/* join threads: */
@@ -254,7 +258,7 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 
 	// send signal
 	for (int i=0; i < RxCA->GetSize(); i++)
-		mpi_send_paket_signal(RxCA->GetCoil(i)->GetSignal());
+		mpi_send_paket_signal(RxCA->GetCoil(i)->GetSignal(),i);
 
 	// clear signal
 	//done in pjemris
@@ -281,28 +285,31 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	return true;
 };
 /*****************************************************************************/
-void mpi_send_paket_signal(Signal* pSig) {
+void mpi_send_paket_signal(Signal* pSig,int CoilID) {
 	long lSigDim = pSig->GetSize();
-	MPI::COMM_WORLD.Send(pSig->repository.tp, (int) lSigDim, MPI_DOUBLE, 0, SIG_TP );
-	MPI::COMM_WORLD.Send(pSig->repository.mx, (int) lSigDim, MPI_DOUBLE, 0, SIG_MX );
-	MPI::COMM_WORLD.Send(pSig->repository.my, (int) lSigDim, MPI_DOUBLE, 0, SIG_MY );
-	MPI::COMM_WORLD.Send(pSig->repository.mz, (int) lSigDim, MPI_DOUBLE, 0, SIG_MZ );
+	World *pw = World::instance();
+	if (pw->m_myRank == 1)
+		MPI::COMM_WORLD.Send(pSig->repository.tp, (int) lSigDim, MPI_DOUBLE, 0, SIG_TP + (CoilID)*4);
+	MPI::COMM_WORLD.Send(pSig->repository.mx, (int) lSigDim, MPI_DOUBLE, 0, SIG_MX + (CoilID)*4);
+	MPI::COMM_WORLD.Send(pSig->repository.my, (int) lSigDim, MPI_DOUBLE, 0, SIG_MY + (CoilID)*4);
+	MPI::COMM_WORLD.Send(pSig->repository.mz, (int) lSigDim, MPI_DOUBLE, 0, SIG_MZ + (CoilID)*4);
 
 }
 
 /*****************************************************************************/
-void mpi_recv_paket_signal(Signal *pSig,int SlaveId) {
+void mpi_recv_paket_signal(Signal *pSig,int SlaveId,int CoilID) {
 	long lSigDim = pSig->GetSize();
 
 	double* tmp;
 	tmp = new double[lSigDim];
 
-	MPI::COMM_WORLD.Recv(pSig->repository.tp, (int) lSigDim, MPI_DOUBLE, SlaveId, SIG_TP );
-	MPI::COMM_WORLD.Recv(tmp, (int) lSigDim, MPI_DOUBLE, SlaveId, SIG_MX );
+	if (SlaveId == 1)
+		MPI::COMM_WORLD.Recv(pSig->repository.tp, (int) lSigDim, MPI_DOUBLE, SlaveId, SIG_TP + (CoilID)*4);
+	MPI::COMM_WORLD.Recv(tmp, (int) lSigDim, MPI_DOUBLE, SlaveId, SIG_MX + (CoilID)*4);
 	for (int i=0; i<lSigDim;i++) pSig->repository.mx[i]+=tmp[i];
-	MPI::COMM_WORLD.Recv(tmp, (int) lSigDim, MPI_DOUBLE, SlaveId, SIG_MY );
+	MPI::COMM_WORLD.Recv(tmp, (int) lSigDim, MPI_DOUBLE, SlaveId, SIG_MY + (CoilID)*4);
 	for (int i=0; i<lSigDim;i++) pSig->repository.my[i]+=tmp[i];
-	MPI::COMM_WORLD.Recv(tmp, (int) lSigDim, MPI_DOUBLE, SlaveId, SIG_MZ );
+	MPI::COMM_WORLD.Recv(tmp, (int) lSigDim, MPI_DOUBLE, SlaveId, SIG_MZ + (CoilID)*4);
 	for (int i=0; i<lSigDim;i++) pSig->repository.mz[i]+=tmp[i];
 
 	delete[] tmp;

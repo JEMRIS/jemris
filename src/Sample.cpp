@@ -34,14 +34,16 @@ void Sample::Init(){
     spins.size = 0;
     m_r2prime = 0.0;
     m_pos_rand_perc = 1.0;
-    for (int i=0;i<8;++i) m_val[i] = 0.0;
+    for (int i=0;i<NO_SPIN_PROPERTIES;++i) m_val[i] = 0.0;
     for (int i=0;i<3;++i) { m_res[i] = 0.0; m_offset[i] = 0.0; }
 
     m_reorder_strategy=NULL;
 
-    m_max_paket_size=100;
+    m_max_paket_size=10000;
     m_min_paket_size=10;
     m_next_spin_to_send=0;
+    m_is_restart=false;
+    m_sent_interval=30;
 
 }
 /**********************************************************/
@@ -265,70 +267,165 @@ void Sample::SetReorderStrategy(string strat){
 /**********************************************************/
 void  Sample::GetScatterVectors(int *sendcount, int *displs, int size) {
 	World* pw = World::instance();
+	m_spins_sent.resize(size);
+	m_last_offset_sent.resize(size);
 
-	if (pw->m_useLoadBalancing) {
-		int count = floor((float) GetSize()/2/(size-1));
-		if (count > m_max_paket_size) count = m_max_paket_size;
+	timeval dummy;
+	gettimeofday(&dummy,NULL);
 
-		displs[0]	= 0;
-		sendcount[0]= 0;
+	if (!m_is_restart) {
+		if (!(pw->m_useLoadBalancing)) {
+				// send all at once:
+				int count = (int) (( (double) GetSize() ) / ((double) (size - 1) ) + 0.01);
+				int rest  = (int) (fmod((double) GetSize() , (double) (size - 1) ) + 0.01);
 
-		for (int i=1;i<size;i++) {
-			sendcount[i] 	= count;
-			displs[i]=displs[i-1]+sendcount[i-1];
-		}
-		m_next_spin_to_send = count*(size-1);
+				// no spin data for master:
+				displs[0]	= 0;
+				sendcount[0]= 0;
 
-	} else {
-		// send all at once:
-		int count = (int) (( (double) GetSize() ) / ((double) (size - 1) ) + 0.01);
-		int rest  = (int) (fmod((double) GetSize() , (double) (size - 1) ) + 0.01);
+				for (int i=1;i<size;i++) {
+					sendcount[i] 	= count;
+					if (rest > 0) {
+						sendcount[i]++;
+						rest--;
+					}
+					displs[i]=displs[i-1]+sendcount[i-1];
+					// bookkeeping
+					m_spins_sent[i]=sendcount[i];
+					m_last_offset_sent[i]=displs[i];
+					if (sendcount[i]>0)
+						ReportSpin(displs[i],displs[i]+sendcount[i]-1,1);
+				}
+				m_next_spin_to_send = GetSize();
+				m_last_time.resize(size,dummy);
 
-		// no spin data for master:
-		displs[0]	= 0;
-		sendcount[0]= 0;
-
-		for (int i=1;i<size;i++) {
-			sendcount[i] 	= count;
-			if (rest > 0) {
-				sendcount[i]++;
-				rest--;
+				return;
 			}
-			displs[i]=displs[i-1]+sendcount[i-1];
 		}
-		m_next_spin_to_send = GetSize();
+	// now get scatter in case of restart/loadbalancing:
+	displs[0]	= 0;
+	sendcount[0]= 0;
+
+	int spins_left = pw->TotalSpinNumber;
+	if (m_is_restart) spins_left = SpinsLeft();
+
+	int maxNoSpins = spins_left / size / 2;
+	if (maxNoSpins<m_min_paket_size) maxNoSpins=m_min_paket_size;
+	if (maxNoSpins>m_max_paket_size) maxNoSpins=m_max_paket_size;
+
+	for (int i=1;i<size;i++) {
+		int noToSent = i*m_min_paket_size;
+		if (noToSent > maxNoSpins) {
+			noToSent=(int) m_rng.uniform(m_min_paket_size,maxNoSpins);
+		}
+		displs[i]=displs[i-1]+sendcount[i-1];
+		if ((noToSent + displs[i])>GetSize()) noToSent = GetSize()-displs[i];
+		if (displs[i]==GetSize()) noToSent = 0;
+		if ((m_is_restart) && (noToSent!=0)) {
+			while(m_spin_state[displs[i]] == 2) {
+				if (displs[i]==GetSize()) {
+					noToSent = 0;
+					break;
+				}
+				displs[i]++;
+			}
+			int count;
+			for (count=1; count<=noToSent;count++){
+				if (m_spin_state[displs[i]+count] != 0) {count++;break;}
+				if ((displs[i]+count) ==GetSize()) {count++;break;}
+			}
+			count--;
+			noToSent=count;
+		}
+		sendcount[i]=noToSent;
+		// bookkeeping
+		m_spins_sent[i]=sendcount[i];
+		m_last_offset_sent[i]=displs[i];
+		if (sendcount[i]>0)
+			ReportSpin(displs[i],displs[i]+sendcount[i]-1,1);
 	}
+	m_last_time.resize(size,dummy);
+	m_next_spin_to_send = displs[size-1] + sendcount[size-1];
 
-
+	return;
 }
 
 /**********************************************************/
-void Sample::GetNextPacket(int &NoSpins, int &NextSpinToSend, int size) {
+void Sample::GetNextPacket(int &NoSpins, int &NextSpinToSend, int ID) {
+	// calc timings:
+	timeval dummy;
+	gettimeofday(&dummy,NULL);
+	double time_used;
+	time_used=((double) dummy.tv_sec - m_last_time[ID].tv_sec) + 0.000001*((double) dummy.tv_usec - (double) m_last_time[ID].tv_usec);
+	m_total_cpu_time += time_used;
+	m_last_time[ID] = dummy;
+	m_no_spins_done += m_spins_sent[ID];
+
+	//bookkeeping:
+	if (m_spins_sent[ID] > 0)
+		ReportSpin(m_last_offset_sent[ID],m_last_offset_sent[ID]+m_spins_sent[ID]-1,2);
+
 	// spins left to send?
-	if (GetSize() != m_next_spin_to_send) {
-		int SpinsLeft = GetSize() - m_next_spin_to_send;
-		// make spin packets smaller as the number of spins decreases:
-		NoSpins = floor ((float) SpinsLeft/2/(size-1) );
-		if (NoSpins > m_max_paket_size) NoSpins = m_max_paket_size;
-		if (NoSpins < m_min_paket_size)	{
-			NoSpins = m_min_paket_size;
-			if (NoSpins > SpinsLeft) NoSpins = SpinsLeft;
+	if (m_next_spin_to_send < GetSize()) {
+		while (m_spin_state[m_next_spin_to_send] != 0) {
+			m_next_spin_to_send++;
+			if (m_next_spin_to_send == GetSize())
+				break;
 		}
-	} else {
-		NoSpins = 0;
 	}
-	NextSpinToSend=m_next_spin_to_send;
-	m_next_spin_to_send += NoSpins;
+	if (GetSize() == m_next_spin_to_send) {
+		NoSpins = 0;
+		NextSpinToSend=-1;
+		return;
+	} else {
+		int spinsleft;
+		if (!m_is_restart) {	spinsleft = GetSize() - m_next_spin_to_send;} else {spinsleft=SpinsLeft();}
+		if (m_no_spins_done == 0) {NoSpins = m_min_paket_size;} else {
+			NoSpins = int ( m_no_spins_done / m_total_cpu_time * m_sent_interval);
+			// make sample size partly random to avoid syncronisation of slaves:
+			NoSpins += (m_rng.uniform()-0.5)*0.1*NoSpins;
+			//decrease NoSpins towards end of simulation:
+			int EndNoSpins = floor(((double) spinsleft)/2.0/((double) m_last_time.size()-1));
+			if(NoSpins > EndNoSpins) NoSpins = EndNoSpins;
+		}
+		if (NoSpins > m_max_paket_size) NoSpins = m_max_paket_size;
+		if (NoSpins < m_min_paket_size)	NoSpins = m_min_paket_size;
+		if (NoSpins > spinsleft) NoSpins = spinsleft;
+		if (m_is_restart) {
+			int count;
+			for (count=1;count<=NoSpins;count++) {
+				if (m_spin_state[m_next_spin_to_send+count]!=0) {
+					count ++;
+					break;
+				}
+			}
+			count--;
+			NoSpins = count;
+		}
+		NextSpinToSend=m_next_spin_to_send;
+		m_next_spin_to_send += NoSpins;
+
+		// bookkeeping:
+		m_last_offset_sent[ID] = NextSpinToSend;
+		m_spins_sent[ID] = NoSpins;
+		if (NoSpins > 0)
+			ReportSpin(m_last_offset_sent[ID],m_last_offset_sent[ID]+m_spins_sent[ID]-1,1);
+	}
 }
 
 /**********************************************************/
 void Sample::DumpRestartInfo(CoilArray* RxCA) {
-	RxCA->DumpSignals(".tmp_sig", false);
+	static time_t lasttime = time(NULL);
 
-	string fname(".spins_state.dat");
-	ofstream fout(fname.c_str() , ios::binary);
-	fout.write(m_spin_state.data(), sizeof(char)*m_spin_state.size());
-	fout.close();
+	// wait at least 10 seconds to dump restart info again. (-> in parallel jemris and syncron slaves prevent excessive disk writing...)
+	if (abs(time(NULL) - lasttime) > 10) {
+		lasttime = time(NULL);
+		RxCA->DumpSignals(".tmp_sig", false);
+		string fname(".spins_state.dat");
+		ofstream fout(fname.c_str() , ios::binary);
+		fout.write(m_spin_state.data(), sizeof(char)*m_spin_state.size());
+		fout.close();
+	}
 }
 
 /**********************************************************/
@@ -342,18 +439,28 @@ int Sample::ReadSpinsState() {
 	int length = spinsFile.tellg();
 	if (length != m_spin_state.size()) {spinsFile.close();  return (-1);}
 	spinsFile.seekg (0, ios::beg);
-	// allocate memory:
 	spinsFile.read (m_spin_state.data(),length);
 	spinsFile.close();
 
-	//serial jemris:
+
 	World* pw = World::instance();
-	long start=0;
+	int start=0;
 	while (m_spin_state[start]==2) start++;
 	for (int i=start; i<m_spin_state.size(); i++) {
-		if (m_spin_state[i]==1) m_spin_state[i]==0;
+		// clean up spin_state:
+		if (m_spin_state[i]==1) m_spin_state[i]=0;
+	}
+	//serial jemris: cannot restart parallel jemris restart files.
+	if (pw->m_myRank<0) {
+		for (int i=start; i < GetSize(); i++) {
+			if (m_spin_state[i] == 2) {
+				ClearSpinsState();
+				return -1;
+			}
+		}
 	}
 	pw->m_startSpin = start;
+	m_is_restart=true;
 
 	return (0);
 }
@@ -362,4 +469,13 @@ void Sample::ClearSpinsState() {
 	World* pw = World::instance();
 	pw->m_startSpin = 0;
 	for (int i=0; i<m_spin_state.size();i++) m_spin_state[i]=0;
+	m_is_restart = false;
+}
+/**********************************************************/
+int Sample::SpinsLeft() {
+	int count=0;
+	for (int i=0; i<m_spin_state.size();i++ ){
+		if (m_spin_state[i]==0) count++;
+	}
+	return count;
 }

@@ -99,6 +99,9 @@ void Simulator::SetSample         (string fsample) {
 	m_sample = new Sample (fsample);
 	m_world->TotalSpinNumber = m_sample->GetSize();
 	m_sample->ReorderSample();
+	string sentinterval = GetAttr(GetElem("sample"),"SentInterval");
+	if (!sentinterval.empty())  m_sample->SetTimeInterval((atof(sentinterval.c_str())));
+
 }
 
 /**********************************************************/
@@ -307,7 +310,7 @@ void Simulator::CheckRestart(){
 	if (sampstate == 0) {
 		int sigstate=m_rx_coil_array->ReadRestartSignal();
 		if (sigstate == 0) {
-			cout << "Restart files found. Resuming calculation." << endl;
+			cout << "\nRestart files found. Resuming calculation.\n" << endl;
 			return;
 		}
 		MoveTmpFiles();

@@ -26,7 +26,7 @@ void SetSaveFunction() {
 };
 
 /*****************************************************************************/
-void Mpi2Evolution::OpenFiles(){
+void Mpi2Evolution::OpenFiles(int is_restart){
 	World* pW= World::instance();
 	if (pW->saveEvolStepSize == 0) return;
 
@@ -39,6 +39,8 @@ void Mpi2Evolution::OpenFiles(){
 	string fname;
 	int SpinNo = pW->TotalSpinNumber;
 
+	MPI::COMM_WORLD.Bcast(&is_restart,1,MPI_INT,0);
+
 	MPI::COMM_WORLD.Bcast(&SpinNo,1,MPI_INT,0);
 	MPI::Offset filesize;
 	filesize = (SpinNo * 7 +2)* sizeof(double);
@@ -47,7 +49,7 @@ void Mpi2Evolution::OpenFiles(){
         stringstream sF;
         sF << pW->saveEvolFileName << "_" << setw(3) << setfill('0') << i+1 << ".bin";
         // delete existing old file; (c) by Rolf Rabenseifer...
-        {
+        if (is_restart != 1){
         	MPI::File fh=MPI::File::Open(MPI::COMM_WORLD,(sF.str()).c_str(),MPI::MODE_DELETE_ON_CLOSE | MPI::MODE_CREATE | MPI::MODE_WRONLY, MPI::INFO_NULL  );
         	fh.Close();
         }

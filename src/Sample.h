@@ -29,12 +29,10 @@
 #include <fstream>
 #include <cstdlib>
 #include <iostream>
-
 #include <xercesc/dom/DOM.hpp>
-
 #include "rng.h"
-
 #include "Declarations.h"
+#include "sys/time.h"
 
 class SampleReorderStrategyInterface;
 class CoilArray;
@@ -229,7 +227,7 @@ class Sample {
      * @brief Utility function for restart:
      * mark spins which have been calculated.
      */
-    void ReportSpinDone(int beg,int end) {for (int i=beg; i<=end; i++) m_spin_state[i] = 2;}
+    void ReportSpin(int beg,int end,int value) {for (int i=beg; i<=end; i++) m_spin_state[i] = value;}
 
     /**
      * @brief Utility function for restart:
@@ -253,8 +251,19 @@ class Sample {
      * @brief utility function to send sample in parallel mode:
      * get next spin packet to be sent. (beginning index + no_spins to send)
      */
-    void GetNextPacket(int &noSpins, int &NextSpinToSend, int size);
+    void GetNextPacket(int &noSpins, int &NextSpinToSend, int SlaveId);
 
+    /**
+     * Returns No spins which still needs to be calculated.
+     */
+    int SpinsLeft();
+
+    /**
+     * Set Time interval in seconds after which new spins are sent (approx. value.)
+     */
+    void SetTimeInterval(double val) {m_sent_interval=val;};
+
+    bool IsRestart() {return m_is_restart;};
 
  private:
     Spin         spins;      /** < My private spins structure          */
@@ -267,7 +276,7 @@ class Sample {
      */
     void    Populate                    (ifstream* fin) ;
 
-    double       m_val   [10];  /** < Copy of the spin properties asked for by GetValues */
+    double       m_val   [NO_SPIN_PROPERTIES];  /** < Copy of the spin properties asked for by GetValues */
     long         m_index [3];  /** < Sample dimension       */
     double       m_res   [3];  /** < Sample resolution [mm] */
     double       m_offset[3];  /** < Sample offeset to {0,0,0} origin */
@@ -284,7 +293,15 @@ class Sample {
     int m_next_spin_to_send;
 
 // bookkeeping for restart:
-    vector<char>  m_spin_state;	/** keeps track whether spin is not touched (==0), sent (==1) or calculated (==2) */
+    vector<char>  	m_spin_state;	/** keeps track whether spin is not touched (==0), sent (==1) or calculated (==2) */
+    bool 			m_is_restart;	/** true if simulation run is from a restart */
+    vector<int>		m_spins_sent;	/** no of spins last sent to each slave */
+    vector<int>		m_last_offset_sent;/** offset to the last spins sent */
+    vector<timeval> m_last_time;	/** last timepoint at which spins were sent */
+    double			m_sent_interval;/** approx. time in seconds after which new spins are sent */
+
+    double			m_total_cpu_time;
+    double			m_no_spins_done;
 
 };
 

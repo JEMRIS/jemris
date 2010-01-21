@@ -84,7 +84,8 @@ void Model::Solve() {
         m_world->deltaB = m_sample->GetDeltaB();
 
         //update progress counter
-        UpdateProcessCounter(lSpin);
+        if (m_do_dump_progress)
+        	UpdateProcessCounter(lSpin);
 
         //Solve while running down the sequence tree
         RunSequenceTree(dTime, lIndex, m_concat_sequence);
@@ -253,10 +254,10 @@ void Model::DumpRestartInfo(long lSpin){
 	if (m_world->m_myRank < 0) {
 		static long lastspin=0;
 		static time_t lasttime=time(NULL);;
-		int WaitTime=10; //dump restart info every 10s.
+		int WaitTime=30; //dump restart info every 10s.
 
 		if ((time(NULL)-lasttime)>WaitTime ){
-			m_sample->ReportSpinDone(lastspin,lSpin);
+			m_sample->ReportSpin(lastspin,lSpin,2);
 			m_sample->DumpRestartInfo(m_rx_coil_array);
 			lastspin=lSpin+1;
 			lasttime=time(NULL);
@@ -294,7 +295,7 @@ void Model::UpdateProcessCounter(long lSpin) {
 		//update progress counter (serial jemris/pjemris without threads support)
 		int progr = (100*(lSpin+1)/m_world->TotalSpinNumber);
 
-		if (m_do_dump_progress && progr != progress_percent) {
+		if (progr != progress_percent) {
 			progress_percent = progr;
 			ofstream fout(".jemris_progress.out" , ios::out);
 			fout << progr;

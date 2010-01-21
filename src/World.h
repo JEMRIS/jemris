@@ -73,7 +73,7 @@ class World {
     long              TotalADCNumber;       /**< @brief Total number of spins*/
 
     double*           Values;               /**< @brief Values of the current spin (position and physical parameters) */
-    double            InitValues[8];        /**< @brief For initialization of Values */
+    double            InitValues[NO_SPIN_PROPERTIES];        /**< @brief For initialization of Values */
     double            time;                 /**< @brief Current time point (in atom) */
     double            total_time;           /**< @brief Current time point (absolut time) */
     double            phase;                /**< @brief Receiver phase taken from the TPOIs*/

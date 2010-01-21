@@ -55,13 +55,13 @@ World* World::instance() {
         for (int i=0; i<3; i++)
             m_instance->solution[i]   =  0.0;
 
-        for (int i=0; i<8; i++)
+        for (int i=0; i<NO_SPIN_PROPERTIES; i++)
             m_instance->InitValues[i] =  0.0;
 
         m_instance->Values            = m_instance->InitValues;
 
         m_instance->m_myRank		  = -1;
-        m_instance->m_useLoadBalancing= false;
+        m_instance->m_useLoadBalancing= true;
         m_instance->m_startSpin		  = 0;
 
     }

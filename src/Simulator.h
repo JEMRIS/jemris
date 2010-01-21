@@ -151,6 +151,16 @@ class Simulator {
 	 */
 	void      SetSequence    (string seq="");
 
+	/**
+	 * @brief Checks if restart files present; sets jemris state
+	 */
+	void	 CheckRestart();
+
+	/**
+	 * delete restart files (after successful simulation)
+	 */
+	void	 DeleteTmpFiles();
+
  protected:
 
 	/**
@@ -183,14 +193,12 @@ class Simulator {
 	 */
 	void      SetParameter   ();
 
-	/**
-	 * @brief Checks if restart files present; sets jemris state
-	 */
-	void	 CheckRestart();
 
  private:
 
-	void	 DeleteTmpFiles();
+	/**
+	 * moves restart files to *.bak if the do not fit to current simulation
+	 */
 	void  	 MoveTmpFiles();
 
 	bool                     m_state;             /**< @brief My status                   */

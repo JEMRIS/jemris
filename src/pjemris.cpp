@@ -83,17 +83,19 @@ int main (int argc, char *argv[]) {
 		cout << "Sequence : " << psim->GetAttr(psim->GetElem("sequence"),"uri")<< endl;
 		CoilArray* RxCA = psim->GetRxCoilArray();
 		RxCA->InitializeSignals( psim->GetSequence()->GetNumOfADCs() );
-		Mpi2Evolution::OpenFiles();
+		psim->CheckRestart();
+		Mpi2Evolution::OpenFiles((int) psim->GetSample()->IsRestart());
 		// returns when last spin is simulated; collects signals:
 		mpi_devide_and_send_sample( psim->GetSample(), psim->GetRxCoilArray() );
 		RxCA->DumpSignals();
+		psim->DeleteTmpFiles();
 	}
 
 	//SLAVES: receives the (sub)sample, Simulate model, then sends (sub)signal(s) of each coil
 	if ( my_rank != master) {
 		Sample* dummy = new Sample(0);
 		psim->SetSample(dummy);
-		Mpi2Evolution::OpenFiles();
+		Mpi2Evolution::OpenFiles((int) psim->GetSample()->IsRestart());
 		pW->saveEvolFunPtr = &Mpi2Evolution::saveEvolution;
 		psim->SetSample( mpi_receive_sample(master, tag) );
 		psim->GetSample()->InitRandGenerator( my_rank );

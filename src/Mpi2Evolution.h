@@ -26,7 +26,7 @@ public:
 	/**
 	 * open evolution file(s)
 	 */
-	static void OpenFiles();
+	static void OpenFiles(int is_restart);
 
 	/**
 	 * close evolution file(s)
