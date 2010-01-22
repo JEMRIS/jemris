@@ -236,7 +236,7 @@ class Prototype {
      * @param  attrib Attribute value
      * @return        Found Prototype
      */
-	inline virtual Prototype* GetPrototypeByAttributeValue (string name, string attrib) {return NULL;};
+	inline virtual Prototype* GetPrototypeByAttributeValue (string name, string attrib) {return this;};
 
     /**
      * @brief Get the name of this module

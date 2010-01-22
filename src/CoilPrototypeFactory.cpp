@@ -25,6 +25,7 @@
 #include "CoilPrototypeFactory.h"
 #include "IdealCoil.h"
 #include "ExternalCoil.h"
+#include "AnalyticCoil.h"
 #include "BiotSavartLoop.h"
 
 #include "StrX.h"
@@ -32,6 +33,7 @@
 /***********************************************************/
 CoilPrototypeFactory::CoilPrototypeFactory () {
 
+	m_Clonables.insert( pair<string,Coil*>( "ANALYTICCOIL",   new AnalyticCoil() ));
 	m_Clonables.insert( pair<string,Coil*>( "BIOTSAVARTLOOP", new BiotSavartLoop() ));
 	m_Clonables.insert( pair<string,Coil*>( "IDEALCOIL"     , new IdealCoil()      ));
 	m_Clonables.insert( pair<string,Coil*>( "EXTERNALCOIL"  , new ExternalCoil()   ));
