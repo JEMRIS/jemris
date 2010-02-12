@@ -20,7 +20,7 @@ bool XMLWriter::Write (DOMImplementation* impl, DOMNode* node, string filename) 
     if (serializer->canSetFeature(XMLUni::fgDOMWRTFormatPrettyPrint, true))
 		serializer->setFeature(XMLUni::fgDOMWRTFormatPrettyPrint, true);
 	
-	serializer->writeNode(mft, node);
+	serializer->writeNode(mft, *node);
 
 	serializer->release();
     #endif 
