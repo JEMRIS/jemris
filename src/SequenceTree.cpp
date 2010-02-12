@@ -28,8 +28,7 @@
 #include "ConcatSequence.h"
 #include "AtomicSequence.h"
 #include "Pulse.h"
-#include <xercesc/framework/StdOutFormatTarget.hpp>
-#include <xercesc/framework/LocalFileFormatTarget.hpp>
+#include "XMLWriter.h"
 
 SequenceTree*            SequenceTree::m_instance = 0;
 
@@ -351,22 +350,8 @@ void          SequenceTree::SerializeModules(string xml_file){
 cout << module->GetClassType() << endl;
 	}
 
-	XMLFormatTarget *myFormTarget;
-
-	if (xml_file.empty())
-		myFormTarget = new StdOutFormatTarget();
-	else
-		myFormTarget  = new LocalFileFormatTarget( StrX(xml_file).XMLchar() );
-
-	DOMWriter* theSerializer =  ((DOMImplementationLS*)impl)->createDOMWriter();
-
-    if (theSerializer->canSetFeature(XMLUni::fgDOMWRTFormatPrettyPrint, true))
-            theSerializer->setFeature(XMLUni::fgDOMWRTFormatPrettyPrint, true);
-
-	theSerializer->writeNode(myFormTarget, *doc);
-
-	delete theSerializer;
-	delete myFormTarget;
+	XMLWriter xmlwriter;
+	xmlwriter.Write(impl, doc->getDocumentElement(), xml_file);
 
 	m_dom_doc = docbackup;
 

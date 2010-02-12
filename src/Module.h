@@ -51,7 +51,7 @@ class Module : public Prototype {
      *
      * Default destrcutor
      */
-    virtual ~Module ();
+    virtual ~Module () {};
 
     /**
      * @brief Copy constructor.

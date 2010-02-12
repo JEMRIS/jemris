@@ -26,8 +26,7 @@
 #include "SequenceTree.h"
 #include "ConcatSequence.h"
 #include "Pulse.h"
-#include <xercesc/framework/StdOutFormatTarget.hpp>
-#include <xercesc/framework/LocalFileFormatTarget.hpp>
+#include "XMLWriter.h"
 
 /***********************************************************/
 Module::Module() {
@@ -38,28 +37,6 @@ Module::Module() {
 	m_calls         = 0    ;
 	m_world         = World::instance();
 
-};
-
-/***********************************************************/
-Module::~Module() {
-
-/*
-	map<void*,void*>::iterator istate;
-
-	for( istate = m_subject_state.begin(); istate != m_subject_state.end(); istate++ ) 	{
-
-	    //delete all copies of subject state variables
-		map<void*,string>::iterator itype  = m_subject_type.find(istate->first);
-		if ( itype->second == typeid(double*).name()      )	delete ((double*)       istate->second);
-		if ( itype->second == typeid(int*).name()         )	delete ((int*)          istate->second);
-		if ( itype->second == typeid(unsigned int*).name()) delete ((unsigned int*) istate->second);
-		if ( itype->second == typeid(float*).name()       )	delete ((float*)        istate->second);
-		if ( itype->second == typeid(long*).name()        )	delete ((long*)         istate->second);
-		if ( itype->second == typeid(string*).name()      )	delete ((string*)       istate->second);
-		if ( itype->second == typeid(PulseAxis*).name()   ) delete ((PulseAxis*)    istate->second);
-
-	}
-*/
 };
 
 /***********************************************************/
@@ -338,44 +315,39 @@ void    Module::DumpTree (string file, Module* mod,int ichild, int level) {
 };
 
 /***********************************************************/
-bool           Module:: WriteStaticXML(string xml_file){
+bool           Module::WriteStaticXML (string xml_file) {
 
-	DOMImplementation* impl    =  DOMImplementationRegistry::getDOMImplementation(StrX("Core").XMLchar() );
+	DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(StrX("Core").XMLchar() );
 
 	if (impl==NULL) return false;
 
-	DOMDocument* doc       =  impl->createDocument( 0, StrX("PARAM").XMLchar(), 0);
-	DOMNode*     topnode   = doc->getFirstChild();
-    Parameters*  p = m_seq_tree->GetParameters();
-    DOMNode* backup_node = p->GetNode();
-    p->SetNode(topnode);
-    p->AddAllDOMattributes(false);
+	DOMDocument* doc          =  impl->createDocument( 0, StrX("PARAM").XMLchar(), 0);
+	DOMNode*     topnode      = doc->getFirstChild();
+    Parameters*  parameters   = m_seq_tree->GetParameters();
+    DOMNode*     backup_node  = parameters->GetNode();
+	XMLWriter*   xmlwriter    = new XMLWriter();
+
+    parameters->SetNode(topnode);
+    parameters->AddAllDOMattributes(false);
+
 	if ( ((DOMElement*) topnode)->getAttributeNode(StrX("Name").XMLchar()) != NULL)
 		((DOMElement*) topnode)->removeAttribute (StrX("Name").XMLchar());
-    p->SetNode(backup_node);
+
+    parameters->SetNode(backup_node);
 
 	//recursively add elements
 	if (!StaticDOM(doc,topnode)) return false;
 
-	//write XML file
-	XMLFormatTarget *myFormTarget;
+	xmlwriter->Write (impl, topnode, xml_file);
 
-	if (xml_file.empty())
-		myFormTarget = new StdOutFormatTarget();
-	else
-		myFormTarget  = new LocalFileFormatTarget( StrX(xml_file).XMLchar() );
-
-	DOMWriter* theSerializer =  ((DOMImplementationLS*)impl)->createDOMWriter();
-
-    if (theSerializer->canSetFeature(XMLUni::fgDOMWRTFormatPrettyPrint, true))
-            theSerializer->setFeature(XMLUni::fgDOMWRTFormatPrettyPrint, true);
-
-	theSerializer->writeNode(myFormTarget, *doc);
-
-	delete theSerializer;
-	delete myFormTarget;
+	delete doc;
+	delete topnode;
+	delete parameters;
+	delete backup_node;
+	delete xmlwriter; 
 
 	return true;
+
 };
 
 /***********************************************************/
