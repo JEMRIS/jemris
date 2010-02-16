@@ -47,59 +47,38 @@ bool BiotSavartLoop::Prepare (PrepareMode mode) {
 
 double BiotSavartLoop::GetSensitivity(double* position) {
 
-    if (m_havemax) {
-		if (round(position[ZC]/m_space_res[ZC])+m_matrx_res[ZC]/2 > 0 && round(position[ZC]/m_space_res[ZC])+m_matrx_res[ZC]/2 < m_matrx_res[ZC]) {
-			return m_sens_map [(int)round(position[ZC]/m_space_res[ZC])+m_matrx_res[ZC]/2]
-							  [(int)round(position[YC]/m_space_res[YC])+m_matrx_res[YC]/2]
-							  [(int)round(position[XC]/m_space_res[XC])+m_matrx_res[XC]/2]/m_maxsens;
-		} else return 0.0;
-    } else {
 
-        double a     = m_radius;
+       double a     = m_radius;
+       double px = position[XC]-m_position[XC];
+       double py = position[YC]-m_position[YC];
+       double pz = position[ZC]-m_position[ZC];
 
-        // distance to sample point
-        double dist  = sqrt(pow(position[XC]-m_position[XC],2)
-                     +      pow(position[YC]-m_position[YC],2)
-                     +      pow(position[ZC]-m_position[ZC],2));
+       //rotate point in solenoid coordinate system and check distance to the loop
+       double x1 =   px*(cos(m_polar) - pow(cos(m_azimuth),2)*(cos(m_polar) - 1))
+                   - pz*sin(m_azimuth)*sin(m_polar) + py*cos(m_azimuth)*sin(m_azimuth)*(cos(m_polar) - 1);
+       double x2 =   py*(cos(m_polar) - pow(sin(m_azimuth),2)*(cos(m_polar) - 1))
+                   - pz*cos(m_azimuth)*sin(m_polar) + px*cos(m_azimuth)*sin(m_azimuth)*(cos(m_polar) - 1);
+       if ( abs(pow(x1,2)+pow(x2,2)-pow(a,2))/pow(a,2) < 0.25 ) return 0.0;
 
-        double q = 5.0;
+       //distance to solenoid center
+       double dist = sqrt( abs(pow(px,2)+pow(py,2)+pow(pz,2)) );
+       if ( dist < 0.25*a ) return 0.0;
 
-        if (abs(position[XC]) < m_radius/q)
-            position[XC] = ((position[XC]<0) ? -m_radius:m_radius)/q;
-
-        if (abs(position[YC]) < m_radius/q)
-            position[YC] = ((position[YC]<0) ? -m_radius:m_radius)/q;
-
-        if (abs(position[ZC]) < m_radius/q)
-            position[ZC] = ((position[ZC]<0) ? -m_radius:m_radius)/q;
-
-
-        // Calculate off axis angle
-
-        // scalar product of negative position vector and sample point
-        double scapr = position[XC]*m_direction[XC]
-                     + position[YC]*m_direction[YC]
-                     + position[ZC]*m_direction[ZC];
-
-        // absolute values of the vetors
-        double abspt = sqrt (pow(  position[XC],2) + pow(  position[YC],2) + pow(  position[ZC],2));
-        double absrd = sqrt (pow(m_position[XC],2) + pow(m_position[YC],2) + pow(m_position[ZC],2));
-
-        // angle off axis
-        double angle = acos (scapr/(abspt*absrd));
+        // angle between position vector and coil normal vector (given by m_azimtuth & m_polar)
+        double angle = acos ( ( px*cos(m_azimuth)*sin(m_polar) +
+								py*sin(m_azimuth)*sin(m_polar) +
+								pz*cos(m_polar)  ) / dist );
 
         // distance off axis
         double r     = dist * sin(angle);
         // distance on axis
         double x     = dist * cos(angle);
-        //cout << "r: " << r << " x:" << x << endl;
 
         double alpha = r/a;
         double beta  = x/a;
         double gamma = x/r;
         double Q     = pow  ((1.0+alpha),2) + pow (beta,2);
-        double k     = 1/pow(sin(sqrt(4.0*alpha/Q)),2);
-        if (k >= 1.0) k = 0.99;
+        double k     = sqrt(4*alpha/Q);
 
         double Kk    = 1.0;
 		double Ek    = 1.0;
@@ -115,10 +94,12 @@ double BiotSavartLoop::GetSensitivity(double* position) {
         double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*a) - Kk) * gamma / (PI * sqrt(Q));
         double B1    = sqrt(pow(Bx,2)+pow(Br,2))/pow(dist,0.5);
 
+        if (B1 > 1.0) return 0.0;
+        //cout <<  "(" << px << "," << py << "," << pz << ") - ";
+        //cout << dist << " : " << sqrt(pow(x1,2)+pow(x2,2)) << " : " << a << " => " << k << " ; " << B1 << endl;
+
         if (B1 > m_maxsens)
             m_maxsens = B1;
         return B1;
-	}
-
 
 }

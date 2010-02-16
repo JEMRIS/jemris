@@ -69,7 +69,7 @@ unsigned int CoilArray::Populate () {
 /***********************************************************/
 bool CoilArray::Prepare (PrepareMode mode) {
 
-	for (int i=0; i<m_coils.size(); i++)
+	for (unsigned int i=0; i<m_coils.size(); i++)
 		m_coils.at(i)->Prepare(mode);
 
 	return true;
@@ -161,7 +161,7 @@ void CoilArray::DumpSignals (string prefix, bool normalize) {
 }
 
 /**********************************************************/
-void CoilArray::DumpSensMaps() {
+void CoilArray::DumpSensMaps(bool verbose) {
 
     string prefix = (m_mode==RX)?"RX":"TX";
 
@@ -170,6 +170,8 @@ void CoilArray::DumpSensMaps() {
         stringstream sstr;
         sstr << prefix << "sensmap" << setw(2) << setfill('0') << i+1 << ".bin";
         m_coils[i]->DumpSensMap(sstr.str());
+        if (verbose)
+        	cout << "Coil #" << i << ": " << m_coils[i]->GetName() << " (" << m_coils[i]->GetClassType() << "): " << " dumps to " << sstr.str() << endl;
 
     }
 

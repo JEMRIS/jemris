@@ -32,17 +32,14 @@ Coil::~Coil() {
 /**********************************************************/
 void Coil::Initialize (DOMNode* node) {
 
-    // init m_matrx_res to 1 since vaCreate_3d has problems with dim_i == 0 (write into non-allocated memory)
-	m_matrx_res[ZC]=1; m_matrx_res[YC]=1; m_matrx_res[XC]=1;
-
 	m_node    = node;
 
 	string s = StrX(((DOMElement*) node)->getAttribute (StrX("Name").XMLchar() )).std_str() ;
 
-	if (s.empty())
+	if (s.empty()) {
 		((DOMElement*) node)->setAttribute(StrX("Name").XMLchar(),node->getNodeName());
-
-	SetName( StrX(node->getNodeName()).std_str() );
+		SetName( StrX(node->getNodeName()).std_str() );
+	}
 
 
 }
@@ -77,34 +74,73 @@ void Coil::Receive (long lADC) {
 /**********************************************************/
 void Coil::DumpSensMap (string fname) {
 
-    m_has_sens_map  = true;
-
-
     ofstream fout(fname.c_str() , ios::binary);
+    double* position  = new double[3];
 
-    for (int i=0; i<m_matrx_res[ZC]; i++) {
-        for (int j=0; j<m_matrx_res[YC]; j++) {
-            for (int k=0; k<m_matrx_res[XC]; k++) {
+    for (int k=0; k< (m_dim==3?m_points:1); k++) {
 
-                double* position  = new double[3];
+        position [ZC] = (m_dim==3?k*m_extent/m_points-m_extent/2:0.0);
 
-                position [XC] = round(((double)k) * m_space_res[XC] - m_volume[XC]/2);
-                position [YC] = round(((double)j) * m_space_res[YC] - m_volume[YC]/2);
-                position [ZC] = round(((double)i) * m_space_res[ZC] - m_volume[ZC]/2)+1;
+        for (int j=0; j<m_points; j++) {
 
+            position [YC] = j*m_extent/m_points-m_extent/2;
+
+            for (int i=0; i<m_points; i++) {
+
+                position [XC] = i*m_extent/m_points-m_extent/2;
                 double sens   = GetSensitivity(position);
-
-
                 m_sens_map[i][j][k] = sens;
                 if (fname != "") fout.write((char*)(&(sens)), sizeof(sens));
-                delete [] position;
-
+				//cout << "i: " << i << ", j: " << j << ", k: " << k << " --- " << m_sens_map[i][j][k] << endl;
             }
         }
     }
-
+    delete [] position;
     fout.close();
 
+}
+
+/**********************************************************/
+double  Coil::GetSensitivity () {
+
+	if (m_interpolate) {
+		return m_scale*InterpolateSensitivity(m_world->Values);
+	}
+	else {
+		return m_scale*GetSensitivity(m_world->Values);
+	}
+}
+
+/**********************************************************/
+double Coil::InterpolateSensitivity (double* position){
+
+	// expects  -m_extent/2 <= position[j] <= m_extent/2
+    double x = (position[XC]+m_extent/2)*m_points/m_extent;
+    double y = (position[YC]+m_extent/2)*m_points/m_extent;
+    double z = (m_dim==3?(position[ZC]+m_extent/2)*m_points/m_extent:0.0);
+	int    px   = int(x),  py   = int(y), pz   = int(z);
+	double normx = x-px ,	normy = y-py ,	normz = z-pz;
+
+	//check if point is on lattice
+	if (px>m_points-1 || px<0 || py>m_points-1 || py<0 || pz>m_points-1 || pz<0 ) return 0.0;
+
+    //bilinear interpolation (2D)
+	int nx = (px+1<m_points?px+1:m_points-1);
+	int ny = (py+1<m_points?py+1:m_points-1);
+	double i11 = m_sens_map[px][py][pz]+(m_sens_map[px][ny][pz]-m_sens_map[px][py][pz])*normy;
+	double i21 = m_sens_map[nx][py][pz]+(m_sens_map[nx][ny][pz]-m_sens_map[nx][py][pz])*normy;
+	double iz1 = i11+(i21-i11)*normx;
+
+	//check 2D
+	if (m_dim<3) return iz1;
+
+    //trilinear interpolation (3D)
+	int nz = (pz+1<m_points?pz+1:m_points-1);
+	double i12 = m_sens_map[px][py][nz]+(m_sens_map[px][ny][nz]-m_sens_map[px][py][nz])*normy;
+	double i22 = m_sens_map[nx][py][nz]+(m_sens_map[nx][ny][nz]-m_sens_map[nx][py][nz])*normy;
+	double iz2 = i12+(i22-i12)*normx;
+
+	return (iz1+(iz2-iz1)*normz);
 
 }
 
@@ -112,33 +148,36 @@ void Coil::DumpSensMap (string fname) {
 bool Coil::Prepare  (PrepareMode mode) {
 
 	bool success = false;
+	m_azimuth = 0.0;
+	m_polar   = 0.0;
+	m_scale   = 1.0;
+	m_phase   = 0.0;
+	m_dim     = 3;
+	m_extent  = 0;
+	m_points  = 0;
 
-   	ATTRIBUTE("Name"   , m_name);
 	ATTRIBUTE("XPos"   , m_position [XC]);
 	ATTRIBUTE("YPos"   , m_position [YC]);
 	ATTRIBUTE("ZPos"   , m_position [ZC]);
-	ATTRIBUTE("XDir"   , m_direction[XC]);
-    ATTRIBUTE("YDir"   , m_direction[YC]);
-    ATTRIBUTE("ZDir"   , m_direction[ZC]);
-    ATTRIBUTE("XSize"  , m_volume   [XC]);
-    ATTRIBUTE("YSize"  , m_volume   [YC]);
-    ATTRIBUTE("ZSize"  , m_volume   [ZC]);
-    ATTRIBUTE("XMatrix", m_matrx_res[XC]);
-    ATTRIBUTE("YMatrix", m_matrx_res[YC]);
-    ATTRIBUTE("ZMatrix", m_matrx_res[ZC]);
-    ATTRIBUTE("Channel", m_channel);
+	ATTRIBUTE("Azimuth", m_azimuth      );
+    ATTRIBUTE("Polar"  , m_polar        );
+    ATTRIBUTE("Scale"  , m_scale        );
+    ATTRIBUTE("Phase"  , m_phase        );
+    ATTRIBUTE("Dim"    , m_dim          );
+    ATTRIBUTE("Extent" , m_extent       );
+    ATTRIBUTE("Points" , m_points       );
 
     m_mode          = mode;
     m_world         = World::instance();
 	m_signal        = NULL;
-    m_has_sens_map  = false;
 
     success         = Prototype::Prepare(mode);
 
-    m_sens_map      = vaCreate_3d(m_matrx_res[ZC], m_matrx_res[YC], m_matrx_res[XC], double, NULL);
+    m_polar   *= PI/180.0;
+    m_azimuth *= PI/180.0;
+    m_interpolate = (m_points>0 && m_extent>0.0);
 
-    for (int i=0; i<3; i++)
-        m_space_res[i] = (double)m_volume[i]/(double)m_matrx_res[i];
+   	m_sens_map = vaCreate_3d(m_points, m_points, (m_dim==3?m_points:1), double, NULL);
 
 	return success;
 

@@ -69,8 +69,7 @@ class ExternalCoil : public Coil {
 
  private:
 
-     string    m_uri;        /**< @brief URI of the sensitivity map  */
-     double*** m_smap;       /**< @brief Sensitivity map             */
+     string    m_fname;        /**< @brief URI of the sensitivity map  */
 
 };
 #endif /*EXTERNALCOIl_H_*/

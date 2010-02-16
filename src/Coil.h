@@ -43,11 +43,18 @@ class Coil : public Prototype {
     virtual ~Coil          ();
 
     /**
-     * @brief Get the sensitivity at point (x,y,z)
+     * @brief Get the sensitivity at point (x,y,z) of the current spin
      *
 	 * @return          Sensitivity with respect to spin in World
      */
-    double  GetSensitivity () {return this->GetSensitivity(m_world->Values);}
+    double  GetSensitivity () ;
+
+    /**
+     * @brief Interpolate the sensitivity at point (x,y,z)
+     *
+	 * @return          Interpolated Sensitivity
+     */
+    double InterpolateSensitivity (double* position);
 
     /**
      * @brief Get the sensitivity at point (x,y,z)
@@ -77,9 +84,9 @@ class Coil : public Prototype {
     void    Transmit        ();
 
     /**
-     * @brief Get the recieved signal of this coil
+     * @brief Get the received signal of this coil
      *
-     * @return          The recieved signal
+     * @return          The received signal
      */
     Signal* GetSignal       () { return m_signal; }
 
@@ -120,16 +127,18 @@ class Coil : public Prototype {
      */
     Coil() {};
 
-    vaArray_3d(double) m_sens_map;
-    double             m_position[3];   /**< My location          */
-    double             m_direction[3];  /**< My location          */
-    Signal*            m_signal;        /**< My signal repository */
-    int                m_channel;       /**< My channel no        */
-    unsigned short     m_mode;          /**< My mode (RX/TX)      */
-    int                m_matrx_res[3];  /**< My sensitivity map matrix  resolution */
-    double             m_space_res[3];  /**< My sensitivity map spatial resolution */
-    double             m_volume[3];     /**< My volume (X,Y,Z)                     */
-    bool               m_has_sens_map;  /**< compute sensitivity map               */
+    double          m_position[3];	/**< Center location   */
+    Signal*         m_signal;    	/**< Signal repository */
+    unsigned		m_mode;      	/**< My mode (RX/TX)      */
+    double			m_azimuth; 		/**< Change of coordinate system: azimuth angle*/
+    double			m_polar;   		/**< Change of coordinate system: polar angle*/
+    double			m_scale;   		/**< Scaling factor for sensitivities */
+    double			m_phase;   		/**< Constant phase shift */
+    bool            m_interpolate;  /**< Whether to precompute sensitivities in an array */
+    unsigned		m_dim;     		/**< Dimensions (2D or 3D) of the array*/
+    double			m_extent;  		/**< Array extend of support region [mm] */
+    int				m_points;  		/**< Sampling points of the array */
+    vaArray_3d(double) m_sens_map;  /**< Array to store sensitivities */
 
 };
 

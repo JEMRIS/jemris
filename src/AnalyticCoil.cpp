@@ -65,10 +65,7 @@ bool AnalyticCoil::Prepare (PrepareMode mode) {
 	//test GiNaC evaluation: calculate the sensitivities on a grid
 	if (m_analytic) {
 		try {
-			bool b = m_use_grid;
-			m_use_grid = false;
 			DumpSensMap("");
-			m_use_grid = b;
 		} catch (exception &p) {
 			if (mode == PREP_VERBOSE) {
 				cout	<< "Warning in " << GetName() << ": attribute Sensitivity"
@@ -87,30 +84,29 @@ bool AnalyticCoil::Prepare (PrepareMode mode) {
 /*******************************************************************/
 double AnalyticCoil::GetSensitivity(double* position) {
 
-	if (!m_analytic)  return 0.0;
+	if ( !m_analytic )	return 0.0;
 
-    if (m_use_grid) {
-		if (round(position[ZC]/m_space_res[ZC])+m_matrx_res[ZC]/2 > 0 && round(position[ZC]/m_space_res[ZC])+m_matrx_res[ZC]/2 < m_matrx_res[ZC]) {
-			double s = m_sens_map [(int)round(position[ZC]/m_space_res[ZC])+m_matrx_res[ZC]/2]
-							  [(int)round(position[YC]/m_space_res[YC])+m_matrx_res[YC]/2]
-							  [(int)round(position[XC]/m_space_res[XC])+m_matrx_res[XC]/2];
-			//cout << "INTERP!! " << "S(" << position[XC] << "," << position[YC] << "," << position[ZC] << ") = " << s << endl;
-			return s;
-		} else return 0.0;
+   	m_px = position[XC]-m_position[XC];
+	m_py = position[YC]-m_position[YC];
+	m_pz = position[ZC]-m_position[ZC];
 
-    } else {
+	//azimuth rotation
+	if (m_azimuth!=0.0) {
+		double px = m_px*cos(m_azimuth) - m_py*sin(m_azimuth);
+		double py = m_py*cos(m_azimuth) + m_px*sin(m_azimuth);
+		m_px = px; m_py = py;
+	}
 
-    	m_px = position[XC]-m_position[XC];
-		m_py = position[YC]-m_position[YC];
-		m_pz = position[ZC]-m_position[ZC];
+	//polar rotation: axis of rotation is the (new) x-axis
+	if (m_polar!=0.0) {
+		double pz = m_pz*cos(m_polar) - m_px*sin(m_polar);
+	    double py = m_py*cos(m_polar) + m_pz*sin(m_polar);
+	    m_py = py; m_pz = pz;
+	}
 
-		GetAttribute("Sensitivity")->EvalExpression();
+	GetAttribute("Sensitivity")->EvalExpression();
 
-		//cout << "ANALYT!! " << "S(" << position[XC] << "," << position[YC] << "," << position[ZC] << ") = " << m_sensitivity << endl;
-
-		return m_sensitivity;
-    }
-
+	return m_sensitivity;
 }
 
 

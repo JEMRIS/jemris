@@ -84,10 +84,10 @@ int main (int argc, char *argv[]) {
 
 	//CASE 2: try Dump of sensitivities from CoilArray xml-file
 	CoilArray* coils = new CoilArray();
+	cout << "dumping sensitivity maps ...\n";
 	coils->Initialize(input);
 	if (coils->Populate() == OK) {
-		cout << "dumping sensitivity maps ...\n";
-		coils->DumpSensMaps();
+		coils->DumpSensMaps(true);
 		return 0;
 	}
 

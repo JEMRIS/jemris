@@ -113,7 +113,7 @@ class CoilArray  {
      * @brief Dump all sensitivities
      * Dump the sensitivities from all coils to discrete files.
      */
-    void DumpSensMaps      ();
+    void DumpSensMaps      (bool verbose = false);
 
 
     /**
