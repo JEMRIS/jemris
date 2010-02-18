@@ -38,7 +38,7 @@ for ic = 1:length(S.Children)
  a=X+x; a=[a a(1)]; b=Y+y; b=[b b(1)];
  S.Children(ic).hp=patch(a,b,COL);
  S.Children(ic).hl=line(a,b,'color',[0 0 0],'linewidth',2);
- if mod(ic,4)==0,y=y-dy;x=x-4*dx;end
+ if mod(ic,8)==0,y=y-dy;x=x-8*dx;end
  %draw 1st three chraracters of the coil name to the symbol
  ANAME='';
  for i=1:length(S.Children(ic).Attributes);
@@ -144,7 +144,7 @@ T=sprintf('Coil: %s - Type: %s',seq.CoilName,seq.Name);
 if ~seq.HasMap,T=sprintf('%s   <--- !sensitvities not yet calculated!',T);end
 set(handles.uipanel1,'Title',T)
 
-%save tmp handles
+save tmp handles
 
 A=handles.Attributes{find(strcmpi(handles.Coils,seq.Name))};
 %HA=handles.HiddenAttributes{find(strcmp(handles.Modules,upper(seq.Name)))};

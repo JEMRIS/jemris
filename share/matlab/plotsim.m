@@ -106,7 +106,7 @@ if ( WHAT>2 ) %& mod(size(M,1),res.^2)==0 )
    wx=.5*(1 - cos(2*pi*(1:Nx/16)'/(Nx+1))); wx = [wx; ones(Nx*7/8,1); wx(end:-1:1)];
    wy=.5*(1 - cos(2*pi*(1:Ny/16)'/(Ny+1))); wy = [wy; ones(Nx*7/8,1); wy(end:-1:1)];
    %FS=abs(fftshift(fft2(((wx*wy').*S)')));
-   FS=fft2(ifftshift(S'));
+   FS=fliplr(fft2(ifftshift(S')));
    if size(FS,1)==1
        dt=t(2)-t(1);
        f=[0:.5/dt/(size(FS,2)/2):.5/dt];

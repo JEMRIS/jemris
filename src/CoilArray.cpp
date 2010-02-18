@@ -188,7 +188,7 @@ Coil* CoilArray::GetCoil(unsigned channel) {
 
 /**********************************************************/
 int CoilArray::ReadRestartSignal(){
-	// return: 0, if files sucessfully read; -2 if no files preesent; -1 if wrong restart files.
+	// return: 0, if files successfully read; -2 if no files present; -1 if wrong restart files.
 	bool fail = false;
 	for (int i=0; i<GetSize();i++) {
 		double data;

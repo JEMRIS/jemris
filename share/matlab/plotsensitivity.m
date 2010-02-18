@@ -65,7 +65,7 @@ for i=1:NC
      end
  end
  f=fopen(sprintf('RXsensmap%02d.bin',i));
- a=fread(f,inf,'double'); fclose(f);
+ a=fread(f,inf,'double'); fclose(f); a=a/max(a);
  if DIM==3;
      if length(a)==N^3   %magn only
          a=reshape(a,[N N N]);
@@ -96,7 +96,7 @@ for i=1:NC
  end
 end
 if ~exist('A','var'),set(gca,'visible','off');return;end
-%A=A/max(abs(A(:)));%to scale or not to scale?
+%A=A/NC;%to scale or not to scale?
 
 %complex data selection
 C=get(handles.ComplexMenu,'String');
@@ -142,6 +142,7 @@ switch T
             return
         end
         az = ax;
+        A=(A-min(A(:)))/(max(A(:))-min(A(:)));
         scale=get(handles.slicepos,'Value');
         if scale==1,scale=0.999;end
         p=patch(isosurface(ax,ay,az,A,scale));
@@ -205,13 +206,13 @@ for i=1:NC
     u=[0 0 0 0]; v=u; w=u;
     d=0.1*diff(get(handles.hax{1},'xlim'));
     if ~isnan(AZ{i})
-        a=[0 0 1 0]; b=[-.25 .25 0 -.25]; 
+        a=[0 0 -1 0]; b=[-.25 .25 0 -.25]; 
         c=cos(AZ{i}*pi/180); s=sin(AZ{i}*pi/180);
         for j=1:4; u(j)=c*a(j)-s*b(j); v(j)=s*a(j)+c*b(j);end
         patch(x+d*u,y+d*v,z+d*w,[1 1 0])
-        line(x+d*u,y+d*v,z+d*w,'color',[0 0 0],'linewidth',2)
+        %line(x+d*u,y+d*v,z+d*w,'color',[0 0 0],'linewidth',4)
     end
-    h=text(x+1.5*d*u(3),y+1.5*d*v(3),z,T{i},'color',TCOL,'fontsize',12,'fontweight','bold');
+    h=text(x+d*u(3),y+1.5*d*v(3),z,T{i},'color',TCOL,'fontsize',12,'fontweight','bold');
     %if ( handles.CoilArray.Children(i).current ),set(h,'fontsize',14,'color',[.7 0 0]);end
     MaxX = max([x MaxX]);  MinX = min([x MinX]);
     MaxY = max([y MaxY]);  MinY = min([y MinY]);

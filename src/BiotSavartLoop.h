@@ -71,8 +71,6 @@ class BiotSavartLoop : public Coil {
  private:
 
     double            m_radius;        /**< @brief My loop radius                  */
-	double            m_maxsens;       /**< @brief maximum sensitivity             */
-	bool              m_havemax;       /**< @brief maximum sensitivity calculated? */
 
 
 };

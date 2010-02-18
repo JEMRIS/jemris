@@ -75,7 +75,8 @@ void Coil::Receive (long lADC) {
 void Coil::DumpSensMap (string fname) {
 
     ofstream fout(fname.c_str() , ios::binary);
-    double* position  = new double[3];
+    double position[3]  = {0.0,0.0,0.0};
+    double max = 0.0;
 
     for (int k=0; k< (m_dim==3?m_points:1); k++) {
 
@@ -91,11 +92,12 @@ void Coil::DumpSensMap (string fname) {
                 double sens   = GetSensitivity(position);
                 m_sens_map[i][j][k] = sens;
                 if (fname != "") fout.write((char*)(&(sens)), sizeof(sens));
+                max = (max>sens?max:sens);
 				//cout << "i: " << i << ", j: " << j << ", k: " << k << " --- " << m_sens_map[i][j][k] << endl;
             }
         }
     }
-    delete [] position;
+    m_norm = 1/max;
     fout.close();
 
 }
@@ -104,10 +106,10 @@ void Coil::DumpSensMap (string fname) {
 double  Coil::GetSensitivity () {
 
 	if (m_interpolate) {
-		return m_scale*InterpolateSensitivity(m_world->Values);
+		return m_norm*m_scale*InterpolateSensitivity(m_world->Values);
 	}
 	else {
-		return m_scale*GetSensitivity(m_world->Values);
+		return m_norm*m_scale*GetSensitivity(m_world->Values);
 	}
 }
 
@@ -151,6 +153,7 @@ bool Coil::Prepare  (PrepareMode mode) {
 	m_azimuth = 0.0;
 	m_polar   = 0.0;
 	m_scale   = 1.0;
+	m_norm    = 1.0;
 	m_phase   = 0.0;
 	m_dim     = 3;
 	m_extent  = 0;
@@ -176,8 +179,14 @@ bool Coil::Prepare  (PrepareMode mode) {
     m_polar   *= PI/180.0;
     m_azimuth *= PI/180.0;
     m_interpolate = (m_points>0 && m_extent>0.0);
-
    	m_sens_map = vaCreate_3d(m_points, m_points, (m_dim==3?m_points:1), double, NULL);
+
+    //normalize sensitivity at origin
+    //double position[3]  = {0.0,0.0,0.0};
+    //double norm = GetSensitivity (position);
+    //if (norm>1e-15) { m_norm = 1.0/norm; }
+
+
 
 	return success;
 

@@ -235,7 +235,7 @@ class Attribute {
     	if ( !NewState(val) ) return false;
 
     	//initiate re-evaluation and preparation of the observers
-        for (int i=0; i<m_observers.size(); i++) {
+        for (unsigned int i=0; i<m_observers.size(); i++) {
         	m_observers.at(i)->EvalExpression();
             UpdatePrototype( m_observers.at(i)->GetPrototype() );
             //cout << "DEBUG " << m_name << " notified " <<  m_observers.at(i)->GetSymbol() << endl;

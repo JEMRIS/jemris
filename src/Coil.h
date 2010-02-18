@@ -133,6 +133,7 @@ class Coil : public Prototype {
     double			m_azimuth; 		/**< Change of coordinate system: azimuth angle*/
     double			m_polar;   		/**< Change of coordinate system: polar angle*/
     double			m_scale;   		/**< Scaling factor for sensitivities */
+    double			m_norm;   		/**< Normalization factor for sensitivities */
     double			m_phase;   		/**< Constant phase shift */
     bool            m_interpolate;  /**< Whether to precompute sensitivities in an array */
     unsigned		m_dim;     		/**< Dimensions (2D or 3D) of the array*/

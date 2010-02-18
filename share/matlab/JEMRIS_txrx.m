@@ -191,8 +191,8 @@ NewCoil = struct('Name', cell(1), 'Attributes',cell(1),'Data',cell(1),    ...
                  'hp',cell(1), 'hl',cell(1),'CoilName',cell(1), 'ht', cell(1));
 NewCoil.Name=handles.Coils{n};
 NewCoil.Attributes.Name='Name';
-NewCoil.Attributes.Value=num2str(N+1);
-NewCoil.CoilName=num2str(N+1);
+NewCoil.Attributes.Value=['C',num2str(N+1)];
+NewCoil.CoilName=['C',num2str(N+1)];
 NewCoil.current=1;
 NewCoil.HasMap=0;
 NewCoil.hp=0; NewCoil.hl=0; NewCoil.ht=0;
@@ -293,16 +293,65 @@ function FigureTag_Callback(hObject, eventdata, handles)
 function FileTag_Callback(hObject, eventdata, handles)
 
 
-
 % --------------------------------------------------------------------
 function LayoutTag_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function CylinderTag_Callback(hObject, eventdata, handles)
+Layout(handles,hObject,'Cylinder');
 
 % --------------------------------------------------------------------
 function SphereTag_Callback(hObject, eventdata, handles)
 
+%create predefined coilarray gemoetries (not a GUI function)
+function Layout(handles,hObject,name)
+cont = questdlg('This will overwrite the current coil array. Continue?');
+if ~strcmpi(cont,'yes'),return; end
+coil = listdlg('ListString',handles.Coils,'SelectionMode','single','ListSize',[300 50],'Name','Define Coil Type');
+S=handles.Coils{coil};
+SA=struct('Name','','Value','');
+switch S
+    case 'BIOTSAVARTLOOP'    
+        a = inputdlg({'Loop Radius'},'Specify Loop Extent',1,{'1'});
+        SA.Name='Radius'; SA.Value=a{1};
+    case 'ANALYTICCOIL'
+        a = inputdlg({'Sensitivity'},'Specify GiNaC Expression',1,{'exp(-abs(X*Y)/10000)'});
+        SA.Name='Sensitivity'; SA.Value=a{1};
+    case 'EXTERNALCOIL'
+        a = inputdlg({'Filename'},'Specify Binary File',1,{'sens.bin'});
+        SA.Name='Radius'; SA.Value=a{1};
+    otherwise
+        disp('no cpoil selected')
+        return
+end
+answ = inputdlg({'# of Coils','Array Radius','Dim','Extent','Points'},'Specify Geometry',1,{'8','256','2','256       ','32'});
+NC=str2num(answ{1}); RA=str2num(answ{2}); DI=str2num(answ{3}); EX=str2num(answ{4}); PO=str2num(answ{5});
+P.Name='CoilArray'; P.Attributes=struct([]); P.Data=[ ]; P.Children=struct([]);
+C.Name=''; C.Attributes=struct('Name','','Value',''); C.Data=[ ]; C.Children=struct([]);
+C.current=1;C.HasMap=0;C.hp=0; C.hl=0; C.CoilName=''; C.ht=0;
+
+for i=1:NC
+    x=0;y=0;z=0;a=0;p=pi/2;
+    if strcmp(name,'Cylinder')
+        a = (i-1)*2*pi/NC;  x = RA*cos(a); y = RA*sin(a);
+    end
+    C.Name=handles.Coils{coil}; C.current = (i==1);
+    C.Attributes(1).Name='Name';  C.Attributes(1).Value=['C',num2str(i)];
+    C.Attributes(2).Name='XPos';  C.Attributes(2).Value=num2str(round(x*1000)/1000);
+    C.Attributes(3).Name='YPos';  C.Attributes(3).Value=num2str(round(y*1000)/1000);
+    C.Attributes(4).Name='ZPos';  C.Attributes(4).Value=num2str(round(z*1000)/1000);
+    C.Attributes(5).Name='Azimuth';C.Attributes(5).Value=num2str(a*180/pi);
+    C.Attributes(6).Name='Polar';  C.Attributes(6).Value=num2str(p*180/pi);
+    C.Attributes(7).Name='Dim';   C.Attributes(7).Value=num2str(DI);
+    C.Attributes(8).Name='Extent';C.Attributes(8).Value=num2str(EX);
+    C.Attributes(9).Name='Points';C.Attributes(9).Value=num2str(PO);
+    C.Attributes(10) = SA;
+    if i==1; P.Children=C; else, P.Children(end+1)=C; end
+end
+handles.CoilArray = P;
+hax=handles.hax;for i=1:length(hax); cla(hax{i},'reset'); set(hax{i},'visible','off'); end
+plotCoils(handles);
+guidata(hObject, handles);
 
 
 % --- Executes on selection change in ComplexMenu.

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CoilArray type="Cylinder" radius="10">
-  <BiotSavartLoop Channel="0" Name="TX1" Radius="20" XPos="0"   YPos="40"  ZPos="0" XDir="0"  YDir="-40" ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Channel="1" Name="TX2" Radius="20" XPos="28"   YPos="28"   ZPos="0" XDir="-28" YDir="-28" ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Channel="2" Name="TX3" Radius="20" XPos="40"  YPos="0"   ZPos="0" XDir="-40" YDir="0"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Channel="3" Name="TX4" Radius="20" XPos="28"   YPos="-28"  ZPos="0" XDir="-28" YDir="28"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Channel="4" Name="TX5" Radius="20" XPos="0"   YPos="-40" ZPos="0" XDir="0"  YDir="40"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Channel="5" Name="TX6" Radius="20" XPos="-28"  YPos="-28"  ZPos="0" XDir="28"  YDir="28"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Channel="6" Name="TX7" Radius="20" XPos="-40" YPos="0"   ZPos="0" XDir="40"  YDir="0"  ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
-  <BiotSavartLoop Channel="7" Name="TX8" Radius="20" XPos="-28"  YPos="28"   ZPos="0" XDir="28"  YDir="-28" ZDir="0" XMatrix="32" YMatrix="32" ZMatrix="32" XSize="100" YSize="100" ZSize="100"/>
+<CoilArray>
+   <BIOTSAVARTLOOP Azimuth="0" Dim="2" Extent="256" Name="C1" Points="32" Polar="90" Radius="1" XPos="256" YPos="0" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="45" Dim="2" Extent="256" Name="C2" Points="32" Polar="90" Radius="1" XPos="181.019" YPos="181.019" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="90" Dim="2" Extent="256" Name="C3" Points="32" Polar="90" Radius="1" XPos="0" YPos="256" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="135" Dim="2" Extent="256" Name="C4" Points="32" Polar="90" Radius="1" XPos="-181.019" YPos="181.019" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="180" Dim="2" Extent="256" Name="C5" Points="32" Polar="90" Radius="1" XPos="-256" YPos="0" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="225" Dim="2" Extent="256" Name="C6" Points="32" Polar="90" Radius="1" XPos="-181.019" YPos="-181.019" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="270" Dim="2" Extent="256" Name="C7" Points="32" Polar="90" Radius="1" XPos="0" YPos="-256" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="315" Dim="2" Extent="256" Name="C8" Points="32" Polar="90" Radius="1" XPos="181.019" YPos="-181.019" ZPos="0"/>
 </CoilArray>
-

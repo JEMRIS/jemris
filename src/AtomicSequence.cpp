@@ -23,6 +23,7 @@
 
 #include "AtomicSequence.h"
 #include "GradPulse.h"
+#include "RFPulse.h"
 
 /***********************************************************/
 AtomicSequence::AtomicSequence  (const AtomicSequence& as) {
@@ -79,13 +80,35 @@ void      AtomicSequence::GetValue (double * dAllVal, double const time) {
 
     for (unsigned int j=0; j<children.size() ; ++j) {
 
+    	//special case: dead time
     	if ( ((Pulse*) children[j])->GetAxis()==AXIS_VOID ) continue;
+
+    	//special case: out of time support region
     	double pulse_time = time - ((Pulse*) children[j])->GetInitialDelay();
     	if (pulse_time < 0.0) continue;
-    	if (m_non_lin_grad && ((Pulse*) children[j])->GetAxis()!=AXIS_RF && ((GradPulse*) children[j])->HasNonLinGrad())
+
+    	//special case: non linear gradients
+    	if (m_non_lin_grad && ((Pulse*) children[j])->GetAxis()!=AXIS_RF && ((GradPulse*) children[j])->HasNonLinGrad()) {
     	    ((GradPulse*) children[j])->SetNonLinGradField(pulse_time);
-    	else
-            children[j]->GetValue(dAllVal,pulse_time);
+    	    continue;
+    	}
+
+    	//special case: apply RF pulse on every transmit coil, if
+    	if ( ((Pulse*) children[j])->GetAxis()==AXIS_RF     		&&	// 1.) the pulse is an RF Pulse
+    		 ((RFPulse*) children[j])->GetCoilArray()!=NULL 		&&	// 2.) it has a coil array
+    		 ((RFPulse*) children[j])->GetCoilArray()->GetSize()>0  &&	// 3.) the array has multiple coils
+    		 !children[j]->HasDOMattribute("Channel") ) {				// 4.) the RF pulse has no channel explicitly specified
+    		for (unsigned k=0; k<((RFPulse*) children[j])->GetCoilArray()->GetSize(); k++) {
+    			((RFPulse*) children[j])->SetChannel(k);
+    			children[j]->GetValue(dAllVal,pulse_time);
+    		}
+    		((RFPulse*) children[j])->SetChannel(0);
+    		continue;
+    	}
+
+
+    	//standard case
+        children[j]->GetValue(dAllVal,pulse_time);
     }
 
     Rotation(&dAllVal[2]);
@@ -125,7 +148,7 @@ void AtomicSequence::CollectTPOIs() {
 
 		Pulse* p = ((Pulse*)children[j]);
 		p->SetTPOIs();
-		for (unsigned int i=0; i<p->GetNumOfTPOIs(); ++i)  {
+		for (int i=0; i<p->GetNumOfTPOIs(); ++i)  {
 
 			double d = p->GetInitialDelay();
 			m_tpoi	+ TPOI::set(d+p->GetTPOIs()->GetTime(i), p->GetTPOIs()->GetPhase(i));

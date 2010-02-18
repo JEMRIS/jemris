@@ -84,6 +84,20 @@ class RFPulse : public Pulse, public TxRxPhase {
     inline void    SetFlipAngle  (double fa) {m_flip_angle = fa; };
 
     /**
+     * @brief  Get the CoilArray channel of this pulse.
+     *
+     * @return Flip angle.
+     */
+    inline int  GetChannel  () {return m_channel;};
+
+    /**
+     * @brief       Set the CoilArray channel of this RF pulse.
+     *
+     * @param fa Flip angle.
+     */
+    inline void    SetChannel  (int ch) {m_channel = ch; };
+
+    /**
      * @brief Returns the Magnitidue of this pulse at a given time.
      *
      * This method needs to be implemented by every derived RF pulse.
@@ -124,6 +138,12 @@ class RFPulse : public Pulse, public TxRxPhase {
      */
     inline void    SetCoilArray (CoilArray* pCA) {m_coil_array = pCA;};
 
+    /**
+     * @brief Get the CoilArray for this RF pulse.
+     *
+     * @param pCA Pointer to the CoilArray
+     */
+    CoilArray*     GetCoilArray () {return m_coil_array;};
 
  protected:
 

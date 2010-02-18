@@ -49,7 +49,6 @@ bool ExternalCoil::Prepare(PrepareMode mode) {
 
     Coil::Prepare(mode);
 
-
     ifstream fin(m_fname.c_str(), ios::binary);
 
     for (int k=0; k< (m_dim==3?m_points:1); k++) {
