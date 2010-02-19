@@ -45,62 +45,85 @@ bool BiotSavartLoop::Prepare (PrepareMode mode) {
 double BiotSavartLoop::GetSensitivity(double* position) {
 
 
-       double a     = m_radius;
-       double px = position[XC]-m_position[XC];
-       double py = position[YC]-m_position[YC];
-       double pz = position[ZC]-m_position[ZC];
-       //if (pz==0.0) pz = m_extent/m_points;
+    double a     = m_radius;
 
-       //rotate point in solenoid coordinate system and check distance to the loop
-       double x1 =   px*(cos(m_polar) - pow(cos(m_azimuth),2)*(cos(m_polar) - 1))
-                   - pz*sin(m_azimuth)*sin(m_polar) + py*cos(m_azimuth)*sin(m_azimuth)*(cos(m_polar) - 1);
-       double x2 =   py*(cos(m_polar) - pow(sin(m_azimuth),2)*(cos(m_polar) - 1))
-                   - pz*cos(m_azimuth)*sin(m_polar) + px*cos(m_azimuth)*sin(m_azimuth)*(cos(m_polar) - 1);
-       if ( sqrt(abs(pow(x1,2)+pow(x2,2)-pow(a,2))) < 0.25*a ) return 0.0;
+	// distance to sample point
+	double dist  = sqrt(pow(position[XC]-m_position[XC],2)
+				 +      pow(position[YC]-m_position[YC],2)
+				 +      pow(position[ZC]-m_position[ZC],2));
 
-       //distance to solenoid center
-       double dist = sqrt( abs(pow(px,2)+pow(py,2)+pow(pz,2)) );
-       if ( dist < 0.01*a ) return 0.0;
+	/*double q = 5.0;
 
-        // angle between position vector and coil normal vector (given by m_azimuth & m_polar)
-        double angle = acos ( ( px*cos(m_azimuth)*sin(m_polar) +
-								py*sin(m_azimuth)*sin(m_polar) +
-								pz*cos(m_polar)  ) / dist );
+	if (abs(position[XC]) < m_radius/q)
+		position[XC] = ((position[XC]<0) ? -m_radius:m_radius)/q;
 
-        // distance off axis
-        double r     = abs(dist * sin(angle));
+	if (abs(position[YC]) < m_radius/q)
+		position[YC] = ((position[YC]<0) ? -m_radius:m_radius)/q;
 
-        // distance on axis
-        double x     = abs(dist * cos(angle));
-        r = (r>0.1*x?r:0.1*x);
+	if (abs(position[ZC]) < m_radius/q)
+		position[ZC] = ((position[ZC]<0) ? -m_radius:m_radius)/q;*/
 
-        double alpha = r/a;
-        double beta  = x/a;
-        double gamma = x/r;
-        double Q     = pow  ((1.0+alpha),2) + pow (beta,2);
-        double k     = sqrt(4*alpha/Q);
 
-        double Kk    = 1.0;
-		double Ek    = 1.0;
+	// Calculate off axis angle
 
-		#ifdef HAVE_BOOST
-            // Complete elliptical integral function of first  kind
-		    Kk = boost::math::ellint_1(k, boost::math::policies::ignore_error);
-            // Complete elliptical integral function of second kind
-            Ek = boost::math::ellint_2(k,  boost::math::policies::ignore_error);
-		#endif
+	// scalar product of negative position vector and sample point
+	double scapr = position[XC]*(-m_position[XC])
+				 + position[YC]*(-m_position[YC])
+				 + position[ZC]*(-m_position[ZC]);
 
-        double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*a) + Kk)         / (PI * sqrt(Q));
-        double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*a) - Kk) * gamma / (PI * sqrt(Q));
-        double B1    = sqrt(pow(Bx,2)+pow(Br,2))/pow(dist,0.5);
+	// absolute values of the vetors
+	double abspt = sqrt (pow(  position[XC],2) + pow(  position[YC],2) + pow(  position[ZC],2));
+	double absrd = sqrt (pow(m_position[XC],2) + pow(m_position[YC],2) + pow(m_position[ZC],2));
 
-        //if (B1>1000/m_norm) return 0.0;
+	// angle off axis
+	double angle = acos (scapr/(abspt*absrd));
+
+	// distance off axis
+	double r     = dist * sin (angle);
+	// distance on axis
+	double x     = dist * cos (angle);
+	//cout << "r: " << r << " x:" << x << endl;
+
+
+	double alpha = r/a;
+	double beta  = x/a;
+	double gamma = x/r;
+	double Q     = pow  ((1.0+alpha),2) + pow (beta,2);
+
+	double k = sqrt(4*alpha/Q);
+	k = (isnan(k)?0:k);
+
+	double Kk    = 1.0;
+	double Ek    = 1.0;
+
+	#ifdef HAVE_BOOST
+	// Complete elliptical integral function of first  kind
+
+
+	Kk = boost::math::ellint_1(k, boost::math::policies::ignore_error);
+	// Complete elliptical integral function of second kind
+	Ek = boost::math::ellint_2(k, boost::math::policies::ignore_error);
+
+	#endif
+
+	double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*a) + Kk)         / (PI * sqrt(Q));
+
+	double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*a) - Kk) * gamma / (PI * sqrt(Q));
+	Br           = (Br< 0?-Br:Br);
+	Br           = Br/6.2830;
+
+	cout << x << " "  << r << endl;
+
+	double B1    = sqrt(pow(Bx,2)+pow(Br,2));
+
+	//if (B1>1000/m_norm) return 0.0;
 /*
-        if (GetName()=="C1") cout <<  "(" << setw(4) << position[XC] << "," << setw(4) << position[YC]
-                                  << "," << setw(4) << position[ZC] << ") || angle = "
-                                  << angle*180.0/PI << " : Kk=" << Kk << " : Ek=" << Ek
-                                  << " : r=" << r << " : x=" << x << " : B1=" << B1 << endl;
+	if (GetName()=="C1") cout <<  "(" << setw(4) << position[XC] << "," << setw(4) << position[YC]
+							  << "," << setw(4) << position[ZC] << ") || angle = "
+							  << angle*180.0/PI << " : Kk=" << Kk << " : Ek=" << Ek
+							  << " : r=" << r << " : x=" << x << " : B1=" << B1 << endl;
 */
-        return B1;
+	B1 = (isnan(B1)? 0.0:B1);
+	return B1;
 
 }
