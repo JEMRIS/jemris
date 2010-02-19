@@ -2249,7 +2249,7 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 cat >>confdefs.h <<\_ACEOF
-#define SVN_REVISION "1476M"
+#define SVN_REVISION "1480M"
 _ACEOF
 
 
