@@ -1,5 +1,15 @@
 /** @file jemris.cpp
  *  @brief Implementation of JEMRIS main executable (sequential version)
+ *
+ *
+ *  \mainpage JEMRIS API Reference
+ *
+ *  This is the API documentation of JEMRIS version 2.0
+ *
+ *  \n
+ *  \n
+ *  \n
+ *  See also <a href="http://www.jemris.org">www.jemris.org</a>
  */
 
 /*

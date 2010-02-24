@@ -204,15 +204,17 @@ for i=1:NC
     if iz,z=C{i}(iz);else z=0;end
     x=C{i}(ix); y=C{i}(iy);
     u=[0 0 0 0]; v=u; w=u;
-    d=0.1*diff(get(handles.hax{1},'xlim'));
+    if i==1;d=0.12*diff(get(handles.hax{1},'xlim'));end
     if ~isnan(AZ{i})
         a=[0 0 -1 0]; b=[-.25 .25 0 -.25]; 
         c=cos(AZ{i}*pi/180); s=sin(AZ{i}*pi/180);
         for j=1:4; u(j)=c*a(j)-s*b(j); v(j)=s*a(j)+c*b(j);end
         patch(x+d*u,y+d*v,z+d*w,[1 1 0])
-        %line(x+d*u,y+d*v,z+d*w,'color',[0 0 0],'linewidth',4)
+        %line(x+d*u,y+d*v,z+d*w,'color',[1 0 0],'linewidth',2)
     end
-    h=text(x+d*u(3),y+1.5*d*v(3),z,T{i},'color',TCOL,'fontsize',12,'fontweight','bold');
+    [T{i},' ',num2str(u)]
+    s=.5*abs(sign(round(u(3)))-1);
+    h=text(x+d*(u(3)-s),y+1.5*d*v(3),z,T{i},'color',TCOL,'fontsize',12,'fontweight','bold');
     %if ( handles.CoilArray.Children(i).current ),set(h,'fontsize',14,'color',[.7 0 0]);end
     MaxX = max([x MaxX]);  MinX = min([x MinX]);
     MaxY = max([y MaxY]);  MinY = min([y MinY]);

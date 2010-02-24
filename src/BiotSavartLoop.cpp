@@ -46,28 +46,20 @@ double BiotSavartLoop::GetSensitivity(double* position) {
 
 
     double a     = m_radius;
+    double px = position[XC]-m_position[XC];
+    double py = position[YC]-m_position[YC];
+    double pz = position[ZC]-m_position[ZC];
+    pz = (abs(pz)<20.0?20.0:pz); //force off-center
 
-	// distance to sample point
-	double dist  = sqrt(pow(position[XC]-m_position[XC],2)
-				 +      pow(position[YC]-m_position[YC],2)
-				 +      pow(position[ZC]-m_position[ZC],2));
+	// distance between coil-center and position
+    double dist = sqrt( abs(pow(px,2)+pow(py,2)+pow(pz,2)) );
+    if ( dist < 0.01*a ) return 0.0;
 
-	// scalar product of negative position vector and sample point
-	double scapr = position[XC]*(-m_position[XC])
-				 + position[YC]*(-m_position[YC])
-				 + position[ZC]*(-m_position[ZC]);
+	// angle coil-normal and position vector
+    double angle = acos ( ( px*cos(m_azimuth)*sin(m_polar) + py*sin(m_azimuth)*sin(m_polar) + pz*cos(m_polar)  ) / dist );
 
-	// absolute values of the vectors
-	double abspt = sqrt (pow(  position[XC],2) + pow(  position[YC],2) + pow(  position[ZC],2));
-	double absrd = sqrt (pow(m_position[XC],2) + pow(m_position[YC],2) + pow(m_position[ZC],2));
-
-	// angle off axis
-	double angle = acos (scapr/(abspt*absrd));
-
-	// distance off axis
-	double r     = dist * sin (angle);
-	// distance on axis
-	double x     = dist * cos (angle);
+	double r     = dist * sin (angle);	// distance off axis
+	double x     = dist * cos (angle);	// distance on axis
 
 	double alpha = r/a;
 	double beta  = x/a;
@@ -86,10 +78,15 @@ double BiotSavartLoop::GetSensitivity(double* position) {
 	Ek = boost::math::ellint_2(k);
 	#endif
 
+	//field parallel to coil normal vector
 	double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*a) + Kk)         / (PI * sqrt(Q));
+	//field orthogonal to coil normal vector
 	double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*a) - Kk) * gamma / (2 * pow(PI,2) * sqrt(Q)) ;
 
-	// TODO: Only xy component is needed!
+	//projections to x-y plane
+	Bx *= sin(m_polar);
+	Br *= cos(m_polar);
+
 	double B1    = sqrt(pow(Bx,2)+pow(Br,2));
 
 	B1 = (isnan(B1)? 0.5:B1);
