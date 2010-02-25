@@ -92,16 +92,7 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	//CASE 2: try Dump of sensitivities from CoilArray xml-file
-	CoilArray* coils = new CoilArray();
-	cout << "dumping sensitivity maps ...\n";
-	coils->Initialize(input);
-	if (coils->Populate() == OK) {
-		coils->DumpSensMaps(true);
-		return 0;
-	}
-
-	//CASE 3: try Dump of seq-diagram from Sequence xml-file
+	//CASE 2: try Dump of seq-diagram from Sequence xml-file
 	SequenceTree* seqTree = SequenceTree::instance();
 	seqTree->Initialize(input);
 	if (seqTree->GetStatus()) {
@@ -113,10 +104,19 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	//CASE 4: try simulation from Simulator xml-file
+	//CASE 3: try simulation from Simulator xml-file
 	Simulator sim(input);
 	if (sim.GetStatus()) {
 		do_simu(&sim);
+		return 0;
+	}
+
+	//CASE 4: try Dump of sensitivities from CoilArray xml-file
+	CoilArray* coils = new CoilArray();
+	cout << "dumping sensitivity maps ...\n";
+	coils->Initialize(input);
+	if (coils->Populate() == OK) {
+		coils->DumpSensMaps(true);
 		return 0;
 	}
 
