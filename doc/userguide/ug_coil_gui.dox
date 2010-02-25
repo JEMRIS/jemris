@@ -1,0 +1,13 @@
+/**
+***************************************************
+* \page ug_JEMRIS_txrx Coil Array Layout GUI JEMRIS_txrx
+The command "JEMRIS_txrx" opens in Matlab the GUI for coil array configurartion.
+The code is not well tested and it serves as a simple tool for array layout.
+
+\image html pics/txrx_gui.jpg
+\image latex pics/txrx_gui.eps
+\n
+
+The GUI provides functionality to place several coils at different spatial positions. Currently, a Biot-Savart loop coil, a coil
+with analytical sensitivity provided by a user-defiend formula, and an external coil
+*/

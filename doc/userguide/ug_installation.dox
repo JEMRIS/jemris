@@ -1,0 +1,79 @@
+/** 
+************************************************** 
+* \page ug_install Installation 
+
+\section ug_install_pre Prerequisites JEMRIS
+relies on three libraries, which need to be downloaded and installed
+prior to its compilation:
+
+\li CVODE 2.5: [http://computation.llnl.gov/casc/sundials]
+\li Xerces-C++ XML Parser 2.8: [http://xerces.apache.org/xerces-c]
+\li CLN, CLass Library for Numbers Version 1.2.X: [http://www.ginac.de/CLN]
+\li GiNaC library for symbolic mathematics 1.4.X: [http://www.ginac.de]
+\li VarArray library 1.X: [http://www.fz-juelich.de/jsc/cv/tools/VarArray]
+
+The developers of Xerces provide precompiled packages for a variety of
+operating systems. CLN, GiNAC and VarArray need to be compiled and
+installed. If you are using a debian flavour, such as ubuntu, you will
+find precompiled CLN, GiNaC and Xerces-C packages for your linux in
+the according repositories.
+
+The provided version numbers for your flavor may differ. The above
+will install Xerces libraries version 2.8 and GiNAC version 1.4
+(!Ginac 1.5 is not yet compatible with JEMRIS!).
+
+\section ug_install_mpi Install MPICH if desired
+
+Should you want to exploit more than one CPU core, you will need an
+implementation of MPI. JEMRIS has been throughly tested with the MPICH
+implementation. [http://www.mcs.anl.gov/research/projects/mpich2/]
+MPICH is developed at the Mathematical and Computer Science division
+of the Argonne Laboratories. 
+
+You may download and compile MPICH for C++ and C. Good luck here;
+The MPICH configuration steps prior to compilation ar rather not
+trivial. If you use a ubuntu flavor once again the installation is very
+simple: 
+
+\li <b>\c # \c sudo \c aptitude \c install \c mpich-bin</b>
+\li <b>\c # \c sudo \c aptitude \c install \c libmpich1.0gf</b>
+\li <b>\c # \c sudo \c aptitude \c install \c libmpich1.0-dev</b>
+
+Again version numbers may differ for your particular installation
+depending on distribution and version.
+
+\section ug_install_boost Install Boost C++ libraries if desired
+
+The boost C++ libraries are used for the evaluation of elliptical
+integration terms of the Biot-Savart law. JEMRIS is operational
+without the boost libraries while Biot-Savart-Loops behave like ideal
+coils.
+
+\section ug_install_compilation Compile JEMRIS 2
+
+Download the jemris package from [http://www.jemris.org/jemris/jemris-2.2.tar.gz]
+
+The unpacked tar ball. JEMRIS is built in a similiar way as many open
+source software packages..
+
+\li \c <b>"# cd jemris-2.2"</b>
+\li \c <b>"# ./configure"</b>
+\li \c <b>"# make"</b>
+\li \c <b>"# make check"</b>
+\li \c <b>"# make install"</b>
+
+The last step will only work if you have write access to
+<b>/usr/local/bin</b> and <b>/usr/local/share</b>. The binaries jemris
+and if available pjemris, matlab GUI files and a bouquet example files are
+installed.
+
+Now you may run the Matlab GUIs for sequence design and simulation
+(see \ref ug_JEMRIS_seq and \ref ug_JEMRIS_sim).
+
+Here, you may start by loading one of the example sequences in the directory \c <b>"app/xmpl"</b>.
+
+back to \ref toc.
+**************************************************
+*/
+
+

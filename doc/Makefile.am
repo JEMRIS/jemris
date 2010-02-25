@@ -1,2 +1,3 @@
-install-data : /usr/local/jemris/doc
 EXTRA_DIST = README
+doc_DATA = $(EXTRA_DIST)
+SUBDIRS = api userguide

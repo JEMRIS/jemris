@@ -1,0 +1,142 @@
+/**
+***************************************************
+* \page ug_JEMRIS_idt_one %In depth tutorial - Part 1
+
+In the following, a 2D spatially-selective excitation experiment
+[Pauly 1989] will be demontrated in detail in three different
+ways. The first will reflect the flexibility of the symbolic
+mathematics evaluation capabilities of JEMRIS. In the second part, the
+use and implementation of external gradient and RF pulses will be
+demonstrated, and in a third part, the framework will be extended to
+boost the performance of the simulation process.
+
+\li Start the sequence GUI.
+\li From the \c <b>File</b> menu select \c <b>Open sequence</b>.
+\li Select the sequence file created in the first steps tutorial: \c <b>MyEPI.xml</b>.
+\li To not overwrite MyEPI, save it as \c <b>PaulyEtAl.xml</b>
+
+The paper describes the spatially-selective small tip
+angle excitation with the application of two gradients accompanied by
+an RF pulse.
+
+To start off, let us delete the hard rf pulse and replace it with a 2D selective excitation block consisting of an analytic RF pulse, and two analytic gradient pulses in read and phase direction.
+
+\li Click on the rubber gum in the on the module bar and click on 
+\li Choose an analytic RF pulse from the module menue and \c <b>HRF</b>.
+\li Click in the moldule bar on the symbol for an analytic RF pulse add it to \c <b>Exc</b>.
+\li Rename it to \c <b>ERF</b>, for excitation RF pulse.
+\li Add two analytic gradient pulses to \c <b>Exc</b> by clicking on
+the corresponding modul symbol and afterwards on \c <b>Exc</b>.
+\li Call the first \c <b>EGX</b> for analytic gradient on the X axis.
+\li Call the second \c <b>EGY</b> for analytic gradient on the Y axis.
+\li Set the \c <b>Axis</b> of the latter to \c <b>GY</b>.
+
+Let us now have a look at the analytical solution for the rf pulse and
+the k-space trajectory presented by the author, which we want to
+implement:
+
+\image html pics/B1.png
+\image latex pics/B1.png
+\image html pics/kx.png
+\image latex pics/kx.png
+\image html pics/ky.png
+\image latex pics/ky.png
+
+The paper investigates the case where beta is 2, n is 8, and A is 1
+while the excitation is played out for 2 ms. The following steps will
+associate the excitation block to the according formulas.
+
+\li Click on \c <b>ERF</b>.
+\li Set \c <b>Duration</b> to 2.
+\li Set \c <b>Observe</b> to \c <b>ERF,Duration</b>.
+
+What the last step essentially means, is that some attribute of RF
+pulse needs to know about its own duration. You can see,
+the magnitude of the RF pulse is time dependent and varies over the 2
+ms pulse duration. The concept of observing oneselfs attribute may
+appear confusing on a first glance, but is due to the flexibility of
+the attribute implmentation. 
+
+Let us now type in the constants involved in order of apearance. They
+can be accessed by depending attributes as \c <b>c1</b> through
+\c <b>c5</b>.
+
+\li Type \c <b>1,.01,1,2,8</b> for gamma, alpha, A, beta, and n. 
+
+Here, some explanation is needed as to why gamma is set to 1.  Simply
+put, JEMRIS does not simulate the nuclear physics deeper than to the
+point, where the relaxation times for proton imaging are given. In
+that case the field strength dependant part is intrinsically built
+into the sample. So, in order to simulate the effects associated with
+faster T2 decay at high fields, one changes the value for T2
+accordingly. 
+
+Let us now type in the formula of the time dependant rf magnitude.
+
+\li Set \c <b>Shape</b> to \c <b>c1*c2*c3/a1*exp( -c4^2 * (1-T/a1)^2) *
+  ((2*Pi*c5*(1-T/a1))^2 + 1)^0.5</b>.
+\li Set \c <b>TPOIs</b> to \c <b>200</b>.
+
+You should now be looking at the GUI in the following state:
+
+\image html pics/jemris_sta_1.png
+\image latex pics/jemris_sta_1.png
+
+We are not finished yet. The Gradients are next.
+
+\li Click on \c <b>EGX</b>.
+
+We need to introduce the necessary parameters, all stemming from
+\c <b>ERF</b>. As there are the duration, A, and n.
+
+\li Set \c <b>Observe</b> to
+\c <b>ERF,Duration/ERF,Constant3/ERF,Constant5</b>.
+\li Set \c <b>Duration</b> to \c <b>a1</b>.
+\li Set \c <b>Shape</b> to \c <b>a2*(1-T/a1)*cos(2*Pi*a3*T/a1)</b>.
+\li Set \c <b>Diff</b> to 1.
+\li Click on \c <b>EGY</b>.
+\li Set \c <b>Duration</b> to \c <b>a1</b>.
+\li Set \c <b>Shape</b> to \c <b>a2*(1-T/a1)*sin(2*Pi*a3*T/a1)</b>.
+\li Set \c <b>Diff</b> to 1.
+
+The not obvious step in the last instruction block is the setting of
+the value for \c <b>Diff</b>. In this step, the flexibility of the
+symbolic math library is demonstrated. The formula, that was typed in
+for the \c <b>Shape</b> describes the k-space trajectory's time
+evolution. However, we are interested in the shape of the
+corresponding gradient. Which is just the first derivative with
+respect to time or \c <b>T</b>. Alternatively you may also reset Diff
+to 0 and set \c <b>Shape</b> to the formula for the gradients as
+described in the paper:
+
+\image html pics/Gx.png
+\image latex pics/Gx.png
+\image html pics/Gy.png
+\image latex pics/Gy.png
+
+It is easily comprehendable that the differentiation will cost
+simulation time.
+
+In Part 2, we will expand the framework by two very easily coded
+classes to demonstrate the extensibility of the
+framework. Additionally, as the use of symbolic mathematics is very
+appealing and should be the first choice for implementing new ideas,
+there are some performance issues to be considered. If, however, the
+computation is shifted to the level of the framework in C++, major
+speed ups may be gained depending on the complexity of the mathematics
+involved. 
+
+You may now simulate the sequence as described in the first steps
+tutorial. But! be very careful here. The simulation involves some
+computation power and, depending on the sample size, some RAM.
+
+Step on to: <a href="ug_JEMRIS_idt_two.html">%In depth tutorial -
+  Part 2</a>
+
+back to \ref toc.
+
+<b>[Pauly 1989]</b> Pauly JM, Nishimura DG, Macovski A. <b>A k-Space
+Analysis of Small-Tip-Angle Excitation</b>. Journal of Magnetic
+Resonance, 81, 43-56 (1989)
+*************************************************** */
+

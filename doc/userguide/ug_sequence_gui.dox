@@ -1,0 +1,352 @@
+/**
+***************************************************
+* \page ug_JEMRIS_seq %Sequence development tool JEMRIS_seq
+
+\n
+
+Sequence development in JEMRIS does not require any programming. The sequence is determined 
+through an XML tree structure. A dedicated GUI allows to construct the tree structure for arbitrary
+complex MRI sequences.
+
+\n
+
+Sections:
+\li \ref ug_JEMRIS_seq_treestruct
+\li \ref ug_JEMRIS_seq_intro
+\li \ref ug_JEMRIS_seq_modules
+\li \ref ug_JEMRIS_seq_ginac
+
+\n
+
+\section ug_JEMRIS_seq_treestruct The Sequence tree concept
+
+The MRI sequence is specified utilizing a tree structure. As a simple
+example, the EPI sequence below is eqivalently described by left-right ordered
+tree structure. This  is very suitable and efficient for computer-aided design
+and access of the pulse sequence: The MRI simulator JEMRIS utilizes such a tree
+structure to represent the MRI sequence. The MatLab tool JEMRIS_seq is used to
+design the sequences.
+
+\image html pics/seq_tree.jpg 
+\image latex pics/seq_tree.eps 
+\n 
+
+\section ug_JEMRIS_seq_intro Introduction to the sequence GUI
+JEMRIS_seq Before starting the %sequence GUI, the directory in which
+the JEMRIS_seq.m file is located has to be added to the MatLab
+path-variable (use e.g. <I> "addpath('<directoryname>')" </I>). Then
+change to the directory in which the %sequence xml-files are located
+and type \c JEMRIS_seq to start the %sequence GUI.  The following
+picture shows a screenshot of the GUI with the EPI sequence loaded
+into it:
+
+\image html pics/epi_jemris_screenshot.png 
+\image latex pics/epi_jemris_screenshot.eps 
+
+The Sequence GUI allows to interactively build the sequence tree. The
+tools for this are given in the top panel. The <b>"File"</b> dialog
+allows to load and save sequences (XML format). The <b>"write XML"</b>
+button overwrites the current sequence file according to the changes
+made.
+
+Further, this button executes a run through the sequence and draws the
+sequence diagram.  Possible error output during sequence execution is
+thrown to the <b>"jemris tree dump"</b> at the bottom. Instead, the
+<b>"read XML"</b> button discards all changes made to the sequence
+tree and rereads the current sequence from its XML file. To view the
+sequence diagram, i.e. the ADC, RF, and gradient events, use the
+<b>"Sequence Diagram"</b> check box. There are several features to
+visualize the %sequence diagram:
+
+\li The <b>"interval [ms]"</b> dialog changes the time axis for all pulses, whereas the
+<b>"zoom"</b> button allows to interactively zoom into a specific axis.
+\image html pics/epi_jemsdg_screenshot.png 
+\image latex pics/epi_jemsdg_screenshot.eps 
+
+\li The <b>"draw moment"</b> flag draws the gradient moments, i.e. the time integral along
+the gradient axes, instead of the gradient waveforms. The moment is set to zero
+after each RF pulse, however, it is inverted for 180° pulses. Thus, it shows the
+correct k-space position encoding for gradient echo and spin echo sequences. 
+\image html pics/epi_jemsmo_screenshot.png 
+\image latex pics/epi_jemsmo_screenshot.eps 
+
+\li A different view of the gradient moments is given by switching the <b>"k-space
+trajectory" </b> flag: it draws the k-space trajectory. Once it is
+drawn, it is possible to further add the ADC events to this plot by
+another check box or have a look at the travelling order by the
+activation of the <b>''Continous''</b> flag.
+\image html pics/epi_jemksp_screenshot.png 
+\image latex pics/epi_jemksp_screenshot.eps 
+
+By clicking on a module, its individual attributes are displayed in
+the upper half of the GUI and may be edited. The attribute values can
+not only be actual numbers, analytical expressions are also accepted
+(see section \ref ug_JEMRIS_seq_ginac ).  Often attribute values from
+other modules are needed for an analytical expression, e.g. the area
+under a previous gradient pulse or the duration of a previous
+pulse. This is handled using the <b>"observe"</b> attribute (see also
+section \ref ug_JEMRIS_seq_ginac ).
+
+\n 
+
+\section  ug_JEMRIS_seq_modules Sequence Building Modules
+This section briefly summarizes all %sequence building modules and its attributes.
+The interaction of these modules is explained in the next section \ref ug_JEMRIS_seq_ginac.
+
+\subsection ug_JEMRIS_seq_intro_para The Parameters Module The
+parameter module (orange circle) is always present in a %sequence. It
+is not a part of the sequence tree but exists only once. The module
+contains global attributes such as field of view \f$ FOV_{x/y/z} \f$,
+the size of the image matrix, the gradient slew rate etc.
+
+\subsection ug_JEMRIS_seq_intro_seqmod Sequence Modules
+So far, there exist three different modules which are of type sequence:
+<ul>
+    <li> The <b> ConcatSequence </b> module (yellow circle) represents
+         a loop which can be controlled by its attribute "repetitions"
+         (default value is 1). It may contain other ConcatSequences,
+         AtomicSequences or DelayAtomicSequences, but no pulses.  A
+         ConcatSequence also has \ref ug_JEMRIS_seq_ginac_hidden,
+         which are not set by the user but in runtime:
+	 <ol>
+		<li> "Counter" is the loop counter through which other modules get information of the current value of the loop counter.
+		<li> "Duration" specifies the duration of the ConcatSequence, which of course depends on the duration of its children.
+	 </ol>
+	 Additionally, the attributes \c "aux1,aux2,aux3" define  auxiliary
+         variables. These values are not used in the calculation of the ConcatSequence. However they can be observed by other modules,
+         thus lengthy expressions can be displayed in a more structured way.
+
+    <li> The <b> AtomicSequence </b> module (purple circles) contains the actual pulses. Each AtomicSequence can contain multiple
+         pulses which are then applied simultaneously.  Additionally, the attributes \c "Inclination", \c "Azimut", \c "RotAngle" define
+         the rotation matrix for gradient pulses inside this AtomicSequence, e.g. for oblique slices or radial imaging.
+         As the ConcatSequence, the AtomicSequence has auxiliary attributes for convenience, and a hidden attribute specifying its
+	 duration.
+
+    <li> The <b> DelayAtomicSequence </b> (green circles) is a specialised AtomicSequence to define delays.
+         It can either be defined as a simple delay by setting the parameter:  \c "delay = 30", which will simple wait for 30ms.
+         However, for e.g. a echo time delay, the echo time is defined from the center of "A_RF" to the center of "A_G_RO".
+         The needed dead-time is TE minus the duration of "A_G_DP" and half the durations of "A_RF" and "A_G_RO". This can be
+         automatically inserted by the DelayAtom. The required parameters for a TE of 30ms are then:  \c "delay = 30 ",
+          \c "StartSeq = A_RF",  \c "StopSeq = A_G_RO",  \c "DelayType = C2C ".
+         Apart from the "center-to-center" ( \c "C2C") delay type, following other delay types are defined:
+	 <ol>
+         	<li> \c "C2E" (center-to-end)
+         	<li> \c "B2C" (beginning-to-center)
+         	<li> \c "B2E" (beginning-to-end; default, if no delaytype is specified) 
+	 </ol>
+         \image html pics/ug_TE_delay.jpg
+         \image latex pics/ug_TE_delay.eps
+</ul>
+
+\n 
+
+\subsection ug_JEMRIS_seq_intro_pulse Pulse Shape Modules
+
+There exist several pulses which may be inserted into an AtomicSequence. All pulses have several attributes in common:
+
+ \li \c Duration: Every pulse has a duration, which is explicitly set. (In some cases, it is however calculated from other attributes.)
+
+ \li \c InitialDelay: A pulse may start at a later time within the atom, e.g. an RF pulse may wait for the ramp-up time of a gradient pulse. 
+
+ \li \c ADC: The ADCs specify the number of readout events. These events are equidistantly distributed over the length of the pulse,
+        and the simulator will save the acquired signal at each of these time points. 
+
+ \li \c Phaselock: Locks the phase of the ADCs inside the module to the phase of the last RF pulse. Can be \c 1 (true) or \c 0 (false).
+
+The most simple pulse-shape module is the <b> \c "EmptyPulse".</b> It represents a dead-time according its specified duration in which, if ADCs
+are present, simulated data is acquired. (The above introduced DelayAtomicSequence is a special implementation of an AtomicSequence which
+has a single EmptyPulse as a child.)
+
+All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pulses, respectively. The following
+<b> RF pulse Modules</b> are defined in JEMRIS:
+<ul> 
+	<li> <b> \c HardRFPulse</b>: A nonselective rectangular RF pulse. It has the following specific attributes
+	 <ol>
+         	<li> \c "FlipAngle" The applied flip angle
+         	<li> \c "InitialPhase" The constant phase during the duration of the pulse (the rotation axis)
+         	<li> \c "Channel" An optional channel number, in case of parallel RF transmit.
+	 </ol>
+
+	<li> <b> \c GaussianRFPulse</b>: A Gaussian-shaped RF pulse. It has all the attributes of the HardRFPulse, and additionally
+	 <ol>
+         	<li> \c "Bandwidth" The bandwidth of the Gaussian
+         	<li> \c "Frequency" The frequency-shift applied for this RF pulse
+	 </ol>
+
+	<li> <b> \c SincRFPulse</b>: A sinc-shaped (\f$sin(t)/t\f$) RF pulse. It has all the attributes of the GaussianRFPulse, and additionally
+	 <ol>
+         	<li> \c "Zeros" The number of positive zero-crossings (or side lobes) of the sinc function (default 3)
+         	<li> \c "Apodization" The apodization factor of the Hanning window (default 0.5)
+	 </ol>
+
+	<li> <b> \c AnalyticRFPulse</b>: An arbitrary RF pulse specified through an analytic expression. It has all the attributes of the
+		GaussianRFPulse, and additionally
+	 <ol>
+         	<li> \c "Shape" The analytic expression of the RF pulse. See \ref ug_JEMRIS_seq_spec for explanation.
+         	<li> \c "TPOIs" A number of time points at which the value is evaluated (but no signal acquired, as specified by the ADCs) 
+         	<li> \c "Diff" If set to 1, then the actual pulse shape is defined by the first derivative of the analytic expression.
+			In this case, the flip angle is set via the analytic expression rather than numerical integration.
+         	<li> \c "Constants" A comma-sparated list of floating point numbers, which may be used as variables \c "c1,c2,..."
+                                    in the Shape expression.
+	 </ol>
+
+	<li> <b> \c ExternalRFPulse</b>: An arbitrary RF pulse specified through an external binary file. It has all the attributes of the
+		GaussianRFPulse, and additionally
+	 <ol>
+         	<li> \c "Filename" A simple binary file of doubles \f$(N,t_1,A_1,P_1,t_2,A_2,P_2,...,t_N,A_N,P_N)\f$ specifying the 
+			time-points \f$t_i\f$, amplitudes \f$A_i\f$, and phases \f$P_i\f$, of the pulse.
+         	<li> \c "Scale" An optional scale of the amplitudes (default 1)
+	 </ol>
+		Note, that such external binary files are easily constructed with the GUI: generate a global matlab variable
+		of size \f$N \times 3\f$, where the first column are the time points and the remaining columns are
+		RF amplitudes and phases. Then write the name of the variable to the attribute \c "Filename". The GUI will automatically
+		construct the necessary binary file for JEMRIS.
+
+</ul>
+
+Note that in terms of numerical efficiency the built-in RF pulses (HardRFPulse,GaussianRFPulse,SincRFPulse) perform best, the
+evaluation of an AnalyticRFPulse is slower, and an ExternalRFPulse is slowest, if it is specified through many data points.
+
+
+Next, there exist several <b> Gradient Pulse Modules</b> in JEMRIS:
+
+<ul> 
+	<li> <b> \c TrapGradPulse</b>: A trapezoidal-shaped gradient pulse, which is the by far most used gradient
+		pulse in JEMRIS. If no duration is specified, the pulse prepares in shortest possbile time according
+		to the hardware limits.
+		\image html pics/ug_trapgrad.jpg
+		\image latex pics/ug_trapgrad.eps
+		The TrapGradPulse has several attributes inherited from the basic GradientPulse class, i.e. these
+		attributes are common for all gradient pulses:
+
+ 	<ol>
+		<li> \c "Slewrate" and \c "MaxAmplitude": Hardware limits, specific only for the particular gradient.
+			If not set, the limits from the \c Parameter module are used.
+		<li> \c "Axis" The spatial axis of the gradient pulse; one of \c "GX", \c "GY", or \c "GZ".
+		<li> \c "Area" The area of the pulse shape, i.e. the total k-space encoding.
+		<li> \c "NLG_field" An optional attribute specifying an analytic expression for nonlinear gradients.
+			See \ref ug_JEMRIS_seq_spec for explanation.
+ 	</ol>
+
+		\n Further, the TrapGradPulse has attributes specific to its trapezoidal shape:
+
+	 <ol>
+         	<li> \c "FlatTopArea" Instead of specifying the area, only the area under the flat top may
+			be specified.
+         	<li> \c "FlatTopTime" Defines the duration of the flat top. 
+			<b> In this case, ADCs are automatically set under the flat top (readout gradient).</b>
+			Therefore, the \c "FlatTopTime" is in case of ADCs the reciprocal of the readout bandwidth.
+         	<li> \c "Asymetric"   Ratio of the slew rates between the ramp up and the ramp down.
+	 </ol>
+
+		\n Finally, the TrapGradPulse has several hidden attributes which may provide important information to other
+		modules: \c "Amplitude", \c "RampUpTime", \c "RampDnTime", "EndOfFlatTop". 
+
+	<li> <b> \c SpiralGradientPulse</b>: A priliminary very simple spiral gradient, only intended for usage on 
+                the \c "GX" and the \c "GY" axis. It has two attributes, \c "pitch" and \c "alpha" for scaling and
+		spiral denisity, respecitvely. 
+
+	<li> <b> \c AnalyticGradientPulse</b>: An arbitrary gradient pulse specified through an analytic expression.
+		It has similar functionality as the AnalyticRFPulse. By setting the attribute \c "Diff=1", the attribute
+		\c Shape directly allows specification of the k-space trajectory.
+
+	<li> <b> \c ExternalGradientPulse</b>: An arbitrary Gradient pulse specified through an external binary file,
+		again simliar to the denition of the ExternalRFPulse. Here, a binary file of doubles
+		\f$(N,t_1,G_1,t_2,G_2,...,t_N,G_N)\f$ specify the time-points \f$t_i\f$ and gradient-values \f$G_i\f$ of the pulse.
+		\n
+		Note, that such external binary files are easily constructed by the GUI: generate a global matlab variable
+		of size \f$N \times 2\f$, where the first column are the time points and the second column are the
+		gradient values. Then write the name of the variable to the attribute \c "Filename". The GUI will automatically
+		construct the necessary binary file for JEMRIS.
+</ul>
+
+\n
+
+\section ug_JEMRIS_seq_ginac Analytical expressions
+\subsection ug_JEMRIS_seq_ginac_obs The "Observe" Attribute
+As mentioned above, instead of being numbers module attributes values can also be analytical expressions.
+For that variables are needed which contain the attribute values of other modules.
+Consider a gradient pulse with name "P1" which is dependent on the area of another gradient pulse "P2".
+To have access to this value, the pulse "P1" needs the special attribute \c "Observe=P2,Area".
+Now the area of pulse "P2" can be accessed in every attribute definition of "P1" with the variable \c "a1".
+For instance, "P1" sets its area to minus half the area of "P2" through \c "Area=-0.5*a1".
+Multiple attributes can be observed separated by a slash, e.g.: \c "Observe=P4,Area/P,Nx/P,Ny/C2,Repetitions" .
+The observed attributes are then accessed with \c "a1", \c "a2", \c "a3", \c "a4", etc.
+
+\subsection ug_JEMRIS_seq_ginac_hidden Hidden Attributes
+Each module can have so-called hidden attributes which cannot be edited. Instead, these attributes are calculated from
+supplied values at runtime. The ConcatSequence, for example, not only has the attribute \c "Repetitions", it also
+has a hidden attribute \c "Counter" which gives the current loop-number. A hidden attribute can be observed by
+other modules. A list of all hidden attributes can be displayed using the pull-down menu in each module. Some
+frequently used hidden attributes are listed here: 
+
+\li Parameters module:
+\c "Dx", \c "Dy", \c  "Dz" (pixel size in image space); \c "DKx", \c  "DKy", \c  "DKz" (increment in k-space); \c "KMAXx", \c  "KMAXy", \c  "KMAXz" (boundaries of k-space).
+
+\li ConcatSequence:
+\c  "Counter" (loop counter); \c "Duration"
+
+Hint: \c "Counter" is the most often observed attribute since it introduces the dynamic to the sequence. Attributes which observe a
+loop counter change their value in run time. (If these attributes are further observed by other attributes, the latter of course will
+also dynamically change their values accordingly.) 
+
+\subsection ug_JEMRIS_seq_expressions Expression syntax and predefined functions
+The symbolic expression syntax is similar to scalar computation syntax in Matlab. For instance, if a gradient observes three attributes,
+then a valid formula for its area would be \c "Area=0.5*sqrt(a1)*sin(2*Pi*a2)*(-1)^a3"
+
+Several predefined mathematical expressions may be used:
+<TABLE>
+	<TR> <TD> Pi		</TD> <TD> area of a unit circle</TD> </TR>
+	<TR> <TD> abs(x)	</TD> <TD> absolute value	</TD> </TR>
+	<TR> <TD> step(x)	</TD> <TD> step function	</TD> </TR>
+	<TR> <TD> I		</TD> <TD> imaginary unit	</TD> </TR>
+	<TR> <TD> csgn(x)	</TD> <TD> complex sign	</TD> </TR>
+	<TR> <TD> conjugate(x)	</TD> <TD> complex conjugation	</TD> </TR>
+	<TR> <TD> real_part(x)	</TD> <TD> real part	</TD> </TR>
+	<TR> <TD> imag_part(x)	</TD> <TD> imaginary part	</TD> </TR>
+	<TR> <TD> sqrt(x)	</TD> <TD> square root 	</TD> </TR>
+	<TR> <TD> sin(x)	</TD> <TD> sine	</TD> </TR>
+	<TR> <TD> cos(x)	</TD> <TD> cosine	</TD> </TR>
+	<TR> <TD> tan(x)	</TD> <TD> tangent	</TD> </TR>
+	<TR> <TD> asin(x)	</TD> <TD> inverse sine	</TD> </TR>
+	<TR> <TD> acos(x)	</TD> <TD> inverse cosine	</TD> </TR>
+	<TR> <TD> atan(x)	</TD> <TD> inverse tangent	</TD> </TR>
+	<TR> <TD> atan2(y,x)	</TD> <TD> inverse tangent with two arguments	</TD> </TR>
+	<TR> <TD> sinh(x) 	</TD> <TD> hyperbolic sine	</TD> </TR>
+	<TR> <TD> cosh(x)	</TD> <TD> hyperbolic cosine	</TD> </TR>
+	<TR> <TD> tanh(x) 	</TD> <TD> hyperbolic tangent	</TD> </TR>
+	<TR> <TD> asinh(x)	</TD> <TD> inverse hyperbolic sine	</TD> </TR>
+	<TR> <TD> acosh(x)	</TD> <TD> inverse hyperbolic cosine	</TD> </TR>
+	<TR> <TD> atanh(x)	</TD> <TD> inverse hyperbolic tangent	</TD> </TR>
+	<TR> <TD> exp(x)        </TD> <TD> exponential function	</TD> </TR>
+	<TR> <TD> log(x)        </TD> <TD> natural logarithm 	</TD> </TR>
+	<TR> <TD> floor(x)      </TD> <TD> round to integer	</TD> </TR>
+	<TR> <TD> mod(x,y)      </TD> <TD> Modulo	</TD> </TR>
+	<TR> <TD> equal(x,y)    </TD> <TD> returns 1, if x equals y, otherwise returns zero 	</TD> </TR>
+	<TR> <TD> gt(x,y)    </TD> <TD> returns 1, if x is greater than y, otherwise returns zero 	</TD> </TR>
+    <TR> <TD> lt(x,y)    </TD> <TD> returns 1, if x is less than y, otherwise returns zero 	</TD> </TR>
+	<TR> <TD> ite(x,y,a,b)  </TD> <TD> returns a, if x equals y, otherwise returns b 	</TD> </TR>
+</TABLE>
+
+There are further, less comonly used, mathematical functions. Please check the <a
+href="http://www.ginac.de/tutorial"> GiNaC documentation </a>.
+
+
+\subsection ug_JEMRIS_seq_spec Exceptional Attributes
+Every Module has its attributes which will have its internal special meaning. However, for the observer mechanism all these
+"standard attributes" may be arbitrarily linked to each other. For instance, the flip angle of an RF pulse may set its value
+through observation of the area of a gradient. However, there are some exceptional attributes for which this general behaviour
+does not work, i.e. these attributes can not be observed by other modules! These exceptions are listed below:
+
+\li \c "Observe": Of course the Observe attribute itself can not be observed.
+
+\li \c "Vector": Every pulse has the attribute \c "Vector". It is a space-separated list of floating point values which can be accessed by another attribute of this pulse. The values can be addressed by observation of loop counters, for instance an RF pulse may set \c "Observe=C1,Counter" and \c "FlipAnlge=Vector(a1)". Thus, the flip angle will loop through the vector as the loop-counter of the ConcatSequence increases. Note that in the Matlab GUI, \c "Vector" can also take any Matlab expression which results in a vector as input such as e.g. \c "rand(10,1)".
+
+\li \c "Shape": For analytical RF / gradient pulses, this attribute defines the shape of the pulse using an analytical expression using the time variable \c "T". For RF-pulses, this expression can be complex to define the magnitude and phase of the RF-pulse. Use \c "I" as imaginary unit. The expression is again evaluated using GiNaC which is capable to perform derivatives. If here additionally the attribute \c "Diff=1" is set, the expression provided by the \c "Shape" attribute will be differentiated once, thus it is possible to directly provide the gradient moments.
+
+\li \c "NLG_field": an analytical expression for non-linear gradient field can be specified to every gradient module. Use \c "X,Y,Z" as space variables, and \c "G" as gradient the value, e.g.  \c "NLG_field=X*G+0.001*X*G^2" will simulate a linear x-gradient field with a small quadratic term.
+
+back to \ref toc.
+***************************************************
+*/
+
