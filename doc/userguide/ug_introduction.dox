@@ -14,13 +14,13 @@ JEMRIS, the “Jülich Extensible MRI Simulator”, provides an MRI sequence dev
 \section ug_intro_features Features
 JEMRIS supports the following features:
 
-\li Utilising an optimised library for numerical solutions of differential equations provides accurate 3D MRI simulation results in cases where no analytical solution is available, e.g. to simulate complex nonlinear RF waveforms for selective excitation or adiabatic full passage pulses. 
+\li Utilising an optimised library for numerical solutions of differential equations (<a href="http://www.llnl.gov/casc/sundials">CVODE</a>) provides accurate 3D MRI simulation results in cases where no analytical solution is available, e.g. to simulate complex nonlinear RF waveforms for selective excitation or adiabatic full passage pulses. 
 
 \li JEMRIS can deal with arbitrary RF and gradient waveforms, arbitrary multi-channel Tx-Rx coil geometries and configurations, as well as many important physical concepts, such as nonlinear gradients, chemical shift, reversible spin dephasing (T2*), susceptibility-induced off-resonance, temporal varying processes of the object (e.g. movement or flow), concomitant gradient fields, etc.
 
-\li Symbolic mathematical calculations are supported by means of a dedicated library. Thus, many extensions are readily available with no additional programming involved.
+\li Symbolic mathematical calculations are supported by means of the <a href="http://www.ginac.de">GiNaC library</a>. Thus, many extensions are readily available with no additional programming involved.
 
-\li The core simulation routines take advantage of massive parallel processing and are available on different hardware architectures. JEMRIS simulations scale on single-core hardware, small HPC clusters and also on massively parallel supercomputers. 
+\li The core simulation routines take advantage of massive parallel processing (<a href="http://www-unix.mcs.anl.gov/mpi">using the MPI standard</a>) and are available on different hardware architectures. JEMRIS simulations scale on single-core hardware, small HPC clusters and also on massively parallel supercomputers. 
 
 \li A graphical user interface (GUI) is provided with which all simulation parameters are configured, including nearly arbitrary complex MRI sequences.
 
@@ -49,8 +49,9 @@ as well as the possibility for the input of a user-defined sample.
 
 \n
 \section ug_intro_dc Disclaimer
-Jemris is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY. See the GNU General Public License for
-more details.
+
+JEMRIS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY. See the
+ <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a> for more details.
 
 Feedback and bug reports are very wellcome. See <a href="http://www.jemris.org">www.jemris.org</a> to contact the authors.  
 It should be noted that the Matlab GUIs are preliminary. They are stable enough to serve as good starting tools.

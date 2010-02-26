@@ -110,7 +110,6 @@ me@my_box:~$ jemris /usr/local/share/jemris/examples/epi.xml
 
 JEMRIS 2.2 r1480M
 
-dumping sensitivity maps ...
 dump of sequence tree
                           TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
                           ----------------------------------------------------------------- |  ---------------

@@ -43,18 +43,13 @@ using std::ofstream;
 using namespace std;
 XERCES_CPP_NAMESPACE_USE
 
-/**
- * Binary file type
- */
+//!Binary file type
 enum fType  {
     EXPLICIT, /**< Old type (x,y,z) coords as last of 8 values per spin */
     IMPLICIT  /**< New type (x,y,z) ordered double values w/o spatial information in bin file */
 };
 
-/**
- * @brief Spin structure
- */
-
+//!brief Spin structure
 struct Spin_data {
     double x;    /**< x-position of the spin                    		*/
     double y;    /**< x-position of the spin                    		*/
@@ -74,10 +69,8 @@ struct Spin {
     Spin_data *data;	/**< array of spins */
 };
 
-/*
- *  @brief  Persistent MR sample cointaining the spins
- */
 
+//! The Sample is the object to simulate. It contains the spins.
 class Sample {
 
 
