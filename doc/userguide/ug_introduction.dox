@@ -22,7 +22,7 @@ JEMRIS supports the following features:
 
 \li The core simulation routines take advantage of massive parallel processing (<a href="http://www-unix.mcs.anl.gov/mpi">using the MPI standard</a>) and are available on different hardware architectures. JEMRIS simulations scale on single-core hardware, small HPC clusters and also on massively parallel supercomputers. 
 
-\li A graphical user interface (GUI) is provided with which all simulation parameters are configured, including nearly arbitrary complex MRI sequences.
+\li A <a href="http://www.mathworks.com">Matlab</a> graphical user interface (GUI) is provided with which all simulation parameters are configured, including nearly arbitrary complex MRI sequences. The GUI stores these configurations in XML format which is parsed by the simulator using the <a href="http://xerces.apache.org/xerces-c">Xerces</a> library.
 
 \li JEMRIS is open source and the community is encouraged to make contributions to the project under <a href="http://www.jemris.org">www.jemris.org</a>. It has been successfully tested on Linux, Windows and Mac OS X.
 
