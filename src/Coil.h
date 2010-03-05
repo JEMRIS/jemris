@@ -43,26 +43,48 @@ class Coil : public Prototype {
     virtual ~Coil          ();
 
     /**
-     * @brief Get the sensitivity at point (x,y,z) of the current spin
+     * @brief Get the B1+ magnitude at point (x,y,z) of the current spin
      *
 	 * @return          Sensitivity with respect to spin in World
      */
     double  GetSensitivity () ;
 
     /**
+     * @brief Get the B1+ phase at point (x,y,z) of the current spin
+     *
+	 * @return          Phase with respect to spin in World
+     */
+    double  GetPhase () ;
+
+    /**
      * @brief Interpolate the sensitivity at point (x,y,z)
      *
 	 * @return          Interpolated Sensitivity
      */
-    double InterpolateSensitivity (double* position);
+    double InterpolateSensitivity (double* position, bool magnitude=true);
 
     /**
-     * @brief Get the sensitivity at point (x,y,z)
+     * @brief Get the B1+ magnitude at point (x,y,z)
+     *
+     * This method must be implemented by every derived coil.
      *
      * @param position  At position.
      * @return          Sensitivity with respect to spin in World.
      */
     virtual double  GetSensitivity (double* position) = 0;
+
+    /**
+     * @brief Get the B1+ phase at point (x,y,z)
+     *
+     * This method may be implemented by every derived coil. Otherwise phase is zero.
+     *
+     * Important: the phase of Coils needs to be implemented with unit radians!
+     * (In contrast to the phase of RF pulses which has units degrees.)
+     *
+     * @param position  At position.
+     * @return          B1+ phase with respect to spin in World.
+     */
+    virtual double  GetPhase (double* position) {return 0.0;};
 
     /**
      * @brief Initialize my signal repository
@@ -136,10 +158,12 @@ class Coil : public Prototype {
     double			m_norm;   		/**< Normalization factor for sensitivities */
     double			m_phase;   		/**< Constant phase shift */
     bool            m_interpolate;  /**< Whether to precompute sensitivities in an array */
+    bool			m_complex;		/**< True, if sensitivity map is complex (non-zero phase entries).*/
     unsigned		m_dim;     		/**< Dimensions (2D or 3D) of the array*/
     double			m_extent;  		/**< Array extend of support region [mm] */
     int				m_points;  		/**< Sampling points of the array */
-    vaArray_3d(double) m_sens_map;  /**< Array to store sensitivities */
+    vaArray_3d(double) m_sens_mag;  /**< Array to store sensitivity magnitudes */
+    vaArray_3d(double) m_sens_pha;  /**< Array to store sensitivity phases */
 
 };
 

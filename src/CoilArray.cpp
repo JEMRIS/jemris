@@ -171,7 +171,7 @@ void CoilArray::DumpSensMaps(bool verbose) {
         sstr << prefix << "sensmap" << setw(2) << setfill('0') << i+1 << ".bin";
         m_coils[i]->DumpSensMap(sstr.str());
         if (verbose)
-        	cout << "Coil #" << i << ": " << m_coils[i]->GetName() << " (" << m_coils[i]->GetClassType() << "): " << " dumps to " << sstr.str() << endl;
+        	cout << "Channel #" << i << ": Coil " << m_coils[i]->GetName() << " (" << m_coils[i]->GetClassType() << "): " << " dumps to " << sstr.str() << endl;
 
     }
 

@@ -55,7 +55,10 @@ bool ExternalCoil::Prepare(PrepareMode mode) {
 		for (int j=0; j<m_points; j++){
             for (int i=0; i<m_points; i++) {
                 fin.read((char *)(&temp), sizeof(double));
-                m_sens_map[i][j][k] = temp;
+                m_sens_mag[i][j][k] = temp;
+                fin.read((char *)(&temp), sizeof(double));
+                if (temp != 0.0) m_complex = true;
+                m_sens_pha[i][j][k] = temp;
 				//cout << "i: " << i << ", j: " << j << ", k: " << k << " --- " << m_sens_map[i][j][k] << endl;
             }
 		}

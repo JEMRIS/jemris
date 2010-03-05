@@ -33,10 +33,13 @@ CENT=cell(NC,1); AZIM=cell(NC,1); POL =cell(NC,1); NAME=cell(NC,1);
 for i=1:NC
  if ~handles.CoilArray.Children(i).HasMap,continue,end
  NA=length(handles.CoilArray.Children(i).Attributes);
- scale = 1; N=0; DIM=0; AxLim=[0 0];
+ scale = 1; N=0; DIM=0; AxLim=[0 0]; phas=0;
  AZIM{i}=NaN;  POL{i}=NaN;  CENT{i}=[0 0 0];
  NAME{i}=handles.CoilArray.Children(i).CoilName;
  for j=1:NA
+     if strcmpi('PHASE',handles.CoilArray.Children(i).Attributes(j).Name)
+         phas = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
+     end
      if strcmpi('SCALE',handles.CoilArray.Children(i).Attributes(j).Name)
          scale = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
      end
@@ -65,16 +68,12 @@ for i=1:NC
      end
  end
  f=fopen(sprintf('RXsensmap%02d.bin',i));
- a=fread(f,inf,'double'); fclose(f); a=a/max(a);
+ a=fread(f,inf,'double'); fclose(f); 
+ a=[a(1:2:end)/max(a(1:2:end));a(2:2:end)];
  if DIM==3;
-     if length(a)==N^3   %magn only
-         a=reshape(a,[N N N]);
-     end 
-     if length(a)==2*N^3 %magn and phase
          a=reshape(a(1:N^3),[N N N]).*exp(sqrt(-1)*reshape(a(1+N^3:2*N^3),[N N N]));
-     end 
  elseif DIM==2;
-     a=reshape(a,[N N]);
+         a=reshape(a(1:N^2),[N N]).*exp(sqrt(-1)*(phas*pi/180+reshape(a(1+N^2:2*N^2),[N N])));
  else
      disp('Dim must be 2 or 3'),set(gca,'visible','off');return;
  end
@@ -105,7 +104,7 @@ switch T
     case 'Magnitude'
         A=abs(A);
     case 'Phase'
-        A=angle(A);
+        A=angle(A)*180/pi;
     case 'Real'
         A=real(A);
     case 'Imaginary'
@@ -212,7 +211,7 @@ for i=1:NC
         patch(x+d*u,y+d*v,z+d*w,[1 1 0])
         %line(x+d*u,y+d*v,z+d*w,'color',[1 0 0],'linewidth',2)
     end
-    [T{i},' ',num2str(u)]
+    %[T{i},' ',num2str(u)]
     s=.5*abs(sign(round(u(3)))-1);
     h=text(x+d*(u(3)-s),y+1.5*d*v(3),z,T{i},'color',TCOL,'fontsize',12,'fontweight','bold');
     %if ( handles.CoilArray.Children(i).current ),set(h,'fontsize',14,'color',[.7 0 0]);end

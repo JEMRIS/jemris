@@ -46,6 +46,7 @@ class AnalyticCoil : public Coil {
         	m_use_grid      = true;
         	m_analytic		= false;
         	m_sensitivity	= 0.0;
+        	m_analytic_phase= 0.0;
         	m_px			= 0.0;
         	m_py			= 0.0;
         	m_pz			= 0.0;
@@ -63,6 +64,8 @@ class AnalyticCoil : public Coil {
          * @return          Sensitivity at requested position.
          */
         virtual double GetSensitivity (double* position);
+
+        virtual double GetPhase (double* position){ return m_analytic_phase;};
 
         /**
          * @brief Clone.
@@ -82,12 +85,13 @@ class AnalyticCoil : public Coil {
 
  private:
 
-	bool   m_use_grid;    /**< @brief compute sensitivities on a grid for later use */
-    bool   m_analytic;    /**< @brief Check, whether analytic evaluation is already prepared */
-    double m_sensitivity; /**< @brief Sensitivity of the AnalyticCoil as calculated by GiNaC */
-    double m_px;          /**< @brief x-position to compute sensitivity*/
-    double m_py;          /**< @brief y-position to compute sensitivity*/
-    double m_pz;          /**< @brief z-position to compute sensitivity*/
+	bool   m_use_grid;    	/**< @brief compute sensitivities on a grid for later use */
+    bool   m_analytic;    	/**< @brief Check, whether analytic evaluation is already prepared */
+    double m_sensitivity;	/**< @brief Sensitivity of the AnalyticCoil as calculated by GiNaC */
+    double m_analytic_phase;/**< @brief Phase of the AnalyticCoil as calculated by GiNaC */
+    double m_px;          	/**< @brief x-position to compute sensitivity*/
+    double m_py;          	/**< @brief y-position to compute sensitivity*/
+    double m_pz;          	/**< @brief z-position to compute sensitivity*/
 
 };
 

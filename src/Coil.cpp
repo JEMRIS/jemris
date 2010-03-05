@@ -26,12 +26,16 @@
 
 /**********************************************************/
 Coil::~Coil() {
-	if (m_signal!=NULL) delete m_signal;
+	if (m_signal   != NULL) delete m_signal;
+	if (m_sens_mag != NULL) vaDelete(m_sens_mag);
+	if (m_sens_pha != NULL) vaDelete(m_sens_pha);
 }
 
 /**********************************************************/
 void Coil::Initialize (DOMNode* node) {
 
+	m_sens_mag = NULL;
+	m_sens_pha = NULL;
 	m_node    = node;
 
 	string s = StrX(((DOMElement*) node)->getAttribute (StrX("Name").XMLchar() )).std_str() ;
@@ -61,10 +65,10 @@ void Coil::Receive (long lADC) {
     m_signal->repository.tp[lADC]  = m_world->time;
 
     m_signal->repository.mx[lADC] +=  GetSensitivity()
-        * m_world->solution[AMPL]* cos (- m_world->phase + m_world->solution[PHASE]);
+        * m_world->solution[AMPL]* cos (- m_world->phase + GetPhase() + m_world->solution[PHASE]);
 
     m_signal->repository.my[lADC] +=  GetSensitivity()
-		* m_world->solution[AMPL]* sin (- m_world->phase + m_world->solution[PHASE]);
+		* m_world->solution[AMPL]* sin (- m_world->phase + GetPhase() + m_world->solution[PHASE]);
 
     m_signal->repository.mz[lADC] += GetSensitivity()
 		* m_world->solution[ZC];
@@ -89,10 +93,16 @@ void Coil::DumpSensMap (string fname) {
             for (int i=0; i<m_points; i++) {
 
                 position [XC] = i*m_extent/m_points-m_extent/2;
-                double sens   = GetSensitivity(position);
-                m_sens_map[i][j][k] = sens;
-                if (fname != "") fout.write((char*)(&(sens)), sizeof(sens));
-                max = (max>sens?max:sens);
+                //dump magnitude and store it to array
+                double mag   = GetSensitivity(position);
+                m_sens_mag[i][j][k] = mag;
+                if (fname != "") fout.write((char*)(&(mag)), sizeof(mag));
+                max = (max>mag?max:mag);
+                //dump phase and store it to array
+                double pha   = GetPhase(position);
+                if (pha != 0.0) m_complex = true;
+                m_sens_pha[i][j][k] = pha;
+                if (fname != "") fout.write((char*)(&(pha)), sizeof(pha));
 				//cout << "i: " << i << ", j: " << j << ", k: " << k << " --- " << m_sens_map[i][j][k] << endl;
             }
         }
@@ -100,6 +110,19 @@ void Coil::DumpSensMap (string fname) {
     m_norm = 1/max;
     fout.close();
 
+}
+
+/**********************************************************/
+double  Coil::GetPhase () {
+
+	if (!m_complex) return m_phase;
+
+	if (m_interpolate) {
+		return m_phase + InterpolateSensitivity(m_world->Values,false);
+	}
+	else {
+		return m_phase + GetPhase(m_world->Values);
+	}
 }
 
 /**********************************************************/
@@ -113,8 +136,9 @@ double  Coil::GetSensitivity () {
 	}
 }
 
+
 /**********************************************************/
-double Coil::InterpolateSensitivity (double* position){
+double Coil::InterpolateSensitivity (double* position, bool magnitude){
 
 	// expects  -m_extent/2 <= position[j] <= m_extent/2
     double x = (position[XC]+m_extent/2)*m_points/m_extent;
@@ -129,8 +153,14 @@ double Coil::InterpolateSensitivity (double* position){
     //bilinear interpolation (2D)
 	int nx = (px+1<m_points?px+1:m_points-1);
 	int ny = (py+1<m_points?py+1:m_points-1);
-	double i11 = m_sens_map[px][py][pz]+(m_sens_map[px][ny][pz]-m_sens_map[px][py][pz])*normy;
-	double i21 = m_sens_map[nx][py][pz]+(m_sens_map[nx][ny][pz]-m_sens_map[nx][py][pz])*normy;
+	double i11, i21;
+	if (magnitude) {
+		i11 = m_sens_mag[px][py][pz]+(m_sens_mag[px][ny][pz]-m_sens_mag[px][py][pz])*normy;
+		i21 = m_sens_mag[nx][py][pz]+(m_sens_mag[nx][ny][pz]-m_sens_mag[nx][py][pz])*normy;
+	} else {
+		i11 = m_sens_pha[px][py][pz]+(m_sens_pha[px][ny][pz]-m_sens_pha[px][py][pz])*normy;
+		i21 = m_sens_pha[nx][py][pz]+(m_sens_pha[nx][ny][pz]-m_sens_pha[nx][py][pz])*normy;
+	}
 	double iz1 = i11+(i21-i11)*normx;
 
 	//check 2D
@@ -138,8 +168,14 @@ double Coil::InterpolateSensitivity (double* position){
 
     //trilinear interpolation (3D)
 	int nz = (pz+1<m_points?pz+1:m_points-1);
-	double i12 = m_sens_map[px][py][nz]+(m_sens_map[px][ny][nz]-m_sens_map[px][py][nz])*normy;
-	double i22 = m_sens_map[nx][py][nz]+(m_sens_map[nx][ny][nz]-m_sens_map[nx][py][nz])*normy;
+	double i12, i22;
+	if (magnitude) {
+		i12 = m_sens_mag[px][py][nz]+(m_sens_mag[px][ny][nz]-m_sens_mag[px][py][nz])*normy;
+		i22 = m_sens_mag[nx][py][nz]+(m_sens_mag[nx][ny][nz]-m_sens_mag[nx][py][nz])*normy;
+	} else {
+		i12 = m_sens_pha[px][py][nz]+(m_sens_pha[px][ny][nz]-m_sens_pha[px][py][nz])*normy;
+		i22 = m_sens_pha[nx][py][nz]+(m_sens_pha[nx][ny][nz]-m_sens_pha[nx][py][nz])*normy;
+	}
 	double iz2 = i12+(i22-i12)*normx;
 
 	return (iz1+(iz2-iz1)*normz);
@@ -155,6 +191,7 @@ bool Coil::Prepare  (PrepareMode mode) {
 	m_scale   = 1.0;
 	m_norm    = 1.0;
 	m_phase   = 0.0;
+	m_complex = false;
 	m_dim     = 3;
 	m_extent  = 0;
 	m_points  = 0;
@@ -176,10 +213,12 @@ bool Coil::Prepare  (PrepareMode mode) {
 
     success         = Prototype::Prepare(mode);
 
+    m_phase   *= PI/180.0;
     m_polar   *= PI/180.0;
     m_azimuth *= PI/180.0;
     m_interpolate = (m_points>0 && m_extent>0.0);
-   	m_sens_map = vaCreate_3d(m_points, m_points, (m_dim==3?m_points:1), double, NULL);
+   	m_sens_mag = vaCreate_3d(m_points, m_points, (m_dim==3?m_points:1), double, NULL);
+   	m_sens_pha = vaCreate_3d(m_points, m_points, (m_dim==3?m_points:1), double, NULL);
 
     //normalize sensitivity at origin
     //double position[3]  = {0.0,0.0,0.0};

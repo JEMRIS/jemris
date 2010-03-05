@@ -75,23 +75,26 @@ void RFPulse::GetValue (double * dAllVal, double const time) {
     if (time < 0.0 || time > GetDuration())
         return;
 
-	// Get the current sensitivity of this B1 Transmit pulse
-	double factor = 1.0;
+	// Get Magnitude and Phase from the B1 sensitivity map
+	double magn  = 1.0;
+	double phase = 0.0;
 
 	if (m_coil_array != NULL) {
 
 		Coil* coil=m_coil_array->GetCoil(m_channel);
 
-		if (coil != NULL)
-			factor=coil->GetSensitivity();
+		if (coil != NULL) {
+			magn  = coil->GetSensitivity();
+			phase = coil->GetPhase();
+		}
 		else
 			cout << GetName() << " warning: my channel" << m_channel << "is not in the TxCoilArray\n";
 
 	}
 
 	// Get Magntidue and Phase of this RF pulse
-	double magn  = factor*GetMagnitude(time);
-	double phase = GetInitialPhase()*PI/180.0;
+	magn  *= GetMagnitude(time);
+	phase += GetInitialPhase()*PI/180.0;
 
 	for (unsigned int i=0; i<m_GetPhaseFunPtrs.size(); ++i)
 		phase += m_GetPhaseFunPtrs[i](this,time)*PI/180.0;

@@ -99,12 +99,20 @@ double AnalyticCoil::GetSensitivity(double* position) {
 
 	//polar rotation: axis of rotation is the (new) x-axis
 	if (m_polar!=0.0) {
-		double pz = m_pz*cos(m_polar) - m_px*sin(m_polar);
+		double pz = m_pz*cos(m_polar) - m_py*sin(m_polar);
 	    double py = m_py*cos(m_polar) + m_pz*sin(m_polar);
 	    m_py = py; m_pz = pz;
 	}
 
 	GetAttribute("Sensitivity")->EvalExpression();
+
+	if ( GetAttribute("Sensitivity")->IsComplex() )
+	{
+		double imag = GetAttribute("Sensitivity")->GetImaginary();
+		m_analytic_phase = atan2(imag,m_sensitivity);
+		return sqrt(pow(imag,2)+pow(m_sensitivity,2)) ;
+	}
+
 
 	return m_sensitivity;
 }
