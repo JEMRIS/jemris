@@ -50,13 +50,28 @@ class ExternalCoil : public Coil {
      */
 	virtual ExternalCoil* Clone() const;
 
-	/**
-	 * @brief Get sensitivity at spin position of m_world
-	 *
-	 * @param position Position of spin in m_world.
-	 * @return         Sensitivity at spin position.
-	 */
+    /**
+     * @brief Get the B1+ magnitude at point (x,y,z)
+     *
+     * This method must be implemented by every derived coil.
+     *
+     * @param position  At position.
+     * @return          Sensitivity with respect to spin in World.
+     */
 	virtual double GetSensitivity (double* position);
+
+    /**
+     * @brief Get the B1+ phase at point (x,y,z)
+     *
+     * This method may be implemented by every derived coil. Otherwise phase is zero.
+     *
+     * Important: the phase of Coils needs to be implemented with unit radians!
+     * (In contrast to the phase of RF pulses which has units degrees.)
+     *
+     * @param position  At position.
+     * @return          B1+ phase with respect to spin in World.
+     */
+	virtual double GetPhase (double* position);
 
     /**
      * @brief Prepare a coil with provided sensitivity map.

@@ -50,23 +50,22 @@ double BiotSavartLoop::GetSensitivity(double* position) {
     double py = position[YC]-m_position[YC];
     double pz = position[ZC]-m_position[ZC];
 
+    double ppx, ppy, ppz;
+
+    //shift half mesh size
     px += 0.5 * m_extent / m_points;
     py += 0.5 * m_extent / m_points;
     pz += 0.5 * m_extent / m_points;
 
 	//azimuth rotation
-	if (m_azimuth!=0.0) {
-		double ppx = px*cos(m_azimuth) - py*sin(m_azimuth);
-		double ppy = py*cos(m_azimuth) + px*sin(m_azimuth);
-		px = ppx; py = ppy;
-	}
+	ppy = px*cos(m_azimuth) + py*sin(m_azimuth);
+	ppx = py*cos(m_azimuth) - px*sin(m_azimuth);
+	px = ppx; py = ppy;
 
 	//polar rotation: axis of rotation is the (new) x-axis
-	if (m_polar!=0.0) {
-		double ppz = pz*cos(m_polar) - py*sin(m_polar);
-	    double ppy = py*cos(m_polar) + pz*sin(m_polar);
-	    py = ppy; pz = ppz;
-	}
+	ppz = pz*cos(m_polar) - py*sin(m_polar);
+    ppy = py*cos(m_polar) + pz*sin(m_polar);
+    py = ppy; pz = ppz;
 
 	// distance between coil-center and position
     double dist = sqrt( abs(pow(px,2)+pow(py,2)+pow(pz,2)) );

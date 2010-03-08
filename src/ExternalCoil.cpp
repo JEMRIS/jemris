@@ -40,6 +40,13 @@ double ExternalCoil::GetSensitivity(double* position) {
 }
 
 /***********************************************************/
+double ExternalCoil::GetPhase(double* position) {
+
+    return InterpolateSensitivity(position,false);
+
+}
+
+/***********************************************************/
 bool ExternalCoil::Prepare(PrepareMode mode) {
 
     bool success = true;
