@@ -71,9 +71,9 @@ for i=1:NC
  a=fread(f,inf,'double'); fclose(f); 
  a=[a(1:2:end)/max(a(1:2:end));a(2:2:end)];
  if DIM==3;
-         a=reshape(a(1:N^3),[N N N]).*exp(sqrt(-1)*reshape(a(1+N^3:2*N^3),[N N N]));
+         a=reshape(abs(a(1:N^3)),[N N N]).*exp(sqrt(-1)*reshape(a(1+N^3:2*N^3),[N N N]));
  elseif DIM==2;
-         a=reshape(a(1:N^2),[N N]).*exp(sqrt(-1)*(phas*pi/180+reshape(a(1+N^2:2*N^2),[N N])));
+         a=reshape(abs(a(1:N^2)),[N N]).*exp(sqrt(-1)*(phas*pi/180+reshape(a(1+N^2:2*N^2),[N N])));
  else
      disp('Dim must be 2 or 3'),set(gca,'visible','off');return;
  end

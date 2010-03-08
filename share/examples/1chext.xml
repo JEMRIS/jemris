@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CoilArray>
-   <EXTERNALCOIL Dim="3" Extent="256" Filename="SM1.bin" Name="C1" Points="32"/>
+   <EXTERNALCOIL Dim="2" Extent="256" Filename="sens.bin" Name="C2" Points="64"/>
 </CoilArray>
