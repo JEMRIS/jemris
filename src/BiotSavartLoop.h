@@ -70,9 +70,7 @@ class BiotSavartLoop : public Coil {
 
  private:
 
-    double            m_radius;        /**< @brief My loop radius                  */
-
-
+    double            m_radius;        /**< Loop radius */
 };
 
 #endif /*BIOTSAVARTLOOP_H_*/

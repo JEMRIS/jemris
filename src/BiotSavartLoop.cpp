@@ -50,6 +50,10 @@ double BiotSavartLoop::GetSensitivity(double* position) {
     double py = position[YC]-m_position[YC];
     double pz = position[ZC]-m_position[ZC];
 
+    px += 0.5 * m_extent / m_points;
+    py += 0.5 * m_extent / m_points;
+    pz += 0.5 * m_extent / m_points;
+
 	//azimuth rotation
 	if (m_azimuth!=0.0) {
 		double ppx = px*cos(m_azimuth) - py*sin(m_azimuth);
@@ -64,25 +68,13 @@ double BiotSavartLoop::GetSensitivity(double* position) {
 	    py = ppy; pz = ppz;
 	}
 
-    //for stability of elliptic integrals: if position is in the plane, shift it slightly
-/*    if ( abs(px*cos(m_azimuth)*sin(m_polar) + py*sin(m_azimuth)*sin(m_polar) + pz*cos(m_polar)) < 1 ) {
-    	double s = 12;
-    	px += cos(m_azimuth)*sin(m_polar);
-    	py += sin(m_azimuth)*sin(m_polar);
-    	pz += cos(m_polar);
-    }
-*/
-	pz+=1.0;
-
 	// distance between coil-center and position
     double dist = sqrt( abs(pow(px,2)+pow(py,2)+pow(pz,2)) );
 
-    //if ( (abs(dist-a)<10 && abs(pz)<10) || abs(pow(px,2)+pow(py,2))<1 ) return 0.0;
-    //if ( dist < 1 ) return 0.0;
-    if ( (abs(dist-a)<10 && abs(pz)<10) ) return 0.0;
+    //return zero on the coil
+    //if (abs(pz) < (m_extent/m_points) && abs(dist-a)< (m_extent/m_points) ) return 0.0;
 
 	// angle coil-normal and position vector
-    //double angle = acos ( ( px*cos(m_azimuth)*sin(m_polar) + py*sin(m_azimuth)*sin(m_polar) + pz*cos(m_polar)  ) / dist );
     double angle = acos (pz/dist);
 
 	double r     = dist * sin (angle);	// distance off axis
@@ -106,9 +98,9 @@ double BiotSavartLoop::GetSensitivity(double* position) {
 	#endif
 
 	//field parallel to coil normal vector
-	double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*a) + Kk)         / (PI * sqrt(Q));
+	double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*alpha) + Kk)         / (PI * sqrt(Q));
 	//field orthogonal to coil normal vector
-	double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*a) - Kk) * gamma / (2 * pow(PI,2) * sqrt(Q)) ;
+	double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*alpha) - Kk) * gamma / (2 * pow(PI,2) * sqrt(Q)) ;
 
 	//projections to x-y plane
 	Bx *= sin(m_polar);
