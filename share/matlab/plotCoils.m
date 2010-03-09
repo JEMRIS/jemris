@@ -128,6 +128,9 @@ handles=set_active(seq.hp,handles);
 guidata(handles.output, handles);
 h=findobj(gca,'Type','Line');
 C=get(handles.CoilMenu,'String');
+if get(handles.SensMenu,'Value')==2
+    plotsensitivity(handles,1);
+end
 for i=1:3
     if strcmpi(C{i}(1:4),seq.Name(1:4))
         set(handles.CoilMenu,'Value',i)
@@ -156,7 +159,7 @@ if isempty(seq.Attributes)
     seq.Attributes.Value=seq.CoilName;
 end
 
-for i=1:15
+for i=1:14
     if i>length(A)
         bvis='''off''';
     else
@@ -174,6 +177,18 @@ for i=1:15
     end
     eval(['set(handles.TextAttrib',num2str(i),',''Visible'',',bvis,');'])
     eval(['set(handles.EditAttrib',num2str(i),',''Visible'',',bvis,');'])
+end
+
+%special case: extended size to enter Sensitivity formula
+p=get(handles.EditAttrib12,'position');
+if strcmpi(get(handles.TextAttrib12,'string'),'sensitivity')
+    if p(3) < 3*handles.FormulaSize; 
+        p(3) = 3*p(3);
+        set(handles.EditAttrib12,'position',p); 
+    end
+else
+    p(3) = handles.FormulaSize;
+    set(handles.EditAttrib12,'position',p);    
 end
 
 return

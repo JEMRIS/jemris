@@ -20,7 +20,7 @@ function varargout = JEMRIS_txrx(varargin)
 %  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 %
 
-% Last Modified by GUIDE v2.5 12-Feb-2010 13:38:02
+% Last Modified by GUIDE v2.5 09-Mar-2010 09:43:57
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -73,6 +73,8 @@ handles.Attributes={BSL,AC,EC};
 % Choose default command line output for JEMRIS_txrx
 handles.output = hObject;
 
+p=get(handles.EditAttrib12,'position');
+handles.FormulaSize=p(3);
 set(handles.uipanel1,'visible','off')
 
 % Update handles structure
@@ -148,6 +150,19 @@ function HideCoilMenu_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on selection change in SensMenu.
+function SensMenu_Callback(hObject, eventdata, handles)
+ handles=plotsensitivity(handles);
+ guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function SensMenu_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
 
 % --- Executes on button press in DeleteCoil.
 function DeleteCoil_Callback(hObject, eventdata, handles)
@@ -529,6 +544,7 @@ end
 function EditAttrib12_Callback(hObject, eventdata, handles)
 common_SOEtags(hObject,handles)
 
+
 % --- Executes during object creation, after setting all properties.
 function EditAttrib12_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -655,3 +671,4 @@ for i=1:length(CA.Children)
     end
 end
         
+

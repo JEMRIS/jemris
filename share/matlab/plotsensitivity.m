@@ -1,4 +1,4 @@
-function handles=plotsensitivity(handles)
+function handles=plotsensitivity(handles,plot_coils_call)
 %
 % plotsensitivity.m helper function of JEMRIS_txrx.m
 %
@@ -22,15 +22,30 @@ function handles=plotsensitivity(handles)
 %  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 %
 
-handles=plotCoils(handles);
+if nargin<2,handles=plotCoils(handles);end
 cla(handles.hax{1},'reset');
 axes(handles.hax{1});
 set(gca,'visible','on');
 colormap(jet)
 
 NC=length(handles.CoilArray.Children); %number of coils
+
+%show sensitivity of all coils or just the selected one?
+if get(handles.SensMenu,'Value')==1
+    COILS = 1:NC; 
+else
+    for i=1:NC
+        if handles.CoilArray.Children(i).current
+            COILS=i;
+            break;
+        end
+        COILS = 1:NC; %if no coil is selected
+    end
+end
+
+%loop over coil(s)
 CENT=cell(NC,1); AZIM=cell(NC,1); POL =cell(NC,1); NAME=cell(NC,1);
-for i=1:NC
+for i=COILS
  if ~handles.CoilArray.Children(i).HasMap,continue,end
  NA=length(handles.CoilArray.Children(i).Attributes);
  scale = 1; N=0; DIM=0; AxLim=[0 0]; phas=0;
@@ -77,7 +92,7 @@ for i=1:NC
  else
      disp('Dim must be 2 or 3'),set(gca,'visible','off');return;
  end
- if i==1
+ if i==1 || length(COILS)==1
      A=scale*a;
      x1 = [AxLim(1):diff(AxLim)/(N-1):AxLim(2)];
  elseif isequal(size(a),size(A))
@@ -190,20 +205,20 @@ else
     title(['slice ',ZL,' = ',num2str(az),' mm'])
 end
 addSample(max(S(:)),min(S(:)),az,handles);
-addCoils(ix,iy,iz,NC,CENT,AZIM,POL,NAME,handles,[.5 .5 0]);
+addCoils(ix,iy,iz,COILS,CENT,AZIM,POL,NAME,handles,[.5 .5 0]);
 
 %%%
-function addCoils(ix,iy,iz,NC,C,AZ,PL,T,handles,TCOL)
+function addCoils(ix,iy,iz,COILS,C,AZ,PL,T,handles,TCOL)
 if get(handles.HideCoilMenu,'Value') == 2, return, end
 hold on
 a=get(gca,'xlim'); b=get(gca,'ylim');
 MinX = a(1); MaxX=a(2); MinY = b(1); MaxY=b(2);
-for i=1:NC
+for i=COILS
     if ~handles.CoilArray.Children(i).HasMap,continue,end
     if iz,z=C{i}(iz);else z=0;end
     x=C{i}(ix); y=C{i}(iy);
     u=[0 0 0 0]; v=u; w=u;
-    if i==1;d=0.12*diff(get(handles.hax{1},'xlim'));end
+    if i==1 || length(COILS)==1; d=0.12*diff(get(handles.hax{1},'xlim')); end
     if ~isnan(AZ{i})
         a=[0 0 -1 0]; b=[-.25 .25 0 -.25]; 
         c=cos(AZ{i}*pi/180); s=sin(AZ{i}*pi/180);
