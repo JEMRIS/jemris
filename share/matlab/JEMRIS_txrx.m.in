@@ -281,6 +281,7 @@ P.Name='CoilArray'; P.Attributes=struct([]);
 P.Data=[ ]; P.Children=struct([]); P.current=0;
 handles.CoilArray = P;
 set(handles.XmlFile,'string',FileName);
+set(handles.uipanel1,'visible','off')
 hax=handles.hax;for i=1:length(hax); cla(hax{i},'reset'); set(hax{i},'visible','off'); end
 guidata(hObject, handles);
 %update_Callback(hObject, eventdata, handles);
@@ -407,7 +408,7 @@ handles.LastChange = STR;
 eval(STR);
 %eval(['get(handles.',S,',''String'')']),get(hObject,'String')
 %redraw
-if strcmpi(eval(['get(handles.',S,',''String'')']),'Scale') 
+if strcmpi(eval(['get(handles.',S,',''String'')']),'Scale') || strcmpi(eval(['get(handles.',S,',''String'')']),'Phase') 
     plotsensitivity(handles);
 else
     plotCoils(handles);
@@ -639,10 +640,11 @@ for i=1:length(CA.Children)
              CA.Children(i).Attributes(end).Value=num2str(Ns(1));
             end
                 
-            %write file
+            %write data to file as (magnitude,phase) pairs
             FileName=[AttrVal,'.bin'];
             f=fopen(FileName,'w','l');
-            fwrite(f,val(:),'double');
+            a=abs(val(:)); b=angle(val(:)); c=[a b]';
+            fwrite(f,c(:),'double');
             fclose(f);
             for j=1:length(CA.Children(i).Attributes)
                 if strcmpi('filename',CA.Children(i).Attributes(j).Name)
