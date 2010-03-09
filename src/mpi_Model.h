@@ -37,7 +37,7 @@ using namespace std;
 #include "Signal.h"
 #include "Declarations.h"
 #include "Sample.h"
-#ifdef HAVE_MPI_THREADS
+#ifndef HAVE_MPI_THREADS
 	#include <pthread.h>
 #endif
 
@@ -84,7 +84,7 @@ MPI_Datatype  MPIspindata() {
 
 /*****************************************************************************/
 /* function that does the progress counting; called by an extra thread from the master process */
-#ifdef HAVE_MPI_THREADS
+#ifndef HAVE_MPI_THREADS
 void *CountProgress(void * arg) {
 	int TotalNoSpins  = *((int *) arg);
 	int SpinsDone = TotalNoSpins - *(((int *) arg )+1);
@@ -110,7 +110,7 @@ void *CountProgress(void * arg) {
 /*****************************************************************************/
 void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 
-#ifdef HAVE_MPI_THREADS
+#ifndef HAVE_MPI_THREADS
 	// copy + paste thread example
 	pthread_t counter_thread;
 	int errcode;                                /* holds pthread error code */
@@ -199,7 +199,7 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 
 	}  // end while (SlavesDone < size -1)
 
-#ifdef HAVE_MPI_THREADS
+#ifndef HAVE_MPI_THREADS
 	/* join threads: */
 	int *status;                                /* holds return code */
 	if (errcode=pthread_join(counter_thread,(void **) &status)) {
