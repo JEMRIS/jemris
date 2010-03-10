@@ -34,7 +34,11 @@ bool BiotSavartLoop::Prepare (PrepareMode mode) {
 
 	bool success = true;
 
+	m_mask   = 0.0;
+	m_radius = 100.0;
+
     ATTRIBUTE("Radius" , m_radius);
+    ATTRIBUTE("Mask" , m_mask);
     success   = Coil::Prepare(mode);
 	DumpSensMap("");
 
@@ -70,8 +74,8 @@ double BiotSavartLoop::GetSensitivity(double* position) {
 	// distance between coil-center and position
     double dist = sqrt( abs(pow(px,2)+pow(py,2)+pow(pz,2)) );
 
-    //return zero on the coil
-    //if (abs(pz) < (m_extent/m_points) && abs(dist-a)< (m_extent/m_points) ) return 0.0;
+    //return zero on torus with radius m_mask
+    if (pow(a-sqrt(pow(px,2)+pow(py,2)),2)+pow(pz,2) < pow(m_mask,2) ) return 0.0;
 
 	// angle coil-normal and position vector
     double angle = acos (pz/dist);
@@ -107,7 +111,6 @@ double BiotSavartLoop::GetSensitivity(double* position) {
 	double B1 = sqrt(pow(Bx,2)+pow(Br,2));
 
 	B1 = (isnan(B1)? 0.5:B1);
-	B1 = (dist > m_radius*6.28? 0.0: B1);
 	return B1;
 
 }

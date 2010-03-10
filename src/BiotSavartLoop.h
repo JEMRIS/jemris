@@ -70,7 +70,8 @@ class BiotSavartLoop : public Coil {
 
  private:
 
-    double            m_radius;        /**< Loop radius */
+    double            m_mask;        /**< Torus radius to mask field on the wire */
+    double            m_radius;      /**< Loop radius */
 };
 
 #endif /*BIOTSAVARTLOOP_H_*/
