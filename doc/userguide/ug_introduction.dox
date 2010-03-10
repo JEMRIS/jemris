@@ -55,8 +55,8 @@ JEMRIS is distributed in the hope that it will be useful, but WITHOUT ANY WARRAN
 
 Feedback and bug reports are very wellcome. See <a href="http://www.jemris.org">www.jemris.org</a> to contact the authors.  
 It should be noted that the Matlab GUIs are preliminary. They are stable enough to serve as good starting tools.
-However, this part of the software might be changed in a later version. Bug reports on all Matlab code will most probably
-be ignored.
+However, this part of the software might be changed in a later version. Bug reports and feature wishes concerning the GUIs are
+also very wellcome also any reaction might be shifted to the next major release of JEMRIS.
 \n
 \n
 \n

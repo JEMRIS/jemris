@@ -1,13 +1,147 @@
 /**
 ***************************************************
 * \page ug_JEMRIS_txrx Coil Array Layout GUI JEMRIS_txrx
-The command "JEMRIS_txrx" opens in Matlab the GUI for coil array configurartion.
-The code is not well tested and it serves as a simple tool for array layout.
+The GUI for coil array configuration allows to construct receiver and/or transmitter arrays with dedicated spatial
+sensitivity patterns. A coil array consists of several coils in a specified order, the channel number. The order is just given
+by the order of creation of the coils. In case of a receive coil array, one binary signal file per coil is generated in
+the simulation. In case of a transmit coil array, the RF pulses of the MR sequence have to specify which channel they use. If no
+channel is specified, the RF is transmitted via all available channels.
+
+The command "JEMRIS_txrx" opens in Matlab the GUI for coil array configuration.
+As seen below, the GUI is devided in four different panels: 
+\li \ref ug_coil_gui_xml
+\li \ref ug_coil_gui_sens
+\li \ref ug_coil_gui_array
+\li \ref ug_coil_gui_coil 
 
 \image html pics/txrx_gui.jpg
 \image latex pics/txrx_gui.eps
+
+To start, open a new or an existing coil array from the file menu. Then, the functionality of each panel is as follows:
+
+\section ug_coil_gui_xml XML File Panel
+On this panel the name of the current XML coil array file is displayed in red. There are two buttons: 
+
+\li <b>"write XML"</b> As with the sequence GUI, this button overwrites the current XML coil file according to the
+recent changes made for the indivudual coils. It then invokes the external jemris binary to (re-) calculate the sensitivity maps.
+The maps are stored in the current working directory (filnames "RXsensemap01.bin", "RXsensemap02.bin", ...).
+
+\li <b>"read XML"</b> Accordingly, this button undoes all recent changes on the coils and reads the current XML coil file.
+
+Additionally, the output of the external jemris call is dumped below.
+
 \n
 
-The GUI provides functionality to place several coils at different spatial positions. Currently, a Biot-Savart loop coil, a coil
-with analytical sensitivity provided by a user-defiend formula, and an external coil
+\section ug_coil_gui_sens Sensitivity Map Panel
+On this panel the sensitivity map is plotted. Note that the magnitude senstivity for each individual coil is normalized to 
+one within the FOV of the coil (see below for a defintion of the coil FOV). Therefore, the superposition of the sensitivity
+may has values larger than one.
+
+The plot may be exported to a standard Matlab figure window with the sub-menu "Figure" in the "File" menu. 
+
+The display of the sensitivity may be changed with four different selection boxes: 
+
+\li <b>"x-y slice" ["x-z-slice","y-z-slice","3-D"]</b> selects the possible views. The 3D view displays a contour of the
+sensitivty map.
+
+\li <b>"Magnitude" ["Phase","Real","Imaginary"]</b> For complex coil sensitivity maps.
+
+\li <b>"Show Coils" ["Hide Coils"]</b> Plots the name (lable) for each coil at its centre position.  Additionally, an arrow
+points in the direction of the coil (see below for definitoion of the direction). 
+
+\li <b>"Show Sample" ["Hide Sample"]</b> Overlays a transparent view of the sample on the sensitivity map.
+The sample is read from the last generated output of the 
+<a href="ug_JEMRIS_sim.html">Simulation GUI \c JEMRIS_sim </a> in the current working directory.
+
+\li <b>"All Coils" ["Active Coil"]</b> Either shows the sensitivity superposition of all coils or only the sensitivity map of the
+currently selected coil in the \ref ug_coil_gui_array.
+
+\n 
+
+
+\section ug_coil_gui_array Coil Array Panel
+
+On the Coil Array Panel all coils of the array are displayed by green circles with their name. Click a coil to make it active for
+manipulation of its attributes on the \ref ug_coil_gui_coil. The active coil is marked with a surrounding red circle.
+
+Additionally, there are three buttons:
+
+\li <b>"Add Coil"</b> Adds another coil to the coil array. The type is choes from the selection box to the right. Currently,
+jemris supports three types of coils: <b>"Biot-Savart" ["Analytic","External"]</b>. There specific differences is explained below
+in the section \ref ug_coil_gui_coil.
+
+\li <b>"Delete Coil"</b> Deletes the currently active coil from the array.
+
+\li <b>"Copy Coil"</b> Adds another coil to the coil array which is an exact copy of the currently active coil.
+
+\n 
+
+\section ug_coil_gui_coil Coil Panel
+
+Finally, on the Coil Panel all properties (attributes) of the currently active coil are specified. Changing the attributes of
+a coil will only have effect after pressing the "write XML" button on the \ref ug_coil_gui_xml (exceptions see below).
+
+Whenever an attribute value is changed, it is possible to apply this last change to all other coils by pressing the button
+<b>"apply change to all"</b>.
+
+There are several attributes which are common for all coil types:
+
+\li <b>"Xpos","Ypos","Zpos"</b> Coordinates of the coil centre.
+
+\li <b>"Azimuth","Polar"</b> Orientation ofd the coil. In case of the Biot-Savart loop, the azimuth and polar angle determine the
+direction of the normal vector on the loop. Similar, for the anaytic coil, the angles specify a rotation of the coordinate system:
+first, rotation about the z-axis (azimuth angle), then rotation about the new x-axis (polar angle, or inclination). For the
+external coil these attributes are not used.
+
+\li <b>"Scale"</b> A scale factor for the mangitude sensitivity. A change of the scale is directly shown on the sensitivity map.
+
+\li <b>"Phase"</b> A phase shift for the complex sensitivity. A change of the phase is directly shown on the sensitivity map.
+
+For the next properties, which also apply to all three coil types, it is important to know how jemris internally handles
+coil sensitivities during the simulation. Each coil represents its sensitivity on a predefined grid which is calculated once
+in the beginning. Then, during simuation, the sensitivities are retrieved by linear interpolation on the grid. This is important
+to speed up the simulation since value retrieval has to take place at at every spin position and every time point of the MR
+sequence which is related to signal acquisition (in case of a receive coil) or RF pulses (in case of a transmit coil). The grid
+(usually the same for all coils in the array) has three attributes:
+
+\li <b>"Dim"</b> The dimension of the coil: has to be either 2 or 3 for 2D or 3D MRI simulations. 2D is allways restricted to
+the x-y plane. If 3D simulations are performed with a 2D coil array, the sensitivity is constant along the z-axis. 
+
+\li <b>"Extent"</b> The size of the support region of the sensitivity map, i.e. the FOV of the coil.
+Outside the extend the sensitivity is zero. The unit is [mm].
+
+\li <b>"Points"</b> Number of sampling points of the grid along all spatial axes.
+If this number is large, sensitivity calculations take longer (espescially in case of a 3D grid).
+
+\n
+
+Finally there are coil attributes specific to the type of the coil:
+
+\subsection ug_coil_gui_biot Biot-Savart Loop
+
+\li <b>"Radius"</b> The radius of the loop. The unit is [mm].
+
+\li <b>"Mask"</b> A radius around the loop wire, i.e. a torus, within the field is masked to zero in order to surpress the strong
+field very close to the loop. The unit is [mm]. This is useful for visualization purposes.
+
+\subsection ug_coil_gui_analytic Analytic Coil
+
+\li <b>"Sensitivity"</b> A GiNaC formula to calculate the sensitivity.
+Use capital letters "X","Y", and "Z" for the position coordinates. The formula may contain imaginary parts (use "I" as the
+imaginary unit) to specify the phase. See section \ref ug_JEMRIS_seq_expressions for a brief description of the symbolic
+expression syntax.
+
+\subsection ug_coil_gui_external External Coil
+
+\li <b>"Filename"</b> Specifies the binary file from which jemris reads the externally defined sensitivities. The binary file
+format is double pairs (magnitude and phase) and column major of the complete data cube without any header information.
+The size of the cube is taken from the above grid attributes. Note, that such external binary files are easily constructed by
+the GUI: generate a global matlab variable which is a complex data cube with size matching the specified grid variables.
+Then write the name of the variable to the attribute "Filename". The GUI will automatically construct the necessary binary file.
+
+\section ug_coil_gui_layouts Layout Menu
+The "Layouts" menu on the top allows easily predefined geometrical arrangement of a number of coils. Currently, only a
+distribution on a cylinder is possible. Using this feature will delete all coils of the current coil array and replace
+them with a new configuration. A distribution on a sphere will be implemented soon (after publication of results).
+
 */
