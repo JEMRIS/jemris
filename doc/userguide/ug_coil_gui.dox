@@ -66,8 +66,8 @@ manipulation of its attributes on the \ref ug_coil_gui_coil. The active coil is 
 
 Additionally, there are three buttons:
 
-\li <b>"Add Coil"</b> Adds another coil to the coil array. The type is choes from the selection box to the right. Currently,
-jemris supports three types of coils: <b>"Biot-Savart" ["Analytic","External"]</b>. There specific differences is explained below
+\li <b>"Add Coil"</b> Adds another coil to the coil array. The type is chosen from the selection box to the right. Currently,
+jemris supports three types of coils: <b>"Biot-Savart" ["Analytic","External"]</b>. Their specific differences is explained below
 in the section \ref ug_coil_gui_coil.
 
 \li <b>"Delete Coil"</b> Deletes the currently active coil from the array.
