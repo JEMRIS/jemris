@@ -53,6 +53,14 @@ class BiotSavartLoop : public Coil {
 	virtual double GetSensitivity (double* position);
 
 	/**
+	 * @brief  Request sensitivity at given position
+	 *
+	 * @param  position Position.
+	 * @return          Sensitivity at requested position.
+	 */
+	virtual double GetPhase       (double* position);
+
+	/**
 	 * @brief Clone.
 	 *
 	 * @return A clone.
