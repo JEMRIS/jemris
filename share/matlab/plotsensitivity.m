@@ -249,16 +249,17 @@ f=fopen('sample.bin'); A=fread(f,Inf,'double'); fclose(f);
  end
  A=A(10:end); A=reshape(A,[5 N]); A=permute(A,[2 3 4 1]); 
  A=A(:,:,:,1); A(find(A))=Max+(Max-Min)/49; A(find(A==0))=NaN;
- x=([0:N(1)-1]-N(1)/2)*res(1)+offset(i);
- y=([0:N(2)-1]-N(2)/2)*res(2)+offset(i);
- z=([0:N(3)-1]-N(3)/2)*res(3)+offset(i);
+ x=([0:N(1)-1]-N(1)/2)*res(1);%+offset(i);
+ y=([0:N(2)-1]-N(2)/2)*res(2);%+offset(i);
+ z=([0:N(3)-1]-N(3)/2)*res(3);%+offset(i);
  C=get(handles.ViewMenu,'String');
  T=C{get(handles.ViewMenu,'Value')};
  NS = ceil(N*get(handles.slicepos,'Value')+eps);
- 
  switch T
      case 'x-y slice'
          [dummy,i]=min(abs(az-z));
+         length(z)
+         if length(z) > 1 && dummy>res(1); return; end
          S=A(:,:,i)';
          if min(size(S))<2
              disp('sample has no data along these dimensions')
@@ -271,6 +272,7 @@ f=fopen('sample.bin'); A=fread(f,Inf,'double'); fclose(f);
          set(h,'facealpha',.2);
      case 'x-z slice'
          [dummy,i]=min(abs(az-y));
+         if length(y) > 1 && dummy>res(2); return; end
          S=squeeze(A(:,i,:))';
          if min(size(S))<2
              disp('sample has no data along these dimensions')
@@ -283,6 +285,7 @@ f=fopen('sample.bin'); A=fread(f,Inf,'double'); fclose(f);
          set(h,'facealpha',.2);
      case 'y-z slice'
          [dummy,i]=min(abs(az-x));
+         if length(x) > 1 && dummy>res(2); return; end
          S=squeeze(A(i,:,:))';
          if min(size(S))<2
              disp('sample has no data along these dimensions')

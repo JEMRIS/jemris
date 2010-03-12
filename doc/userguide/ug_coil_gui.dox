@@ -8,7 +8,20 @@ the simulation. In case of a transmit coil array, the RF pulses of the MR sequen
 channel is specified, the RF is transmitted via all available channels.
 
 The command "JEMRIS_txrx" opens in Matlab the GUI for coil array configuration.
-As seen below, the GUI is devided in four different panels: 
+\section ug_coil_gui_Menu GUI Menus
+
+\li File Menu \n
+To start, open a new or an existing coil array from the File Menu. The File Menu also contains a submenu "Figure" from which
+the complete GUI window can be exported to a jpeg image. Further, a new standard Matlab figure window containing the sensitivity
+map can be created.
+
+\li Layout Menu \n
+The "Layouts" menu on the top allows easily predefined geometrical arrangement of a number of coils. Currently, only a
+distribution on a cylinder is possible. Using this feature will delete all coils of the current coil array and replace
+them with a new configuration. A distribution on a sphere will be made available soon (after publication of results).
+
+\section ug_coil_gui_Panels GUI Panels
+The GUI is devided in four different panels comprising all functionality:
 \li \ref ug_coil_gui_xml
 \li \ref ug_coil_gui_sens
 \li \ref ug_coil_gui_array
@@ -17,7 +30,6 @@ As seen below, the GUI is devided in four different panels:
 \image html pics/txrx_gui.jpg
 \image latex pics/txrx_gui.eps
 
-To start, open a new or an existing coil array from the file menu. Then, the functionality of each panel is as follows:
 
 \section ug_coil_gui_xml XML File Panel
 On this panel the name of the current XML coil array file is displayed in red. There are two buttons: 
@@ -37,17 +49,15 @@ On this panel the sensitivity map is plotted. Note that the magnitude senstivity
 one within the FOV of the coil (see below for a defintion of the coil FOV). Therefore, the superposition of the sensitivity
 may has values larger than one.
 
-The plot may be exported to a standard Matlab figure window with the sub-menu "Figure" in the "File" menu. 
-
-The display of the sensitivity may be changed with four different selection boxes: 
+The display of the sensitivity can be manipulated with four different selection boxes: 
 
 \li <b>"x-y slice" ["x-z-slice","y-z-slice","3-D"]</b> selects the possible views. The 3D view displays a contour of the
 sensitivty map.
 
 \li <b>"Magnitude" ["Phase","Real","Imaginary"]</b> For complex coil sensitivity maps.
 
-\li <b>"Show Coils" ["Hide Coils"]</b> Plots the name (lable) for each coil at its centre position.  Additionally, an arrow
-points in the direction of the coil (see below for definitoion of the direction). 
+\li <b>"Show Coils" ["Hide Coils"]</b> Plots the name (label) for each coil at its centre position.  Additionally, an arrow
+points in the direction of the coil (see below for definition of the direction). 
 
 \li <b>"Show Sample" ["Hide Sample"]</b> Overlays a transparent view of the sample on the sensitivity map.
 The sample is read from the last generated output of the 
@@ -88,10 +98,10 @@ There are several attributes which are common for all coil types:
 
 \li <b>"Xpos","Ypos","Zpos"</b> Coordinates of the coil centre.
 
-\li <b>"Azimuth","Polar"</b> Orientation ofd the coil. In case of the Biot-Savart loop, the azimuth and polar angle determine the
+\li <b>"Azimuth","Polar"</b> Orientation of the coil. In case of the Biot-Savart loop, the azimuth and polar angle determine the
 direction of the normal vector on the loop. Similar, for the anaytic coil, the angles specify a rotation of the coordinate system:
-first, rotation about the z-axis (azimuth angle), then rotation about the new x-axis (polar angle, or inclination). For the
-external coil these attributes are not used.
+first, rotation of the x-y axes about the z-axis (azimuth angle), then rotation of the z-axis about the new x-axis (polar angle, or inclination).
+For the external coil these attributes are not used.
 
 \li <b>"Scale"</b> A scale factor for the mangitude sensitivity. A change of the scale is directly shown on the sensitivity map.
 
@@ -121,8 +131,8 @@ Finally there are coil attributes specific to the type of the coil:
 
 \li <b>"Radius"</b> The radius of the loop. The unit is [mm].
 
-\li <b>"Mask"</b> A radius around the loop wire, i.e. a torus, within the field is masked to zero in order to surpress the strong
-field very close to the loop. The unit is [mm]. This is useful for visualization purposes.
+\li <b>"Mask"</b> A radius around the loop wire defining a torus within the field is masked to zero in order to surpress the 
+field close to the loop. The unit is [mm]. This is useful for visualization purposes.
 
 \subsection ug_coil_gui_analytic Analytic Coil
 
@@ -139,9 +149,5 @@ The size of the cube is taken from the above grid attributes. Note, that such ex
 the GUI: generate a global matlab variable which is a complex data cube with size matching the specified grid variables.
 Then write the name of the variable to the attribute "Filename". The GUI will automatically construct the necessary binary file.
 
-\section ug_coil_gui_layouts Layout Menu
-The "Layouts" menu on the top allows easily predefined geometrical arrangement of a number of coils. Currently, only a
-distribution on a cylinder is possible. Using this feature will delete all coils of the current coil array and replace
-them with a new configuration. A distribution on a sphere will be implemented soon (after publication of results).
-
+back to \ref toc.
 */

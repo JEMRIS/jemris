@@ -298,7 +298,7 @@ by adding them to the \c<b>ModulePrototypeFactory</b>. Just append the two inclu
 #include "STASpiralGradPulse.h"
 #include "STARFPulse.h"
 
-\end code
+\endcode
 
 Open \c<b>ModulePrototypeFactory.cpp</b> and add the headers of the new modules. 
 And, further, add the object prototypes to the factory by appending the following two lines after the last entry in \c<b>ModulePrototypeFactory::ModulePrototypeFactory</b>: 
@@ -308,7 +308,7 @@ And, further, add the object prototypes to the factory by appending the followin
 ModulePrototypeFactory::ModulePrototypeFactory () {
     ...
     m_Clonables.insert( pair<string,Module*>( "STASPIRALGRADPULSE",  new STASpiralGradPulse  () ));
-	m_Clonables.insert( pair<string,Module*>( "STARFPULSE",          new STARFPulse          () ));
+    m_Clonables.insert( pair<string,Module*>( "STARFPULSE",          new STARFPulse          () ));
 
 }
 
