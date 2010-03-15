@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(JEMRIS, [2.2], k.vahedipour@fz-juelich.de)
+AC_INIT(JEMRIS, [2.3], k.vahedipour@fz-juelich.de)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
@@ -275,6 +275,8 @@ else
   AC_MSG_RESULT([yes])
 fi
 
+case "$host" in
+  *linux*)
 AC_MSG_CHECKING([whether MPI supports threads])
 echo "$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp" >&5
 $MPICXX $CXXFLAGS -o conftest2 conftest2.cpp 2>&5
@@ -285,6 +287,8 @@ else
   AC_DEFINE(HAVE_MPI_THREADS,1,[define that mpi supports threads])
 fi
 rm -f conftest2.*
+;;
+esac
 
 
 ic_mpirun_found=no
