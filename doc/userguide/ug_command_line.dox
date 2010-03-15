@@ -160,15 +160,15 @@ To read the sequence diagram binary file in Matlab:
  f=fopen('seq.bin');
  A=fread(f,Inf,'double');
  fclose(f);
- N              = length(A)/7)';   % the number of TPOIs
- A              = reshape(A,7,N)'; % the sequence diagram in an N times 7 matrix 
- time_axis      = A(:,1);          % 1st column: temporal sampling points 
- receiver_phase = A(:,2);          % 2nd column: Receiver phase; unit: radiants; if negative, the TPOI was not an ADC
- RF_mangitude   = A(:,3);          % 3rd column: RF pulse magnitude
- RF_phase       = A(:,4);          % 4th column: RF pulse phase; unit: radiants
- Grad_x         = A(:,5);          % 5th column: physical X-Gradient
- Grad_y         = A(:,6);          % 6th column: physical X-Gradient
- Grad_z         = A(:,7);          % 7th column: physical X-Gradient
+ N              = length(A)/7;     % the number of TPOIs
+ A              = reshape(A,7,N);  % the sequence diagram in an 7 times N matrix 
+ time_axis      = A(1,:);          % 1st row: temporal sampling points 
+ receiver_phase = A(2,:);          % 2nd row: Receiver phase; unit: radiants; if negative, the TPOI was not an ADC
+ RF_magnitude   = A(3,:);          % 3rd row: RF pulse magnitude
+ RF_phase       = A(4,:);          % 4th row: RF pulse phase; unit: radiants
+ Grad_x         = A(5,:);          % 5th row: physical X-Gradient
+ Grad_y         = A(6,:);          % 6th row: physical Y-Gradient
+ Grad_z         = A(7,:);          % 7th row: physical Z-Gradient
 \endcode
 
 \n
