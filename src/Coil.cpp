@@ -218,6 +218,8 @@ bool Coil::Prepare  (PrepareMode mode) {
     m_polar   *= PI/180.0;
     m_azimuth *= PI/180.0;
     m_interpolate = (m_points>0 && m_extent>0.0);
+    // dimensions with m_points==0 lead to undefined memory access in vaArray.
+    if (m_points==0) m_points=1;
    	m_sens_mag = vaCreate_3d(m_points, m_points, (m_dim==3?m_points:1), double, NULL);
    	m_sens_pha = vaCreate_3d(m_points, m_points, (m_dim==3?m_points:1), double, NULL);
 
