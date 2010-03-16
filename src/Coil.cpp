@@ -23,6 +23,7 @@
 
 #include "Coil.h"
 #include "Model.h"
+#include <complex>
 
 /**********************************************************/
 Coil::~Coil() {
