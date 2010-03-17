@@ -96,7 +96,7 @@ void      AtomicSequence::GetValue (double * dAllVal, double const time) {
     	//special case: apply RF pulse on every transmit coil, if
     	if ( ((Pulse*) children[j])->GetAxis()==AXIS_RF     		&&	// 1.) the pulse is an RF Pulse
     		 ((RFPulse*) children[j])->GetCoilArray()!=NULL 		&&	// 2.) it has a coil array
-    		 ((RFPulse*) children[j])->GetCoilArray()->GetSize()>0  &&	// 3.) the array has multiple coils
+    		 ((RFPulse*) children[j])->GetCoilArray()->GetSize()>1  &&	// 3.) the array has multiple coils
     		 !children[j]->HasDOMattribute("Channel") ) {				// 4.) the RF pulse has no channel explicitly specified
     		for (unsigned k=0; k<((RFPulse*) children[j])->GetCoilArray()->GetSize(); k++) {
     			((RFPulse*) children[j])->SetChannel(k);
