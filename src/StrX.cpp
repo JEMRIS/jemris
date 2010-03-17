@@ -26,7 +26,7 @@
 
 
 /***********************************************************/
-StrX::StrX(const XMLCh* const toTranscode) {
+StrX::StrX(const XMLCh* const toTranscode):brelease2(false),tmp(NULL) {
 	// Call the private transcoding method
 	fLocalForm = XMLString::transcode(toTranscode);
 	if (fLocalForm != NULL)
@@ -35,7 +35,7 @@ StrX::StrX(const XMLCh* const toTranscode) {
 }
 
 /***********************************************************/
-StrX::StrX(const char* toTranscode ) {
+StrX::StrX(const char* toTranscode ):brelease2(false),tmp(NULL) {
 	if (toTranscode != NULL)
 		mString = string(toTranscode) ;
 	else
@@ -45,13 +45,14 @@ StrX::StrX(const char* toTranscode ) {
 }
 
 /***********************************************************/
-StrX::StrX(const string toTranscode ) {
+StrX::StrX(const string toTranscode ):brelease2(false),tmp(NULL) {
     mString = toTranscode;
     brelease = false;
 }
 /***********************************************************/
 StrX::~StrX() {
     if (brelease) XMLString::release(&fLocalForm);
+    if (brelease2) XMLString::release(&tmp);
 }
 
 /***********************************************************/
@@ -65,7 +66,10 @@ const string StrX::std_str() const {
 }
 
 /***********************************************************/
-const XMLCh* StrX::XMLchar() const {
-    return XMLString::transcode(mString.c_str());
+const XMLCh* StrX::XMLchar()  {
+	if (tmp!=NULL) XMLString::release(&tmp);
+	tmp = XMLString::transcode(mString.c_str());
+    brelease2 = true;
+	return tmp;
 }
 

@@ -75,12 +75,16 @@ class StrX {
      *
      * @return Transcoded XMLCh*.
      */
-    const XMLCh* XMLchar() const;
+    const XMLCh* XMLchar() ;
 
 private :
     char*   fLocalForm;
     string  mString;
     bool    brelease;
+
+    XMLCh*  tmp;
+    bool    brelease2;
+
 };
 
 #endif /*STRX_H_*/
