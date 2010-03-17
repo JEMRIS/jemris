@@ -24,6 +24,7 @@
 #include "config.h"
 
 #include "BiotSavartLoop.h"
+#include <complex>
 
 #ifdef HAVE_BOOST
     #include <boost/math/special_functions/ellint_2.hpp>
