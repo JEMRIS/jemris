@@ -381,7 +381,8 @@ void Sample::GetNextPacket(int &NoSpins, int &NextSpinToSend, int ID) {
 		int spinsleft;
 		if (!m_is_restart) {	spinsleft = GetSize() - m_next_spin_to_send;} else {spinsleft=SpinsLeft();}
 		if (m_no_spins_done == 0) {NoSpins = m_min_paket_size;} else {
-			NoSpins = int ( m_no_spins_done / m_total_cpu_time * m_sent_interval);
+			World* pw=World::instance();
+			NoSpins = int ( (m_no_spins_done / m_total_cpu_time) * m_sent_interval * (pw->m_no_processes - 1));
 			// make sample size partly random to avoid syncronisation of slaves:
 			NoSpins += (m_rng.uniform()-0.5)*0.1*NoSpins;
 			//decrease NoSpins towards end of simulation:

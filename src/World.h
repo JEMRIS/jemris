@@ -95,6 +95,7 @@ class World {
 
     int 			  m_myRank;				/**< @brief MPI rank of this process. if m_myRank<0 process is serial jemris */
     bool			  m_useLoadBalancing;	/**< @brief use load balancing (send sample in small packages top slaves) */
+    int				  m_no_processes;		/**< @brief number of parallel processes; used by load balancing */
 
     long			  m_startSpin;			/**< @brief start calculation with this spin ( in case of restart)  */
 

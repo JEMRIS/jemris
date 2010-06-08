@@ -48,6 +48,7 @@ int main (int argc, char *argv[]) {
 	int my_rank = MPI::COMM_WORLD.Get_rank();
 	World* pW = World::instance();
 	pW->m_myRank = my_rank;
+	pW->m_no_processes = MPI::COMM_WORLD.Get_size();
 	int master=0, second=1, tag=42;
 	double t1 = MPI::Wtime();
 

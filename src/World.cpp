@@ -62,8 +62,8 @@ World* World::instance() {
 
         m_instance->m_myRank		  = -1;
         m_instance->m_useLoadBalancing= true;
+        m_instance->m_no_processes	  = 1;  /* default: serial jemris */
         m_instance->m_startSpin		  = 0;
-
     }
 
     return m_instance;
