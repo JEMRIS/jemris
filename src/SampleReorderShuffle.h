@@ -1,5 +1,5 @@
-/*
- * SampleReorderShuffle.h
+/** @file SampleReorderShuffle.h
+ * @brief Implementation of JEMRIS SampleReorderShuffle
  *
  *  Created on: Jan 11, 2010
  *      Author: dpflug
@@ -10,6 +10,9 @@
 
 #include "SampleReorderStrategyInterface.h"
 
+/**
+ * @brief shuffles the order in which spins are simulated.
+ */
 class SampleReorderShuffle: public SampleReorderStrategyInterface {
 public:
 	SampleReorderShuffle();

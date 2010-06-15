@@ -1,5 +1,5 @@
-/*
- * DynamicVariables.h
+/** @file DynamicVariables.h
+ * @brief Implementation of JEMRIS DynamicVariables
  *
  *  Created on: Dec 4, 2009
  *      Author: dpflug
@@ -23,7 +23,10 @@ struct Circle{
 	double z;
 	double r;
 };
-
+/**
+ * @brief Instance class holding dynamic sample properties
+ *
+ */
 class DynamicVariables {
 
  public:
@@ -38,8 +41,15 @@ class DynamicVariables {
      */
     static DynamicVariables*  instance      ();
 
+    /**
+     * @brief set appropriate strategy for current spin (active/non_active)
+     */
     void SetActivation();
 
+    /**
+     * @brief spins within this circle are simulated with time-varying T2/T2s.
+     * as many active circles as needed may be added.
+     */
     void AddActiveCircle(double pos[3],double radius);
 
     Trajectory* m_Motion;

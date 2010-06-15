@@ -1,5 +1,5 @@
-/*
- * TrajectoryMotion.h
+/** @file TrajectoryMotion.h
+ * @brief Implementation of TrajectoryMotion
  *
  *  Created on: Dec 4, 2009
  *      Author: dpflug
@@ -10,6 +10,9 @@
 
 #include "TrajectoryInterface.h"
 
+/**
+ * @brief Motion Trajectory
+ */
 class TrajectoryMotion : public TrajectoryInterface {
 public:
 	TrajectoryMotion();

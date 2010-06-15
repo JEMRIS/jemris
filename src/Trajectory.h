@@ -1,5 +1,5 @@
-/*
- * Trajectory.h
+/** @file Trajectory.h
+ * @brief Implementation of JEMRIS Trajectory
  *
  *  Created on: Feb 27, 2009
  *      Author: dpflug
@@ -13,8 +13,8 @@ using namespace std;
 class TrajectoryInterface;
 
 
-/*
- * Context class for trajectories (design pattern: Strategy)
+/**
+ * @brief Context class for trajectories (design pattern: Strategy)
  */
 class Trajectory {
 private:

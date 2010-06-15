@@ -1,5 +1,5 @@
-/*
- * Mpi2Evolution.h
+/** @file Mpi2Evolution.h
+ * @brief Implementation of JEMRIS Mpi2Evolution
  *
  *  Created on: Jan 13, 2010
  *      Author: dpflug
@@ -13,7 +13,9 @@
 
 using namespace std;
 
-
+/**
+ * @brief pure virtual class; provides methods to write evolution file using parallel I/O
+ */
 
 class Mpi2Evolution {
 public:

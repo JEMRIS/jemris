@@ -1,5 +1,5 @@
-/*
- * Trajectory1D.h
+/** @file Trajectory1D.h
+ * @brief Implementation of JEMRIS Trajectory1D
  *
  *  Created on: Dec 7, 2009
  *      Author: dpflug
@@ -10,6 +10,9 @@
 
 #include "TrajectoryInterface.h"
 
+/**
+ * @brief one-dimensional Trajectory
+ */
 class Trajectory1D: public TrajectoryInterface {
 public:
 	Trajectory1D();

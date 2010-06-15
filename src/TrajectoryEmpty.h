@@ -1,5 +1,5 @@
-/*
- * TrajectoryEmpty.h
+/** @file TrajectoryEmpty.h
+ * @brief Implementation of JEMRIS TrajectoryEmpty
  *
  *  Created on: Dec 7, 2009
  *      Author: dpflug
@@ -10,6 +10,9 @@
 
 #include "TrajectoryInterface.h"
 
+/**
+ * @brief The "do nothing"-strategy.
+ */
 class TrajectoryEmpty: public TrajectoryInterface {
 public:
 	TrajectoryEmpty(){};
