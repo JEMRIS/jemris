@@ -21,7 +21,7 @@ Sections:
 \section ug_JEMRIS_seq_treestruct The Sequence tree concept
 
 The MRI sequence is specified utilizing a tree structure. As a simple
-example, the EPI sequence below is eqivalently described by left-right ordered
+example, the EPI sequence below is equivalently described by left-right ordered
 tree structure. This  is very suitable and efficient for computer-aided design
 and access of the pulse sequence: The MRI simulator JEMRIS utilizes such a tree
 structure to represent the MRI sequence. The MatLab tool JEMRIS_seq is used to
@@ -74,7 +74,7 @@ correct k-space position encoding for gradient echo and spin echo sequences.
 trajectory" </b> flag: it draws the k-space trajectory. Once it is
 drawn, it is possible to further add the ADC events to this plot by
 another check box or have a look at the travelling order by the
-activation of the <b>''Continous''</b> flag.
+activation of the <b>''Continuous''</b> flag.
 \image html pics/epi_jemksp_screenshot.png 
 \image latex pics/epi_jemksp_screenshot.eps 
 
@@ -186,7 +186,7 @@ All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pu
          	<li> \c "TPOIs" A number of time points at which the value is evaluated (but no signal acquired, as specified by the ADCs) 
          	<li> \c "Diff" If set to 1, then the actual pulse shape is defined by the first derivative of the analytic expression.
 			In this case, the flip angle is set via the analytic expression rather than numerical integration.
-         	<li> \c "Constants" A comma-sparated list of floating point numbers, which may be used as variables \c "c1,c2,..."
+         	<li> \c "Constants" A comma-separated list of floating point numbers, which may be used as variables \c "c1,c2,..."
                                     in the Shape expression.
 	 </ol>
 
@@ -212,7 +212,7 @@ Next, there exist several <b> Gradient Pulse Modules</b> in JEMRIS:
 
 <ul> 
 	<li> <b> \c TrapGradPulse</b>: A trapezoidal-shaped gradient pulse, which is the by far most used gradient
-		pulse in JEMRIS. If no duration is specified, the pulse prepares in shortest possbile time according
+		pulse in JEMRIS. If no duration is specified, the pulse prepares in shortest possible time according
 		to the hardware limits.
 		\image html pics/ug_trapgrad.jpg
 		\image latex pics/ug_trapgrad.eps
@@ -242,16 +242,16 @@ Next, there exist several <b> Gradient Pulse Modules</b> in JEMRIS:
 		\n Finally, the TrapGradPulse has several hidden attributes which may provide important information to other
 		modules: \c "Amplitude", \c "RampUpTime", \c "RampDnTime", "EndOfFlatTop". 
 
-	<li> <b> \c SpiralGradientPulse</b>: A priliminary very simple spiral gradient, only intended for usage on 
+	<li> <b> \c SpiralGradientPulse</b>: A preliminary very simple spiral gradient, only intended for usage on 
                 the \c "GX" and the \c "GY" axis. It has two attributes, \c "pitch" and \c "alpha" for scaling and
-		spiral denisity, respecitvely. 
+		spiral density, respectively. 
 
 	<li> <b> \c AnalyticGradientPulse</b>: An arbitrary gradient pulse specified through an analytic expression.
 		It has similar functionality as the AnalyticRFPulse. By setting the attribute \c "Diff=1", the attribute
 		\c Shape directly allows specification of the k-space trajectory.
 
 	<li> <b> \c ExternalGradientPulse</b>: An arbitrary Gradient pulse specified through an external binary file,
-		again simliar to the denition of the ExternalRFPulse. Here, a binary file of doubles
+		again similar to the definition of the ExternalRFPulse. Here, a binary file of doubles
 		\f$(N,t_1,G_1,t_2,G_2,...,t_N,G_N)\f$ specify the time-points \f$t_i\f$ and gradient-values \f$G_i\f$ of the pulse.
 		\n
 		Note, that such external binary files are easily constructed by the GUI: generate a global matlab variable
@@ -328,7 +328,7 @@ Several predefined mathematical expressions may be used:
 	<TR> <TD> ite(x,y,a,b)  </TD> <TD> returns a, if x equals y, otherwise returns b 	</TD> </TR>
 </TABLE>
 
-There are further, less comonly used, mathematical functions. Please check the <a
+There are further, less commonly used, mathematical functions. Please check the <a
 href="http://www.ginac.de/tutorial"> GiNaC documentation </a>.
 
 

@@ -22,10 +22,10 @@ Let us load our EPI sequence, \c <b>MyEPI</b>:
 \li Click on \c <b>Open</b>.
 
 The simulation GUI indicates the chosen sequence in red letters at the
-top left: \c <b>Seqeunce: MyEPI.xml</b>. Should you have succeeded in
+top left: \c <b>Sequence: MyEPI.xml</b>. Should you have succeeded in
 building the multi processor simulator, \c <b>pjemris</b>, you may now
 choose to setup the simulation for execution with mpirun. Otherwise
-jump over the next intruction block.
+jump over the next instruction block.
 
 \li Click in the menubar on \c <b>Settings | Computation | localhost (parallel)</b>.
 
@@ -47,7 +47,7 @@ above experimental setup:
 You are also prompted with some information in the text field at the
 top right, titled \c <b>simulation message dump</b>. These are in
 order from top to bottom the applied physical model, the simulated
-sample, the transmit and recieve coils, the aggregated sequence, and
+sample, the transmit and receive coils, the aggregated sequence, and
 some further information regarding computation time, number of
 simulated isoschromats etc.
 

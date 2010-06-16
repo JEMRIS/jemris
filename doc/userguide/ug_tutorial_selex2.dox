@@ -5,8 +5,8 @@
 Let us now consider extending the framework to achieve the same
 results. One may ask why this could be of any interest. First of all,
 the symbolic math toolbox requires additional computation
-power. The implementation of the nessecary code in the simulator
-framwork speeds up the simualtion process dramatically.
+power. The implementation of the necessary code in the simulator
+framework speeds up the simulation process dramatically.
 
 The workflow will involve the creation of two new classes one for the
 RF pulse and one for the gradient pulses.
@@ -43,10 +43,10 @@ class STARFPulse : public RFPulse {
     // Default destructor.
     ~STARFPulse () {};
 
-    // Cloning mechanism as descibed by Gamma et al "Design patterns"
+    // Cloning mechanism as described by Gamma et al "Design patterns"
     inline STARFPulse* Clone() const { return (new STARFPulse(*this)); };
 
-    // Prepare the pulse with nessecary parameters.
+    // Prepare the pulse with necessary parameters.
     //
     // param mode. Sets the preparation mode, one of enum PrepareMode 
     //             {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
@@ -83,7 +83,7 @@ GetMagnitude function implementation will do the calculation of the
 pulse during runtime.
 
 The rest of the object declaration is similar for any newly added
-framework element inherting from the virtual implementation RFPulse.
+framework element inheriting from the virtual implementation RFPulse.
 
 Let us now have a look at the implementation. Add
 \c<b>STARFPulse.cpp</b> to the framework directory with the following
@@ -98,7 +98,7 @@ bool STARFPulse::Prepare  (PrepareMode mode) {
     bool btag = true;
 
     // Every attribute, which needs to be set with values before the simulation starts
-    // needs to be declared to the framework's attribute decalaration and observation 
+    // needs to be declared to the framework's attribute declaration and observation 
     // mechanism. With the macro ATTRIBUTE("ATTRIBUTE_NAME", &m_attribute_name);
 
     ATTRIBUTE("Gamma", &m_Gamma);
@@ -112,7 +112,7 @@ bool STARFPulse::Prepare  (PrepareMode mode) {
 
         // XML error checking
         // This mechanism supplies the functionality for checking for proper
-        // decalartion of sequence modules at runtime.
+        // declaration of sequence modules at runtime.
 
         if (!HasDOMattribute("Gamma"))    {
             btag = false;

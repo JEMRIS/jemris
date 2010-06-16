@@ -21,7 +21,7 @@ Remarks:
     the above reference for more information.
 \li As some simulation parameters of the original examples mysteriously disappeared, the
     results slightly differ to the paper, however, qualitatively they show the same artifact properties.
-    Results look nicer, if the spin densitiy ({dx,dy}) is increased on the simulation GUI. See examples below and 
+    Results look nicer, if the spin density ({dx,dy}) is increased on the simulation GUI. See examples below and 
     choose values which are acceptable for your hardware.
 
 \n
@@ -60,7 +60,7 @@ This is the resulting XML code:
 \endcode
 
 
-Now start the matlab simultion GUI and change to the "brain sample"; choose "slice" 45 to get a lower slice in which
+Now start the matlab simulation GUI and change to the "brain sample"; choose "slice" 45 to get a lower slice in which
 more fat is present. Further, choose T2*=0 in order to neglect local spin dephasing.
 Running the simulation then yields the expected result:
 
@@ -82,7 +82,7 @@ your favorite working directory and modify it in the following way:
 \li change TE=10 and TR=500, also in the PARAMETER node
 \li The GRE sequence came without a phase encode rewinder: to get one, copy the modified pulse P5 to a new pulse, name it P6, change its Axis to "GY", 
     change the second "Observe" argument from "P4,Area" to "P3,Area", and change the Area to "-a1".
-\li use nonlinear gradients with a small cubic term for the reaout gradient (PULSE node P3): NLG_field="G*X+0.0001*X^3".
+\li use nonlinear gradients with a small cubic term for the readout gradient (PULSE node P3): NLG_field="G*X+0.0001*X^3".
 
 
 This is the resulting XML code:
@@ -118,14 +118,14 @@ Run the simulation with the default brain slice:
 \n
 
 \section ug_ex_artifacts_band_trufi Banding artifacts in a trueFISP sequence
-Save the gradient echo sequence of the provious example to the new file "trufi.xml" and remove the NLG_field attribute of the readout gradient pulse (P4). To change it into a
+Save the gradient echo sequence of the previous example to the new file "trufi.xml" and remove the NLG_field attribute of the readout gradient pulse (P4). To change it into a
 trueFISP sequence (fully balanced SSFP) several steps are needed:
 \li Shift and revert the dephaser gradient (PULSE P5): change the second "Observe" argument from "P4,EndOfFlatTop" to "P4,Duration" (then the pulse starts
-after the readourt gradient) and change the sign of the "Area" Attribute.
+after the readout gradient) and change the sign of the "Area" Attribute.
 \li To have an alternating RF phase, let the RF pulse P1 observe the loop counter, i.e. Observe="C,Counter", and change the InitialPhase to "90+90*(-1)^a1".
     You may also want to increase FlipAngle to 70 degree.
 \li Set Phaselock to "1" in the readout gradient P4 to ensure a rotated acquisition according to the RF pulse phase.
-\li To reach ther steady state, prepend another loop consisting of only the RF pulse and the TR delay (most easy to achieve with copying objects).
+\li To reach their steady state, prepend another loop consisting of only the RF pulse and the TR delay (most easy to achieve with copying objects).
 
 Further, we modified TE,TR, and the readout length to manipulate the banding artifacts. The final XML file is:
 
@@ -161,8 +161,8 @@ Further, we modified TE,TR, and the readout length to manipulate the banding art
 
 Test if the sequence diagram and k-space trajectory looks as expected.
 
-Then, use the same lower slice as in the first example, turn off CS and turn on suceptibility at 127 MHz (3 Tesla).
-The simualtion result looks like this:
+Then, use the same lower slice as in the first example, turn off CS and turn on susceptibility at 127 MHz (3 Tesla).
+The simulation result looks like this:
 
 \image html pics/ex_art_band_trufi.jpg 
 \image latex pics/ex_art_band_trufi.eps width=12cm
@@ -170,7 +170,7 @@ The simualtion result looks like this:
 \n
 
 \section ug_ex_artifacts_long_se Artifacts arising from a long refocusing pulse in a spin echo sequence
-As with tyhe previous example, it takes only a few steps to convert the GRE sequence into a spin echo sequence.
+As with the previous example, it takes only a few steps to convert the GRE sequence into a spin echo sequence.
 Here, just the result is shown:
 
 \code

@@ -31,7 +31,7 @@ MPICH is developed at the Mathematical and Computer Science division
 of the Argonne Laboratories. 
 
 You may download and compile MPICH for C++ and C. Good luck here;
-The MPICH configuration steps prior to compilation ar rather not
+The MPICH configuration steps prior to compilation are rather not
 trivial. If you use a ubuntu flavor once again the installation is very
 simple: 
 
@@ -53,7 +53,7 @@ coils.
 
 Download the jemris package from [http://www.jemris.org/jemris/jemris-2.2.tar.gz]
 
-The unpacked tar ball. JEMRIS is built in a similiar way as many open
+The unpacked tar ball. JEMRIS is built in a similar way as many open
 source software packages..
 
 \li \c <b>"# cd jemris-2.2"</b>

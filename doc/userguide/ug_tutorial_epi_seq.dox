@@ -25,16 +25,16 @@ MATLAB runtime
 \image latex pics/jemris_sequence.png
 
 We will now start to model an EPI sequence with the following
- protocol: TE 50ms, TR 100ms, FA 90, Imaging matrix 64x64, Maxmum
+ protocol: TE 50ms, TR 100ms, FA 90, Imaging matrix 64x64, Maximum
  gradient amplitude 40 mT/m, Maximum slewrate 200 mT/m, and FOV
  100x100.
 
-\li From the File drop down menue choose "New sequence".
+\li From the File drop down menu choose "New sequence".
 \li As <b>Filename</b> choose \c <b>MyEPI.xml</b> and save.
 
 You will now see the minimum requirements for a sequence. The <b>top
  node</b> (outer most loop) of the sequence, \c <b>C1</b>, short
-  ConcatSequence1, and the <b>paramters</b>, \c <b>P</b>. Let us start
+  ConcatSequence1, and the <b>parameters</b>, \c <b>P</b>. Let us start
  with the parameters. The <b>parameters</b> hold information valid for
  the whole sequence. These include in order from top left to bottom
  right: <b>name</b>, <b>FOV in x, y, and z direction</b>,<b>maximum
@@ -57,7 +57,7 @@ Let us now model the sequence.
 Since we do not loop over more than one slices you do not need to
 change any of the parameters of \c <b>Sli</b>.
 
-We want to start with inserting the excitation puls. Pulses, which
+We want to start with inserting the excitation pulse. Pulses, which
 are played out simultaneously are contained in <b>atomic
 sequences</b>. 
 
@@ -97,7 +97,7 @@ the \c <b>Exc</b> atom.
 \li Select from the symbol bar the symbol for atomic sequences.
 \li Click on \c <b>Sli</b> to insert the atom after \c <b>Exc</b>.
 \li Change its name to \c <b>Dph</b> for dephasers.
-\li Choose from the symbol bar the symbol for trapeziodal gradients.
+\li Choose from the symbol bar the symbol for trapezoidal gradients.
 \li Click on \c <b>Dph</b> to insert it therein.
 \li Change its name to \c <b>RDp</b> for read dephaser.
 \li Repeat the last three steps for the phase encoding
@@ -107,7 +107,7 @@ dephaser.
 
 The areas for the dephasing gradients can not be set yet, since we
 have to prepare the actual readout and phase encoding gradients first.
-But first we need to introduct a dead time to match the center of the
+But first we need to introduce a dead time to match the center of the
 EPI readout with \c <b>TE</b> from the parameters.
 
 \li Choose the symbol for a delay atomic sequence from the module bar.
@@ -132,7 +132,7 @@ We would like to observe \c <b>TE</b> from \c <b>P</b>. We inform \c
 
 \li Set \c <b>Observe</b> to  <b>\c P,\c TE</b>
 
-You will find a short introduction to the concept of observing attibutes here: \ref ug_JEMRIS_seq_ginac_obs.
+You will find a short introduction to the concept of observing attributes here: \ref ug_JEMRIS_seq_ginac_obs.
 Now we can use this new <b>attribute</b> known to the module as \c <b>a1</b>.
 
 \li Set the \c <b>Delay</b> to <b>\c a1</b>.
@@ -172,7 +172,7 @@ above, as <b>\c a1</b>.
 For defining the flat top of <b>\c ROG</b> we have to know the maximum
 k-space vector in readout direction and the number of the line, which
 is acquired. We introduce these two attributes to <b>\c
-Observe</b>. Observed values are seperated by <b>\c /</b> (slash).
+Observe</b>. Observed values are separated by <b>\c /</b> (slash).
 
 \li Append to <b>\c Observe</b> the following string: <b>\c
 "/P,KMAXx/ERL,Counter"</b>
@@ -189,7 +189,7 @@ to calculate the <b>\c FlatTopArea</b> by the evaluation of a symbolic
 formula.
 
 Let us define the <b>\c Area</b> of the PE blips, <b>\c PEG</b>. This is a very
-simple assignement. The area will be the size of the phase encoding
+simple assignment. The area will be the size of the phase encoding
 steps in <b>\c Ky</b> direction.
 
 \li Set <b>\c Observe</b> to <b>\c P,DKy</b>.
@@ -239,7 +239,7 @@ Click now on the check box \c <b>Sequence Diagram</b> at the top to see the curr
 \image html pics/jemris_sequence_5.png
 \image latex pics/jemris_sequence_5.png
 
-Click now on the check boxes \c <b>k-space trajecory</b> and \c <b>continuous</b> to verify the sampling pattern and time evolution from \c <b>early</b> to \c <b>late</b>.
+Click now on the check boxes \c <b>k-space trajectory</b> and \c <b>continuous</b> to verify the sampling pattern and time evolution from \c <b>early</b> to \c <b>late</b>.
 
 \image html pics/jemris_sequence_6.png
 \image latex pics/jemris_sequence_6.png

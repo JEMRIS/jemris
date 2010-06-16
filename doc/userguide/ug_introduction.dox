@@ -4,7 +4,7 @@
 * \page ug_intro Introduction
 
 \n
-This manual intends to give a hands-on introduction to JEMRIS. A comprehensive software manual does not yet exist. Every user is wellcome to start writing.
+This manual intends to give a hands-on introduction to JEMRIS. A comprehensive software manual does not yet exist. Every user is welcome to start writing.
 
 \n
 \section ug_intro_summary Summary
@@ -35,7 +35,7 @@ Here, the MRI sequence returns values of all pulse axes (RF magnitudes and phase
 at desired time points to the physical model which numerically solves the Bloch equation individually for each spin.
 The coil array receives and sums the net signal at every desired time point, which is sent back to the master process
 where finally the bulk signal is summed and stored. Read <a href="ug_command_line.html"> this chapter </a>, if you prefer
-directly running the main execucatbles from the command line.
+directly running the main executables from the command line.
 
 \subsection ug_intro_gui Graphical User Interfaces
 Our experience showed that acceptance of the software is increased if a GUI is provided, and data I/O is supported from Matlab
@@ -53,10 +53,10 @@ as well as the possibility for the input of a user-defined sample.
 JEMRIS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY. See the
  <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a> for more details.
 
-Feedback and bug reports are very wellcome. See <a href="http://www.jemris.org">www.jemris.org</a> to contact the authors.  
+Feedback and bug reports are very welcome. See <a href="http://www.jemris.org">www.jemris.org</a> to contact the authors.  
 It should be noted that the Matlab GUIs are preliminary. They are stable enough to serve as good starting tools.
 However, this part of the software might be changed in a later version. Bug reports and feature wishes concerning the GUIs are
-also very wellcome also any reaction might be shifted to the next major release of JEMRIS.
+also very welcome also any reaction might be shifted to the next major release of JEMRIS.
 \n
 \n
 \n
