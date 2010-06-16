@@ -4,8 +4,8 @@ function Nimg=plotsim(handles,WHAT)
 %
 
 %
-%  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
-%                                  Forschungszentrum Jülich, Germany
+%  JEMRIS Copyright (C) 2007-2010  Tony St??cker, Kaveh Vahedipour
+%                                  Forschungszentrum J??lich, Germany
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -47,10 +47,48 @@ end
 if WHAT~=1
  t=[];M=[];I=[];
  for i=1:length(handles.rxca)
-   f=fopen(sprintf('signal%02d.bin',i)); A=fread(f,Inf,'double','l');fclose(f);
-   n=size(A,1)/4; A=reshape(A,4,n)';ti=A(:,1);[ti,J]=sort(ti);Mi(:,:,i)=A(J,2:4);
-   d=diff(diff(ti));d(d<1e-5)=0;Ii=[0;find(d)+1;length(ti)];
-   t=[t;ti];M=[M;Mi];I=[I;Ii];
+   channel=handles.channel;
+   if channel>0
+       f=fopen(sprintf('signal%02d.bin',channel)); A=fread(f,Inf,'double','l');fclose(f);
+       n=size(A,1)/4; A=reshape(A,4,n)';ti=A(:,1);[ti,J]=sort(ti);Mi(:,:,i)=A(J,2:4);
+       d=diff(diff(ti));d(d<1e-5)=0;Ii=[0;find(d)+1;length(ti)];
+       t=[t;ti];M=[M;Mi];I=[I;Ii];
+   else
+     if WHAT~=5; display('ups.'), return;end;
+     % plot SumofSquares; only possible with mag images.
+     FS=0; 
+     for k=1:abs(channel)
+       t=[];M=[];I=[];
+       f=fopen(sprintf('signal%02d.bin',k)); A=fread(f,Inf,'double','l');fclose(f);
+       n=size(A,1)/4; A=reshape(A,4,n)';ti=A(:,1);[ti,J]=sort(ti);Mi(:,:,i)=A(J,2:4);
+       d=diff(diff(ti));d(d<1e-5)=0;Ii=[0;find(d)+1;length(ti)];
+       t=[t;ti];M=[M;Mi];I=[I;Ii];
+%copy + paste from single channel:       
+      S=[];
+      for ik=1:length(I)-1
+       J=[I(ik)+1:I(ik+1)]';%[i length(J)]
+       if (ik>1 && ~isequal(size(J),size(S(:,1))) ),disp('error ... not an imaging sequence'),return,end
+       S(:,ik)=M(J,1)+sqrt(-1)*M(J,2);
+      end
+      %check for multiple images
+      if ( size(S,2)>size(S,1) && mod(size(S,2),size(S,1)) == 0  ) 
+          Nimg = size(S,2)/size(S,1);
+          S=reshape(S,size(S,1),size(S,1),Nimg);
+          S=S(:,:,handles.img_num);
+      end
+      if handles.epil
+       S(:,1:2:end)=flipud(S(:,1:2:end));
+      end
+      FS=FS+abs(fliplr(fft2(ifftshift(S')))).^2;
+%end copy+paste from single channel
+     end
+     imagesc(fftshift(sqrt(FS)/abs(channel)))
+       axis image,set(gca,'xtick',[],'ytick',[])
+       xlabel('Readout (Freq. Enc.)','fontsize',12,'fontweight','bold')
+       ylabel('Phase Encode','fontsize',12,'fontweight','bold')
+       title('Sum of magnitude square image','fontsize',12,'fontweight','bold');
+    return;
+   end
  end
 end
 
