@@ -10,12 +10,12 @@
 
 using namespace std;
 #include <vector>
+#include "Trajectory.h"
 
 class TrajectoryMotion;
 class TrajectoryT2s;
 class Trajectory1D;
 class TrajectoryEmpty;
-class Trajectory;
 
 struct Circle{
 	double x;

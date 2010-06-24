@@ -23,7 +23,6 @@
 
 #include "Bloch_CV_Model.h"
 #include "DynamicVariables.h"
-#include "Trajectory.h"
 
 /**********************************************************/
 static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {

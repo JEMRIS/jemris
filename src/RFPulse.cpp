@@ -84,8 +84,9 @@ void RFPulse::GetValue (double * dAllVal, double const time) {
 		Coil* coil=m_coil_array->GetCoil(m_channel);
 
 		if (coil != NULL) {
-			magn  = coil->GetSensitivity();
-			phase = coil->GetPhase();
+			World* pw=World::instance();
+			magn  = coil->GetSensitivity(pw->total_time + time);
+			phase = coil->GetPhase(pw->total_time + time);
 		}
 		else
 			cout << GetName() << " warning: my channel" << m_channel << "is not in the TxCoilArray\n";

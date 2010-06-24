@@ -47,14 +47,14 @@ class Coil : public Prototype {
      *
 	 * @return          Sensitivity with respect to spin in World
      */
-    double  GetSensitivity () ;
+    double  GetSensitivity (double time=0) ;
 
     /**
      * @brief Get the B1+ phase at point (x,y,z) of the current spin
      *
 	 * @return          Phase with respect to spin in World
      */
-    double  GetPhase () ;
+    double  GetPhase (double time=0) ;
 
     /**
      * @brief Interpolate the sensitivity at point (x,y,z)

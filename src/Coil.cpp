@@ -23,6 +23,7 @@
 
 #include "Coil.h"
 #include "Model.h"
+#include "DynamicVariables.h"
 #include <complex>
 
 /**********************************************************/
@@ -65,13 +66,16 @@ void Coil::Receive (long lADC) {
 
     m_signal->repository.tp[lADC]  = m_world->time;
 
-    m_signal->repository.mx[lADC] +=  GetSensitivity()
-        * m_world->solution[AMPL]* cos (- m_world->phase + GetPhase() + m_world->solution[PHASE]);
+    double sens  = GetSensitivity(m_signal->repository.tp[lADC]);
+    double phase = GetPhase(m_signal->repository.tp[lADC]);
 
-    m_signal->repository.my[lADC] +=  GetSensitivity()
-		* m_world->solution[AMPL]* sin (- m_world->phase + GetPhase() + m_world->solution[PHASE]);
+    m_signal->repository.mx[lADC] +=  sens
+        * m_world->solution[AMPL]* cos (- m_world->phase + phase + m_world->solution[PHASE]);
 
-    m_signal->repository.mz[lADC] += GetSensitivity()
+    m_signal->repository.my[lADC] +=  sens
+		* m_world->solution[AMPL]* sin (- m_world->phase + phase + m_world->solution[PHASE]);
+
+    m_signal->repository.mz[lADC] += sens
 		* m_world->solution[ZC];
 
 }
@@ -114,26 +118,36 @@ void Coil::DumpSensMap (string fname) {
 }
 
 /**********************************************************/
-double  Coil::GetPhase () {
+double  Coil::GetPhase (double time) {
 
 	if (!m_complex) return m_phase;
 
-	if (m_interpolate) {
-		return m_phase + InterpolateSensitivity(m_world->Values,false);
+    double position[3];
+    position[0]=m_world->Values[XC];position[1]=m_world->Values[YC];position[2]=m_world->Values[ZC];
+    DynamicVariables* dv = DynamicVariables::instance();
+    dv->m_Motion->GetValue(time,position);
+
+    if (m_interpolate) {
+		return m_phase + InterpolateSensitivity(position,false);
 	}
 	else {
-		return m_phase + GetPhase(m_world->Values);
+		return m_phase + GetPhase(position);
 	}
 }
 
 /**********************************************************/
-double  Coil::GetSensitivity () {
+double  Coil::GetSensitivity (double time) {
+
+    double position[3];
+    position[0]=m_world->Values[XC];position[1]=m_world->Values[YC];position[2]=m_world->Values[ZC];
+    DynamicVariables* dv = DynamicVariables::instance();
+    dv->m_Motion->GetValue(time,position);
 
 	if (m_interpolate) {
-		return m_norm*m_scale*InterpolateSensitivity(m_world->Values);
+		return m_norm*m_scale*InterpolateSensitivity(position);
 	}
 	else {
-		return m_norm*m_scale*GetSensitivity(m_world->Values);
+		return m_norm*m_scale*GetSensitivity(position);
 	}
 }
 
