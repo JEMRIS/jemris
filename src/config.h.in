@@ -38,6 +38,9 @@
 /* Define to 1 if you have the <cvode.h> header file. */
 #undef HAVE_CVODE_H
 
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
 /* Define to 1 if you have the `floor' function. */
 #undef HAVE_FLOOR
 
@@ -142,6 +145,10 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
 /* Name of package */
 #undef PACKAGE
 
@@ -208,15 +215,6 @@
 /* Define to rpl_malloc if the replacement function should be used. */
 #undef malloc
 
-/* Define to the equivalent of the C99 'restrict' keyword, or to
-   nothing if this is not supported.  Do not define if restrict is
-   supported directly.  */
+/* Define to equivalent of C99 restrict keyword, or to nothing if this is not
+   supported. Do not define if restrict is supported directly. */
 #undef restrict
-/* Work around a bug in Sun C++: it does not support _Restrict, even
-   though the corresponding Sun C compiler does, which causes
-   "#define restrict _Restrict" in the previous line.  Perhaps some future
-   version of Sun C++ will work with _Restrict; if so, it'll probably
-   define __RESTRICT, just as Sun C does.  */
-#if defined __SUNPRO_CC && !defined __RESTRICT
-# define _Restrict
-#endif

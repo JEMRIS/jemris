@@ -8,8 +8,9 @@ AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
 define([svnversion], esyscmd([sh -c "svnversion|tr -d '\n'"]))dnl
 AC_DEFINE(SVN_REVISION, "svnversion", [SVN Revision])
+AC_CONFIG_MACRO_DIR([m4])
 
-
+# C++ project
 AC_LANG(C++)
 
 # Check standard headers
@@ -21,6 +22,7 @@ AC_CANONICAL_HOST
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
+AC_PROG_LIBTOOL
 
 # Check for required headers.
 AC_CHECK_HEADERS([cstdlib],                                   [], [AC_MSG_ERROR([cannot find cstdlib, bailing out])])

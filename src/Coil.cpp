@@ -108,7 +108,6 @@ void Coil::DumpSensMap (string fname) {
                 if (pha != 0.0) m_complex = true;
                 m_sens_pha[i][j][k] = pha;
                 if (fname != "") fout.write((char*)(&(pha)), sizeof(pha));
-				//cout << "i: " << i << ", j: " << j << ", k: " << k << " --- " << m_sens_map[i][j][k] << endl;
             }
         }
     }
