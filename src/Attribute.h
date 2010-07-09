@@ -142,7 +142,7 @@ class Attribute {
     /**
      * @brief  Get the number of symbolic differentiations of the attribute's expression.
      *
-     * @param val The order of the derrivative
+     * @return The order of the derivative
      */
     int GetDiff()    { return m_diff; }
 
@@ -154,7 +154,7 @@ class Attribute {
     double GetImaginary()    { return m_imaginary; }
 
     /**
-     * @brief Check, if this attribute's evaluation is comples.
+     * @brief Check, if this attribute's evaluation is complex.
      *
      * @return true/false
      */
@@ -163,7 +163,7 @@ class Attribute {
     /**
      * @brief  Set the number of symbolic differentiations of the attribute's expression.
      *
-     * @param val The order of the derrivative
+     * @param val The order of the derivative
      */
     void SetDiff(int val=0, string sym="diff")    { m_diff = val; m_sym_diff = sym; }
 
@@ -230,12 +230,15 @@ class Attribute {
      * @brief Evaluate the compiled GiNaC expression of this attribute
      *
      * At first call, performs runtime compilation of the GiNaC expression.
-     * Then, compiled function evaluation is returned.
-     * It is NOT written to the Prototype's private member represented by this attribute.
-     * Attributes observing this attribute are NOT notified.
+     * Then, compiled function evaluation is returned. Runtime compilation
+     * is repeated, if the expression changes according to notification of
+     * observed attributes in the expression.
      * Attention:
-     *   a) Only to be used for attributes of type double.
-     *   b) Falls back to slow analytic evaluation, if external compilation fails.
+     *   1) Only to be used for attributes of type double.
+     *   2) The evaluation is NOT written to the Prototype's private member
+     *      represented by this attribute.
+     *   3) Attributes observing this attribute are NOT notified.
+     *   4) Falls back to slow analytic evaluation, if external compilation fails.
      *
      * @param val		function input value
      * @param attrib	attribute representing the function input value
@@ -248,13 +251,28 @@ class Attribute {
      */
     bool	HasGinacExCompiler(){return	m_ginac_excomp;};
 
+    /**
+     * @brief  Return the total number of function pointers.
+     */
     int		GetNumberFunctionPointers(){return m_num_fp;};
 
-    int		GetCurrentFunctionPointer  (){ 	return m_cur_fp;										};
-    void	ResetCurrentFunctionPointer(){  m_cur_fp=0; 											};
-    void	StepCurrentFunctionPointer (){	m_cur_fp = (m_cur_fp+1>m_num_fp)?m_num_fp:m_cur_fp+1;	};
+    /**
+     * @brief Return the counter to the current function pointer.
+     */
+    int		GetCurrentFunctionPointer  (){ 	return m_cur_fp; };
 
-    /* pure template Functions need header implementation */
+    /**
+     * @brief Set the counter to the current function pointer to zero.
+     */
+    void	ResetCurrentFunctionPointer(){  m_cur_fp=0; };
+
+    /**
+     * @brief Increase the counter to the current function pointer by one.
+     */
+    void	StepCurrentFunctionPointer (){	m_cur_fp = (m_cur_fp+1>m_num_fp)?m_num_fp:m_cur_fp+1; };
+
+
+    /* pure template Functions need header implementation! */
 
     /**
      * @brief Notify all observers
