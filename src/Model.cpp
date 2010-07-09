@@ -66,7 +66,7 @@ void Model::Solve() {
         long   lIndex = 0;
 
         //Prepare sequence
-        m_concat_sequence->Prepare(PREP_UPDATE);
+        m_concat_sequence->Prepare(PREP_INIT);
 
         //get current spin properties
         m_world->Values = m_sample->GetValues(lSpin);

@@ -75,10 +75,13 @@ class Attribute {
         m_dynamic       = false;
         m_name  		= name;
         m_prototype     = proto;
-        m_symbol_name   = "m_name";
-        m_expression    = "";
-        m_diff 			= 0;
-        m_sym_diff      = "diff";
+        m_symbol_name   = "NA";
+        m_formula	    = "NA";
+        m_ginac_excomp  = false;
+        m_num_fp		= -1;
+        m_cur_fp		= -1;
+        m_diff 			= -1;
+        m_sym_diff      = "NA";
         m_complex       = false;
         m_imaginary		= 0.0;
         m_address       = NULL;
@@ -223,6 +226,34 @@ class Attribute {
      */
     void EvalExpression ();
 
+    /**
+     * @brief Evaluate the compiled GiNaC expression of this attribute
+     *
+     * At first call, performs runtime compilation of the GiNaC expression.
+     * Then, compiled function evaluation is returned.
+     * It is NOT written to the Prototype's private member represented by this attribute.
+     * Attributes observing this attribute are NOT notified.
+     * Attention:
+     *   a) Only to be used for attributes of type double.
+     *   b) Falls back to slow analytic evaluation, if external compilation fails.
+     *
+     * @param val		function input value
+     * @param attrib	attribute representing the function input value
+     * @return			expression evaluation
+     */
+    double EvalCompiledExpression (double const val, string const attrib );
+
+    /**
+     * @brief True, if GiNaC external compiler is available on this system.
+     */
+    bool	HasGinacExCompiler(){return	m_ginac_excomp;};
+
+    int		GetNumberFunctionPointers(){return m_num_fp;};
+
+    int		GetCurrentFunctionPointer  (){ 	return m_cur_fp;										};
+    void	ResetCurrentFunctionPointer(){  m_cur_fp=0; 											};
+    void	StepCurrentFunctionPointer (){	m_cur_fp = (m_cur_fp+1>m_num_fp)?m_num_fp:m_cur_fp+1;	};
+
     /* pure template Functions need header implementation */
 
     /**
@@ -236,9 +267,15 @@ class Attribute {
 
     	//initiate re-evaluation and preparation of the observers
         for (unsigned int i=0; i<m_observers.size(); i++) {
+
+        	//increase the counter for the observer's function pointer
+        	if (m_observers.at(i)->GetNumberFunctionPointers()>0) {
+        		m_observers.at(i)->StepCurrentFunctionPointer(  );
+        	}
+
         	m_observers.at(i)->EvalExpression();
             UpdatePrototype( m_observers.at(i)->GetPrototype() );
-            //cout << "DEBUG " << m_name << " notified " <<  m_observers.at(i)->GetSymbol() << endl;
+            //cout << "DEBUG " << GetName() << " notified " << m_observers.at(i)->GetName() << endl;
         }
 
     	return true;
@@ -257,6 +294,7 @@ class Attribute {
      * @param attr   The observed attribute.
      */
     void AttachSubject (Attribute* attrib);
+
 
  private:
 
@@ -319,7 +357,11 @@ class Attribute {
         m_name  		= name;
         m_prototype     = proto;
         m_symbol_name   = "x";
-        m_expression    = "";
+        m_formula	    = "";
+        m_ginac_excomp  = true;
+        m_compiled.push_back(false);
+        m_num_fp		= 0;
+        m_cur_fp		= 0;
         m_diff 			= 0;
         m_sym_diff      = "diff";
         m_complex       = false;
@@ -340,7 +382,15 @@ class Attribute {
     Prototype*		m_prototype;	/**< @brief Pointer to the Prototype object, which instantiated this attribute.  */
     string			m_symbol_name;	/**< @brief GiNaC symbol name of the attribute.*/
     string			m_sym_diff;		/**< @brief GiNaC symbol name for symbolic derivative.*/
-	string     		m_expression;	/**< @brief Mathematical expression of the attribute (in XML) for GiNaC evaluation.*/
+	string     		m_formula;		/**< @brief Mathematical formula of the attribute (in XML) for GiNaC evaluation.*/
+	GiNaC::ex       m_expression;	/**< @brief GiNaC Mathematical expression of the attribute */
+	GiNaC::lst		m_symlist;		/**< @brief GiNaC list of all symbols involved in the calculation.*/
+	bool			m_ginac_excomp;	/**< @brief True, if GiNaC external compiler is available on this system.*/
+	int				m_num_fp;		/**< @brief Number of GiNaC expression function pointers owned by this attribute.*/
+	int				m_cur_fp;		/**< @brief Current GiNaC expression function pointer.*/
+	vector<bool>	m_compiled;		/**< @brief True, if GiNaC expression is compiled successfully in run time.*/
+	vector<GiNaC::FUNCP_1P> m_fp;	/**< @brief Function pointers to GiNaC expression evaluation.*/
+	vector<GiNaC::FUNCP_1P> m_fpi;	/**< @brief Function pointers to GiNaC expression evaluation of imaginary part.*/
 	int				m_diff;			/**< @brief Number of symbolic differentiations of the attribute's expression.*/
 	bool            m_complex;      /**< @brief If symbolic expressions are complex, the imaginary part is considered */
     double          m_imaginary;    /**< @brief The imaginary part of complex expression evaluation.*/

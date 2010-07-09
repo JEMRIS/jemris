@@ -91,8 +91,8 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 	if (expr.find("I", 0)!=string::npos) m_complex = true;
 
 	m_subjects.clear();
-	GiNaC::lst symlist;
-	GiNaC::symbol d(m_sym_diff);
+	m_symlist.remove_all();
+	//GiNaC::symbol d(m_sym_diff);
     //loop over all possibly observed subjects
 	for (int i=0; i<obs_attribs.size() ; i++) {
 		//convert string "a1","a2", ... to the matching symbol name
@@ -102,26 +102,22 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
         if (!Prototype::ReplaceString(expr,key.str(),SymbolName)) continue;
         //still here? the attribute was in the expression, so it is an observed subject
         AttachSubject( subject_attrib );
-		GiNaC::symbol x(SymbolName);
-		if (m_diff>0 && SymbolName==m_sym_diff)
-			symlist.append( d );
-		else
-			symlist.append( x );
+        m_symlist.append( get_symbol(SymbolName) );
 	}
 
-	m_expression = expr;
+	//cout << "!!! " << GetPrototype()->GetName() << " : " << expr << " , " << m_symlist << endl;
+	m_formula = expr;
 
-	//differentiation of expression?
-	if (m_diff>0) {
-		GiNaC::ex e(m_expression,symlist);
-		e = e.diff(d,m_diff);
-		stringstream se; se << e;
-		m_expression = se.str();
-	}
-
-	//test the expression evaluation once
+	//build GiNaC expression (maybe not successful at first call, if subjects still missing)
 	try {
-
+		m_expression = GiNaC::ex(m_formula,m_symlist);
+		//differentiation of expression?
+		if (m_diff>0) {
+			m_expression = m_expression.diff(get_symbol(m_sym_diff),m_diff);
+			stringstream se; se << m_expression;
+			m_formula = se.str();
+		}
+		//test the expression evaluation once
 		EvalExpression ();
 
 	} catch (exception &p) {
@@ -141,15 +137,12 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 /***********************************************************/
 void Attribute::EvalExpression () {
 
-	if (m_expression.empty()) return;
+	if (m_formula.empty()) return;
 
 	//collect symbols and corresponding member-values from observed attributes
-	GiNaC::lst symlist;
 	GiNaC::lst numlist;
 	for (int i=0; i<m_subjects.size() ; i++) {
 		Attribute* a = m_subjects.at(i);
-		GiNaC::symbol x(a->GetSymbol());
-		symlist.append( x );
 		if (a->GetTypeID()==typeid(  double*).name()) { numlist.append(a->GetMember  <double>() ); continue; }
 		if (a->GetTypeID()==typeid(     int*).name()) { numlist.append(a->GetMember     <int>() ); continue; }
 		if (a->GetTypeID()==typeid(    long*).name()) { numlist.append(a->GetMember    <long>() ); continue; }
@@ -158,8 +151,7 @@ void Attribute::EvalExpression () {
 	}
 
 	//numeric evaluation of GiNaC expression
-	GiNaC::ex e(m_expression,symlist);
-	e = e.subs(symlist,numlist);
+	GiNaC::ex e = m_expression.subs(m_symlist,numlist);
 	m_static_vector = m_prototype->GetVector(); // static pointer to evaluate the Vector function
 	e = GiNaC::evalf(e);
 	double d = 0.0;
@@ -174,6 +166,103 @@ void Attribute::EvalExpression () {
 	if (m_datatype==typeid(    long*).name() ) WriteMember((long)     d );
 	if (m_datatype==typeid(unsigned*).name() ) WriteMember((unsigned) d );
 	if (m_datatype==typeid(    bool*).name() ) WriteMember((bool)     d );
+
+	//  for dynamic change of runtime compiled attributes after notification!
+	if (m_ginac_excomp && m_cur_fp==m_num_fp && m_num_fp>0) {
+		//cout << "!!! " << GetName() << " : NFP =" << GetNumberFunctionPointers() << endl;
+		//cout << "!!! " << GetName() << " : CFP =" << GetCurrentFunctionPointer() << endl;
+		//cout << "!!! " << GetName() << " : size=" << m_compiled.size() << endl;
+
+			if (m_compiled.size() == m_cur_fp ) m_compiled.push_back(false);
+		}
+};
+
+/***********************************************************/
+double Attribute::EvalCompiledExpression (double const val, string const attrib ) {
+
+//cout << GetPrototype()->GetName() << " ??  at pointer num " << m_cur_fp << " -> compiled = " << m_compiled.at(m_cur_fp) << endl;
+ 	if (!m_compiled.at(m_cur_fp)) {
+ 		//substitute all attributes with numbers in GiNaC expression, except the attribute
+ 		//which serves as the free parameter for runtime compilation
+ 		GiNaC::lst symlist;
+ 		GiNaC::lst numlist;
+ 		for (int i=0; i<m_subjects.size() ; i++) {
+ 			Attribute* a = m_subjects.at(i);
+ 			if (a->GetName() == attrib) continue;
+ 	        symlist.append( get_symbol(a->GetSymbol()) );
+ 			if (a->GetTypeID()==typeid(  double*).name()) { numlist.append(a->GetMember  <double>() ); continue; }
+ 			if (a->GetTypeID()==typeid(     int*).name()) { numlist.append(a->GetMember     <int>() ); continue; }
+ 			if (a->GetTypeID()==typeid(    long*).name()) { numlist.append(a->GetMember    <long>() ); continue; }
+ 			if (a->GetTypeID()==typeid(unsigned*).name()) { numlist.append(a->GetMember<unsigned>() ); continue; }
+ 			if (a->GetTypeID()==typeid(    bool*).name()) { numlist.append(a->GetMember    <bool>() ); continue; }
+ 		}
+		GiNaC::ex e = ((symlist.nops()==0)?m_expression:m_expression.subs(symlist,numlist));
+
+		//add function pointers
+		m_fp.push_back(NULL);
+		m_fpi.push_back(NULL);
+		//compile the GiNaC expression
+		try {
+			//fairly easy for real valued expressions
+			if (!m_complex) {
+				compile_ex(e, get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fp.at(m_num_fp));
+			}
+			//more work to do, since GiNaC::realsymbol does not behave as expected (and it is therefore not used at all)
+			else {
+				stringstream se; se << e; string formula = se.str();
+				string sym  = GetPrototype()->GetAttribute(attrib)->GetSymbol();
+				string asym = "abs(VarForEvalCompiledExpression)";
+				Prototype::ReplaceString(formula,sym,asym);
+				GiNaC::lst symlist;
+				symlist.append( get_symbol("VarForEvalCompiledExpression") );
+				GiNaC::ex ea = GiNaC::ex(formula,symlist);
+				symlist.remove_all();
+				symlist.append( get_symbol(sym) );
+
+				GiNaC::ex ear = ea.real_part();
+				stringstream ser;  ser << ear; formula = ser.str();
+				if ( Prototype::ReplaceString(formula,asym,sym) ) {
+					ear  = GiNaC::ex(formula,symlist);
+					compile_ex(ear, get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fp.at(m_num_fp));
+				}
+
+				GiNaC::ex eai = ea.imag_part();
+				stringstream sei;  sei << eai; formula = sei.str();
+				if ( Prototype::ReplaceString(formula,asym,sym) ) {
+					eai  = GiNaC::ex(formula,symlist);
+					compile_ex(eai, get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fpi.at(m_num_fp));
+				}
+			}
+ 			//cout << " compiling attribute " << GetName() << " of module " << GetPrototype()->GetName() << endl;
+ 		 	m_num_fp++;
+		}
+	 	catch (exception &p) {
+ 			cout << " Warning: attribute " << GetName() << " of module " << GetPrototype()->GetName() << endl << endl
+ 				 << " function Attribute::EvalCompiledExpression" << endl
+ 				 << " No external runtime compiler available: " << p.what() << endl
+				 << " Falling back to (slow) analytic evaluation!" << endl << endl
+				 << " Hint: if you have a shell and gcc on your system, create the one-liner " << endl << endl
+				 << "    #!/bin/sh" << endl
+				 << "    gcc -x c -fPIC -shared -o $1.so $1" << endl << endl
+ 		         << " name it \"ginac-excompiler\", and put it somewhere in your search path." << endl << endl;
+	 		m_ginac_excomp = false;
+	 	}
+		m_compiled.at(m_cur_fp) = true; //even if compilation failed, as we don't have to try a second time!
+ 	}
+
+	//if compilation failed, invoke slow analytic evaluation
+	if (!m_ginac_excomp ) {
+		*((double*) GetPrototype()->GetAttribute(attrib)-> GetAddress()) = val;
+ 		EvalExpression();
+ 		return *((double*) GetAddress());
+ 	}
+
+	//invoke fast runtime compiled routines
+ 	if (m_fpi.at(m_cur_fp) != NULL ) m_imaginary = m_fpi.at(m_cur_fp)(val);
+	if ( m_fp.at(m_cur_fp) != NULL ) return m_fp.at(m_cur_fp)(val);
+
+	return 0.0;
+
 };
 
 

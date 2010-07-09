@@ -47,6 +47,8 @@ bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
 	UNOBSERVABLE_ATTRIBUTE("Diff"     ); // Number of TPOIs along the analytical expression.
 	UNOBSERVABLE_ATTRIBUTE("Constants");
 
+	if (mode !=PREP_UPDATE) GetAttribute("Shape")->ResetCurrentFunctionPointer();
+
 	//base class Prepare; the GiNaC expression for Shape is set from Pulse::Prepare
 	btag = (RFPulse::Prepare(mode) && btag && m_analytic);
 
@@ -84,17 +86,13 @@ bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
 inline double  AnalyticRFPulse::GetMagnitude  (double const time){
 
 	if (!m_analytic) return 0.0;
-	m_analytic_time = time;
-	GetAttribute("Shape")->EvalExpression();
 
-	if ( GetAttribute("Shape")->IsComplex() )
-	{
-		double imag = GetAttribute("Shape")->GetImaginary();
-		m_analytic_phase = atan2(imag,m_analytic_value);
-		return sqrt(pow(imag,2)+pow(m_analytic_value,2)) ;
-	}
+ 	double real = GetAttribute("Shape")->EvalCompiledExpression(time,"AnalyticTime");
+	double imag = GetAttribute("Shape")->GetImaginary();
 
-	return m_analytic_value;
+	m_analytic_phase = atan2(imag,real);
+	return sqrt(pow(imag,2)+pow(real,2)) ;
+
 };
 
 /***********************************************************/

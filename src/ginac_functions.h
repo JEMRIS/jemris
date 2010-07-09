@@ -28,9 +28,24 @@
 #include <vector>
 
 using namespace std;
+
+
 /**
- * @brief Functions for numeric evaluation of expressions (evalf)
+ * @brief Get a unique GiNaC symbol
+ *
+ * A symbol factory, which either creates a new symbol or
+ * takes previously defined symbol from a global map.
  */
+const GiNaC::symbol & get_symbol(const string & sym_name)
+{
+    static map<string, GiNaC::symbol> symbol_list;
+    map<string, GiNaC::symbol>::iterator it = symbol_list.find(sym_name);
+    if (it != symbol_list.end())
+        return it->second;
+    else
+        return symbol_list.insert(pair<string, GiNaC::symbol>(sym_name, GiNaC::symbol(sym_name))).first->second;
+}
+
 
 /**
  * @brief floor routine.

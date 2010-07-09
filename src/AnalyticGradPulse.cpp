@@ -46,6 +46,9 @@ bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
 	UNOBSERVABLE_ATTRIBUTE("Diff"     ); // Number of TPOIs along the analytical expression.
 	UNOBSERVABLE_ATTRIBUTE("Constants");
 
+
+	if (mode !=PREP_UPDATE) GetAttribute("Shape")->ResetCurrentFunctionPointer();
+
 	// Base class Prepare; the GiNaC expression for Shape is set from Pulse::Prepare
 	btag = (GradPulse::Prepare(mode) && btag && m_analytic);
 
@@ -89,10 +92,8 @@ bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
 inline double AnalyticGradPulse::GetGradient (double const time) {
 
  	if (!m_analytic) return 0.0;
-	m_analytic_time = time;
-	GetAttribute("Shape")->EvalExpression();
 
-	return m_analytic_value;
+ 	return 	GetAttribute("Shape")->EvalCompiledExpression(time,"AnalyticTime");
 
 };
 

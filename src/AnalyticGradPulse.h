@@ -73,7 +73,6 @@ public:
      */
     virtual string          GetInfo        ();
 
-
 };
 
 #endif /*PE_TRAPGRADPULSE_H_*/
