@@ -40,21 +40,12 @@ AC_CHECK_HEADERS([cctype],                                    [], [AC_MSG_ERROR(
 AC_CHECK_HEADERS([algorithm],                                 [], [AC_MSG_ERROR([cannot find algorithm, bailing out])])
 AC_CHECK_HEADERS([math.h],                                    [], [AC_MSG_ERROR([cannot find math.h, bailing out])])
 AC_CHECK_HEADERS([stdexcept],                                 [], [AC_MSG_ERROR([cannot find stdexcept, bailing out])])
-
-AC_CHECK_HEADERS_ONCE([cvode.h cvode/cvode.h])
-if test "x$HAVE_cvode.h" = "x"; then
-    if test "x$HAVE_cvode/cvode.h" = "x" ;then
-      echo "cannot find cvode.h or cvode/cvode.h, bailing out"; exit 1;
-    fi
-fi
-
-AC_CHECK_HEADERS_ONCE([nvector_serial.h nvector/nvector_serial.h])
-if test "x$HAVE_nvector_serial.h" = "x"; then
-    if test "x$HAVE_nvector/nvector_serial.h" = "x" ;then
-      echo "cannot find nvector_serial.h nvector/nvector_serial.h, bailing out"; exit 1;
-    fi
-fi
-
+AC_CHECK_HEADERS([cvode.h],             [], [
+    AC_CHECK_HEADERS([cvode/cvode.h],   [], [AC_MSG_ERROR([cannot find neither cvode.h nor cvode/cvode.h, bailing out])])
+])
+AC_CHECK_HEADERS([nvector_serial.h],    [], [
+    AC_CHECK_HEADERS([nvector/nvector_serial.h], [], [AC_MSG_ERROR([cannot find neither nvector_serial.h nor nvector/nvector_serial.h, bailing out])])
+])
 AC_CHECK_HEADERS([ginac/ginac.h],                             [], [AC_MSG_ERROR([cannot find ginac/ginac.h, bailing out])])
 AC_CHECK_HEADERS([cln/cln.h],                                 [], [AC_MSG_ERROR([cannot find cln/cln.h, bailing out])])
 AC_CHECK_HEADERS([xercesc/dom/DOM.hpp],                       [], [AC_MSG_ERROR([cannot find xercesc/dom/DOM.hpp, bailing out. Get it from http://xerces.apache.org/xerces-c.])])
