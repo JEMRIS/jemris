@@ -99,9 +99,9 @@ fi
 AC_MSG_CHECKING([for Xerces 2.x or 3.x library naming convention])
 OLD_LIBS=$LIBS
 if test -z xerces_lib_base; then
-  LIBS="${LIBS} -lxerces-c -DXML_LIBRARY"
+  LIBS="${LIBS} -lxerces-c"
 else
-  LIBS="-lxerces-c ${LIBS} -DXML_LIBRARY"
+  LIBS="-lxerces-c ${LIBS}"
 fi
 
 AC_TRY_LINK([#include <xercesc/util/PlatformUtils.hpp>],
@@ -279,17 +279,17 @@ fi
 
 case "$host" in
   *linux*)
-AC_MSG_CHECKING([whether MPI supports threads])
-echo "$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp" >&5
-$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp 2>&5
-if test $? -ne 0; then
-  AC_MSG_RESULT([no])
-else
-  AC_MSG_RESULT([yes])
-  AC_DEFINE(HAVE_MPI_THREADS,1,[define that mpi supports threads])
-fi
-rm -f conftest2.*
-;;
+    AC_MSG_CHECKING([whether MPI supports threads])
+    echo "$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp" >&5
+    $MPICXX $CXXFLAGS -o conftest2 conftest2.cpp 2>&5
+    if test $? -ne 0; then
+      AC_MSG_RESULT([no])
+    else
+      AC_MSG_RESULT([yes])
+      AC_DEFINE(HAVE_MPI_THREADS,1,[define that mpi supports threads])
+    fi
+    rm -f conftest2.*
+  ;;
 esac
 
 
