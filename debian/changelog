@@ -1,3 +1,11 @@
+jemris (2.4-1) stable; urgency=low
+
+  * Major update release pre v3.
+  * GiNaC compiler engaged for almost complete set of analytics
+  * Fixed configure bug for dundials headers
+
+ -- Kaveh Vahedipour <k.vahedipour@fz-juelich.de>  Sun, 27 Jul 2010 09:20:27 +0200
+
 jemris (2.3-1) stable; urgency=low
 
   * Major update release pre v3.
