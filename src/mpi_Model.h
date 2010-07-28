@@ -196,7 +196,19 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 		MPI::COMM_WORLD.Send(&NoSpins,1,MPI_INT,SlaveID,SEND_NO_SPINS);
 		if (NoSpins > 0)
 			MPI::COMM_WORLD.Send(&(spindata[NextSpinToSend]),NoSpins,MPI_SPINDATA,SlaveID,SEND_SAMPLE);
+#ifndef HAVE_MPI_THREADS
+		// without threads: write progress bar each time new spins are sent:
+		static int progress_percent = -1;
+		//update progress counter (pjemris without threads support)
+		int progr = (100*(NextSpinToSend+1)/pW->TotalSpinNumber);
 
+		if (progr != progress_percent) {
+			progress_percent = progr;
+			ofstream fout(".jemris_progress.out" , ios::out);
+			fout << progr;
+			fout.close();
+		}
+#endif
 	}  // end while (SlavesDone < size -1)
 
 #ifdef HAVE_MPI_THREADS

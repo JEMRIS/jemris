@@ -266,8 +266,10 @@ void Model::DumpRestartInfo(long lSpin){
 }
 /*************************************************************************/
 void Model::UpdateProcessCounter(long lSpin) {
+	if ((m_world->m_myRank > 0 )){
+	// parallel jemris:
 #ifdef HAVE_MPI_THREADS
-	if ((m_world->m_myRank >= 0 )){
+// with pthreads: use continuous progress bar:
 		//update progress counter (parallel jemris)
 		static time_t lasttime=time(NULL);
 		static long lastspin=lSpin-1;
@@ -285,10 +287,9 @@ void Model::UpdateProcessCounter(long lSpin) {
 
 			lasttime = time(NULL);
 		}
-	} else {
-#else
-       	{
 #endif
+	} else {
+		// serial jemris progress bar:
 		//progress counter
 		static int progress_percent = -1;
 
