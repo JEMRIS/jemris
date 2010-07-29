@@ -164,8 +164,6 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	// broadcast resolution:
 	MPI::COMM_WORLD.Bcast(pSam->GetResolution(),3,MPI_DOUBLE,0);
 
-	delete[] sendcount;
-	delete[] displs;
 
 	// now listen for paket requests:
 	int SlavesDone=0;
@@ -199,8 +197,10 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 #ifndef HAVE_MPI_THREADS
 		// without threads: write progress bar each time new spins are sent:
 		static int progress_percent = -1;
+		static int spinsdone=0;
+		spinsdone+=sendcount[SlaveID];	sendcount[SlaveID]=NoSpins;
 		//update progress counter (pjemris without threads support)
-		int progr = (100*(NextSpinToSend+1)/pW->TotalSpinNumber);
+		int progr = (100*(spinsdone+1)/pW->TotalSpinNumber);
 
 		if (progr != progress_percent) {
 			progress_percent = progr;
@@ -210,6 +210,9 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 		}
 #endif
 	}  // end while (SlavesDone < size -1)
+
+	delete[] sendcount;
+	delete[] displs;
 
 #ifdef HAVE_MPI_THREADS
 	/* join threads: */
