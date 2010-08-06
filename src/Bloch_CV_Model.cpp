@@ -64,17 +64,13 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( d_SeqVal, t );        // calculates also pW->NonLinGradField
     double Bx=0.0,By=0.0,Bz=0.0;
 
-    //RF field
+    //Transverse Components: RF field
     Bx = d_SeqVal[RF_AMP]*cos(d_SeqVal[RF_PHS]);
     By = d_SeqVal[RF_AMP]*sin(d_SeqVal[RF_PHS]);
 
-
-    //Gradient field
-    Bz = position[0]*d_SeqVal[GRAD_X]+ position[1]*d_SeqVal[GRAD_Y]+ position[2]*d_SeqVal[GRAD_Z];
-
-
-    //other off-resonance contributions
-    Bz += DeltaB + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;
+    //Longitudinal component: Gradient field and off-resonance contributions
+    Bz = position[0]*d_SeqVal[GRAD_X]+ position[1]*d_SeqVal[GRAD_Y]+ position[2]*d_SeqVal[GRAD_Z]
+         + DeltaB + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;
 
     //NV_Ith_S is the solution magn. vector with components AMPL,PHASE,ZC
     //important: restrict phase to [0, 2*PI]

@@ -45,6 +45,8 @@ XERCES_CPP_NAMESPACE_USE
 //declaration of the Prototype
 class Prototype;
 
+typedef double (*FUNCP_4P) (double, double, double, double);
+
 /**
  * @brief Attribute class. Attributes are private member variables of a Prototype which are
  * accessible through XML and, thus, they are subject to observation mechanism.
@@ -80,6 +82,7 @@ class Attribute {
         m_ginac_excomp  = false;
         m_num_fp		= -1;
         m_cur_fp		= -1;
+        m_nlgfp			= NULL;
         m_diff 			= -1;
         m_sym_diff      = "NA";
         m_complex       = false;
@@ -247,6 +250,18 @@ class Attribute {
     double EvalCompiledExpression (double const val, string const attrib );
 
     /**
+     * @brief Evaluate the compiled GiNaC expression of the NLG attribute (nonlinear gradients)
+     *
+     * At first call, performs runtime compilation of the GiNaC expression.
+     * Then, compiled function evaluation is returned.
+     * @param x		x position of spin
+     * @param y		y position of spin
+     * @param z		z position of spin
+     * @return		expression evaluation
+     */
+    double EvalCompiledNLGExpression (double const x, double const y, double const z, double const g );
+
+    /**
      * @brief True, if GiNaC external compiler is available on this system.
      */
     bool	HasGinacExCompiler(){return	m_ginac_excomp;};
@@ -380,6 +395,7 @@ class Attribute {
         m_compiled.push_back(false);
         m_num_fp		= 0;
         m_cur_fp		= 0;
+        m_nlgfp			= NULL;
         m_diff 			= 0;
         m_sym_diff      = "diff";
         m_complex       = false;
@@ -409,6 +425,7 @@ class Attribute {
 	vector<bool>	m_compiled;		/**< @brief True, if GiNaC expression is compiled successfully in run time.*/
 	vector<GiNaC::FUNCP_1P> m_fp;	/**< @brief Function pointers to GiNaC expression evaluation.*/
 	vector<GiNaC::FUNCP_1P> m_fpi;	/**< @brief Function pointers to GiNaC expression evaluation of imaginary part.*/
+	FUNCP_4P 		m_nlgfp;		/**< @brief Function pointer to GiNaC expression evaluation of nonlinear gradients.*/
 	int				m_diff;			/**< @brief Number of symbolic differentiations of the attribute's expression.*/
 	bool            m_complex;      /**< @brief If symbolic expressions are complex, the imaginary part is considered */
     double          m_imaginary;    /**< @brief The imaginary part of complex expression evaluation.*/

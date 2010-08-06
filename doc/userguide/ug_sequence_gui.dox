@@ -320,6 +320,7 @@ Several predefined mathematical expressions may be used:
 	<TR> <TD> atanh(x)	</TD> <TD> inverse hyperbolic tangent	</TD> </TR>
 	<TR> <TD> exp(x)        </TD> <TD> exponential function	</TD> </TR>
 	<TR> <TD> log(x)        </TD> <TD> natural logarithm 	</TD> </TR>
+	<TR> <TD> sinc(x)       </TD> <TD> returns 1, if x equals zero, otherwise returns sin(x)/x   	</TD> </TR>
 	<TR> <TD> floor(x)      </TD> <TD> round to integer	</TD> </TR>
 	<TR> <TD> mod(x,y)      </TD> <TD> Modulo	</TD> </TR>
 	<TR> <TD> equal(x,y)    </TD> <TD> returns 1, if x equals y, otherwise returns zero 	</TD> </TR>
@@ -344,7 +345,7 @@ does not work, i.e. these attributes can not be observed by other modules! These
 
 \li \c "Shape": For analytical RF / gradient pulses, this attribute defines the shape of the pulse using an analytical expression using the time variable \c "T". For RF-pulses, this expression can be complex to define the magnitude and phase of the RF-pulse. Use \c "I" as imaginary unit. The expression is again evaluated using GiNaC which is capable to perform derivatives. If here additionally the attribute \c "Diff=1" is set, the expression provided by the \c "Shape" attribute will be differentiated once, thus it is possible to directly provide the gradient moments.
 
-\li \c "NLG_field": an analytical expression for non-linear gradient field can be specified to every gradient module. Use \c "X,Y,Z" as space variables, and \c "G" as gradient the value, e.g.  \c "NLG_field=X*G+0.001*X*G^2" will simulate a linear x-gradient field with a small quadratic term.
+\li \c "NLG_field": an analytical expression for non-linear gradient field can be specified to every gradient module. Use \c "X,Y,Z" as space variables, and \c "G" as the gradient value, e.g.  \c "NLG_field=X*G+0.001*X*G^2" will simulate a linear x-gradient field with a small quadratic term. <b> Attention: </b> \c "X,Y,Z" always denote the physical coordinate system. Nonlinear gradients should not be used within an AtomicSequence which performs a rotation of the coordinate system. This will lead to unphysical, strange results.
 
 back to \ref toc.
 ***************************************************

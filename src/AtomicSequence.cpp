@@ -106,9 +106,9 @@ void      AtomicSequence::GetValue (double * dAllVal, double const time) {
     		continue;
     	}
 
-
     	//standard case
         children[j]->GetValue(dAllVal,pulse_time);
+
     }
 
     Rotation(&dAllVal[2]);

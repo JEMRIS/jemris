@@ -196,7 +196,8 @@ double Attribute::EvalCompiledExpression (double const val, string const attrib 
  			if (a->GetTypeID()==typeid(unsigned*).name()) { numlist.append(a->GetMember<unsigned>() ); continue; }
  			if (a->GetTypeID()==typeid(    bool*).name()) { numlist.append(a->GetMember    <bool>() ); continue; }
  		}
-		GiNaC::ex e = ((symlist.nops()==0)?m_expression:m_expression.subs(symlist,numlist));
+
+		GiNaC::ex e = GiNaC::evalf((symlist.nops()==0)?m_expression:m_expression.subs(symlist,numlist));
 
 		//add function pointers
 		m_fp.push_back(NULL);
@@ -260,6 +261,70 @@ double Attribute::EvalCompiledExpression (double const val, string const attrib 
 	//invoke fast runtime compiled routines
  	if (m_fpi.at(m_cur_fp) != NULL ) m_imaginary = m_fpi.at(m_cur_fp)(val);
 	if ( m_fp.at(m_cur_fp) != NULL ) return m_fp.at(m_cur_fp)(val);
+
+	return 0.0;
+
+};
+
+/***********************************************************/
+double Attribute::EvalCompiledNLGExpression (double const x, double const y ,double const z, double const g ) {
+
+//cout << GetPrototype()->GetName() << " ??  at pointer num " << m_cur_fp << " -> compiled = " << m_compiled.at(m_cur_fp) << endl;
+ 	if (m_nlgfp == NULL && m_ginac_excomp) {
+ 		//substitute all attributes with numbers in GiNaC expression, except the attribute
+ 		//which serves as the free parameter for runtime compilation
+ 		GiNaC::lst symlist;
+ 		GiNaC::lst numlist;
+ 		for (int i=0; i<m_subjects.size() ; i++) {
+ 			Attribute* a = m_subjects.at(i);
+ 			if (a->GetName() == "NLG_posX") continue;
+ 			if (a->GetName() == "NLG_posY") continue;
+ 			if (a->GetName() == "NLG_posZ") continue;
+ 			if (a->GetName() == "NLG_value") continue;
+ 	        symlist.append( get_symbol(a->GetSymbol()) );
+ 			if (a->GetTypeID()==typeid(  double*).name()) { numlist.append(a->GetMember  <double>() ); continue; }
+ 			if (a->GetTypeID()==typeid(     int*).name()) { numlist.append(a->GetMember     <int>() ); continue; }
+ 			if (a->GetTypeID()==typeid(    long*).name()) { numlist.append(a->GetMember    <long>() ); continue; }
+ 			if (a->GetTypeID()==typeid(unsigned*).name()) { numlist.append(a->GetMember<unsigned>() ); continue; }
+ 			if (a->GetTypeID()==typeid(    bool*).name()) { numlist.append(a->GetMember    <bool>() ); continue; }
+ 		}
+
+		GiNaC::ex e = GiNaC::evalf((symlist.nops()==0)?m_expression:m_expression.subs(symlist,numlist));
+
+		try {
+			compile_ex (e,
+						get_symbol(GetPrototype()->GetAttribute("NLG_posX")->GetSymbol()),
+						get_symbol(GetPrototype()->GetAttribute("NLG_posY")->GetSymbol()),
+						get_symbol(GetPrototype()->GetAttribute("NLG_posZ")->GetSymbol()),
+						get_symbol(GetPrototype()->GetAttribute("NLG_value")->GetSymbol()),
+						m_nlgfp);
+ 			//cout << " compiling attribute " << GetName() << " of module " << GetPrototype()->GetName() << endl;
+		}
+	 	catch (exception &p) {
+ 			cout << " Warning: attribute " << GetName() << " of module " << GetPrototype()->GetName() << endl << endl
+ 				 << " function Attribute::EvalCompiledNLGExpression" << endl
+ 				 << " No external runtime compiler available: " << p.what() << endl
+				 << " Falling back to (slow) analytic evaluation!" << endl << endl
+				 << " Hint: if you have a shell and gcc on your system, create the one-liner " << endl << endl
+				 << "    #!/bin/sh" << endl
+				 << "    gcc -x c -fPIC -shared -o $1.so $1" << endl << endl
+ 		         << " name it \"ginac-excompiler\", and put it somewhere in your search path." << endl << endl;
+	 		m_ginac_excomp = false;
+	 	}
+ 	}
+
+	//if compilation failed, invoke slow analytic evaluation
+	if (!m_ginac_excomp ) {
+		*((double*) GetPrototype()->GetAttribute("NLG_posX")-> GetAddress()) = x;
+		*((double*) GetPrototype()->GetAttribute("NLG_posY")-> GetAddress()) = y;
+		*((double*) GetPrototype()->GetAttribute("NLG_posZ")-> GetAddress()) = z;
+		*((double*) GetPrototype()->GetAttribute("NLG_posZ")-> GetAddress()) = g;
+ 		EvalExpression();
+ 		return *((double*) GetAddress());
+ 	}
+
+	//invoke fast runtime compiled routines
+	if ( m_nlgfp != NULL ) return m_nlgfp(x,y,z,g);
 
 	return 0.0;
 

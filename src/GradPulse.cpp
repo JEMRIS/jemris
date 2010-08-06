@@ -134,6 +134,7 @@ void GradPulse::GetValue (double * dAllVal, double const time) {
 
 /***********************************************************/
 void GradPulse::SetNonLinGradField(double const time){
+/*
 	//x,y,z position of current spin
 	m_nlg_px = m_world->Values[0];
 	m_nlg_py = m_world->Values[1];
@@ -144,6 +145,13 @@ void GradPulse::SetNonLinGradField(double const time){
 	GetAttribute("NLG_field")->EvalExpression();
 	m_world->NonLinGradField += m_nlg_field;
 	return;
+*/
+	//evaluate NLG field and add it to the World
+	m_world->NonLinGradField += GetAttribute("NLG_field")->EvalCompiledNLGExpression
+			( m_world->Values[0], m_world->Values[1], m_world->Values[2], GetGradient(time) );
+	return;
+
+
 }
 /***********************************************************/
 void GradPulse::SetArea (double val) {
