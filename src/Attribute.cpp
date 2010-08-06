@@ -318,7 +318,7 @@ double Attribute::EvalCompiledNLGExpression (double const x, double const y ,dou
 		*((double*) GetPrototype()->GetAttribute("NLG_posX")-> GetAddress()) = x;
 		*((double*) GetPrototype()->GetAttribute("NLG_posY")-> GetAddress()) = y;
 		*((double*) GetPrototype()->GetAttribute("NLG_posZ")-> GetAddress()) = z;
-		*((double*) GetPrototype()->GetAttribute("NLG_posZ")-> GetAddress()) = g;
+		*((double*) GetPrototype()->GetAttribute("NLG_value")-> GetAddress()) = g;
  		EvalExpression();
  		return *((double*) GetAddress());
  	}
