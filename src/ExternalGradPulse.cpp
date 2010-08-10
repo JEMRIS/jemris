@@ -85,10 +85,10 @@ inline void  ExternalGradPulse::SetTPOIs () {
 
     m_tpoi.Reset();
 
-    for (int i=0; i<m_times.size(); ++i)
+    for (unsigned int i=0; i<m_times.size(); ++i)
 	m_tpoi + TPOI::set(m_times.at(i), -1.0);
 
-    for (unsigned i = 0; i < GetNADC(); i++)
+    for (unsigned int i = 0; i < GetNADC(); i++)
         m_tpoi + TPOI::set(i*GetDuration()/GetNADC(), (Pulse::m_phase_lock?m_world->PhaseLock:0.0));
 
 }

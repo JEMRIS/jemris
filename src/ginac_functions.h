@@ -209,7 +209,7 @@ REGISTER_FUNCTION(ite, evalf_func(ite_evalf))
 static vector<double>* m_static_vector;
 static ex Vector_evalf(const ex &i){
 	if (!is_a<numeric>(i) ) return 0;
-	int in = ((int) ex_to<numeric>(i).to_double() );
+	unsigned int in = ((int) ex_to<numeric>(i).to_double() );
 	if ( (*m_static_vector).size() > in )
 		return (*m_static_vector).at(in);
 	else
@@ -262,7 +262,7 @@ public:
 			const char* filename_pattern = "./GiNaCXXXXXX";
 			char* new_filename = new char[strlen(filename_pattern)+1];
 			strcpy(new_filename, filename_pattern);
-			if (!mktemp(new_filename)) {
+			if (!mkstemp(new_filename)) {
 				delete[] new_filename;
 				throw std::runtime_error("mktemp failed");
 			}

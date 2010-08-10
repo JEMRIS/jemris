@@ -420,8 +420,8 @@ class Attribute {
 	GiNaC::ex       m_expression;	/**< @brief GiNaC Mathematical expression of the attribute */
 	GiNaC::lst		m_symlist;		/**< @brief GiNaC list of all symbols involved in the calculation.*/
 	bool			m_ginac_excomp;	/**< @brief True, if GiNaC external compiler is available on this system.*/
-	int				m_num_fp;		/**< @brief Number of GiNaC expression function pointers owned by this attribute.*/
-	int				m_cur_fp;		/**< @brief Current GiNaC expression function pointer.*/
+	unsigned int	m_num_fp;		/**< @brief Number of GiNaC expression function pointers owned by this attribute.*/
+	unsigned int	m_cur_fp;		/**< @brief Current GiNaC expression function pointer.*/
 	vector<bool>	m_compiled;		/**< @brief True, if GiNaC expression is compiled successfully in run time.*/
 	vector<GiNaC::FUNCP_1P> m_fp;	/**< @brief Function pointers to GiNaC expression evaluation.*/
 	vector<GiNaC::FUNCP_1P> m_fpi;	/**< @brief Function pointers to GiNaC expression evaluation of imaginary part.*/

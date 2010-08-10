@@ -80,7 +80,7 @@ bool Pulse::PrepareAnalytic  (PrepareMode mode) {
 		if (HasDOMattribute("Constants")) {
 			string constants = GetDOMattribute("Constants");
 			vector<string> vp = Tokenize(constants,",");
-			for (int i=0;i<vp.size();i++) {
+			for (unsigned int i=0;i<vp.size();i++) {
 				m_constant[i] = atof( vp[i].c_str() );
 				stringstream C; C << "Constant" << i+1;
 				HIDDEN_ATTRIBUTE(C.str() , m_constant[i]);

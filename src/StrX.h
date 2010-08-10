@@ -81,9 +81,9 @@ private :
     char*   fLocalForm;
     string  mString;
     bool    brelease;
-
-    XMLCh*  tmp;
     bool    brelease2;
+    XMLCh*  tmp;
+
 
 };
 

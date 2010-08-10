@@ -49,7 +49,7 @@ int main (int argc, char *argv[]) {
 	World* pW = World::instance();
 	pW->m_myRank = my_rank;
 	pW->m_no_processes = MPI::COMM_WORLD.Get_size();
-	int master=0, second=1, tag=42;
+	int master=0, tag=42;
 	double t1 = MPI::Wtime();
 
 	// read simulator settings. Slaves do not read the sample !!!

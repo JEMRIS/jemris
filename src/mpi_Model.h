@@ -85,7 +85,8 @@ MPI_Datatype  MPIspindata() {
 /*****************************************************************************/
 /* function that does the progress counting; called by an extra thread from the master process */
 #ifdef HAVE_MPI_THREADS
-void *CountProgress(void * arg) {
+void* CountProgress(void * arg) {
+
 	int TotalNoSpins  = *((int *) arg);
 	int SpinsDone = TotalNoSpins - *(((int *) arg )+1);
 	int NowDone=0;
@@ -119,10 +120,12 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	buffer[0] = pSam->GetSize();
 	buffer[1] = pSam->SpinsLeft();
 
-    if (errcode=pthread_create(&counter_thread,	/* thread struct             */
-                    NULL,                      	/* default thread attributes */
-                    CountProgress,              /* start routine             */
-                    (void *) &buffer)) {       /* arg to routine            */
+	errcode=pthread_create(&counter_thread,	/* thread struct             */
+						   NULL,                      	/* default thread attributes */
+						   CountProgress,              /* start routine             */
+						   (void *) &buffer);
+
+    if (errcode) {       /* arg to routine            */
     	cout << "thread creation failed !! exit."<< endl;
     	exit (-1);
     }
@@ -141,7 +144,6 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	MPI::Datatype MPI_SPINDATA = MPIspindata();
 	int *sendcount; 		// array with NumberOfSpins[slaveid]
 	int *displs;
-	int count,rest;
 	int recvbuf;
 	Spin_data recvdummy;				// dummy buffer
 
@@ -153,7 +155,6 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	displs[0]	= 0;
 	sendcount[0]= 0;
 
-	World* pW = World::instance();
 
 	pSam->GetScatterVectors(sendcount,displs,size);
 
@@ -170,7 +171,6 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	while (SlavesDone < size -1)
 	{
 		int SlaveID;
-		int SpinsLeft;
 		int NoSpins;
 		int NextSpinToSend;
 		Spin_data *spindata = pSam->GetSpinsData();
@@ -184,7 +184,7 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 			SlavesDone++;
 
 		// receive signal
-		for (int i=0; i < RxCA->GetSize(); i++)
+		for (unsigned int i=0; i < RxCA->GetSize(); i++)
 			mpi_recv_paket_signal(RxCA->GetCoil(i)->GetSignal(),SlaveID,i);
 
 		// dump temp signal
@@ -219,7 +219,8 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 #ifdef HAVE_MPI_THREADS
 	/* join threads: */
 	int *status;                                /* holds return code */
-	if (errcode=pthread_join(counter_thread,(void **) &status)) {
+	errcode=pthread_join(counter_thread,(void **) &status);
+	if (errcode) {
        cout << "Joining of threads failed! (so what... ;) )"<<endl;
        // exit(-1);
     }
@@ -274,7 +275,7 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	MPI::COMM_WORLD.Send(&myRank,1,MPI_INT,0,REQUEST_SPINS);
 
 	// send signal
-	for (int i=0; i < RxCA->GetSize(); i++)
+	for (unsigned int i=0; i < RxCA->GetSize(); i++)
 		mpi_send_paket_signal(RxCA->GetCoil(i)->GetSignal(),i);
 
 	// clear signal

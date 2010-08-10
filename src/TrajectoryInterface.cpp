@@ -44,7 +44,7 @@ int TrajectoryInterface::GetLowerIndex(double t) {
 		ihi = ilo + 1;
 		while (m_time[ihi] < t ) {
 			ilo = ihi;
-			iHuntStep << 1;
+			//iHuntStep << 1;
 			ihi = ilo + iHuntStep;
 			if (ihi > iend) ihi = iend;
 		}
@@ -54,7 +54,7 @@ int TrajectoryInterface::GetLowerIndex(double t) {
 		ilo = ihi - 1;
 		while (m_time[ilo] > t ) {
 			ihi = ilo;
-			iHuntStep << 1;
+			//iHuntStep << 1;
 			ilo = ihi - iHuntStep;
 			if (ilo < 0 ) ilo = 0;
 		}

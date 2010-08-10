@@ -106,7 +106,7 @@ bool Prototype::Observe (Attribute* attrib, string prot_name, string attrib_name
 	//... then get the requested Attribute and add it to the list
 	Attribute* a = M->GetAttribute(attrib_name);
 	if (a!=NULL) {
-    	for(int i = 0; i < m_obs_attribs.size(); i++)
+    	for(unsigned int i = 0; i < m_obs_attribs.size(); i++)
     	    if ( m_obs_attribs.at(i) == a ) m_obs_attribs.erase(m_obs_attribs.begin()+i);
 		m_obs_attribs.push_back(a);
 
@@ -155,7 +155,7 @@ bool Prototype::Prepare  (PrepareMode mode){
 				m_vector.clear();
 				vector<string> vp = Tokenize(val," ");
 
-				for (int i=0; i<vp.size(); i++) m_vector.push_back(atof(vp[i].c_str()));
+				for (unsigned int i=0; i<vp.size(); i++) m_vector.push_back(atof(vp[i].c_str()));
 
 				continue;
 			}

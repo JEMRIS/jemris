@@ -45,7 +45,7 @@ void Attribute::AttachObserver (Attribute* attrib){
 
 	if ( !IsObservable() ) return;
 	m_symbol_name = m_prototype->GetName()+"x"+m_name;
-	for (int i=0; i<m_observers.size(); i++) if ( attrib == m_observers.at(i) ) return;
+	for (unsigned int i=0; i<m_observers.size(); i++) if ( attrib == m_observers.at(i) ) return;
 	m_observers.push_back(attrib);
 	attrib->AttachSubject(this);
 
@@ -55,7 +55,7 @@ void Attribute::AttachObserver (Attribute* attrib){
 void Attribute::AttachSubject (Attribute* attrib){
 
 	if ( !attrib->IsObservable() ) return;
-	for (int i=0; i<m_subjects.size(); i++) if ( attrib == m_subjects.at(i) ) return;
+	for (unsigned int i=0; i<m_subjects.size(); i++) if ( attrib == m_subjects.at(i) ) return;
 
 	m_subjects.push_back(attrib);
 	attrib->AttachObserver(this);
@@ -94,7 +94,7 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 	m_symlist.remove_all();
 	//GiNaC::symbol d(m_sym_diff);
     //loop over all possibly observed subjects
-	for (int i=0; i<obs_attribs.size() ; i++) {
+	for (unsigned int i=0; i<obs_attribs.size() ; i++) {
 		//convert string "a1","a2", ... to the matching symbol name
 		Attribute* subject_attrib = obs_attribs.at(i);
 		string  SymbolName = subject_attrib->GetPrototype()->GetName() + "x" + subject_attrib->GetName();
@@ -141,7 +141,7 @@ void Attribute::EvalExpression () {
 
 	//collect symbols and corresponding member-values from observed attributes
 	GiNaC::lst numlist;
-	for (int i=0; i<m_subjects.size() ; i++) {
+	for (unsigned int i=0; i<m_subjects.size() ; i++) {
 		Attribute* a = m_subjects.at(i);
 		if (a->GetTypeID()==typeid(  double*).name()) { numlist.append(a->GetMember  <double>() ); continue; }
 		if (a->GetTypeID()==typeid(     int*).name()) { numlist.append(a->GetMember     <int>() ); continue; }
@@ -186,7 +186,7 @@ double Attribute::EvalCompiledExpression (double const val, string const attrib 
  		//which serves as the free parameter for runtime compilation
  		GiNaC::lst symlist;
  		GiNaC::lst numlist;
- 		for (int i=0; i<m_subjects.size() ; i++) {
+ 		for (unsigned int i=0; i<m_subjects.size() ; i++) {
  			Attribute* a = m_subjects.at(i);
  			if (a->GetName() == attrib) continue;
  	        symlist.append( get_symbol(a->GetSymbol()) );
@@ -275,7 +275,7 @@ double Attribute::EvalCompiledNLGExpression (double const x, double const y ,dou
  		//which serves as the free parameter for runtime compilation
  		GiNaC::lst symlist;
  		GiNaC::lst numlist;
- 		for (int i=0; i<m_subjects.size() ; i++) {
+ 		for (unsigned int i=0; i<m_subjects.size() ; i++) {
  			Attribute* a = m_subjects.at(i);
  			if (a->GetName() == "NLG_posX") continue;
  			if (a->GetName() == "NLG_posY") continue;

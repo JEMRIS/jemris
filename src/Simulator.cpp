@@ -229,9 +229,9 @@ void Simulator::SetParameter      () {
 	    double pos[3];
 	    double r;
 	    while (ss >> pos[0]) {
-	        if (!(ss >> pos[1])) {cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; exit;}
-	        if (!(ss >> pos[2])) {cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; exit;}
-	        if (!(ss >> r)) {cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; exit;}
+	        if (!(ss >> pos[1])) { cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; return;}
+	        if (!(ss >> pos[2])) {cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; return;}
+	        if (!(ss >> r)) {cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; return;}
 	        dynVar->AddActiveCircle(pos,r);
 	    }
 	}
@@ -321,7 +321,7 @@ void Simulator::CheckRestart(){
 void Simulator::MoveTmpFiles(){
 	cout << "Restart file does not fit to current simulation. move .spins_state.dat to spins_state.bak; .tmp_sig*.bin to tmp_sig.bak. " << endl;
 	rename(".spins_state.dat","spins_state.bak");
-	for (int j=0;j<m_rx_coil_array->GetSize();j++) {
+	for (unsigned int j=0;j<m_rx_coil_array->GetSize();j++) {
 	    stringstream sstr1,sstr2;
 		sstr1 << ".tmp_sig" << setw(2) << setfill('0') << j+1 << ".bin";
 		sstr2 << "tmp_sig" << setw(2) << setfill('0') << j+1 << ".bak";

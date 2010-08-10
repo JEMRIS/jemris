@@ -84,7 +84,7 @@ void DynamicVariables::SetActivation() {
 
 	bool activated=false;
 
-	for (int i=0;i < m_Circles.size(); i++) {
+	for (unsigned int i=0;i < m_Circles.size(); i++) {
 		if (m_Circles[i].r*m_Circles[i].r > ((m_Circles[i].x-x)*(m_Circles[i].x-x) + (m_Circles[i].y-y)*(m_Circles[i].y-y) + (m_Circles[i].z-z)*(m_Circles[i].z-z) )  ){
 			activated=true;
 			break;

@@ -78,7 +78,6 @@ double compare_binary_files(string file1, string file2){
 	double dif = 0.0;
 	double sum = 0.0;
 	double d1,d2;
-	int i=0;
 
 	ifstream IF1(file1.c_str(),ios::binary);
 	ifstream IF2(file2.c_str(),ios::binary);
@@ -136,7 +135,7 @@ int main (int argc, char *argv[]) {
 		cout << endl << "Test Case 1: producing tree-dumps and sequence diagrams" << endl;
 		cout << "======================================================="<< endl << endl;
 
-		for (int i=0;i<seq.size();i++) {
+		for (unsigned int i=0;i<seq.size();i++) {
 			seqTree = SequenceTree::instance();
 			seqTree->Initialize(path+seq[i]);
 
@@ -193,7 +192,6 @@ int main (int argc, char *argv[]) {
 	if (input == "2") {
 
 		bool          status = true;
-		SequenceTree* seqTree;
 
 		cout << endl << "Test directory: " << path << endl;
 		cout << endl << "Test Case 2: producing simulated signals" << endl;
@@ -210,7 +208,7 @@ int main (int argc, char *argv[]) {
 			return 0;
 		}
 
-		for (int i=0;i<seq.size();i++) {
+		for (unsigned int i=0;i<seq.size();i++) {
 
 			sim.SetSequence(path+seq[i]);
 			printf("%02d. %15s | ",i+1,seq[i].c_str());
@@ -248,7 +246,6 @@ int main (int argc, char *argv[]) {
 	if (input == "3") {
 
 		bool          status = true;
-		SequenceTree* seqTree;
 
 		cout << endl << "Test directory: " << path << endl;
 		cout << endl << "Test Case 3: producing simulated signals" << endl;
@@ -265,7 +262,7 @@ int main (int argc, char *argv[]) {
 			return 0;
 		}
 
-		for (int i=0;i<coils.size();i++) {
+		for (unsigned int i=0;i<coils.size();i++) {
 
 			sim.SetSequence(path+"epi.xml");
 			printf("%02d. %15s | ",i+1,coils[i].c_str());

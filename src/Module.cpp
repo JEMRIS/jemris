@@ -241,8 +241,8 @@ void           Module::AddAllDOMattributes (bool show_hidden){
 void    Module::DumpTree (string file, Module* mod,int ichild, int level) {
 
 	//root node redirects output buffer, if filename is given
-	streambuf* sobuf;
-	std::ofstream* pfout;
+	streambuf* sobuf = 0;
+	std::ofstream* pfout = 0;
 	if (mod ==NULL) {
 
 	    mod=this;
@@ -279,7 +279,7 @@ void    Module::DumpTree (string file, Module* mod,int ichild, int level) {
 	transform(class_type.begin(), class_type.end(), class_type.begin(), (int(*)(int)) toupper);
 
 	string type;
-	int    adcs;
+	int    adcs = 0;
 
 	if (mod->GetType() == MOD_CONCAT) {
 		type="CONCAT";

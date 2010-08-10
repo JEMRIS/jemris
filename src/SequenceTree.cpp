@@ -197,7 +197,6 @@ unsigned int        SequenceTree::Populate     ()  {
 int        SequenceTree::RunTree (DOMNode* node, void* ptr, unsigned int (*fun) (void*, DOMNode*) ,int depth ) {
 
 	DOMNode* child;
-	DOMNode* rnode=NULL;
 
 	if (node) {
 

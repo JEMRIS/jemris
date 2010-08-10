@@ -170,7 +170,7 @@ class Pulse :public Module {
     double        m_initial_delay;     /**< Time shift at the beginning inside the atom */
     bool          m_phase_lock;        /**< Lock phase of ADCs to the phase of the last RF pulse event*/
 
-    int           m_more_tpois;        /**< For analytic evaluation of GetValue */
+    unsigned int  m_more_tpois;        /**< For analytic evaluation of GetValue */
     bool          m_analytic;          /**< For analytic evaluation of GetValue */
     double        m_analytic_value;    /**< For analytic evaluation of GetValue */
     double        m_analytic_time;     /**< For analytic evaluation of GetValue */

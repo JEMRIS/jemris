@@ -52,12 +52,12 @@ void TrajectoryMotion::LoadFile(string filename) {
     while ((inFile >> x)) {
         m_time.push_back(x);
         if ((inFile >> x)) m_trans_x.push_back(x); else CERR;
-        if (inFile >> x) m_trans_y.push_back(x); else CERR;
-        if (inFile >> x) m_trans_z.push_back(x); else CERR;
+        if (inFile >> y) m_trans_y.push_back(x); else CERR;
+        if (inFile >> z) m_trans_z.push_back(x); else CERR;
 
         if (inFile >> x) m_rot_x.push_back(x/180*PI); else CERR;
-        if (inFile >> x) m_rot_y.push_back(x/180*PI); else CERR;
-        if (inFile >> x) m_rot_z.push_back(x/180*PI); else CERR;
+        if (inFile >> y) m_rot_y.push_back(x/180*PI); else CERR;
+        if (inFile >> z) m_rot_z.push_back(x/180*PI); else CERR;
     }
     inFile.close();
 
@@ -90,7 +90,7 @@ void TrajectoryMotion::LoadFile(string filename) {
 
     // test if motion is zero for a whole axis:
     btx = false;bty = false;btz = false;brx = false;bry = false;brz = false;
-    for (int i=0; i < m_time.size(); i++) {
+    for (unsigned int i=0; i < m_time.size(); i++) {
     	if (m_trans_x[i] != 0) btx = true;
     	if (m_trans_y[i] != 0) bty = true;
     	if (m_trans_z[i] != 0) btz = true;

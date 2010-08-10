@@ -431,13 +431,13 @@ void Sample::DumpRestartInfo(CoilArray* RxCA) {
 
 /**********************************************************/
 int Sample::ReadSpinsState() {
-	char sdat;
+
 	ifstream spinsFile(".spins_state.dat", ifstream::binary);
 
 	if (!spinsFile.is_open()) return (-2);
 	// get length of file:
 	spinsFile.seekg (0, ios::end);
-	int length = spinsFile.tellg();
+	unsigned int length = spinsFile.tellg();
 	if (length != m_spin_state.size()) {spinsFile.close();  return (-1);}
 	spinsFile.seekg (0, ios::beg);
 	spinsFile.read (m_spin_state.data(),length);
@@ -447,7 +447,7 @@ int Sample::ReadSpinsState() {
 	World* pw = World::instance();
 	int start=0;
 	while (m_spin_state[start]==2) start++;
-	for (int i=start; i<m_spin_state.size(); i++) {
+	for (unsigned int i=start; i<m_spin_state.size(); i++) {
 		// clean up spin_state:
 		if (m_spin_state[i]==1) m_spin_state[i]=0;
 	}
@@ -469,13 +469,13 @@ int Sample::ReadSpinsState() {
 void Sample::ClearSpinsState() {
 	World* pw = World::instance();
 	pw->m_startSpin = 0;
-	for (int i=0; i<m_spin_state.size();i++) m_spin_state[i]=0;
+	for (unsigned int i=0; i<m_spin_state.size();i++) m_spin_state[i]=0;
 	m_is_restart = false;
 }
 /**********************************************************/
 int Sample::SpinsLeft() {
 	int count=0;
-	for (int i=0; i<m_spin_state.size();i++ ){
+	for (unsigned int i=0; i<m_spin_state.size();i++ ){
 		if (m_spin_state[i]==0) count++;
 	}
 	return count;

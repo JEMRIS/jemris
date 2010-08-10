@@ -82,7 +82,7 @@ void TPOI::Purge ()        {
  // will only purge, if more than one data points 
  if (GetSize() > 1) {
 
-   int i=0, j=0, k=0;
+   int i=0, j=0;
    for (i = 0; i < GetSize(); ++i) {
 
         if ( i+1 < GetSize() )

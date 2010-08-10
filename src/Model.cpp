@@ -204,7 +204,6 @@ void Model::saveEvolution (long index, bool close_files) {
     int n = index / pW->saveEvolStepSize - 1;
     int N = pW->TotalADCNumber / pW->saveEvolStepSize ;
 
-    int m = pW->SpinNumber ;
     int M = pW->TotalSpinNumber ;
 
     //create ofstreams at first call

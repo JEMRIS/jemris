@@ -190,8 +190,7 @@ Coil* CoilArray::GetCoil(unsigned channel) {
 int CoilArray::ReadRestartSignal(){
 	// return: 0, if files successfully read; -2 if no files present; -1 if wrong restart files.
 	bool fail = false;
-	for (int i=0; i<GetSize();i++) {
-		double data;
+	for (unsigned int i=0; i<GetSize();i++) {
 		Repository rep = m_coils[i]->GetSignal()->repository;
 		ifstream tmp;
 	    stringstream sstr;
@@ -205,7 +204,7 @@ int CoilArray::ReadRestartSignal(){
 		if (length != rep.size) fail=true;
 		if (fail) {
 			tmp.close();
-			for (int j=0;j<GetSize();j++) {
+			for (unsigned int j=0;j<GetSize();j++) {
 				m_coils[j]->InitSignal(rep.size);
 			}
 			return (-1);

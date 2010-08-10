@@ -73,7 +73,7 @@ void Mpi2Evolution::OpenFiles(int is_restart){
 /*****************************************************************************/
 void Mpi2Evolution::CloseFiles(){
 #ifdef HAVE_MPI_THREADS
-	for (int i=0; i<m_files.size(); i++) {
+	for (unsigned int i=0; i<m_files.size(); i++) {
 		m_files[i].Close();
 	}
 #endif
@@ -87,7 +87,6 @@ void Mpi2Evolution::saveEvolution(long index, bool close_files) {
 	        return;
 
 	    int n = index / pW->saveEvolStepSize - 1;
-	    int N = pW->TotalADCNumber / pW->saveEvolStepSize ;
 
 	    //write timepoint at first call
 	    if (pW->m_myRank==1 ) {
