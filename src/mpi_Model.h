@@ -203,6 +203,7 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 		static int spinsdone=0;
 		spinsdone+=sendcount[SlaveID];	sendcount[SlaveID]=NoSpins;
 		//update progress counter (pjemris without threads support)
+		World* pW = World::instance();
 		int progr = (100*(spinsdone+1)/pW->TotalSpinNumber);
 		// case of restart: set progress to 100 at end:
 		if (SlavesDone==(size-1)) progr=100;

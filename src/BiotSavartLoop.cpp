@@ -33,23 +33,22 @@
 
 bool BiotSavartLoop::Prepare (PrepareMode mode) {
 
-	bool success = true;
+    bool success = true;
 
-	m_mask   = 0.0;
-	m_radius = 100.0;
+    m_mask   = 0.0;
+    m_radius = 100.0;
 
     ATTRIBUTE("Radius" , m_radius);
     ATTRIBUTE("Mask" , m_mask);
     success   = Coil::Prepare(mode);
-	DumpSensMap("");
+    DumpSensMap("");
 
-	return success;
+    return success;
 
 }
 
 double BiotSavartLoop::GetSensitivity(double* position) {
 
-
     double a     = m_radius;
     double px = position[XC]-m_position[XC];
     double py = position[YC]-m_position[YC];
@@ -62,131 +61,90 @@ double BiotSavartLoop::GetSensitivity(double* position) {
     py += 0.5 * m_extent / m_points;
     pz += 0.5 * m_extent / m_points;
 
-	//azimuth rotation
-	ppy = px*cos(m_azimuth) + py*sin(m_azimuth);
-	ppx = py*cos(m_azimuth) - px*sin(m_azimuth);
-	px = ppx; py = ppy;
+    //azimuth rotation
+    ppy = px*cos(m_azimuth) + py*sin(m_azimuth);
+    ppx = py*cos(m_azimuth) - px*sin(m_azimuth);
+    px = ppx; py = ppy;
 
-	//polar rotation: axis of rotation is the (new) x-axis
-	ppz = pz*cos(m_polar) - py*sin(m_polar);
+    //polar rotation: axis of rotation is the (new) x-axis
+    ppz = pz*cos(m_polar) - py*sin(m_polar);
     ppy = py*cos(m_polar) + pz*sin(m_polar);
     py = ppy; pz = ppz;
 
-	// distance between coil-center and position
+    // distance between coil-center and position
     double dist = sqrt( abs(pow(px,2)+pow(py,2)+pow(pz,2)) );
 
     //return zero on torus with radius m_mask
     if (pow(a-sqrt(pow(px,2)+pow(py,2)),2)+pow(pz,2) < pow(m_mask,2) ) return 0.0;
 
-	// angle coil-normal and position vector
+    // angle coil-normal and position vector
     double angle = acos (pz/dist);
 
-	double r     = dist * sin (angle);	// distance off axis
-	double x     = dist * cos (angle);	// distance on axis
+    // Bio-Savart closed form solution for a current loop
+    // online: http://www.netdenizen.com/emagnettest/offaxis/?offaxisloop
+    double r     = dist * sin (angle);	// distance off axis
+    double x     = dist * cos (angle);	// distance on axis
 
-	double alpha = r/a;
-	double beta  = x/a;
-	double gamma = x/r;
-	double Q     = pow  ((1.0+alpha),2) + pow (beta,2);
+    double alpha = r/a;
+    double beta  = x/a;
+    double gamma = x/r;
+    double Q     = pow  ((1.0+alpha),2) + pow (beta,2);
 
-	double k     = sqrt(4*alpha/Q);
-	k            = (isnan(k)?0.0:k);
+    double k     = sqrt(4*alpha/Q);
+    k            = (isnan(k)?0.0:k);
 
-	double Kk    = 1.0;
-	double Ek    = 1.0;
+    double Kk    = 1.0;
+    double Ek    = 1.0;
 
-	#ifdef HAVE_BOOST
-	// Complete elliptical integrals
-	Kk = boost::math::ellint_1(k);
-	Ek = boost::math::ellint_2(k);
-	#endif
+    #ifdef HAVE_BOOST
+    // Complete elliptical integrals
+    Kk = boost::math::ellint_1(k);
+    Ek = boost::math::ellint_2(k);
+    #endif
 
-	//field parallel to coil normal vector
-	double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*alpha) + Kk)         / (PI * sqrt(Q));
-	//field orthogonal to coil normal vector
-	double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*alpha) - Kk) * gamma / (PI * sqrt(Q)) ;
+    //field parallel to coil normal vector
+    double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*alpha) + Kk)         / (PI * sqrt(Q));
+    //field orthogonal to coil normal vector
+    double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*alpha) - Kk) * gamma / (PI * sqrt(Q)) ;
 
-	//projections to x-y plane
-	Bx *= sin(m_polar);
-	Br *= cos(m_polar);
+    // return to cartesian coordinate system of the coil
+    double Bz, By, phi;
+    phi = atan2(py,px);
+    Bz = Bx;
+    By = Br * cos(phi);
+    Bx = Br * sin(phi);
 
-	complex <double> b1  (Br,Bx);
+    // return to global coordinate system - polar rotation
+    double BBx, BBy, BBz;
+    BBz = Bz*cos(m_polar) + By*sin(m_polar);
+    BBy = By*cos(m_polar) - Bz*sin(m_polar);
+    Bz = BBz; By = BBy;
 
-	double B1 = sqrt(pow(Bx,2)+pow(Br,2));
+    // return to global coordinate system - azimuth rotation
+    BBy = Bx*cos(m_azimuth) - By*sin(m_azimuth);
+    BBx = By*cos(m_azimuth) + By*sin(m_azimuth);
+    Bx = BBx; By = BBy;
 
-	B1 = (isnan(B1)? 0.5:B1);
-	return B1;
+    // Compute clockwise rotating field (equal to 1/2 of linear field)
+    // Ref: Principles of Magentic Resonance Engineering, Z-P Liang and P. C. Lauterbur,
+    //   section 3.2.2 pp. 71ff
+    Bx = 0.5*Bx;
+    By = 0.5*By;
+    Bz = 0.5*Bz;
 
-}
+    // save transverse field in complex notation
+    complex <double> b1  (Bx,By);
 
-double BiotSavartLoop::GetPhase(double* position) {
+    // compute |B1|
+    double B1 = sqrt(pow(Bx,2.0)+pow(By,2.0));
 
-
-    double a     = m_radius;
-    double px = position[XC]-m_position[XC];
-    double py = position[YC]-m_position[YC];
-    double pz = position[ZC]-m_position[ZC];
-
-    double ppx, ppy, ppz;
-
-    //shift half mesh size
-    px += 0.5 * m_extent / m_points;
-    py += 0.5 * m_extent / m_points;
-    pz += 0.5 * m_extent / m_points;
-
-	//azimuth rotation
-	ppy = px*cos(m_azimuth) + py*sin(m_azimuth);
-	ppx = py*cos(m_azimuth) - px*sin(m_azimuth);
-	px = ppx; py = ppy;
-
-	//polar rotation: axis of rotation is the (new) x-axis
-	ppz = pz*cos(m_polar) - py*sin(m_polar);
-    ppy = py*cos(m_polar) + pz*sin(m_polar);
-    py = ppy; pz = ppz;
-
-	// distance between coil-center and position
-    double dist = sqrt( abs(pow(px,2)+pow(py,2)+pow(pz,2)) );
-
-    //return zero on torus with radius m_mask
-    if (pow(a-sqrt(pow(px,2)+pow(py,2)),2)+pow(pz,2) < pow(m_mask,2) ) return 0.0;
-
-	// angle coil-normal and position vector
-    double angle = acos (pz/dist);
-
-	double r     = dist * sin (angle);	// distance off axis
-	double x     = dist * cos (angle);	// distance on axis
-
-	double alpha = r/a;
-	double beta  = x/a;
-	double gamma = x/r;
-	double Q     = pow  ((1.0+alpha),2) + pow (beta,2);
-
-	double k     = sqrt(4*alpha/Q);
-	k            = (isnan(k)?0.0:k);
-
-	double Kk    = 1.0;
-	double Ek    = 1.0;
-
-	#ifdef HAVE_BOOST
-	// Complete elliptical integrals
-	Kk = boost::math::ellint_1(k);
-	Ek = boost::math::ellint_2(k);
-	#endif
-
-	//field parallel to coil normal vector
-	double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*alpha) + Kk)         / (PI * sqrt(Q));
-	//field orthogonal to coil normal vector
-	double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*alpha) - Kk) * gamma / (PI * sqrt(Q)) ;
-
-	//projections to x-y plane
-	Bx *= sin(m_polar);
-	Br *= cos(m_polar);
-
-	complex <double> b1  (Bx,Br);
-
-	double B1 = sqrt(pow(Bx,2)+pow(Br,2));
-
-	B1 = (isnan(B1)? 0.5:B1);
-	return arg(b1);
+    // compute phase and store for later retrieval 
+    m_biosavart_phase = arg(b1);
+    
+    // check for numerical problems
+    B1 = (isnan(B1)? 0.5:B1);
+    
+    // return amplitude of B1
+    return B1;
 
 }

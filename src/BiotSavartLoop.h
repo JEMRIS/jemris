@@ -58,7 +58,7 @@ class BiotSavartLoop : public Coil {
 	 * @param  position Position.
 	 * @return          Sensitivity at requested position.
 	 */
-	virtual double GetPhase       (double* position);
+	inline double GetPhase (double* position) {return this->m_biosavart_phase;};
 
 	/**
 	 * @brief Clone.
@@ -78,8 +78,10 @@ class BiotSavartLoop : public Coil {
 
  private:
 
-    double            m_mask;        /**< Torus radius to mask field on the wire */
-    double            m_radius;      /**< Loop radius */
+    double            m_mask;               /**< Torus radius to mask field on the wire */
+    double            m_radius;             /**< Loop radius */
+    double            m_biosavart_phase;    /**< @brief Phase */
+    
 };
 
 #endif /*BIOTSAVARTLOOP_H_*/
