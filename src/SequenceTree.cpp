@@ -134,7 +134,7 @@ unsigned int        SequenceTree::AddModule    (string       name) {
 unsigned int        SequenceTree::Populate     ()  {
 
 	DOMNode* topnode;
-	if (!(topnode = m_dom_doc->getFirstChild())) EMPTY_DOCUMENT;
+	if (!(topnode = m_dom_doc->getFirstChild())) return EMPTY_DOCUMENT;
 
 	//Prepare the parameters first! (if any specified in XML)
 	DOMNodeList* dnl = m_dom_doc->getElementsByTagName( StrX("Parameters").XMLchar() );

@@ -105,6 +105,9 @@ void* CountProgress(void * arg) {
 			fout.close();
 		}
 	}
+
+	return new void*;
+
 }
 #endif
 
