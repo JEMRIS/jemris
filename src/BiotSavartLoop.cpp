@@ -122,7 +122,7 @@ double BiotSavartLoop::GetSensitivity(double* position) {
 
     // return to global coordinate system - azimuth rotation
     BBy = Bx*cos(m_azimuth) - By*sin(m_azimuth);
-    BBx = By*cos(m_azimuth) + By*sin(m_azimuth);
+    BBx = By*cos(m_azimuth) + Bx*sin(m_azimuth);
     Bx = BBx; By = BBy;
 
     // Compute clockwise rotating field (equal to 1/2 of linear field)
