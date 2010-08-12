@@ -105,16 +105,14 @@ double AnalyticCoil::GetSensitivity(double* position) {
 	}
 
 	GetAttribute("Sensitivity")->EvalExpression();
+	double imag = 0.0;
 
 	if ( GetAttribute("Sensitivity")->IsComplex() )
-	{
-		double imag = GetAttribute("Sensitivity")->GetImaginary();
-		m_analytic_phase = atan2(imag,m_sensitivity);
-		return sqrt(pow(imag,2)+pow(m_sensitivity,2)) ;
-	}
+		imag = GetAttribute("Sensitivity")->GetImaginary();
 
+	m_analytic_phase = atan2(imag,m_sensitivity);
+	return sqrt(pow(imag,2)+pow(m_sensitivity,2)) ;
 
-	return m_sensitivity;
 }
 
 
