@@ -2,3 +2,4 @@ EXTRA_DIST = 1chext.xml 8chheadcyl.xml Makefile.am sens.bin ThreePulses.xml anal
 examplesdir = $(datadir)/jemris/examples
 examples_DATA = $(EXTRA_DIST)
 
+SUBDIRS = approved
