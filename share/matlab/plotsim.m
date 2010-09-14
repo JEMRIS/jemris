@@ -152,7 +152,7 @@ if ( WHAT>2 ) %& mod(size(M,1),res.^2)==0 )
        %X=fftshift(fft(S'));
        %size(f),size(X),pause
        %A=20*log(abs(X)/max(abs(X)))/log(10);
-       if WHAT==5;plot(f,abs(FS),'b'),YL='amplitude [a.u.]';end
+       if WHAT==5;plot(f,abs(fftshift(FS)),'b'),YL='amplitude [a.u.]';end
        if WHAT==6;plot(f,unwrap(angle(FS))*180/pi,'b'),YL='phase [deg]';end
        axis([-.5/dt .5/dt -inf inf])
        xlabel('frequency [kHz]','fontsize',12,'fontweight','bold')

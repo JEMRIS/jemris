@@ -52,8 +52,10 @@ bool RFPulse::Prepare  (PrepareMode mode) {
     // Prepare up the chain
     bool b = Pulse::Prepare(mode);
 
-    if (mode != PREP_UPDATE)
+    if (mode != PREP_UPDATE) {
         HideAttribute("Axis",false);
+    	HideAttribute("PhaseLock",false);
+    }
 
 	return b;
 
