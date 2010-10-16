@@ -1,0 +1,15 @@
+Source: jemris
+Section: main/science
+Priority: extra
+Maintainer: Kaveh Vahedipour <k.vahedipour@fz-juelich.de>
+Build-Depends: libginac-dev (>= 1.5.8-1 ), libcln-dev (>= 1.3.1-2 ), libmpich2-dev (>= 1.2.1.1-4 ), libsundials-cvode0 (>= 2.3.0-2 ), libsundials-nvecserial0 (>= 2.3.0-2 ), libsundials-serial-dev (>= 2.3.0-2 ), libxerces-c3.1 (>= 3.1.1-1 ), libxerces-c-dev (>= 3.1.1-1 )
+Standards-Version: 3.7.3
+Homepage: http://www.jemris.org
+
+Package: jemris
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Juelich Extensible MRI Simulator
+ JEMRIS, which stands for "Juelich Extensible MRI Simulator", is a general MRI simulator. Visit http://www.jemris.org for more details. 
+
+
