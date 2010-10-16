@@ -1,6 +1,3 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
-
 AC_PREREQ(2.61)
 AC_INIT(JEMRIS, [2.4], k.vahedipour@fz-juelich.de)
 AC_CONFIG_AUX_DIR(config)
@@ -66,6 +63,7 @@ fi
 
 # Checks for libraries.
 AC_CHECK_LIB([m],                   [cos],                    , [AC_MSG_ERROR([cannot find libm, bailing out])])
+AC_CHECK_LIB([dl],                  [dlopen],                 , [AC_MSG_ERROR([cannot find libdl, bailing out])])
 AC_CHECK_LIB([sundials_cvode],      [CVodeCreate],            , [AC_MSG_ERROR([cannot find libsundials_cvode, bailing out])])
 AC_CHECK_LIB([sundials_nvecserial], [N_VNew_Serial],          , [AC_MSG_ERROR([cannot find libsundials_nvecserial, bailing out])])
 
@@ -198,6 +196,12 @@ AC_TRY_COMPILE([#include <xercesc/dom/DOM.hpp>],
     [AC_MSG_RESULT([no])])
 
 
+case "$target" in 
+*-mingw*) 
+AC_CHECK_LIB([iberty],                   [mkstemps],                    , [AC_MSG_ERROR([cannot find libiberty, bailing out])])
+AC_DEFINE(HAVE_MKSTEMPS, [], [Description])
+esac
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_C_CONST
@@ -207,7 +211,7 @@ AC_STRUCT_TM
 
 # Checks for library functions.
 AC_FUNC_ERROR_AT_LINE
-AC_FUNC_MALLOC
+#AC_FUNC_MALLOC
 AC_TYPE_SIGNAL
 AC_CHECK_FUNCS([floor pow sqrt round])
 

@@ -32,6 +32,11 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include "config.h"
+
+#ifdef HAVE_MKSTEMPS
+extern "C" int mkstemps (char *path, int len);
+#endif
 
 using namespace std;
 
@@ -262,10 +267,17 @@ public:
 			const char* filename_pattern = "./GiNaCXXXXXX";
 			char* new_filename = new char[strlen(filename_pattern)+1];
 			strcpy(new_filename, filename_pattern);
+			#ifndef HAVE_MKSTEMPS
 			if (!mkstemp(new_filename)) {
 				delete[] new_filename;
 				throw std::runtime_error("mktemp failed");
 			}
+			#else
+			if (!mkstemps(new_filename, 0)) {
+				delete[] new_filename;
+				throw std::runtime_error("mktemps failed");
+			}
+			#endif
 			filename = std::string(new_filename);
 			ofs.open(new_filename, std::ios::out);
 			delete[] new_filename;
