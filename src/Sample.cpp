@@ -424,7 +424,7 @@ void Sample::DumpRestartInfo(CoilArray* RxCA) {
 		RxCA->DumpSignals(".tmp_sig", false);
 		string fname(".spins_state.dat");
 		ofstream fout(fname.c_str() , ios::binary);
-		fout.write(m_spin_state.data(), sizeof(char)*m_spin_state.size());
+		fout.write(&m_spin_state.at(0), sizeof(char)*m_spin_state.size());
 		fout.close();
 	}
 }
@@ -440,7 +440,7 @@ int Sample::ReadSpinsState() {
 	unsigned int length = spinsFile.tellg();
 	if (length != m_spin_state.size()) {spinsFile.close();  return (-1);}
 	spinsFile.seekg (0, ios::beg);
-	spinsFile.read (m_spin_state.data(),length);
+	spinsFile.read (&m_spin_state.at(0),length);
 	spinsFile.close();
 
 

@@ -2735,7 +2735,7 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 
-$as_echo "#define SVN_REVISION \"1593M\"" >>confdefs.h
+$as_echo "#define SVN_REVISION \"1594\"" >>confdefs.h
 
 
 # C++ project
