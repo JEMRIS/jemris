@@ -65,7 +65,7 @@ fi
 AC_CHECK_LIB([m],                   [cos],                    , [AC_MSG_ERROR([cannot find libm, bailing out])])
 AC_CHECK_LIB([dl],                  [dlopen],                 , [AC_MSG_ERROR([cannot find libdl, bailing out])])
 AC_CHECK_LIB([sundials_cvode],      [CVodeCreate],            , [AC_MSG_ERROR([cannot find libsundials_cvode, bailing out])])
-AC_CHECK_FUNC([CVodeSetUserdata],      [AC_DEFINE([CVODE26],  [1], [CVODE Version >= 2.6?])])
+AC_CHECK_FUNC([CVodeSetUserData],      [AC_DEFINE([CVODE26],  [1], [CVODE Version >= 2.6?])])
 AC_CHECK_LIB([sundials_nvecserial], [N_VNew_Serial],          , [AC_MSG_ERROR([cannot find libsundials_nvecserial, bailing out])])
 
 

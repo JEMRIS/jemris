@@ -2741,7 +2741,7 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 
-$as_echo "#define SVN_REVISION \"1598M\"" >>confdefs.h
+$as_echo "#define SVN_REVISION \"1599M\"" >>confdefs.h
 
 
 # C++ project
@@ -5465,8 +5465,8 @@ else
   as_fn_error $? "cannot find libsundials_cvode, bailing out" "$LINENO" 5
 fi
 
-ac_fn_cxx_check_func "$LINENO" "CVodeSetUserdata" "ac_cv_func_CVodeSetUserdata"
-if test "x$ac_cv_func_CVodeSetUserdata" = x""yes; then :
+ac_fn_cxx_check_func "$LINENO" "CVodeSetUserData" "ac_cv_func_CVodeSetUserData"
+if test "x$ac_cv_func_CVodeSetUserData" = x""yes; then :
 
 $as_echo "#define CVODE26 1" >>confdefs.h
 
