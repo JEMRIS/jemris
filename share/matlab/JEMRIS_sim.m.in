@@ -72,7 +72,7 @@ else    % a BASH
     handles.PJemrisCall = ['LD_LIBRARY_PATH=""; mpirun -np 5 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
 end
 %CLUSTER call works only, if the CWD belongs to cluster
-cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/data/home/',cwd(n:end)];
+cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/srv/data/',cwd(n:end)];
 handles.ClusterCall=sprintf('ssh mrcluster "cd %s; qsub /vol/share/jemris/matlab/pbs_script.sh"',cwd);
 
 %default is sequential computing
@@ -138,12 +138,12 @@ guidata(hObject, handles);
 function handles=write_simu_xml(handles,redraw)
  %path defintions differ on cluster
  if strcmp(get(handles.ParCompTag,'Checked')   ,'on')
-     jp='/vol/share/jemris/';
+     jp='/vol/share/jemris/matlab';
      [w,s]=system('whoami');
-     cwd=pwd            ; n=strfind(cwd,s(1:end-1)); cwd=['/srv/data/home/',cwd(n:end)];
-     sd =handles.seqdir ; n=strfind(sd,s(1:end-1)) ; sd =['/srv/data/home/',sd(n:end)] ;
-     td =handles.txadir ; n=strfind(td,s(1:end-1)) ; td =['/srv/data/home/',td(n:end)] ;
-     rd =handles.rxadir ; n=strfind(rd,s(1:end-1)) ; rd =['/srv/data/home/',rd(n:end)] ;    
+     cwd=pwd            ; n=strfind(cwd,s(1:end-1)); cwd=['/srv/data/',cwd(n:end)];
+     sd =handles.seqdir ; n=strfind(sd,s(1:end-1)) ; sd =['/srv/data/',sd(n:end)] ;
+     td =handles.txadir ; n=strfind(td,s(1:end-1)) ; td =['/srv/data/',td(n:end)] ;
+     rd =handles.rxadir ; n=strfind(rd,s(1:end-1)) ; rd =['/srv/data/',rd(n:end)] ;    
  else
      jp=handles.JemrisShare;
      cwd=pwd; sd=handles.seqdir; td=handles.txadir; rd=handles.rxadir;
