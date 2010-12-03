@@ -10,6 +10,9 @@
 #include <cmath>
 #include "config.h"
 
+#define HAVE_MPI_THREADS 1
+
+
 // init variables:
 #ifdef HAVE_MPI_THREADS
 vector<MPI::File> 		Mpi2Evolution::m_files;
@@ -50,10 +53,17 @@ void Mpi2Evolution::OpenFiles(int is_restart){
 	for (int i=0; i<M; i++) {
         stringstream sF;
         sF << pW->saveEvolFileName << "_" << setw(3) << setfill('0') << i+1 << ".bin";
-        // delete existing old file; (c) by Rolf Rabenseifer...
         if (is_restart != 1){
-        	MPI::File fh=MPI::File::Open(MPI::COMM_WORLD,(sF.str()).c_str(),MPI::MODE_DELETE_ON_CLOSE | MPI::MODE_CREATE | MPI::MODE_WRONLY, MPI::INFO_NULL  );
-        	fh.Close();
+         // delete existing old file; (c) by Rolf Rabenseifer...
+  /*       	MPI::File fh=MPI::File::Open(MPI::COMM_WORLD,(sF.str()).c_str(),MPI::MODE_DELETE_ON_CLOSE | MPI::MODE_CREATE | MPI::MODE_WRONLY, MPI::INFO_NULL  );
+         	fh.Close();*/
+ 	// above lines lead to trouble on our cluster. try different approach:
+ 		if (pW->m_myRank == 0) {
+ 			ofstream myfile;
+ 			myfile.open ((sF.str()).c_str(),ios::out | ios::binary| ios::trunc);
+ 			myfile.close();
+ 		}
+ 		MPI::COMM_WORLD.Barrier();
         }
         m_files.push_back(MPI::File::Open(MPI::COMM_WORLD,(sF.str()).c_str(),MPI::MODE_WRONLY | MPI::MODE_CREATE, MPI::INFO_NULL  ));
 
