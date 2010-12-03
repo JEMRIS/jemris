@@ -138,12 +138,12 @@ guidata(hObject, handles);
 function handles=write_simu_xml(handles,redraw)
  %path defintions differ on cluster
  if strcmp(get(handles.ParCompTag,'Checked')   ,'on')
-     jp='/apps/prod/misc/share/jemris/';
+     jp='/vol/share/jemris/';
      [w,s]=system('whoami');
-     cwd=pwd            ; n=strfind(cwd,s(1:end-1)); cwd=['/data/home/',cwd(n:end)];
-     sd =handles.seqdir ; n=strfind(sd,s(1:end-1)) ; sd =['/data/home/',sd(n:end)] ;
-     td =handles.txadir ; n=strfind(td,s(1:end-1)) ; td =['/data/home/',td(n:end)] ;
-     rd =handles.rxadir ; n=strfind(rd,s(1:end-1)) ; rd =['/data/home/',rd(n:end)] ;    
+     cwd=pwd            ; n=strfind(cwd,s(1:end-1)); cwd=['/srv/data/home/',cwd(n:end)];
+     sd =handles.seqdir ; n=strfind(sd,s(1:end-1)) ; sd =['/srv/data/home/',sd(n:end)] ;
+     td =handles.txadir ; n=strfind(td,s(1:end-1)) ; td =['/srv/data/home/',td(n:end)] ;
+     rd =handles.rxadir ; n=strfind(rd,s(1:end-1)) ; rd =['/srv/data/home/',rd(n:end)] ;    
  else
      jp=handles.JemrisShare;
      cwd=pwd; sd=handles.seqdir; td=handles.txadir; rd=handles.rxadir;
