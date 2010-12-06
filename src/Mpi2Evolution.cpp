@@ -10,9 +10,6 @@
 #include <cmath>
 #include "config.h"
 
-#define HAVE_MPI_THREADS 1
-
-
 // init variables:
 #ifdef HAVE_MPI_THREADS
 vector<MPI::File> 		Mpi2Evolution::m_files;
