@@ -4,7 +4,7 @@
 #PBS -q cpu
 
 # Job Limits
-#PBS -N pc_nm_db
+#PBS -N pjemris
 #PBS -l cput=300000000
 
 # Keep stout,-error in
