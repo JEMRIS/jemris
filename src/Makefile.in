@@ -74,7 +74,8 @@ am__objects_1 = Attribute.$(OBJEXT) DOMTreeErrorReporter.$(OBJEXT) \
 	Sample.$(OBJEXT) SampleReorderShuffle.$(OBJEXT) \
 	Signal.$(OBJEXT) Simulator.$(OBJEXT) Trajectory.$(OBJEXT) \
 	Trajectory1D.$(OBJEXT) TrajectoryT2s.$(OBJEXT) \
-	TrajectoryInterface.$(OBJEXT) TrajectoryMotion.$(OBJEXT)
+	TrajectoryInterface.$(OBJEXT) TrajectoryMotion.$(OBJEXT) \
+	KVSpiral.$(OBJEXT)
 am_jemris_OBJECTS = $(am__objects_1) jemris.$(OBJEXT)
 jemris_OBJECTS = $(am_jemris_OBJECTS)
 jemris_LDADD = $(LDADD)
@@ -239,7 +240,8 @@ SOURCES = Attribute.cpp Attribute.h DOMTreeErrorReporter.cpp \
 	Signal.cpp Signal.h Simulator.cpp Simulator.h Trajectory.cpp \
 	Trajectory.h Trajectory1D.cpp Trajectory1D.h TrajectoryEmpty.h \
 	TrajectoryT2s.cpp TrajectoryT2s.h TrajectoryInterface.cpp \
-	TrajectoryInterface.h TrajectoryMotion.cpp TrajectoryMotion.h
+	TrajectoryInterface.h TrajectoryMotion.cpp TrajectoryMotion.h \
+	KVSpiral.h KVSpiral.cpp
 jemris_SOURCES = $(SOURCES) jemris.cpp
 sanityck_SOURCES = $(SOURCES) sanityck.cpp
 pjemris_SOURCES = $(SOURCES) Mpi2Evolution.cpp Mpi2Evolution.h mpi_Model.h pjemris.cpp
@@ -372,6 +374,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GradPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HardRFPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IdealCoil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KVSpiral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Model.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Module.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModulePrototypeFactory.Po@am__quote@
