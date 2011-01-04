@@ -21,39 +21,38 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _SPIRALGRADPULSE_H
-#define _SPIRALGRADPULSE_H
+#ifndef _KVSPIRAL_H
+#define _KVSPIRAL_H
 
 #include <cmath>
 
 #include "GradPulse.h"
 
-//! Prototype of a spiral gradient
+//! Prototype of a spiral gradient as described by Pauly et al.
 
 class SpiralGradPulse : public GradPulse {
-
+	
  public:
-
-
+	
     /**
      * Constructor
      */
     SpiralGradPulse               () {};
-
+	
     /**
      * Copy constructor.
      */
     SpiralGradPulse               (const SpiralGradPulse&) {};
-
+	
     /**
      * Destructor.
      */
-    ~SpiralGradPulse              () {};
+    ~SpiralGradPulse              () { delete [] m_amps; };
 
     /**
      *  See Module::clone
      */
-    SpiralGradPulse* Clone        () const { return (new SpiralGradPulse(*this)); };
+    inline SpiralGradPulse* Clone () const {return (new SpiralGradPulse(*this));};
 
     /**
      * Prepare the spiral gradient pulse.
@@ -67,11 +66,6 @@ class SpiralGradPulse : public GradPulse {
      */
     virtual double   GetGradient  (double const time);
 
-    /**
-     * See Pulse::SetTPOIs
-     */
-    virtual void     SetTPOIs      ();
-
  protected:
     /**
      * Get informations on this trapezoidal gradient
@@ -80,10 +74,18 @@ class SpiralGradPulse : public GradPulse {
      */
     virtual string          GetInfo        ();
 
-    double m_pitch;            /**< Spiral trajectory pitch */
-    double m_alpha;            /**< Spiral trajectory angle */
-
+    double  m_arms;          /**< Acceleration factor */
+    double  m_slewrate;      /**< Maximum slew rate override  */
+    double  m_max_grad;      /**< Maximum gradient amplitude override*/
+    double  m_grad_samp_int; /**< Gradient samping interval */
+    double  m_fov;           /**< Field of view override */
+    double  m_bw;            /**< Bandwidth */
+    double  m_pitch;         /**< Spiral pitch */
+    double  m_beta;          /**< Beta */
+	bool    m_inward;        /**< Spiral in? */
+	long    m_samples;       /**< Number of samples */
+	double* m_amps;          /**< Gradient amplitudes */
 
 };
 
-#endif /*TRAPGRADPULSE_*/
+#endif /*KVSPIRAL_*/

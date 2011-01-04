@@ -26,75 +26,130 @@
 /***********************************************************/
 double            SpiralGradPulse::GetGradient (double const time)  {
 
-    double value = 0.0;
+	return m_amps [(long)floor(time / (GetDuration() * m_grad_samp_int))];
 
-    double a = m_alpha;
-    double p = m_pitch;
-    double t = time;
-
-    double b    = a * pow(t,2) / (2 + 2 * pow(2/3*a,1/6) * pow(t,1/3) + pow(2/3*a,2/3) * pow(t,4/3));
-    double bdot = 2.0*a*t/(2.0+2.0/3.0*pow(2.0,1/6)*pow(3.0,5/6)*pow(a,1/6)*pow(t,1/3)+pow(2.0,2/3)*pow(3.0,1/3)*pow(a,2/3)*pow(t,4/3)/3.0)-a*t*t/pow(2.0+2.0/3.0*pow(2.0,1/6)*pow(3.0,5/6)*pow(a,1/6)*pow(t,1/3)+pow(2.0,2/3)*pow(3.0,1/3)*pow(a,2/3)*pow(t,4/3)/3.0,2.0)*(2.0/9.0*pow(2.0,1/6)*pow(3.0,5/6)*pow(a,1/6)/pow(t,2/3)+4.0/9.0*pow(2.0,2/3)*pow(3.0,1/3)*pow(a,2/3)*pow(t,1/3));
-
-    if      (m_axis == AXIS_GX) value = bdot * p * (sin(b) + b * cos(b));
-    else if (m_axis == AXIS_GY) value = bdot * p * (cos(b) - b * sin(b));
-
-    return value;
 }
 
 /***********************************************************/
 bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 
     bool btag = true;
+	m_inward  = false;
 
-    ATTRIBUTE("Pitch" , m_pitch);
-    ATTRIBUTE("Alpha" , m_alpha);
+    ATTRIBUTE("Arms"       , m_arms);
+	ATTRIBUTE("MaxSlew"    , m_slewrate);
+	ATTRIBUTE("MaxGrad"    , m_max_grad);
+	ATTRIBUTE("GradSampInt", m_grad_samp_int);
+	ATTRIBUTE("FOV"        , m_fov);
+	ATTRIBUTE("BandWidth"  , m_bw);
+	ATTRIBUTE("Inward"     , m_inward);
+	
     if ( mode == PREP_VERBOSE) {
 
-        //XML error checking
-        if (!HasDOMattribute("Alpha"))    {
+        if (!HasDOMattribute("Arms"))    {
             btag = false;
-            cout << GetName() << "::Prepare() error: Alpha required!!\n";
-        }
-        if (!HasDOMattribute("Pitch"))    {
-            btag = false;
-            cout << GetName() << "::Prepare() error: Pitch required!!\n";
+            cout << GetName() << "::Prepare() error: Arms required!!\n";
         }
 
-        double dArea = 0.0;
-        for (int i = 0; i < GetDuration()*1000; i++)
-            dArea += GetGradient((double)i/1000)/1000;
-        SetArea(dArea);
+        if (!HasDOMattribute("MaxSlew"))    {
+            btag = false;
+            cout << GetName() << "::Prepare() error: MaxSlew required!!\n";
+        }
+
+        if (!HasDOMattribute("MaxGrad"))    {
+            btag = false;
+            cout << GetName() << "::Prepare() error: MaxGrad required!!\n";
+        }
+
+        if (!HasDOMattribute("FOV"))    {
+            btag = false;
+            cout << GetName() << "::Prepare() error: FOV required!!\n";
+        }
+
+        if (!HasDOMattribute("BandWidth"))    {
+            btag = false;
+            cout << GetName() << "::Prepare() error: BandWidth required!!\n";
+        }
 
     }
 
     btag = (GradPulse::Prepare(mode) && btag);
 
-    if (!btag && mode == PREP_VERBOSE)
-        cout << "\n warning in Prepare(1) of TRAPGRADPULSE " << GetName() << endl;
+	if (btag && mode != PREP_VERBOSE) {
 
+		double gamma          = 42576000.0;
+
+		double samp_int       = 1.0 / m_bw;
+		double max_grad_samp  = 1.0 / (gamma * m_fov * samp_int); 
+
+		m_pitch               = m_arms / (2.0 * PI * m_fov);
+		m_beta                = gamma * m_slewrate / m_pitch;
+
+		if (m_max_grad > max_grad_samp) { // Nyquist limit exceeded
+			cout << "\n warning in Prepare(1) of KVSPIRAL " << GetName() << endl;
+			cout << "Nyquist limit (" << max_grad_samp << ") exceeded." << endl;
+		}
+		
+		double time_of_switch = 0.0;
+		double gradient       = 0.0;
+
+		m_samples             = GetDuration() / m_grad_samp_int;
+
+		double time           = 0.0;
+
+		double* angle         = new double[m_samples];
+		double* radius        = new double[m_samples];
+		double* k             = new double[m_samples];
+		m_amps                = new double[m_samples];
+
+		long    I             = 0l;
+		
+		for (long i = 0; i <= m_samples; i++) {
+
+			time = (double) i *  m_grad_samp_int * GetDuration() / 10;
+
+			if ( time_of_switch == 0.0 ) { // Limited slewrate
+				angle [i] = m_beta  * time * time / (2.0 + 2.0 * pow(2.0*m_beta/3.0, 1.0/6.0) * pow(time, 1.0/3.0) + pow(2*m_beta/3, 2.0/3.0) * pow(time, 4.0/3.0));
+				radius[i] = m_pitch * angle[i]; 
+			} else  {                     // Limited gradient
+				angle [i] = sqrt (angle[I] * angle[I] + 2*(time-time_of_switch) * gamma * m_max_grad/m_pitch);
+				radius[i] = m_pitch * angle[i]; 
+			}
+
+			if ( m_axis == AXIS_GX )
+				k[i]  = radius[i] * sin(angle[i]);
+			else if ( m_axis == AXIS_GY )
+				k[i]  = radius[i] * cos(angle[i]);
+
+		}
+		
+		if (m_inward) 
+			for (long i = 0; i < m_samples; i++) 
+				//k[m_samples]
+
+				m_amps[i] = (double) ((k[m_samples-i+1] - k[m_samples - i-1]) / (gamma * m_grad_samp_int));
+		else
+			for (long i = 0; i < m_samples; i++)
+				m_amps[i] = (double) ((k[i+1] - k[i]) / (gamma * m_grad_samp_int));
+
+		delete [] angle;
+		delete [] radius;
+		delete [] k;
+
+	}
+	
+    if (!btag && mode == PREP_VERBOSE)
+        cout << "\n warning in Prepare(1) of KVSPIRAL " << GetName() << endl;
 
     return btag;
 }
 
 /***********************************************************/
-inline void  SpiralGradPulse::SetTPOIs () {
-
-    //Reset and take care for ADCs
-    Pulse::SetTPOIs();
-
-    //add TPOIs at nonlinear points of the trapezoid
-    int samplePts = 500;
-    for (int i = 1; i<samplePts; i++) {
-        m_tpoi + TPOI::set(GetDuration()/samplePts*i, -1.0);
-    }
-
-};
-
-/***********************************************************/
 string          SpiralGradPulse::GetInfo() {
 
 	stringstream s;
-	s << GradPulse::GetInfo() << " , (a,p)= (" << m_alpha << "," << m_pitch << ")";
+	s << GradPulse::GetInfo() << " , (beta,pitch,sampint)= (" << m_beta << "," << m_pitch << ")";
 
 	return s.str();
+
 };
