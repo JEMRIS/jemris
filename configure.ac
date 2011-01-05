@@ -237,7 +237,7 @@ if test x$MPICXX = xnone; then
 fi
 
 # find compiler and characteristics
- AC_MSG_CHECKING(for mpi.h)
+AC_MSG_CHECKING(for mpi.h)
   AC_PREPROC_IFELSE(
   [AC_LANG_SOURCE([[#include <mpi.h>]])],
   [ 
@@ -272,8 +272,6 @@ else
   AC_MSG_RESULT([yes])
 fi
 
-case "$host" in
-  *linux*)
     AC_MSG_CHECKING([whether MPI supports threads])
     echo "$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp" >&5
     $MPICXX $CXXFLAGS -o conftest2 conftest2.cpp 2>&5
@@ -284,8 +282,6 @@ case "$host" in
       AC_DEFINE(HAVE_MPI_THREADS,1,[define that mpi supports threads])
     fi
     rm -f conftest2.*
-  ;;
-esac
 
 
 ic_mpirun_found=no

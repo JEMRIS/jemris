@@ -21,8 +21,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _KVSPIRAL_H
-#define _KVSPIRAL_H
+#ifndef _SPIRALGRADPULSE_H
+#define _SPIRALGRADPULSE_H
 
 #include <cmath>
 
@@ -37,7 +37,7 @@ class SpiralGradPulse : public GradPulse {
     /**
      * Constructor
      */
-    SpiralGradPulse               () {};
+    SpiralGradPulse               () { m_initialised = false; };
 	
     /**
      * Copy constructor.
@@ -47,7 +47,7 @@ class SpiralGradPulse : public GradPulse {
     /**
      * Destructor.
      */
-    ~SpiralGradPulse              () { delete [] m_amps; };
+    ~SpiralGradPulse              ();
 
     /**
      *  See Module::clone
@@ -85,7 +85,8 @@ class SpiralGradPulse : public GradPulse {
 	bool    m_inward;        /**< Spiral in? */
 	long    m_samples;       /**< Number of samples */
 	double* m_amps;          /**< Gradient amplitudes */
+	bool    m_initialised;   /**< Internal check for existence of m_amps */
 
 };
 
-#endif /*KVSPIRAL_*/
+#endif /*_SPIRALGRADPULSE_H*/

@@ -100,6 +100,8 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		double* angle         = new double[m_samples];
 		double* radius        = new double[m_samples];
 		double* k             = new double[m_samples];
+
+		m_initialised         = true;
 		m_amps                = new double[m_samples];
 
 		long    I             = 0l;
@@ -144,6 +146,7 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
     return btag;
 }
 
+
 /***********************************************************/
 string          SpiralGradPulse::GetInfo() {
 
@@ -151,5 +154,14 @@ string          SpiralGradPulse::GetInfo() {
 	s << GradPulse::GetInfo() << " , (beta,pitch,sampint)= (" << m_beta << "," << m_pitch << ")";
 
 	return s.str();
+
+};
+
+
+/**********************************************************/
+SpiralGradPulse::~SpiralGradPulse ()  { 
+
+	if (m_initialised)
+		delete [] m_amps; 
 
 };
