@@ -26,7 +26,9 @@
 /***********************************************************/
 double            SpiralGradPulse::GetGradient (double const time)  {
 
-	return m_amps [(long)floor(time / (GetDuration() * m_grad_samp_int))];
+	if (m_axis == AXIS_GX)
+		cout << (long) floor (time / m_grad_samp_int) << " " << m_amps [(long) floor (time / m_grad_samp_int)] << endl;
+	return m_amps [(long) floor (time / m_grad_samp_int)];
 
 }
 
@@ -75,7 +77,7 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 
     btag = (GradPulse::Prepare(mode) && btag);
 
-	if (btag && mode != PREP_VERBOSE) {
+	if (mode == PREP_VERBOSE) {
 
 		double gamma          = 42576000.0;
 
@@ -97,46 +99,58 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 
 		double time           = 0.0;
 
-		double* angle         = new double[m_samples];
-		double* radius        = new double[m_samples];
-		double* k             = new double[m_samples];
+		double* angle         = new double[m_samples+1];
+		double* k             = new double[m_samples+1];
 
 		m_initialised         = true;
 		m_amps                = new double[m_samples];
 
 		long    I             = 0l;
 		
+		k[0]      = 0.0;
+		m_amps[0] = 0.0;
+
 		for (long i = 0; i <= m_samples; i++) {
 
-			time = (double) i *  m_grad_samp_int * GetDuration() / 10;
-
-			if ( time_of_switch == 0.0 ) { // Limited slewrate
+			time = (double) i *  m_grad_samp_int * GetDuration() / 100;
+			
+			if ( time_of_switch == 0.0 ) // Limited slewrate
 				angle [i] = m_beta  * time * time / (2.0 + 2.0 * pow(2.0*m_beta/3.0, 1.0/6.0) * pow(time, 1.0/3.0) + pow(2*m_beta/3, 2.0/3.0) * pow(time, 4.0/3.0));
-				radius[i] = m_pitch * angle[i]; 
-			} else  {                     // Limited gradient
+			else                         // Limited gradient
 				angle [i] = sqrt (angle[I] * angle[I] + 2*(time-time_of_switch) * gamma * m_max_grad/m_pitch);
-				radius[i] = m_pitch * angle[i]; 
-			}
-
+			
 			if ( m_axis == AXIS_GX )
-				k[i]  = radius[i] * sin(angle[i]);
+				k[i]  = m_pitch * angle[i] * sin(angle[i]);
 			else if ( m_axis == AXIS_GY )
-				k[i]  = radius[i] * cos(angle[i]);
+				k[i]  = m_pitch * angle[i] * cos(angle[i]);
+			
+			if (i > 0)
+				m_amps [i-1] = (k[i] - k[i-1]) / (gamma*m_grad_samp_int);
+
+			cout << i << endl;
 
 		}
-		
-		if (m_inward) 
-			for (long i = 0; i < m_samples; i++) 
-				//k[m_samples]
 
-				m_amps[i] = (double) ((k[m_samples-i+1] - k[m_samples - i-1]) / (gamma * m_grad_samp_int));
-		else
+		cout << "Good 1" << endl;
+
+		if (m_inward)  {
+
+			double* tmp = new double [m_samples]; 
+
 			for (long i = 0; i < m_samples; i++)
-				m_amps[i] = (double) ((k[i+1] - k[i]) / (gamma * m_grad_samp_int));
+				tmp [m_samples-1 - i] = m_amps[i];
+
+			delete [] m_amps;
+			m_amps = tmp;
+
+		}
+
+		cout << "Good 2" << endl;
 
 		delete [] angle;
-		delete [] radius;
 		delete [] k;
+
+		cout << "Good 3" << endl;
 
 	}
 	
