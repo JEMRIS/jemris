@@ -11,4 +11,14 @@ jemris_SOURCES   = $(SOURCES) jemris.cpp
 sanityck_SOURCES = $(SOURCES) sanityck.cpp
 pjemris_SOURCES   = $(SOURCES) Mpi2Evolution.cpp Mpi2Evolution.h mpi_Model.h pjemris.cpp
 
-EXTRA_DIST = testsequences.sh testsignals.sh testcoils.sh testmpi.sh
+EXTRA_DIST = testsequences.sh testsignals.sh testcoils.sh
+
+do_subst = sed $(do_dlopen) \
+	-e 's,[@]MPIRUN[@],$(MPIRUN),g' \
+	-e 's,[@]MPIRUN_PROC_OPT[@],$(MPIRUN_PROC_OPT),g'
+
+testmpi.sh: testmpi.sh.in Makefile
+	$(do_subst) < testmpi.sh.in > testmpi.sh.tmp
+	chmod +x testmpi.sh.tmp
+	mv testmpi.sh.tmp testmpi.sh
+

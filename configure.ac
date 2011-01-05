@@ -213,7 +213,6 @@ AC_STRUCT_TM
 
 # Checks for library functions.
 AC_FUNC_ERROR_AT_LINE
-#AC_FUNC_MALLOC
 AC_TYPE_SIGNAL
 AC_CHECK_FUNCS([floor pow sqrt round])
 
@@ -229,6 +228,7 @@ AC_ARG_ENABLE([mpi],
 
 AC_DEFUN([AC_PROG_MPICXX], [
 AC_ARG_VAR([MPICXX],  [MPI C++ compiler command])
+AC_ARG_VAR([MPIRUN],  [MPI run command])
 
 # find compiler and characteristics
 AC_CHECK_PROGS([MPICXX], [$1], [none])
@@ -269,24 +269,25 @@ $MPICXX $CXXFLAGS -o conftest conftest.cpp 2>&5
 if test $? -ne 0; then
   AC_MSG_FAILURE([failed!])
 else
+  mpiw=yes
   AC_MSG_RESULT([yes])
 fi
 
-    AC_MSG_CHECKING([whether MPI supports threads])
-    echo "$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp" >&5
-    $MPICXX $CXXFLAGS -o conftest2 conftest2.cpp 2>&5
-    if test $? -ne 0; then
-      AC_MSG_RESULT([no])
-    else
-      AC_MSG_RESULT([yes])
-      AC_DEFINE(HAVE_MPI_THREADS,1,[define that mpi supports threads])
-    fi
-    rm -f conftest2.*
-
+AC_MSG_CHECKING([whether MPI library supports threads])
+echo "$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp" >&5
+$MPICXX $CXXFLAGS -o conftest2 conftest2.cpp 2>&5
+if test $? -ne 0; then
+  AC_MSG_RESULT([no])
+else
+  AC_MSG_RESULT([yes])
+  AC_DEFINE(HAVE_MPI_THREADS,1,[define that mpi supports threads])
+fi
+rm -f conftest2.*
 
 ic_mpirun_found=no
-if test x$2 = xyes; then
+if test x$mpiw = xyes; then
   AC_MSG_CHECKING([for MPI run command])
+  if test x$ac_cv_env_MPIRUN_value = x; then
   case "$MPICXX" in
     *mpCC_r*)
       mpirun="poe"
@@ -304,10 +305,18 @@ if test x$2 = xyes; then
       mpirun="mprun"
       mpirun_proc_opt="-np"
       ;;
+    *mpicxx*)
+      mpirun="mpirun"
+      mpirun_proc_opt="-np"
+      ;;
     *)
       AC_MSG_ERROR([unknown MPI C++ compiler])
       ;;
   esac
+  else
+	  mpirun=$ac_cv_env_MPIRUN_value
+	  mpirun_proc_opt="-np"
+  fi
   AC_MSG_RESULT([$mpirun])
   AC_SUBST(MPIRUN, [$mpirun])
   AC_SUBST(MPIRUN_PROC_OPT, [$mpirun_proc_opt])
