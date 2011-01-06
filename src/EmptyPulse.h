@@ -49,6 +49,13 @@ class EmptyPulse : public Pulse {
     ~EmptyPulse          () {};
 
     /**
+     * see Pulse::SetTPOIs()
+     */
+    virtual void    SetTPOIs  ();
+
+
+
+    /**
      *  See Prototype::Clone.
      */
     inline EmptyPulse*         Clone() const { return (new EmptyPulse(*this)); };

@@ -26,9 +26,35 @@
 /***********************************************************/
 bool EmptyPulse::Prepare  (PrepareMode mode) {
 
+	ATTRIBUTE("Shape"    , m_analytic_value );
+	
 	m_axis = AXIS_VOID;
 
 	return Pulse::Prepare(mode);
 
 };
 
+/*****************************************************************/
+inline void  EmptyPulse::SetTPOIs () {
+
+	if (!m_analytic) {
+	  //standard way: equidistant ADC sampling
+	  Pulse::SetTPOIs();
+	}
+	else {
+	  //non-equdistant sampling accordig to Shape-attribute (GiNaC formula)
+	  m_tpoi.Reset();
+	  double D=GetDuration();
+	  m_tpoi + TPOI::set(D, -1.0);
+	  int N = GetNADC();
+	  double first = GetAttribute("Shape")->EvalCompiledExpression(0.0,"AnalyticTime");
+	  double last  = GetAttribute("Shape")->EvalCompiledExpression(D,"AnalyticTime");
+	  for (unsigned i = 0; i < N; i++) {
+	    double t = (i+1)*D/(GetNADC()+1);
+	    double shape = GetAttribute("Shape")->EvalCompiledExpression(t,"AnalyticTime");
+	    double adc   = D*(shape-first)/(last-first); //scale adc event into livetime of this emptypulse
+	    m_tpoi + TPOI::set(adc, (m_phase_lock?m_world->PhaseLock:0.0) );
+	  }
+	}
+
+}
