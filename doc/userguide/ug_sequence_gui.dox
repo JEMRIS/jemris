@@ -155,7 +155,11 @@ There exist several pulses which may be inserted into an AtomicSequence. All pul
 
 The most simple pulse-shape module is the <b> \c "EmptyPulse".</b> It represents a dead-time according its specified duration in which, if ADCs
 are present, simulated data is acquired. (The above introduced DelayAtomicSequence is a special implementation of an AtomicSequence which
-has a single EmptyPulse as a child.)
+has a single EmptyPulse as a child.) The EpmtyPulse has a special attribute to perform non-equidistant sampling of ADC events:
+
+         	\li \c "Shape" The analytic expression defines a functional dependence for the distribution of the ADC events.
+		        The function is automatically scaled to the duration of the EmptyPulse. See \ref ug_JEMRIS_seq_spec for further
+			explanation on the usage of the "Shape" attribute.
 
 All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pulses, respectively. The following
 <b> RF pulse Modules</b> are defined in JEMRIS:
@@ -204,10 +208,6 @@ All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pu
 
 </ul>
 
-Note that in terms of numerical efficiency the built-in RF pulses (HardRFPulse,GaussianRFPulse,SincRFPulse) perform best, the
-evaluation of an AnalyticRFPulse is slower, and an ExternalRFPulse is slowest, if it is specified through many data points.
-
-
 Next, there exist several <b> Gradient Pulse Modules</b> in JEMRIS:
 
 <ul> 
@@ -242,9 +242,17 @@ Next, there exist several <b> Gradient Pulse Modules</b> in JEMRIS:
 		\n Finally, the TrapGradPulse has several hidden attributes which may provide important information to other
 		modules: \c "Amplitude", \c "RampUpTime", \c "RampDnTime", "EndOfFlatTop". 
 
+	<li> <b> \c ConstantGradPulse</b>: An gradient pulse of constant amplitude. Here, the attribute \c "Amplitude"
+		is public and the attribute \c "Area" is hidden.
+
+	<li> <b> \c TriangleGradPulse</b>: An gradient pulse for linear ramps. Again, the attribute \c "Amplitude"
+		is public and the attribute \c "Area" is hidden. It has a special attribute \c "TriangleType" which must be
+		either "UP" or "DN" to specify the type of the gradient ramp (ramp up or ramp down, respectively).
+
 	<li> <b> \c SpiralGradientPulse</b>: A preliminary very simple spiral gradient, only intended for usage on 
                 the \c "GX" and the \c "GY" axis. It has two attributes, \c "pitch" and \c "alpha" for scaling and
-		spiral density, respectively. 
+		spiral density, respectively. The SpiralGradientPulse will be removed in a future version of JEMRIS,
+		since the AnalyticGradientPulse (see below) is much more flexible to produce spiral gradient trajectories.
 
 	<li> <b> \c AnalyticGradientPulse</b>: An arbitrary gradient pulse specified through an analytic expression.
 		It has similar functionality as the AnalyticRFPulse. By setting the attribute \c "Diff=1", the attribute
@@ -260,6 +268,13 @@ Next, there exist several <b> Gradient Pulse Modules</b> in JEMRIS:
 		construct the necessary binary file for JEMRIS.
 </ul>
 
+<b> Note on the performance of analytic pulses:</b>\n
+In terms of numerical efficiency the built-in pulses (e.g. SincRFPulse or TrapGradPulse) perform best, the
+evaluation of an analytic pulse (AnalyticRFPulse and AnalyticGradientPulse) is slower, and an external pulse is slowest, if it is
+specified through many data points.
+However, since JEMRIS version 2.4 automatic run-time compilation of analytic pulse-shapes is supported. The functionality is only available
+if the operating system supports the <b> \c ginac-excompiler</b> command. In this case, analytic pulses perform as fast as the
+built-in jemris pulses!
 \n
 
 \section ug_JEMRIS_seq_ginac Analytical expressions
