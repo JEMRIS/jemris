@@ -24,7 +24,6 @@
 #include "config.h"
 
 #include "BiotSavartLoop.h"
-#include <complex>
 
 #ifdef HAVE_BOOST
     #include <boost/math/special_functions/ellint_2.hpp>
@@ -111,8 +110,8 @@ double BiotSavartLoop::GetSensitivity(double* position) {
     double Bz, By, phi;
     phi = atan2(py,px);
     Bz = Bx;
-    By = Br * cos(phi);
-    Bx = Br * sin(phi);
+    Bx = Br * cos(phi);
+    By = Br * sin(phi);
 
     // return to global coordinate system - polar rotation
     double BBx, BBy, BBz;
@@ -132,14 +131,11 @@ double BiotSavartLoop::GetSensitivity(double* position) {
     By = 0.5*By;
     Bz = 0.5*Bz;
 
-    // save transverse field in complex notation
-    complex <double> b1  (Bx,By);
-
     // compute |B1|
     double B1 = sqrt(pow(Bx,2.0)+pow(By,2.0));
 
     // compute phase and store for later retrieval 
-    m_biosavart_phase = arg(b1);
+    m_biosavart_phase = atan2(By,Bx); 
     
     // check for numerical problems
     B1 = (isnan(B1)? 0.5:B1);

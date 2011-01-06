@@ -24,7 +24,6 @@
 #include "Coil.h"
 #include "Model.h"
 #include "DynamicVariables.h"
-#include <complex>
 
 /**********************************************************/
 Coil::~Coil() {
