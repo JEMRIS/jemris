@@ -26,9 +26,12 @@
 /***********************************************************/
 double            SpiralGradPulse::GetGradient (double const time)  {
 
-	if (m_axis == AXIS_GX)
-		cout << (long) floor (time / m_grad_samp_int) << " " << m_amps [(long) floor (time / m_grad_samp_int)] << endl;
-	return m_amps [(long) floor (time / m_grad_samp_int)];
+	long index = (long) floor (time / m_grad_samp_int);
+
+	if (index > m_samples-1)
+		index = m_samples-1;
+
+	return m_amps [index];
 
 }
 
@@ -82,12 +85,13 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		double gamma          = 42576000.0;
 
 		double samp_int       = 1.0 / m_bw;
-		double max_grad_samp  = 1.0 / (gamma * m_fov * samp_int); 
 
-		m_pitch               = m_arms / (2.0 * PI * m_fov);
+		double max_grad_samp  = 1000 / (gamma * m_fov * samp_int); 
+
+		m_pitch               = 1000 * m_arms / (2.0 * PI * m_fov);
 		m_beta                = gamma * m_slewrate / m_pitch;
 
-		if (m_max_grad > max_grad_samp) { // Nyquist limit exceeded
+		if (m_max_grad/1000 > max_grad_samp) { // Nyquist limit exceeded
 			cout << "\n warning in Prepare(1) of KVSPIRAL " << GetName() << endl;
 			cout << "Nyquist limit (" << max_grad_samp << ") exceeded." << endl;
 		}
@@ -98,40 +102,55 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		m_samples             = GetDuration() / m_grad_samp_int;
 
 		double time           = 0.0;
+		double phi            = 0.0;
+		double max_phi        = 0.0;
 
-		double* angle         = new double[m_samples+1];
-		double* k             = new double[m_samples+1];
+		double klast[2];
+		double k    [2];
+		double g    [2];
+		double gabs           = 0.0;
 
-		m_initialised         = true;
 		m_amps                = new double[m_samples];
 
-		long    I             = 0l;
-		
-		k[0]      = 0.0;
-		m_amps[0] = 0.0;
+		m_initialised         = true;
+
+		k[0]                  = 0.0;
+		m_amps[0]             = 0.0;
 
 		for (long i = 0; i <= m_samples; i++) {
 
-			time = (double) i *  m_grad_samp_int * GetDuration() / 100;
+			time = (double) i * m_grad_samp_int / 1000;
 			
 			if ( time_of_switch == 0.0 ) // Limited slewrate
-				angle [i] = m_beta  * time * time / (2.0 + 2.0 * pow(2.0*m_beta/3.0, 1.0/6.0) * pow(time, 1.0/3.0) + pow(2*m_beta/3, 2.0/3.0) * pow(time, 4.0/3.0));
+				phi = m_beta * pow (time, 2.0) / (2.0 + 2.0 * pow(2.0*m_beta/3.0, 1.0/6.0) * pow(time, 1.0/3.0) + pow(2*m_beta/3, 2.0/3.0) * pow(time, 4.0/3.0));
 			else                         // Limited gradient
-				angle [i] = sqrt (angle[I] * angle[I] + 2*(time-time_of_switch) * gamma * m_max_grad/m_pitch);
+				phi = sqrt ( pow(max_phi, 2.0) + 2.0 * (time-time_of_switch) * gamma * m_max_grad / m_pitch * PI / 1000);
 			
-			if ( m_axis == AXIS_GX )
-				k[i]  = m_pitch * angle[i] * sin(angle[i]);
-			else if ( m_axis == AXIS_GY )
-				k[i]  = m_pitch * angle[i] * cos(angle[i]);
+			k[XC]  = m_pitch * phi * sin(phi);
+			k[YC]  = m_pitch * phi * cos(phi);
 			
-			if (i > 0)
-				m_amps [i-1] = (k[i] - k[i-1]) / (gamma*m_grad_samp_int);
+			if (i > 0) {
 
-			cout << i << endl;
+				g[XC]  = 10000000.0 * (k[XC] - klast[XC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
+				g[YC]  = 10000000.0 * (k[YC] - klast[YC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
 
+				m_amps[i] = 1.0e16 * (m_axis == AXIS_GX) ? g[XC] : g[YC];
+				
+				gabs   = sqrt (pow(g[XC],2) + pow(g[YC],2));
+
+			}
+
+			klast[XC] = k[XC];
+			klast[YC] = k[YC];
+
+			// Maximum gradient reached?
+			if (gabs >= m_max_grad && time_of_switch == 0.0) { 
+				m_max_grad     = gabs;
+				time_of_switch = time;
+				max_phi        = phi;
+			}
+			
 		}
-
-		cout << "Good 1" << endl;
 
 		if (m_inward)  {
 
@@ -144,13 +163,6 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 			m_amps = tmp;
 
 		}
-
-		cout << "Good 2" << endl;
-
-		delete [] angle;
-		delete [] k;
-
-		cout << "Good 3" << endl;
 
 	}
 	
