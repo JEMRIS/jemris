@@ -50,8 +50,8 @@ Simulator::Simulator (string fname, string fsample, string frxarray, string ftxa
 	m_state             = false;
 
 	m_domtree_error_rep = new DOMTreeErrorReporter;
-	m_xml_read          = new XMLRead();
-	m_dom_doc           = m_xml_read->ParseFile(fname);
+	m_xio               = new XMLIO();
+	m_dom_doc           = m_xio->Parse(fname);
 
 	DOMNode* topnode;
 
@@ -282,7 +282,7 @@ void Simulator::SetSequence       (string seq) {
 /**********************************************************/
 Simulator::~Simulator             () {
 
-	if (m_xml_read          != NULL) delete m_xml_read;
+	if (m_xio               != NULL) delete m_xio;
 	if (m_sample            != NULL) delete m_sample;
 	if (m_domtree_error_rep != NULL) delete m_domtree_error_rep;
 	if (m_rx_coil_array     != NULL) delete m_rx_coil_array;

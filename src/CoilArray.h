@@ -24,7 +24,7 @@
 #ifndef COILARRAY_H_
 #define COILARRAY_H_
 
-#include "XMLRead.h"
+#include "XMLIO.h"
 
 #include "Signal.h"
 #include "CoilPrototypeFactory.h"
@@ -160,7 +160,7 @@ class CoilArray  {
     CoilPrototypeFactory* m_cpf;           /**< @brief Coil factory    */
     DOMDocument*          m_dom_doc;       /**< @brief DOM document containing configuration */
     Parameters*           m_params;        /**< @brief My parameters   */
-    XMLRead*              m_xml_read;      /**< @brief My XML reader   */
+    XMLIO*                m_xio;           /**< @brief My XML IO module   */
 
 
     /**

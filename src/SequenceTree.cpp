@@ -28,7 +28,7 @@
 #include "ConcatSequence.h"
 #include "AtomicSequence.h"
 #include "Pulse.h"
-#include "XMLWriter.h"
+#include "XMLIO.h"
 
 SequenceTree*            SequenceTree::m_instance = 0;
 
@@ -41,7 +41,7 @@ SequenceTree::SequenceTree() {
 	m_state      = false;
 	m_depth      = 0;
 	m_mpf        = new ModulePrototypeFactory();
-	m_xml_read   = new XMLRead();
+	m_xio        = new XMLIO();
 
 }
 
@@ -50,7 +50,7 @@ SequenceTree::~SequenceTree() {
 
 	SequenceTree::m_instance = 0;
 
-	delete m_xml_read;
+	delete m_xio;
 
 	XMLPlatformUtils::Terminate();
 
@@ -80,7 +80,7 @@ void SequenceTree::Initialize(string seqFile) {
 
     //initialize
 	m_state   = false;
-   	m_dom_doc = m_xml_read->ParseFile(seqFile);
+   	m_dom_doc = m_xio->Parse(seqFile);
 
 	DOMNode* topnode;
 
@@ -349,8 +349,8 @@ void          SequenceTree::SerializeModules(string xml_file){
 cout << module->GetClassType() << endl;
 	}
 
-	XMLWriter xmlwriter;
-	xmlwriter.Write(impl, doc->getDocumentElement(), xml_file);
+	XMLIO xio;
+	xio.Write(impl, doc->getDocumentElement(), xml_file);
 
 	m_dom_doc = docbackup;
 

@@ -29,18 +29,18 @@
 /***********************************************************/
 CoilArray::CoilArray () {
 
-    m_dom_doc  = 0;
-    m_mode   = RX;
+    m_dom_doc = 0;
+    m_mode    = RX;
     m_signal_prefix = "signal";
     m_cpf     = new CoilPrototypeFactory();
-    m_xml_read = new XMLRead();
+    m_xio     = new XMLIO();
 
 }
 
 /***********************************************************/
 CoilArray::~CoilArray() {
 
-	delete m_xml_read;
+	delete m_xio;
 	delete m_cpf;
 	XMLPlatformUtils::Terminate();
 
@@ -119,7 +119,7 @@ DOMNode* CoilArray::RunTree (DOMNode* node, void* ptr, unsigned int (*fun) (void
 /**************************************************/
 void CoilArray::Initialize (string uri) {
 
-   	m_dom_doc = m_xml_read->ParseFile(uri.c_str());
+   	m_dom_doc = m_xio->Parse(uri.c_str());
 
 }
 

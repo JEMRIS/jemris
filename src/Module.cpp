@@ -26,7 +26,7 @@
 #include "SequenceTree.h"
 #include "ConcatSequence.h"
 #include "Pulse.h"
-#include "XMLWriter.h"
+#include "XMLIO.h"
 
 /***********************************************************/
 Module::Module() {
@@ -321,11 +321,11 @@ bool           Module::WriteStaticXML (string xml_file) {
 
 	if (impl==NULL) return false;
 
-	DOMDocument* doc          =  impl->createDocument( 0, StrX("PARAM").XMLchar(), 0);
+	DOMDocument* doc          = impl->createDocument( 0, StrX("PARAM").XMLchar(), 0);
 	DOMNode*     topnode      = doc->getFirstChild();
     Parameters*  parameters   = m_seq_tree->GetParameters();
     DOMNode*     backup_node  = parameters->GetNode();
-	XMLWriter*   xmlwriter    = new XMLWriter();
+	XMLIO*       xmlio        = new XMLIO();
 
     parameters->SetNode(topnode);
     parameters->AddAllDOMattributes(false);
@@ -338,13 +338,13 @@ bool           Module::WriteStaticXML (string xml_file) {
 	//recursively add elements
 	if (!StaticDOM(doc,topnode)) return false;
 
-	xmlwriter->Write (impl, topnode, xml_file);
+	xmlio->Write (impl, topnode, xml_file);
 
 	delete doc;
 	delete topnode;
 	delete parameters;
 	delete backup_node;
-	delete xmlwriter; 
+	delete xmlio; 
 
 	return true;
 

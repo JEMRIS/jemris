@@ -25,7 +25,7 @@
 #define SIMULATOR_H_
 
 #include "ConcatSequence.h"
-#include "XMLRead.h"
+#include "XMLIO.h"
 #include "World.h"
 #include "Sample.h"
 #include "CoilArray.h"
@@ -209,7 +209,7 @@ class Simulator {
 	World*                   m_world;             /**< @brief World to be simulated       */
 	Model*                   m_model;
 	ConcatSequence*          m_sequence;          /**< @brief Sequece to be simulated     */
-	XMLRead*                 m_xml_read;          /**< @brief XML file handler            */
+	XMLIO*                   m_xio;               /**< @brief XML file handler            */
 	CoilArray*               m_tx_coil_array;     /**< @brief Transmit coil array         */
 	CoilArray*               m_rx_coil_array;     /**< @brief Receive coil array          */
 	DOMTreeErrorReporter*    m_domtree_error_rep; /**< @brief DOM tree error reporter     */

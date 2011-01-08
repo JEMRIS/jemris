@@ -25,7 +25,7 @@
 #define SEQUENCETREE_H_
 
 #include "ModulePrototypeFactory.h"
-#include "XMLRead.h"
+#include "XMLIO.h"
 
 
 using std::map;
@@ -229,7 +229,7 @@ class SequenceTree {
     ConcatSequence*      	m_root_seq;   /**< Pointer to the root ConcatSequence */
     DOMDocument*     		m_dom_doc;   /**< The DOM document containing the whole sequence      */
     ModulePrototypeFactory* m_mpf;
-    XMLRead*                m_xml_read;
+    XMLIO*                  m_xio;
     map<DOMNode*, Module*>  m_Modules;
 
 };
