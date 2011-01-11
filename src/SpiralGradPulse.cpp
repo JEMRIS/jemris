@@ -134,7 +134,7 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 				g[XC]  = 10000000.0 * (k[XC] - klast[XC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
 				g[YC]  = 10000000.0 * (k[YC] - klast[YC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
 				
-				m_amps[i] = 0.0; //1.0e16 * (m_axis == AXIS_GX) ? g[XC] : g[YC];
+				m_amps[i] = 1.0e16 * (m_axis == AXIS_GX) ? g[XC] : g[YC];
 				
 				gabs   = sqrt (pow(g[XC],2) + pow(g[YC],2));
 				
