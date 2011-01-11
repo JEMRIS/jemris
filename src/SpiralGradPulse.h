@@ -37,7 +37,7 @@ class SpiralGradPulse : public GradPulse {
     /**
      * Constructor
      */
-    SpiralGradPulse               () { m_initialised = false; };
+    SpiralGradPulse               () {};
 	
     /**
      * Copy constructor.
@@ -85,7 +85,6 @@ class SpiralGradPulse : public GradPulse {
 	bool    m_inward;        /**< Spiral in? */
 	long    m_samples;       /**< Number of samples */
 	double* m_amps;          /**< Gradient amplitudes */
-	bool    m_initialised;   /**< Internal check for existence of m_amps */
 
 };
 

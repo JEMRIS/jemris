@@ -97,7 +97,6 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		}
 		
 		double time_of_switch = 0.0;
-		double gradient       = 0.0;
 
 		m_samples             = GetDuration() / m_grad_samp_int;
 
@@ -110,11 +109,16 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		double g    [2];
 		double gabs           = 0.0;
 
+		if (m_amps)
+			delete [] m_amps;
+
 		m_amps                = new double[m_samples];
 
-		m_initialised         = true;
+		k[XC]                 = 0.0;
+		k[YC]                 = 0.0;
+		klast[XC]             = 0.0;
+		klast[YC]             = 0.0;
 
-		k[0]                  = 0.0;
 		m_amps[0]             = 0.0;
 
 		for (long i = 0; i <= m_samples; i++) {
@@ -187,7 +191,7 @@ string          SpiralGradPulse::GetInfo() {
 /**********************************************************/
 SpiralGradPulse::~SpiralGradPulse ()  { 
 
-	if (m_initialised)
-		delete [] m_amps; 
+	if (m_amps)
+		delete [] m_amps;
 
 };
