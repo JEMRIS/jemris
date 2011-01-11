@@ -46,7 +46,7 @@ inline void  EmptyPulse::SetTPOIs () {
 	  m_tpoi.Reset();
 	  double D=GetDuration();
 	  m_tpoi + TPOI::set(D, -1.0);
-	  int N = GetNADC();
+	  unsigned int N = GetNADC();
 	  double first = GetAttribute("Shape")->EvalCompiledExpression(0.0,"AnalyticTime");
 	  double last  = GetAttribute("Shape")->EvalCompiledExpression(D,"AnalyticTime");
 	  for (unsigned i = 0; i < N; i++) {
