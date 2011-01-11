@@ -21,6 +21,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <algorithm>
 #include "SpiralGradPulse.h"
 
 /***********************************************************/
@@ -154,13 +155,10 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		
 		if (m_inward)  {
 			
-			double tmp[m_samples]; 
-			
-			for (long i = 0; i < m_samples; i++)
-				tmp [m_samples-1 - i] = m_amps[i];
-			
-			for (long i = 0; i < m_samples; i++)
-				m_amps[i] = tmp [i];
+			double* tmp = (double*) malloc ((m_samples+1)*sizeof(double)); 
+			std::reverse_copy (&m_amps[0], &m_amps[m_samples-1], &tmp[0]);
+			free (m_amps);
+			m_amps = tmp;
 			
 		}
 		
