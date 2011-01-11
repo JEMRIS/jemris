@@ -76,6 +76,7 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 
     }
 
+    btag = (GradPulse::Prepare(mode) && btag);
 
 	if (mode == PREP_VERBOSE) {
 		
@@ -164,8 +165,6 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		
 	}
 	
-    btag = (GradPulse::Prepare(mode) && btag);
-
     if (!btag && mode == PREP_VERBOSE)
         cout << "\n warning in Prepare(1) of KVSPIRAL " << GetName() << endl;
 	

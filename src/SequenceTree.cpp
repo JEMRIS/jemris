@@ -342,11 +342,13 @@ void          SequenceTree::SerializeModules(string xml_file){
 			node->removeChild(module->GetChild(i)->GetNode());
 
 		module->AddAllDOMattributes();
+
 		if (module->GetType() == MOD_CONCAT) concats->appendChild(node);
 		if (module->GetType() == MOD_ATOM  )   atoms->appendChild(node);
 		if (module->GetType() == MOD_PULSE )  pulses->appendChild(node);
 		if (module->GetType() == MOD_VOID  ) topnode->appendChild(node);
-cout << module->GetClassType() << endl;
+
+		cout << module->GetClassType() << endl;
 	}
 
 	XMLIO xio;

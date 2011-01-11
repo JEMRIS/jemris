@@ -28,8 +28,10 @@
 
 /**********************************************************/
 XMLIO::~XMLIO() {
-	delete m_parser;
-	delete m_err_reporter;
+	if (m_parser)
+		delete m_parser;
+	if (m_err_reporter)
+		delete m_err_reporter;
 }
 
 /**********************************************************/
@@ -43,7 +45,7 @@ XMLIO::XMLIO () {
              << StrX(e.getMessage()) << XERCES_STD_QUALIFIER endl;
     }
 
-	m_parser      = new XercesDOMParser;
+	m_parser       = new XercesDOMParser;
     m_err_reporter = new DOMTreeErrorReporter;
 
 	XercesDOMParser::ValSchemes valScheme    = XercesDOMParser::Val_Auto;
@@ -171,7 +173,6 @@ DOMNode* XMLIO::RunTree (DOMNode* node, void* ptr, unsigned int (*fun) (void*, D
 /**********************************************************/
 bool XMLIO::Write (DOMImplementation* impl, DOMNode* node, string filename) {
 
-
 	XMLFormatTarget* mft;
 
 	if (filename.empty())
@@ -205,7 +206,6 @@ bool XMLIO::Write (DOMImplementation* impl, DOMNode* node, string filename) {
 	output->release();
 	serializer->release(); 
     #endif
-
 
 	return true;
 

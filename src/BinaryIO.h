@@ -5,6 +5,9 @@
 
 #include <H5Cpp.h>
 
+/**
+ * Binary file IO template class
+ */
 class BinaryIO {
 	
 public:
@@ -42,8 +45,9 @@ public:
 	SetFileName (const std::string fn) { m_file_name = fn; }
 
 	/**
-	 *
+	 * @brief Get Data
 	 */
+	virtual void GetData (double* ) {};
 	
 	
 private: 
