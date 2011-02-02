@@ -46,6 +46,7 @@ World* World::instance() {
         m_instance->saveEvolFileName    =  "";
         m_instance->saveEvolOfstream    = NULL;
         m_instance->saveEvolFunPtr      = &Model::saveEvolution;
+        m_instance->solverSuccess       = true;
 
 
 	m_instance->pAtom		= NULL;

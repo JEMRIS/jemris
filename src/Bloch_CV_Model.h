@@ -124,16 +124,14 @@ class Bloch_CV_Model : public Model {
     /**
      *  see Model::Calculate()
      */
-    virtual void Calculate       (double next_tStop);
+    virtual bool Calculate       (double next_tStop);
 
  private:
 
     // CVODE related
-    void*  m_cvode_mem;
-    double m_tpoint;
- //   long   m_iopt[NEQ];
- //   cvreal m_ropt[NEQ], m_reltol;
-    double m_reltol;
+    void*  m_cvode_mem;	 /**< @brief pointer to cvode malloc */
+    double m_tpoint;	 /**< @brief current time point */
+    double m_reltol;	 /**< @brief relative error tolerance for CVODE */
 
 };
 

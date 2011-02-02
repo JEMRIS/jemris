@@ -67,6 +67,7 @@ class World {
     void      (*saveEvolFunPtr)(long, bool)  ;
 
     void*             solverSettings ;      /**< @brief Arbitrary solver settings  */
+    bool              solverSuccess;	    /**< @brief true, if last calculation successful */
 
     long              SpinNumber;		    /**< @brief Number of the current spin*/
     long              TotalSpinNumber;      /**< @brief Total number of spins*/
@@ -81,7 +82,7 @@ class World {
     double            deltaB;               /**< @brief Any off-resonance terms*/
     double            solution[3];          /**< @brief Solution [M_r, phi, M_z] at the current time point*/
 
-    double			  RandNoise;            /**< @brief percentage of random noise added to the signal */
+    double            RandNoise;            /**< @brief percentage of random noise added to the signal */
     double            GMAXoverB0;           /**< @brief Constant for the concomittant field term */
     double            NonLinGradField;      /**< @brief Non-linear contriution to B_z from gradients */
 

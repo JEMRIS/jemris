@@ -100,7 +100,7 @@ class Model {
 	 * Calculate specific solution in an atomic sequence
 	 * All setting for the computation are in m_World
 	 */
-	virtual void Calculate(double next_tStop) = 0;
+	virtual bool Calculate(double next_tStop) = 0;
 
 	/**
  	 * Run through the sequence tree and
@@ -118,6 +118,7 @@ class Model {
     CoilArray*      m_tx_coil_array;    /**< @brief Transmit coil array                           */
     ConcatSequence* m_concat_sequence;  /**< @brief Top node of the sequence tree for simulation */
     Sample*         m_sample;           /**< @brief Sample                                       */
+    double	    m_accuracy_factor;  /**< @brief increase accuracy by thid factor in case of numerical problems */
 
     bool            m_do_dump_progress; /**< @brief If true, percentage progress during Solve() is written to .jemris_progress.out */
 

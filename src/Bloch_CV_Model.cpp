@@ -73,15 +73,20 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     Bz = position[0]*d_SeqVal[GRAD_X]+ position[1]*d_SeqVal[GRAD_Y]+ position[2]*d_SeqVal[GRAD_Z]
          + DeltaB + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;
 
+    //correct unphysical solutions (in case of numerical problems)
+    if ( NV_Ith_S(y,AMPL) < 0.0 ) { NV_Ith_S(y,AMPL) = 0.0; pW->solverSuccess=false; }
+    if ( NV_Ith_S(y,AMPL) > m0  ) { NV_Ith_S(y,AMPL) =  m0; pW->solverSuccess=false; }
+    if ( NV_Ith_S(y, ZC ) > m0  ) { NV_Ith_S(y, ZC ) =  m0; pW->solverSuccess=false; }
+    if ( NV_Ith_S(y, ZC ) <-m0  ) { NV_Ith_S(y, ZC ) = -m0; pW->solverSuccess=false; }
+
     //NV_Ith_S is the solution magn. vector with components AMPL,PHASE,ZC
     //important: restrict phase to [0, 2*PI]
     NV_Ith_S(y,PHASE) = fmod(NV_Ith_S(y,PHASE),6.28318530717958);
     Mxy = NV_Ith_S(y,AMPL); phi = NV_Ith_S(y,PHASE); Mz = NV_Ith_S(y,ZC);
 
-    //avoid CVODE warnings (does not change physics!)
-
+    //avoid CVODE warnings (does not change physics!)    
     //trivial case: no transv. magnetisation AND no excitation
-    if (Mxy<ATOL1 && d_SeqVal[RF_AMP]<BEPS) {
+    if (Mxy<ATOL1*m0 && d_SeqVal[RF_AMP]<BEPS) {
         NV_Ith_S(y,AMPL)    = 0; NV_Ith_S(y,PHASE)    = 0;
         NV_Ith_S(ydot,AMPL) = 0; NV_Ith_S(ydot,PHASE) = 0;
 
@@ -182,11 +187,12 @@ void Bloch_CV_Model::InitSolver    () {
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,ZC )    = m_world->solution[ZC] ;
 
     ((nvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ);
-    NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,AMPL )  = ATOL1;
-    NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,PHASE ) = ATOL2;
-    NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,ZC )    = ATOL3;
+    NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,AMPL )  = ATOL1*m_accuracy_factor;
+    NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,PHASE ) = ATOL2*m_accuracy_factor;
+    NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,ZC )    = ATOL3*m_accuracy_factor;
 
-
+    m_reltol = RTOL*m_accuracy_factor;
+    
 //cvode2.5:
     int flag;
 #ifndef CVODE26
@@ -215,11 +221,13 @@ void Bloch_CV_Model::FreeSolver    () {
 }
 
 /**********************************************************/
-void Bloch_CV_Model::Calculate(double next_tStop){
+bool Bloch_CV_Model::Calculate(double next_tStop){
 
 	if ( m_world->time < RTOL)
 	    m_world->time += RTOL;
-
+	
+	m_world->solverSuccess=true;
+	
 	CVodeSetStopTime(m_cvode_mem,next_tStop);
 
 	int flag;
@@ -231,8 +239,10 @@ void Bloch_CV_Model::Calculate(double next_tStop){
 	} while ((flag==CV_TSTOP_RETURN) && (m_world->time-TIME_ERR_TOL > m_tpoint ));
 
 #endif
+	if(flag < 0) { m_world->solverSuccess=false; }
+
 	//reinit needed?
-	if (m_world->phase == -2.0) {
+	if (m_world->phase == -2.0 && m_world->solverSuccess) {
 #ifndef CVODE26
 		CVodeReInit(m_cvode_mem,bloch,m_world->time + TIME_ERR_TOL,((nvec*) (m_world->solverSettings))->y,CV_SV,m_reltol,((nvec*) (m_world->solverSettings))->abstol);
 #else
@@ -243,9 +253,13 @@ void Bloch_CV_Model::Calculate(double next_tStop){
 	}
 
 	m_world->solution[AMPL]  = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, AMPL );
-    m_world->solution[PHASE] = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, PHASE );
-    m_world->solution[ZC]    = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, ZC );
+	m_world->solution[PHASE] = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, PHASE );
+	m_world->solution[ZC]    = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, ZC );
 
+	//higher accuray than 1e-10 not useful. Return success and hope for the best.
+	if(m_reltol < 1e-10) { m_world->solverSuccess=true; }
+	
+	return m_world->solverSuccess;
 };
 
 /**********************************************************/

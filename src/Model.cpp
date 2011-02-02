@@ -7,7 +7,7 @@
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU General Public License as publadched by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
@@ -37,7 +37,8 @@ Model::Model() {
 
     m_world            = World::instance();
     m_aux              = false;
-   	m_do_dump_progress = true;
+    m_do_dump_progress = true;
+    m_accuracy_factor  = 1.0;
 
 }
 
@@ -114,7 +115,6 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 	if (module-> GetType() == MOD_ATOM)	{
 
 		m_world->pAtom = (AtomicSequence*) module;
-
 		InitSolver();
 
 		vector<Module*> children = module->GetChildren();
@@ -136,6 +136,15 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				if (p->GetAxis() == AXIS_RF)
 					((RFPulse*) p)->SetCoilArray(m_tx_coil_array);
 		}
+
+		//temporary storage
+		double dtsh = dTimeShift;
+		long   ladc = lIndexShift;
+		int    iadc = m_world->pAtom->GetNumOfADCs();
+		double* dmxy = new double[iadc];
+		double* dmph = new double[iadc];
+		double* dmz  = new double[iadc];
+		iadc=0;
 
 		if (bCollectTPOIs) m_world->pAtom->CollectTPOIs () ;
 
@@ -164,22 +173,51 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				if (found_next == false) next_tStop = 1e200;
 			}
 
-			Calculate(next_tStop);
+			//if numerical error occures in calculation, repeat the current atom with increased accuracy
+			if (!Calculate(next_tStop)) {				
+				//remove wrong contribution to the signal(s)
+				iadc=0;
+				for (int j=0;j<i;++j) {
+				  m_world->phase = m_world->pAtom->GetTPOIs()->GetPhase(j);
+				  if (m_world->phase<0.0) continue;
+				  m_world->time  = dtsh + m_world->pAtom->GetTPOIs()->GetTime(j);
+				  m_world->solution[AMPL]  = -dmxy[iadc];
+				  m_world->solution[PHASE] =  dmph[iadc];
+				  m_world->solution[ZC]    =  -dmz[iadc];
+				  m_rx_coil_array->Receive(ladc+iadc);
+				  iadc++;
+				}
+				
+				delete[] dmxy; delete[] dmph; delete[] dmz;
+				FreeSolver();				
+				
+				m_accuracy_factor *= 0.1; // increase accuray by factor 1e-3
+				RunSequenceTree(dtsh, ladc, m_world->pAtom);
+				dTimeShift  = dtsh;
+				lIndexShift = ladc;
+				m_accuracy_factor *= 10.0; // back to default  accuray
+				return;
+			}
 
-			if (m_world->phase<0.0) //negative receiver phase == no ADC !
-			    continue;
+			if (m_world->phase<0.0) continue;	//negative receiver phase == no ADC !
 
 			m_world->time  += dTimeShift;
 			m_rx_coil_array->Receive(lIndexShift++);
+			
+			//temporary storage of solution
+			dmxy[iadc] = m_world->solution[AMPL];
+			dmph[iadc] = m_world->solution[PHASE];
+			dmz[iadc]  = m_world->solution[ZC];
+			iadc++;
 
 			//write time evolution
 			if (m_world->saveEvolStepSize != 0 && lIndexShift%(m_world->saveEvolStepSize) == 0) {
 
-                int n = lIndexShift / m_world->saveEvolStepSize  - 1;
-                int N = m_world->TotalADCNumber / m_world->saveEvolStepSize ;
-                int m = m_world->SpinNumber;
-                int M = m_world->TotalSpinNumber;
-                m_world->saveEvolFunPtr( lIndexShift, n+1 == N && m+1 == M );
+			    int n = lIndexShift / m_world->saveEvolStepSize  - 1;
+			    int N = m_world->TotalADCNumber / m_world->saveEvolStepSize ;
+			    int m = m_world->SpinNumber;
+			    int M = m_world->TotalSpinNumber;
+			    m_world->saveEvolFunPtr( lIndexShift, n+1 == N && m+1 == M );
 
 			}
 
@@ -187,6 +225,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 
 		dTimeShift += m_world->pAtom->GetDuration();
 
+		delete[] dmxy; delete[] dmph; delete[] dmz;
 		FreeSolver();
 
 	}
