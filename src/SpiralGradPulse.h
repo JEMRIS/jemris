@@ -82,7 +82,7 @@ class SpiralGradPulse : public GradPulse {
     double  m_bw;            /**< Bandwidth */
     double  m_pitch;         /**< Spiral pitch */
     double  m_beta;          /**< Beta */
-	bool    m_inward;        /**< Spiral in? */
+	int     m_inward;        /**< Spiral in? */
 	long    m_samples;       /**< Number of samples */
 	double* m_amps;          /**< Gradient amplitudes */
 

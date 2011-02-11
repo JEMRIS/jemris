@@ -37,7 +37,7 @@ double            SpiralGradPulse::GetGradient (double const time)  {
 bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 
     bool btag = true;
-	m_inward  = false;
+	m_inward  = 0;
 
     ATTRIBUTE("Arms"       , m_arms);
 	ATTRIBUTE("MaxSlew"    , m_slewrate);
@@ -102,9 +102,9 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		double phi            = 0.0;
 		double max_phi        = 0.0;
 		
-		double klast[2];
-		double k    [2];
-		double g    [2];
+		double klast[3];
+		double k    [3];
+		double g    [3];
 		double gabs           = 0.0;
 
 		if (!m_amps)
@@ -112,10 +112,13 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		
 		k[XC]                 = 0.0;
 		k[YC]                 = 0.0;
+		k[ZC]                 = 0.0;
 		klast[XC]             = 0.0;
 		klast[YC]             = 0.0;
+		klast[ZC]             = 0.0;
 		g[XC]                 = 0.0;
 		g[YC]                 = 0.0;
+		g[ZC]                 = 0.0;
 		
 		m_amps[0]             = 0.0;
 		
@@ -130,31 +133,39 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 			
 			k[XC]  = m_pitch * phi * sin(phi);
 			k[YC]  = m_pitch * phi * cos(phi);
+			k[ZC]  = m_pitch * phi * sin (phi/3/PI*4) * cos (phi/3/PI*4) * 2;
 			
 			if (i > 0) {
 				
 				g[XC]  = 10000000.0 * (k[XC] - klast[XC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
 				g[YC]  = 10000000.0 * (k[YC] - klast[YC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
+				g[ZC]  = 10000000.0 * (k[ZC] - klast[ZC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
 				
-				m_amps[i] = 1.0e16 * (m_axis == AXIS_GX) ? g[XC] : g[YC];
-				
-				gabs   = sqrt (pow(g[XC],2) + pow(g[YC],2));
+				if (m_axis == AXIS_GX)
+					m_amps[i] = g[XC];
+				else if (m_axis == AXIS_GY)
+					m_amps[i] = g[YC];
+				else
+					m_amps[i] = g[ZC];
+
+				gabs   = sqrt (pow(g[XC],2) + pow(g[YC],2) + pow(g[ZC],2));
 				
 			}
 			
 			klast[XC] = k[XC];
 			klast[YC] = k[YC];
+			klast[ZC] = k[ZC];
 			
 			// Maximum gradient reached?
-			if (gabs >= m_max_grad && time_of_switch == 0.0) { 
+			/*if (gabs >= m_max_grad && time_of_switch == 0.0) { 
 				m_max_grad     = gabs;
 				time_of_switch = time;
 				max_phi        = phi;
-			}
+				}*/
 			
 		}
 		
-		if (m_inward)  {
+		if (m_inward>0)  {
 			
 			double* tmp = (double*) malloc ((m_samples+1)*sizeof(double)); 
 			std::reverse_copy (&m_amps[0], &m_amps[m_samples-1], &tmp[0]);
