@@ -196,7 +196,7 @@ if WHAT==1
       dBT2s = tan(pi*(rand(length(I),1)-.5)).*(R2S(I)-R2(I));
       a=max(R2S(I)-R2(I));
       dBT2s(abs(dBT2s)>2*a)=0;dBT2s((R2S(I)-R2(I))<0)=0;
-      B(I) = B(I) + dBT2s;
+      B(I) = B(I) + 1000*dBT2s; %convert 1/T2prime to Hz
   end
   axes(handles.hax{2+i})
   if N(3)>1;
