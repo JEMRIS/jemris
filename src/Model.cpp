@@ -144,6 +144,10 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 		double* dmxy = new double[iadc];
 		double* dmph = new double[iadc];
 		double* dmz  = new double[iadc];
+		double dMt   = m_world->solution[0];
+		double dMp   = m_world->solution[1];
+		double dMz   = m_world->solution[2];
+
 		iadc=0;
 
 		if (bCollectTPOIs) m_world->pAtom->CollectTPOIs () ;
@@ -192,6 +196,9 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				FreeSolver();				
 				
 				m_accuracy_factor *= 0.1; // increase accuray by factor 1e-3
+				m_world->solution[0] = dMt;
+				m_world->solution[1] = dMp;
+				m_world->solution[2] = dMz;
 				RunSequenceTree(dtsh, ladc, m_world->pAtom);
 				dTimeShift  = dtsh;
 				lIndexShift = ladc;
