@@ -199,8 +199,7 @@ point on the grid (which is specified in the XML file).
 
 Running jemris with a simulation XML file
 \code
-me@my_box:~$ jemris /usr/local/share/jemris/examples/8chheadcyl.xml 
-jemris simu.xml 
+me@my_box:~$ jemris simu.xml 
 
 JEMRIS 2.2 r1509M
 
