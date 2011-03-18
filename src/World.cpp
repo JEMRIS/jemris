@@ -47,24 +47,25 @@ World* World::instance() {
         m_instance->saveEvolOfstream    = NULL;
         m_instance->saveEvolFunPtr      = &Model::saveEvolution;
         m_instance->solverSuccess       = true;
+        m_instance->m_noofpools         = 1;
 
 
-	m_instance->pAtom		= NULL;
-	m_instance->pStaticAtom		= NULL;
-		m_instance->pAtom		= NULL;
+        m_instance->pAtom               = NULL;
+        m_instance->pStaticAtom         = NULL;
+        m_instance->pAtom               = NULL;
 
         for (int i=0; i<3; i++)
-            m_instance->solution[i]   =  0.0;
+            m_instance->solution[i]     =  0.0;
 
         for (int i=0; i<NO_SPIN_PROPERTIES; i++)
-            m_instance->InitValues[i] =  0.0;
+            m_instance->InitValues[i]   =  0.0;
 
-        m_instance->Values            = m_instance->InitValues;
+        m_instance->Values              = m_instance->InitValues;
 
-        m_instance->m_myRank		  = -1;
-        m_instance->m_useLoadBalancing= true;
-        m_instance->m_no_processes	  = 1;  /* default: serial jemris */
-        m_instance->m_startSpin		  = 0;
+        m_instance->m_myRank            = -1;
+        m_instance->m_useLoadBalancing  = true;
+        m_instance->m_no_processes      = 1;  /* default: serial jemris */
+        m_instance->m_startSpin         = 0;
     }
 
     return m_instance;

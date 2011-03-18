@@ -51,17 +51,15 @@ enum fType  {
 
 //!brief Spin structure
 struct Spin_data {
-    double x;    /**< x-position of the spin                    		*/
-    double y;    /**< x-position of the spin                    		*/
-    double z;    /**< x-position of the spin                    		*/
-    double m0;   /**< equilibrium magnetisation                 		*/
-    double r1;   /**< longitudinal relaxation rate              		*/
-    double r2;   /**< transverse relaxation rate                		*/
-    double r2s;  /**< effective transverse relaxation rate      		*/
-    double db;   /**< 'Delta B' - any off-resoance at this spin 		*/
-    double nn;   /**< not-known (free purpose parameter)        		*/
-    double index;/** the spin id; needed for pjemris (e.g. save evol)	*/
-
+    double x;     /**< x-position of the spin                    		*/
+    double y;     /**< x-position of the spin                    		*/
+    double z;     /**< x-position of the spin                    		*/
+    double m0;    /**< equilibrium magnetisation                 		*/
+    double r1;    /**< longitudinal relaxation rate              		*/
+    double r2;    /**< transverse relaxation rate                		*/
+    double r2s;   /**< effective transverse relaxation rate      		*/
+    double db;    /**< 'Delta B' - any off-resoance at this spin 		*/
+    double index; /** the spin id; needed for pjemris (e.g. save evol)	*/
 };
 
 struct Spin {
@@ -257,6 +255,9 @@ class Sample {
     void SetTimeInterval(double val) {m_sent_interval=val;};
 
     bool IsRestart() {return m_is_restart;};
+
+	// HACK
+	int  GetNoOfPools () {return 1;};
 
  private:
     Spin         spins;      /** < My private spins structure          */

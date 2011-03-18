@@ -63,19 +63,19 @@ void Coil::InitSignal(long lADCs) {
 void Coil::Receive (long lADC) {
 //  normalization by TotalSpinnumber moved to 'Signal->DumpTo'
 
-    m_signal->repository.tp[lADC]  = m_world->time;
+    m_signal->repository.tp[lADC]  = World::instance()->time;
 
     double sens  = GetSensitivity(m_signal->repository.tp[lADC]);
     double phase = GetPhase(m_signal->repository.tp[lADC]);
 
     m_signal->repository.mx[lADC] +=  sens
-        * m_world->solution[AMPL]* cos (- m_world->phase + phase + m_world->solution[PHASE]);
+        * World::instance()->solution[AMPL]* cos (- World::instance()->phase + phase + World::instance()->solution[PHASE]);
 
     m_signal->repository.my[lADC] +=  sens
-		* m_world->solution[AMPL]* sin (- m_world->phase + phase + m_world->solution[PHASE]);
+		* World::instance()->solution[AMPL]* sin (- World::instance()->phase + phase + World::instance()->solution[PHASE]);
 
     m_signal->repository.mz[lADC] += sens
-		* m_world->solution[ZC];
+		* World::instance()->solution[ZC];
 
 }
 
@@ -121,7 +121,7 @@ double  Coil::GetPhase (double time) {
 	if (!m_complex) return m_phase;
 
     double position[3];
-    position[0]=m_world->Values[XC];position[1]=m_world->Values[YC];position[2]=m_world->Values[ZC];
+    position[0]=World::instance()->Values[XC];position[1]=World::instance()->Values[YC];position[2]=World::instance()->Values[ZC];
     DynamicVariables* dv = DynamicVariables::instance();
     dv->m_Motion->GetValue(time,position);
 
@@ -137,7 +137,7 @@ double  Coil::GetPhase (double time) {
 double  Coil::GetSensitivity (double time) {
 
     double position[3];
-    position[0]=m_world->Values[XC];position[1]=m_world->Values[YC];position[2]=m_world->Values[ZC];
+    position[0]=World::instance()->Values[XC];position[1]=World::instance()->Values[YC];position[2]=World::instance()->Values[ZC];
     DynamicVariables* dv = DynamicVariables::instance();
     dv->m_Motion->GetValue(time,position);
 
@@ -221,7 +221,6 @@ bool Coil::Prepare  (PrepareMode mode) {
     ATTRIBUTE("Points" , m_points       );
 
     m_mode          = mode;
-    m_world         = World::instance();
 	m_signal        = NULL;
 
     success         = Prototype::Prepare(mode);

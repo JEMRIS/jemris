@@ -143,7 +143,7 @@ inline void  Pulse::SetTPOIs () {
     	m_tpoi + TPOI::set((i+1)*GetDuration()/(m_more_tpois+1), -1.0 );
 
     for (unsigned i = 0; i < GetNADC(); i++)
-    	m_tpoi + TPOI::set((i+1)*GetDuration()/(GetNADC()+1), (m_phase_lock?m_world->PhaseLock:0.0) );
+    	m_tpoi + TPOI::set((i+1)*GetDuration()/(GetNADC()+1), (m_phase_lock?World::instance()->PhaseLock:0.0) );
 
 };
 

@@ -47,17 +47,20 @@ void mpi_recv_paket_signal(Signal* pSig,int SlaveID,int CoilID);
 /*****************************************************************************/
 MPI_Datatype  MPIspindata() {
 
-	Spin_data data;
+	Spin_data    data;
 
-	const int NUM_DATA = NO_SPIN_PROPERTIES;
+	const int    NUM_DATA = 4 + World::instance()->GetNoOfPools() * 5;
 
     MPI_Datatype MPI_SPINDATA ;
-    MPI_Datatype type[NUM_DATA];// = {MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE, MPI_DOUBLE};
-    for (int i=0;i<NUM_DATA; i++) type[i] =MPI_DOUBLE;
-    int          blocklen[NUM_DATA];// = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+    MPI_Datatype type[NUM_DATA];
+    for (int i=0;i < NUM_DATA; i++) type[i] = MPI_DOUBLE;
+
+    int          blocklen[NUM_DATA];
     for (int i=0;i<NUM_DATA; i++) blocklen[i] = 1;
+
     MPI_Aint     disp[NUM_DATA];
-    MPI_Aint          base;
+    MPI_Aint     base;
 
     MPI_Address(&(data.x) , disp);
     MPI_Address(&(data.y) , disp+1);
@@ -67,8 +70,7 @@ MPI_Datatype  MPIspindata() {
     MPI_Address(&(data.r2), disp+5);
     MPI_Address(&(data.r2s),disp+6);
     MPI_Address(&(data.db), disp+7);
-    MPI_Address(&(data.nn), disp+8);
-    MPI_Address(&(data.index), disp+9);
+    MPI_Address(&(data.index), disp+8);
 
     base = disp[0];
 

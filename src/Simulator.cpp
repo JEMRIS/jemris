@@ -98,6 +98,7 @@ void Simulator::SetSample         (string fsample) {
 	if (fsample.empty()) fsample = GetAttr(GetElem("sample"), "uri");
 	m_sample = new Sample (fsample);
 	m_world->TotalSpinNumber = m_sample->GetSize();
+	m_world->SetNoOfPools(m_sample->GetNoOfPools());
 	m_sample->ReorderSample();
 	string sentinterval = GetAttr(GetElem("sample"),"SentInterval");
 	if (!sentinterval.empty())  m_sample->SetTimeInterval((atof(sentinterval.c_str())));

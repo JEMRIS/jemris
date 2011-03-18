@@ -53,7 +53,7 @@ inline void  EmptyPulse::SetTPOIs () {
 	    double t = (i+1)*D/(GetNADC()+1);
 	    double shape = GetAttribute("Shape")->EvalCompiledExpression(t,"AnalyticTime");
 	    double adc   = D*(shape-first)/(last-first); //scale adc event into livetime of this emptypulse
-	    m_tpoi + TPOI::set(adc, (m_phase_lock?m_world->PhaseLock:0.0) );
+	    m_tpoi + TPOI::set(adc, (m_phase_lock?World::instance()->PhaseLock:0.0) );
 	  }
 	}
 

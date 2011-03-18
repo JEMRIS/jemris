@@ -35,6 +35,8 @@
 #include     <vector>
 #include     <typeinfo>
 #include     <cmath>
+#include     <sstream>
+#include     <fstream>
 
 #include     <ginac/ginac.h>
 #include     <xercesc/dom/DOM.hpp>
@@ -289,7 +291,6 @@ class Prototype {
     bool                        m_aux;         /**< @brief auxiliary helper variable for debugging purposes*/
     bool                        m_prepared;    /**< @brief True, after the first call to Prepare */
     string                      m_name;        /**< @brief Name of this Prototype */
-    World*                      m_world;	   /**< @brief Sole instance of the physical World. */
     DOMNode*                    m_node;        /**< @brief The node configuring this Module */
     Type                        m_type;        /**< @brief The type of the module: one of MOD_PULSE, MOD_ATOM, MOD_CONCAT*/
     vector<double>              m_vector;      /**< @brief A vector which elements are accessible through loop counters.*/

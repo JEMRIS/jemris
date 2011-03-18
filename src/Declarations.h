@@ -44,9 +44,10 @@ enum fields {
     R2,                 /**< @brief Relaxation rate 2: 1/T2   */
     R2S,                /**< @brief Relaxation rate 2: 1/T2S   */
     DB,                 /**< @brief Delta B (e.g. chemical-shift + susceptiblity-induced, ...) */
-    NN,                 /**< @brief Not-Named (unused so far) */
     ID,				    /**< @brief Index of spin			  */
-    NO_SPIN_PROPERTIES  /**< @brief counts number of entries to enum fields. must stay last element, other entries to 'fields' may not be assigned to a value!*/
+    NO_SPIN_PROPERTIES  /**< @brief counts number of entries to enum fields. must stay 
+						            last element, other entries to 'fields' may not be assigned 
+									to a value!*/
 };
 
 /**

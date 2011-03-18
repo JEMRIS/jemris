@@ -223,7 +223,7 @@ inline void  TrapGradPulse::SetTPOIs () {
 		//add ADCs  only on the flat top
     		for (unsigned int i = 0; i < GetNADC(); i++)
     			m_tpoi + TPOI::set(m_ramp_up_time + (i+1)*m_flat_top_time/(GetNADC()+1),
-					   (m_phase_lock?m_world->PhaseLock:0.0)                 );
+					   (m_phase_lock?World::instance()->PhaseLock:0.0)                 );
 	}
 
 	//add TPOIs at nonlinear points of the trapezoid

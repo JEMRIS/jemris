@@ -225,7 +225,6 @@ class Module : public Prototype {
     SequenceTree*  m_seq_tree;    /**< @brief Reference to single instance of the sequence tree. */
     Parameters*    m_parameters;  /**< @brief Pointer to the sole instance of the Parameters*/
     TPOI           m_tpoi;        /**< @brief Time points of interest are stored the referred repository.*/
-    World*         m_world;       /**< @brief World in the experiment*/
 
     string         m_info;        /**< @brief Information string for this module */
     double         m_duration;    /**< @brief The duration of this module*/

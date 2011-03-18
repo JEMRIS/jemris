@@ -75,7 +75,7 @@ void      AtomicSequence::GetValue (double * dAllVal, double const time) {
 
     if (time < 0.0 || time > GetDuration()) { return ; }
 
-    if (m_non_lin_grad) m_world->NonLinGradField = 0.0;
+    if (m_non_lin_grad) World::instance()->NonLinGradField = 0.0;
     vector<Module*> children = GetChildren();
 
     for (unsigned int j=0; j<children.size() ; ++j) {

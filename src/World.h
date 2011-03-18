@@ -59,7 +59,21 @@ class World {
      * @param  G Current gradients
      * @return   Concomitant field term for the current gradients.
      */
-    double ConcomitantField(double* G);
+    double ConcomitantField (double* G);
+
+	/**
+	 * @brief    Set number of sample pools 
+	 *
+	 * @param n  Number of pools
+	 */
+	void   SetNoOfPools (int n) {m_noofpools=1;};
+
+	/**
+	 * @brief    Set number of sample pools 
+	 *
+	 * @param n  Number of pools
+	 */
+	int    GetNoOfPools () {return m_noofpools;};
 
     /**
      * @brief Pointer to the evolution saving function
@@ -99,6 +113,8 @@ class World {
     int				  m_no_processes;		/**< @brief number of parallel processes; used by load balancing */
 
     long			  m_startSpin;			/**< @brief start calculation with this spin ( in case of restart)  */
+
+	int               m_noofpools;          /**< @brief # of pools in sample */
 
  private:
 

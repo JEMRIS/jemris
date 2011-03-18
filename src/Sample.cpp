@@ -80,7 +80,6 @@ void Sample::CreateSpins(long size) {
 		spins.data[i].r2 = 0.0;
 		spins.data[i].r2s= 0.0;
 		spins.data[i].db = 0.0;
-		spins.data[i].nn = 0.0;
 		spins.data[i].index = 0.0;
     }
 }
@@ -143,7 +142,6 @@ void Sample::Populate (ifstream* fin) {
 	            fin->read((char*)(&(spins.data[pos].r2)), sizeof(double));
 	            fin->read((char*)(&(spins.data[pos].r2s)),sizeof(double));
 	            fin->read((char*)(&(spins.data[pos].db)), sizeof(double));
-	            //fin->read((char*)(&(spins.data[pos].nn)), sizeof(double));
 
 	            spins.data[pos].x = (x-0.5*(m_index[XC]-1))*m_res[XC]+m_offset[XC];
 	            spins.data[pos].y = (y-0.5*(m_index[YC]-1))*m_res[YC]+m_offset[YC];
@@ -167,7 +165,6 @@ void Sample::Populate (ifstream* fin) {
                fin->read((char*)(&(spins.data[pos].r2)), sizeof(double));
                fin->read((char*)(&(spins.data[pos].r2s)),sizeof(double));
                fin->read((char*)(&(spins.data[pos].db)), sizeof(double));
-               //fin->read((char*)(&(spins.data[pos].nn)), sizeof(double));
 
         }
 
@@ -203,7 +200,6 @@ Sample* Sample::GetSubSample (int n, long size){
          subSample->spins.data[u].r2 = spins.data[i].r2;
          subSample->spins.data[u].r2s= spins.data[i].r2s;
          subSample->spins.data[u].db = spins.data[i].db;
-         subSample->spins.data[u].nn = spins.data[i].nn;
          subSample->spins.data[u].index = spins.data[i].index;
 
    }
@@ -229,7 +225,6 @@ double* Sample::GetValues (long l) {
          m_val[R2]  = spins.data[l].r2;
          m_val[R2S] = spins.data[l].r2s;
          m_val[DB]  = spins.data[l].db;
-         m_val[NN]  = spins.data[l].nn;
          m_val[ID]  = spins.data[l].index;
 
 	//add position randomness of spin position

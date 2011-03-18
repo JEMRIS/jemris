@@ -35,7 +35,6 @@ Module::Module() {
 	m_seq_tree      = NULL ;
 	m_duration      = 0.0  ;
 	m_calls         = 0    ;
-	m_world         = World::instance();
 
 };
 
