@@ -49,11 +49,10 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am__objects_1 = Attribute.$(OBJEXT) BinaryIO.$(OBJEXT) \
-	DOMTreeErrorReporter.$(OBJEXT) Prototype.$(OBJEXT) \
-	PrototypeFactory.$(OBJEXT) StrX.$(OBJEXT) TPOI.$(OBJEXT) \
-	TxRxPhase.$(OBJEXT) XMLIO.$(OBJEXT) rng.$(OBJEXT) \
-	var_array.$(OBJEXT) AnalyticGradPulse.$(OBJEXT) \
+am__objects_1 = Attribute.$(OBJEXT) DOMTreeErrorReporter.$(OBJEXT) \
+	Prototype.$(OBJEXT) PrototypeFactory.$(OBJEXT) StrX.$(OBJEXT) \
+	TPOI.$(OBJEXT) TxRxPhase.$(OBJEXT) XMLIO.$(OBJEXT) \
+	rng.$(OBJEXT) var_array.$(OBJEXT) AnalyticGradPulse.$(OBJEXT) \
 	AnalyticRFPulse.$(OBJEXT) AtomicSequence.$(OBJEXT) \
 	ConcatSequence.$(OBJEXT) ConstantGradPulse.$(OBJEXT) \
 	DelayAtomicSequence.$(OBJEXT) EmptyPulse.$(OBJEXT) \
@@ -201,22 +200,21 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 TESTS = testsequences.sh testsignals.sh testcoils.sh $(am__append_2)
-SOURCES = Attribute.cpp Attribute.h BinaryIO.h BinaryIO.cpp \
-	DOMTreeErrorReporter.cpp DOMTreeErrorReporter.h Debug.h \
-	Declarations.h Prototype.cpp Prototype.h PrototypeFactory.cpp \
-	PrototypeFactory.h StrX.cpp StrX.h TPOI.cpp TPOI.h \
-	TxRxPhase.cpp TxRxPhase.h XMLIO.cpp XMLIO.h ginac_functions.h \
-	rng.h rng.cpp var_array.h var_array++.h var_array.c \
-	var_array++.h var_array++_cpp.h list.h list_c.h \
-	AnalyticGradPulse.cpp AnalyticGradPulse.h AnalyticRFPulse.cpp \
-	AnalyticRFPulse.h AtomicSequence.cpp AtomicSequence.h \
-	ConcatSequence.cpp ConcatSequence.h ConstantGradPulse.cpp \
-	ConstantGradPulse.h DelayAtomicSequence.cpp \
-	DelayAtomicSequence.h EmptyPulse.cpp EmptyPulse.h \
-	ExternalGradPulse.cpp ExternalGradPulse.h ExternalRFPulse.cpp \
-	ExternalRFPulse.h GaussianRFPulse.cpp GaussianRFPulse.h \
-	GradPulse.cpp GradPulse.h HardRFPulse.cpp HardRFPulse.h \
-	Module.cpp Module.h ModulePrototypeFactory.cpp \
+SOURCES = Attribute.cpp Attribute.h DOMTreeErrorReporter.cpp \
+	DOMTreeErrorReporter.h Debug.h Declarations.h Prototype.cpp \
+	Prototype.h PrototypeFactory.cpp PrototypeFactory.h StrX.cpp \
+	StrX.h TPOI.cpp TPOI.h TxRxPhase.cpp TxRxPhase.h XMLIO.cpp \
+	XMLIO.h ginac_functions.h rng.h rng.cpp var_array.h \
+	var_array++.h var_array.c var_array++.h var_array++_cpp.h \
+	list.h list_c.h AnalyticGradPulse.cpp AnalyticGradPulse.h \
+	AnalyticRFPulse.cpp AnalyticRFPulse.h AtomicSequence.cpp \
+	AtomicSequence.h ConcatSequence.cpp ConcatSequence.h \
+	ConstantGradPulse.cpp ConstantGradPulse.h \
+	DelayAtomicSequence.cpp DelayAtomicSequence.h EmptyPulse.cpp \
+	EmptyPulse.h ExternalGradPulse.cpp ExternalGradPulse.h \
+	ExternalRFPulse.cpp ExternalRFPulse.h GaussianRFPulse.cpp \
+	GaussianRFPulse.h GradPulse.cpp GradPulse.h HardRFPulse.cpp \
+	HardRFPulse.h Module.cpp Module.h ModulePrototypeFactory.cpp \
 	ModulePrototypeFactory.h Parameters.cpp Parameters.h Pulse.cpp \
 	Pulse.h RFPulse.cpp RFPulse.h RepIter.cpp RepIter.h \
 	SechRFPulse.cpp SechRFPulse.h Sequence.cpp Sequence.h \
@@ -338,7 +336,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AnalyticRFPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AtomicSequence.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Attribute.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BinaryIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BiotSavartLoop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bloch_CV_Model.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Coil.Po@am__quote@
