@@ -107,6 +107,8 @@ For the external coil these attributes are not used.
 
 \li <b>"Phase"</b> A phase shift for the complex sensitivity. A change of the phase is directly shown on the sensitivity map.
 
+\li <b>"Conj"</b> Complex conjugation of the spatial sensitivity. Boolean value: 1=complex conjugation, 0=do nothing. (The phase shift above is not conjugated.)
+
 For the next properties, which also apply to all three coil types, it is important to know how jemris internally handles
 coil sensitivities during the simulation. Each coil represents its sensitivity on a predefined grid which is calculated once
 in the beginning. Then, during simulation, the sensitivities are retrieved by linear interpolation on the grid. This is important

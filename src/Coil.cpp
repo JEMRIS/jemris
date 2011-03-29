@@ -118,18 +118,23 @@ void Coil::DumpSensMap (string fname) {
 /**********************************************************/
 double  Coil::GetPhase (double time) {
 
-	if (!m_complex) return m_phase;
+  
+    if (!m_complex) return m_phase;
 
     double position[3];
-    position[0]=World::instance()->Values[XC];position[1]=World::instance()->Values[YC];position[2]=World::instance()->Values[ZC];
+    position[0]=World::instance()->Values[XC];
+    position[1]=World::instance()->Values[YC];
+    position[2]=World::instance()->Values[ZC];
     DynamicVariables* dv = DynamicVariables::instance();
     dv->m_Motion->GetValue(time,position);
 
+    double sign = (m_conjugate?-1.0:1.0);
+	
     if (m_interpolate) {
-		return m_phase + InterpolateSensitivity(position,false);
+		return (m_phase + sign*InterpolateSensitivity(position,false));
 	}
 	else {
-		return m_phase + GetPhase(position);
+		return (m_phase + sign*GetPhase(position));
 	}
 }
 
@@ -137,7 +142,9 @@ double  Coil::GetPhase (double time) {
 double  Coil::GetSensitivity (double time) {
 
     double position[3];
-    position[0]=World::instance()->Values[XC];position[1]=World::instance()->Values[YC];position[2]=World::instance()->Values[ZC];
+    position[0]=World::instance()->Values[XC];
+    position[1]=World::instance()->Values[YC];
+    position[2]=World::instance()->Values[ZC];
     DynamicVariables* dv = DynamicVariables::instance();
     dv->m_Motion->GetValue(time,position);
 
@@ -204,26 +211,28 @@ bool Coil::Prepare  (PrepareMode mode) {
 	m_scale   = 1.0;
 	m_norm    = 1.0;
 	m_phase   = 0.0;
-	m_complex = false;
 	m_dim     = 3;
 	m_extent  = 0;
 	m_points  = 0;
+	m_complex = false;
+	m_conjugate = false;
 
 	ATTRIBUTE("XPos"   , m_position [XC]);
 	ATTRIBUTE("YPos"   , m_position [YC]);
 	ATTRIBUTE("ZPos"   , m_position [ZC]);
 	ATTRIBUTE("Azimuth", m_azimuth      );
-    ATTRIBUTE("Polar"  , m_polar        );
-    ATTRIBUTE("Scale"  , m_scale        );
-    ATTRIBUTE("Phase"  , m_phase        );
-    ATTRIBUTE("Dim"    , m_dim          );
-    ATTRIBUTE("Extent" , m_extent       );
-    ATTRIBUTE("Points" , m_points       );
+	ATTRIBUTE("Polar"  , m_polar        );
+	ATTRIBUTE("Scale"  , m_scale        );
+	ATTRIBUTE("Phase"  , m_phase        );
+	ATTRIBUTE("Conj"   , m_conjugate    );
+	ATTRIBUTE("Dim"    , m_dim          );
+	ATTRIBUTE("Extent" , m_extent       );
+	ATTRIBUTE("Points" , m_points       );
 
-    m_mode          = mode;
-	m_signal        = NULL;
+	m_mode		= mode;
+	m_signal	= NULL;
 
-    success         = Prototype::Prepare(mode);
+    success = Prototype::Prepare(mode);
 
     m_phase   *= PI/180.0;
     m_polar   *= PI/180.0;

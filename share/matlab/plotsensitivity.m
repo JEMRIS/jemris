@@ -48,12 +48,15 @@ CENT=cell(NC,1); AZIM=cell(NC,1); POL =cell(NC,1); NAME=cell(NC,1);
 for i=COILS
  if ~handles.CoilArray.Children(i).HasMap,continue,end
  NA=length(handles.CoilArray.Children(i).Attributes);
- scale = 1; N=0; DIM=0; AxLim=[0 0]; phas=0;
+ scale = 1; N=0; DIM=0; AxLim=[0 0]; phas=0; cs=1;
  AZIM{i}=NaN;  POL{i}=NaN;  CENT{i}=[0 0 0];
  NAME{i}=handles.CoilArray.Children(i).CoilName;
  for j=1:NA
      if strcmpi('PHASE',handles.CoilArray.Children(i).Attributes(j).Name)
          phas = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
+     end
+     if strcmpi('CONJ',handles.CoilArray.Children(i).Attributes(j).Name)
+         cs = 2*(.5-str2double(handles.CoilArray.Children(i).Attributes(j).Value));
      end
      if strcmpi('SCALE',handles.CoilArray.Children(i).Attributes(j).Name)
          scale = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
@@ -86,9 +89,9 @@ for i=COILS
  a=fread(f,inf,'double'); fclose(f); 
  a=[a(1:2:end)/max(a(1:2:end));a(2:2:end)];
  if DIM==3;
-         a=reshape(abs(a(1:N^3)),[N N N]).*exp(sqrt(-1)*reshape(a(1+N^3:2*N^3),[N N N]));
+         a=reshape(abs(a(1:N^3)),[N N N]).*exp(cs*sqrt(-1)*reshape(a(1+N^3:2*N^3),[N N N]));
  elseif DIM==2;
-         a=reshape(abs(a(1:N^2)),[N N]).*exp(sqrt(-1)*(phas*pi/180+reshape(a(1+N^2:2*N^2),[N N])));
+         a=reshape(abs(a(1:N^2)),[N N]).*exp(cs*sqrt(-1)*(phas*pi/180+reshape(a(1+N^2:2*N^2),[N N])));
  else
      disp('Dim must be 2 or 3'),set(gca,'visible','off');return;
  end

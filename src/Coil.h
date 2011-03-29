@@ -149,19 +149,20 @@ class Coil : public Prototype {
      */
     Coil() {};
 
-    double          m_position[3];	/**< Center location   */
-    Signal*         m_signal;    	/**< Signal repository */
+    double		m_position[3];	/**< Center location   */
+    Signal*		m_signal;    	/**< Signal repository */
     unsigned		m_mode;      	/**< My mode (RX/TX)      */
-    double			m_azimuth; 		/**< Change of coordinate system: azimuth angle*/
-    double			m_polar;   		/**< Change of coordinate system: polar angle*/
-    double			m_scale;   		/**< Scaling factor for sensitivities */
-    double			m_norm;   		/**< Normalization factor for sensitivities */
-    double			m_phase;   		/**< Constant phase shift */
-    bool            m_interpolate;  /**< Whether to precompute sensitivities in an array */
-    bool			m_complex;		/**< True, if sensitivity map is complex (non-zero phase entries).*/
-    unsigned		m_dim;     		/**< Dimensions (2D or 3D) of the array*/
-    double			m_extent;  		/**< Array extend of support region [mm] */
-    int				m_points;  		/**< Sampling points of the array */
+    double		m_azimuth; 	/**< Change of coordinate system: azimuth angle*/
+    double		m_polar;   	/**< Change of coordinate system: polar angle*/
+    double		m_scale;   	/**< Scaling factor for sensitivities */
+    double		m_norm;   	/**< Normalization factor for sensitivities */
+    double		m_phase;   	/**< Constant phase shift */
+    bool		m_interpolate;	/**< Whether to precompute sensitivities in an array */
+    bool		m_complex;	/**< True, if sensitivity map is complex (non-zero phase entries).*/
+    bool		m_conjugate;	/**< Complex conjugate the sensitivites, if true.*/
+    unsigned		m_dim;     	/**< Dimensions (2D or 3D) of the array*/
+    double		m_extent;  	/**< Array extend of support region [mm] */
+    int			m_points;  	/**< Sampling points of the array */
     vaArray_3d(double) m_sens_mag;  /**< Array to store sensitivity magnitudes */
     vaArray_3d(double) m_sens_pha;  /**< Array to store sensitivity phases */
 

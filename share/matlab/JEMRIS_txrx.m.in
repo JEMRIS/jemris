@@ -65,7 +65,7 @@ end
 %fixed cloil proerties; should be automatically read from XML, as for
 %modules, some day.
 handles.Coils={'BIOTSAVARTLOOP','ANALYTICCOIL','EXTERNALCOIL'};
-all={'Name','XPos','YPos','ZPos','Azimuth','Polar','Scale','Phase','Dim',...
+all={'Name','XPos','YPos','ZPos','Azimuth','Polar','Scale','Phase','Conj','Dim',...
      'Extent','Points'};
 BSL=all;BSL(end+1)={'Radius'};BSL(end+1)={'Mask'}; AC=all;AC(end+1)={'Sensitivity'};EC=all;EC(end+1)={'Filename'};
 handles.Attributes={BSL,AC,EC};
@@ -409,7 +409,13 @@ CA=handles.CoilArray;
 for i=1:length(CA.Children), handles.CoilArray.Children(i).current = ~handles.CoilArray.Children(i).current; end
 eval(handles.LastChange);
 for i=1:length(CA.Children), handles.CoilArray.Children(i).current = ~handles.CoilArray.Children(i).current; end
-plotCoils(handles);
+
+S=get(handles.LastObject,'Tag'); S=strrep(S,'Edit','Text');
+if strcmpi(eval(['get(handles.',S,',''String'')']),'Scale') || strcmpi(eval(['get(handles.',S,',''String'')']),'Phase')  || strcmpi(eval(['get(handles.',S,',''String'')']),'Conj') 
+    plotsensitivity(handles);
+else
+    plotCoils(handles);
+end    
 guidata(hObject, handles);
 
 %this function is performed for all text-edit callbacks on the coil card
@@ -423,7 +429,7 @@ handles.LastChange = STR;
 eval(STR);
 %eval(['get(handles.',S,',''String'')']),get(hObject,'String')
 %redraw
-if strcmpi(eval(['get(handles.',S,',''String'')']),'Scale') || strcmpi(eval(['get(handles.',S,',''String'')']),'Phase') 
+if strcmpi(eval(['get(handles.',S,',''String'')']),'Scale') || strcmpi(eval(['get(handles.',S,',''String'')']),'Phase')  || strcmpi(eval(['get(handles.',S,',''String'')']),'Conj') 
     plotsensitivity(handles);
 else
     plotCoils(handles);
@@ -608,6 +614,7 @@ for i=1:length(CA.Children)
        for j=1:length(CA.Children(i).Attributes);
            if strcmp(AttrName,CA.Children(i).Attributes(j).Name), pos=j; end
        end
+       if strcmpi(AttrName,'conj'),AttrVal=num2str(boolean(str2num(AttrVal)));end
        if pos>0
            if isempty(AttrVal)
                CA.Children(i).Attributes(pos)=[];              %delete attribute
