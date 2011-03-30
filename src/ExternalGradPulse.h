@@ -43,7 +43,7 @@ class ExternalGradPulse : public GradPulse {
     /**
      * @brief Copy constructor.
      */
-    ExternalGradPulse               (const ExternalGradPulse&)  {  m_gain=1.0; };
+    ExternalGradPulse               (const ExternalGradPulse&);
 
     /**
      * @brief Default destructor.
@@ -82,11 +82,11 @@ class ExternalGradPulse : public GradPulse {
      */
     string           GetInfo      ();
 
+    string m_fname;                /**< @brief Filename containing the RF amps and phases  */
+    string m_fname_old;            /**< @brief Filename containing the RF amps and phases  */
     vector<double> m_times;         /**< @brief My sample time points                          */
     vector<double> m_magnitudes;    /**< @brief My corresponding amplitudes                    */
     double  m_gain;                 /**< @brief Amplification gain                             */
-    long    m_samples;              /**< @brief Number of samples of this pulse                */
-    string  m_fname;                /**< @brief URI of the external gradient file              */
 
 };
 

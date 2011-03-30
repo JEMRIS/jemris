@@ -117,7 +117,7 @@ class ConcatSequence : public Sequence {
      *
      * @return The first repetition iterator.
      */
-    inline RepIter begin() {m_counter=0; Notify(m_counter); return RepIter(this,0);}
+    inline RepIter begin() {m_counter=-1; NewState(m_counter); SetRepCounter(0); return RepIter(this,0);}
 
     /**
      * Get the final iterator for counting repetitions.

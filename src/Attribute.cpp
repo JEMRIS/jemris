@@ -74,8 +74,9 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 
 	//set my own symbol
 	m_symbol_name = m_prototype->GetName()+"x"+m_name;
+	
 	//attribute represents a string
-	if (GetTypeID()==typeid(string*).name()) { WriteMember(expr); return true; }
+	//if (GetTypeID()==typeid(string*).name()) { WriteMember(expr);  return true; }
 
 	//attribute represents a PulseAxis
 	if (GetTypeID()==typeid(PulseAxis*).name()) {
@@ -108,6 +109,12 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 	//cout << "!!! " << GetPrototype()->GetName() << " : " << expr << " , " << m_symlist << endl;
 	m_formula = expr;
 
+	//stop for strings
+	if (GetTypeID()==typeid(string*).name()) {
+	  EvalExpression ();
+	  return true;	  
+	}
+	
 	//build GiNaC expression (maybe not successful at first call, if subjects still missing)
 	try {
 		m_expression = GiNaC::ex(m_formula,m_symlist);
@@ -136,8 +143,28 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 
 /***********************************************************/
 void Attribute::EvalExpression () {
-
+  
 	if (m_formula.empty()) return;
+	
+	//replace attribute symbol by its value in strings
+	if (GetTypeID()==typeid(string*).name()) {
+		string expr = m_formula;
+		for (unsigned int i=0; i<m_subjects.size() ; i++) {
+			Attribute* a = m_subjects.at(i);
+			stringstream key;
+			if (a->GetTypeID()==typeid(  double*).name()) key << a->GetMember  <double>() ; 
+			if (a->GetTypeID()==typeid(     int*).name()) key << a->GetMember     <int>() ; 
+			if (a->GetTypeID()==typeid(    long*).name()) key << a->GetMember    <long>() ; 
+			if (a->GetTypeID()==typeid(unsigned*).name()) key << a->GetMember<unsigned>() ; 
+			if (a->GetTypeID()==typeid(    bool*).name()) key << a->GetMember    <bool>() ; 
+			string  SymbolName = a->GetPrototype()->GetName() + "x" + a->GetName();
+			Prototype::ReplaceString(expr,SymbolName,key.str());
+		}
+		WriteMember(expr);
+		//if (GetName()=="Filename") cout << " Eval: " << expr <<  endl;
+		return;	  
+	}
+
 
 	//collect symbols and corresponding member-values from observed attributes
 	GiNaC::lst numlist;
@@ -150,8 +177,13 @@ void Attribute::EvalExpression () {
 		if (a->GetTypeID()==typeid(    bool*).name()) { numlist.append(a->GetMember    <bool>() ); continue; }
 	}
 
+	
 	//numeric evaluation of GiNaC expression
 	GiNaC::ex e = m_expression.subs(m_symlist,numlist);
+	
+	if (GetName()=="Filename") cout << " Evaluate " << m_expression << " to " << e << endl;
+	if (GetTypeID()==typeid(string*).name()) return;
+	
 	m_static_vector = m_prototype->GetVector(); // static pointer to evaluate the Vector function
 	e = GiNaC::evalf(e);
 	double d = 0.0;
@@ -159,6 +191,7 @@ void Attribute::EvalExpression () {
 		if ( m_complex ) m_imaginary = -0.5 * GiNaC::ex_to<GiNaC::numeric>( (e-e.conjugate())*GiNaC::I ).to_double();
 		d = GiNaC::ex_to<GiNaC::numeric>( e ).to_double();//default is real-part
 	}
+
 
 	//overwrite private member
 	if (m_datatype==typeid(  double*).name() ) WriteMember((double)   d );

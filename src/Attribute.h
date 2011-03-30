@@ -313,6 +313,18 @@ class Attribute {
 
     	return true;
     };
+    
+    /**
+     * @brief Check the state of the value represented by this attribute.
+     *
+     * @param the value to ckeck
+     * return true,  if the value is new
+     */
+    template <typename T> bool NewState(const T& val) {
+    	if ( *((T*) m_backup) == val ) return false;
+    	*((T*) m_backup) = val;
+    	return true;
+    };
 
     /**
      * @brief Append a new observer of this attribute.
@@ -340,18 +352,6 @@ class Attribute {
 
 
     /* pure template Functions need header implementation */
-
-    /**
-     * @brief Check the state of the value represented by this attribute.
-     *
-     * @param the value to ckeck
-     * return true,  if the value is new
-     */
-    template <typename T> bool NewState(const T& val) {
-    	if ( *((T*) m_backup) == val ) return false;
-    	*((T*) m_backup) = val;
-    	return true;
-    };
 
    /**
      * @brief write the member variable of this attribute

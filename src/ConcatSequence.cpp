@@ -38,7 +38,7 @@ bool    ConcatSequence::Prepare(PrepareMode mode){
 	       ATTRIBUTE("Repetitions", m_repetitions);
 	HIDDEN_ATTRIBUTE("Counter"    , m_counter    );
 
-	if (mode != PREP_UPDATE) SetRepCounter(0);
+	if (mode != PREP_UPDATE)	SetRepCounter( 0);
 
         return Sequence::Prepare(mode);
 };

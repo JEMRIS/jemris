@@ -258,14 +258,14 @@ void    Module::DumpTree (string file, Module* mod,int ichild, int level) {
 	}
 
 	//Dump info on this module
-    vector<Module*> children = mod->GetChildren();
+	vector<Module*> children = mod->GetChildren();
 	stringstream spaces_bef;
-    for (int j=0;j<level;++j) spaces_bef << "  ";
+	for (int j=0;j<level;++j) spaces_bef << "  ";
 	stringstream spaces_aft;
- 	for (int j=level; j<m_seq_tree->GetDepth(); ++j) spaces_aft << "  ";
+	for (int j=level; j<m_seq_tree->GetDepth(); ++j) spaces_aft << "  ";
 
-    if (ichild)	cout	<< spaces_bef.str() << "|_ child " << ichild << "   ";
-    else		cout	<< "dump of sequence tree\n"
+	if (ichild)	cout	<< spaces_bef.str() << "|_ child " << ichild << "   ";
+	else		cout	<< "dump of sequence tree\n"
 		<< spaces_aft.str() << "                  TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific\n"
 		<< spaces_aft.str() << "                  ----------------------------------------------------------------- |  ---------------\n"
 		<< "sequence-root";

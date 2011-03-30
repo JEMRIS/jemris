@@ -22,6 +22,14 @@
  */
 
 #include "ExternalGradPulse.h"
+/***********************************************************/
+ExternalGradPulse::ExternalGradPulse               (const ExternalGradPulse&)  {
+  
+    m_gain=1.0;
+    m_fname="";
+    m_fname_old="";
+  
+}
 
 /***********************************************************/
 double            ExternalGradPulse::GetGradient (double const time)  {
@@ -42,39 +50,52 @@ bool              ExternalGradPulse::Prepare     (PrepareMode mode)   {
     ATTRIBUTE("Filename" , m_fname);
     ATTRIBUTE("Scale"    , m_gain);
 
-    //read file only once !
-    if (mode == PREP_INIT && !m_fname.empty() ) {
+    //read data if filename changed
+    if (m_fname != m_fname_old) {
 
-        m_times.clear();
-        m_magnitudes.clear();
+	//read TPOIs and B1-vaules from file
+	ifstream fin(m_fname.c_str(), ios::binary);
+	    
+	if (fin.is_open()) {
 
-        ifstream fin(m_fname.c_str(), ios::binary);
+		m_fname_old = m_fname;
+		
+		double dTP, dVal;
+		fin.read((char *)(&(dTP)), sizeof(double));
+		int iNumberOfTimePoints = ((int) dTP);
 
-        double dTP, dVal;
+		m_times.clear();
+		m_magnitudes.clear();
+		m_tpoi.Reset();
 
-        fin.read((char *)(&(dTP)), sizeof(double));
-        m_samples = ((long) dTP);
+		for (int i=0; i<iNumberOfTimePoints; ++i) {
 
-        for (int i=0; i<m_samples; ++i) {
+			fin.read((char *)(&dTP), sizeof(double));
+			m_times.push_back(dTP);
+			m_tpoi + TPOI::set(dTP,           -1.0);
+			fin.read((char *)(&dVal), sizeof(double));
+			m_magnitudes.push_back(dVal);
 
-            fin.read((char *)(&dTP), sizeof(double));
-            m_times.push_back(dTP);
-            fin.read((char *)(&dVal), sizeof(double));
-            m_magnitudes.push_back(dVal);
+		}
+		m_area = GetAreaNumeric(m_tpoi.GetSize());
+		SetDuration(dTP);
+		fin.close();
+	}
+		//cout << "Success in Module " << GetName() << ": ExternalRFPulse::Prepare read RF binary file " << m_fname << endl;
+	else {
+	      btag = false;
+	      if (mode == PREP_UPDATE)
+		cout << "Error in Module " << GetName() << ": ExternalRFPulse::Prepare can not read RF binary file " << m_fname << endl;
+	    }
+     }
 
-        }
-
-        fin.close();
-        SetDuration(dTP);
-
-    }
-
-    m_area = GetAreaNumeric(m_tpoi.GetSize());
+     //attributes not needed in XML 
+     if (mode != PREP_UPDATE) HideAttribute ("Duration");
 
     btag = (GradPulse::Prepare(mode) && btag);
 
     if (!btag && mode == PREP_VERBOSE)
-        cout << "\n warning in Prepare(1) of TRAPGRADPULSE " << GetName() << endl;
+        cout << "\n warning in Prepare(1) of ExternalGradPulse " << GetName() << endl;
 
     return btag;
 

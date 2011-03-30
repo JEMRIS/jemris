@@ -28,31 +28,38 @@ ExternalRFPulse::ExternalRFPulse  (const ExternalRFPulse& hrfp) {
 
     m_scale=1.0;
     m_fname="";
+    m_fname_old="";
 
 };
 
 /***********************************************************/
 bool ExternalRFPulse::Prepare  (PrepareMode mode) {
 
+	bool btag = true;
 	m_bw  = 1e16;
 
 	ATTRIBUTE("Filename", m_fname );
 	ATTRIBUTE("Scale"   , m_scale );
 
 
-        //read file only once !
-	if (mode == PREP_INIT && !m_fname.empty() ) {
-
+        //read data if filename changed
+	if (m_fname != m_fname_old)
+	{
 		//read TPOIs and B1-vaules from file
 	    ifstream fin(m_fname.c_str(), ios::binary);
+	    
+	    if (fin.is_open()) {
 
-	    double dTP, dVal;
-	    fin.read((char *)(&(dTP)), sizeof(double));
-	    int iNumberOfTimePoints = ((int) dTP);
+		m_fname_old = m_fname;
+		
+		double dTP, dVal;
+		fin.read((char *)(&(dTP)), sizeof(double));
+		int iNumberOfTimePoints = ((int) dTP);
 
 		m_times.clear();
 		m_phases.clear();
 		m_magnitudes.clear();
+		m_tpoi.Reset();
 
 		for (int i=0; i<iNumberOfTimePoints; ++i) {
 
@@ -60,25 +67,31 @@ bool ExternalRFPulse::Prepare  (PrepareMode mode) {
 			m_times.push_back( dTP );
 			m_tpoi + TPOI::set(dTP,           -1.0);
 
-            fin.read((char *)(&dVal), sizeof(double));
-            m_magnitudes.push_back( dVal);
+		    fin.read((char *)(&dVal), sizeof(double));
+		    m_magnitudes.push_back( dVal);
 
-            fin.read((char *)(&dVal), sizeof(double));
-			m_phases.push_back( dVal );
-
-       	}
-
-       	SetDuration(dTP);
-       	fin.close();
-
+		    fin.read((char *)(&dVal), sizeof(double));
+		    m_phases.push_back( dVal );
+		}
+		SetDuration(dTP);
+		fin.close();
+		//cout << "Success in Module " << GetName() << ": ExternalRFPulse::Prepare read RF binary file " << m_fname << endl;
+	    }
+	    else {
+	      btag = false;
+	      if (mode == PREP_UPDATE)
+		cout << "Error in Module " << GetName() << ": ExternalRFPulse::Prepare can not read RF binary file " << m_fname << endl;
+	    }
 	}
 
-	bool b = RFPulse::Prepare(mode);
+	//attributes not needed in XML 
+	if (mode != PREP_UPDATE) { HideAttribute ("Bandwidth",false); HideAttribute ("Duration"); }
 
-	//remove Bandwidth from XML attributes
-	if (mode != PREP_UPDATE) HideAttribute ("Bandwidth",false);
+	btag = (RFPulse::Prepare(mode) && btag); 
+	if (!btag && mode == PREP_VERBOSE)
+		cout << "\n warning in Prepare(1) of ExternalRFPulse " << GetName() << endl;
 
-	return b;
+	return btag;
 
 };
 

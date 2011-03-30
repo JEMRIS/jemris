@@ -84,6 +84,7 @@ class ExternalRFPulse : public RFPulse {
     string           GetInfo      ();
 
     string m_fname;                /**< @brief Filename containing the RF amps and phases  */
+    string m_fname_old;            /**< @brief Filename containing the RF amps and phases  */
     double m_scale;                /**< @brief Scaling factor for the amps                 */
     double m_external_phase;       /**< @brief External phase                              */
     vector<double> m_times;        /**< @brief Vector of Times correlated to the RF events */

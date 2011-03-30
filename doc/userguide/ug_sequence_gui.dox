@@ -198,10 +198,11 @@ All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pu
 		GaussianRFPulse, and additionally
 	 <ol>
          	<li> \c "Filename" A simple binary file of doubles \f$(N,t_1,A_1,P_1,t_2,A_2,P_2,...,t_N,A_N,P_N)\f$ specifying the 
-			time-points \f$t_i\f$, amplitudes \f$A_i\f$, and phases \f$P_i\f$, of the pulse.
+			time-points \f$t_i\f$, amplitudes \f$A_i\f$, and phases \f$P_i\f$, of the pulse. The duration of this pulse is no longer
+			available as an attribute, instead it is defined by the last time point \f$t_N\f$.
          	<li> \c "Scale" An optional scale of the amplitudes (default 1)
 	 </ol>
-		Note, that such external binary files are easily constructed with the GUI: generate a global matlab variable
+		Note that such external binary files are easily constructed with the GUI: generate a global matlab variable
 		of size \f$N \times 3\f$, where the first column are the time points and the remaining columns are
 		RF amplitudes and phases. Then write the name of the variable to the attribute \c "Filename". The GUI will automatically
 		construct the necessary binary file for JEMRIS.
@@ -261,6 +262,7 @@ Next, there exist several <b> Gradient Pulse Modules</b> in JEMRIS:
 	<li> <b> \c ExternalGradientPulse</b>: An arbitrary Gradient pulse specified through an external binary file,
 		again similar to the definition of the ExternalRFPulse. Here, a binary file of doubles
 		\f$(N,t_1,G_1,t_2,G_2,...,t_N,G_N)\f$ specify the time-points \f$t_i\f$ and gradient-values \f$G_i\f$ of the pulse.
+		Again, its duration is defined by the last time point \f$t_N\f$.
 		\n
 		Note, that such external binary files are easily constructed by the GUI: generate a global matlab variable
 		of size \f$N \times 2\f$, where the first column are the time points and the second column are the

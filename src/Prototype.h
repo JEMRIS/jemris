@@ -278,6 +278,21 @@ class Prototype {
     };
 
     /**
+     * @brief Check the state of an attribute.
+     *
+     * @param private member variable.
+     * @return true, if member has changed
+     */
+    template <typename T> bool NewState (const T& val) {
+
+    	map<string,Attribute*>::iterator iter;
+    	for(iter = m_attributes.begin(); iter != m_attributes.end(); iter++)
+    	    if (iter->second->GetAddress() == ((void*) &val) ) return iter->second->NewState(val);
+
+    	return false;
+    };
+    
+    /**
      * @brief Each Prototype has a double vector as a private member, which values
      * can be filled through XML and accessed from attributes within the same Prototype.
      *
