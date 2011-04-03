@@ -85,7 +85,7 @@ class ExternalGradPulse : public GradPulse {
 
     ExternalPulseData		   m_pulse_data; /**<contains the data*/
     string m_fname;                /**< @brief Filename containing the RF amps and phases  */
-    double  m_gain;                 /**< @brief Amplification gain                             */
+    double m_scale;                /**< @brief Scaling factor for the amps                 */
 
 };
 

@@ -25,7 +25,7 @@
 /***********************************************************/
 ExternalGradPulse::ExternalGradPulse               (const ExternalGradPulse&)  {
   
-    m_gain=1.0;
+    m_scale=1.0;
     m_fname="";
     m_pulse_data.SetPulse(this);
   
@@ -35,7 +35,7 @@ ExternalGradPulse::ExternalGradPulse               (const ExternalGradPulse&)  {
 bool              ExternalGradPulse::Prepare     (PrepareMode mode)   {
 
     ATTRIBUTE("Filename" , m_fname);
-    ATTRIBUTE("Scale"    , m_gain);
+    ATTRIBUTE("Scale"    , m_scale);
 	if (mode != PREP_UPDATE) HideAttribute ("Duration");
 
     //read data
