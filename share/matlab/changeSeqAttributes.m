@@ -39,10 +39,12 @@ if Seq.current
        Seq.Attributes(end).Value=AttrVal;
    end
  
-  
+   %AttrVal
+   
    %special case of external pulse shapes
    if ~isempty(strfind(upper(Seq.Name),'EXTERNAL')) && strcmp(upper(AttrName),'FILENAME')
        if exist(AttrVal,'file') == 2, return, end %file exists!
+       if exist(AttrVal,'file') ~= 1, return, end %value is not a (global) variable
        eval(['global ',AttrVal])
        eval(['val= ',AttrVal,';'])
        [N,M]=size(val);
