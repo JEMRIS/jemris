@@ -146,7 +146,7 @@ void Attribute::EvalExpression () {
   
 	if (m_formula.empty()) return;
 	
-	//replace attribute symbol by its value in strings
+	//strings: simply replace attribute symbol by its value
 	if (GetTypeID()==typeid(string*).name()) {
 		string expr = m_formula;
 		for (unsigned int i=0; i<m_subjects.size() ; i++) {
@@ -179,11 +179,7 @@ void Attribute::EvalExpression () {
 
 	
 	//numeric evaluation of GiNaC expression
-	GiNaC::ex e = m_expression.subs(m_symlist,numlist);
-	
-	if (GetName()=="Filename") cout << " Evaluate " << m_expression << " to " << e << endl;
-	if (GetTypeID()==typeid(string*).name()) return;
-	
+	GiNaC::ex e = m_expression.subs(m_symlist,numlist);	
 	m_static_vector = m_prototype->GetVector(); // static pointer to evaluate the Vector function
 	e = GiNaC::evalf(e);
 	double d = 0.0;

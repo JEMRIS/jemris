@@ -26,13 +26,14 @@
 
 #include <cmath>
 #include "GradPulse.h"
+#include "ExternalPulseData.h"
 
 /**
  * @brief External gradient prototype.
  */
 
 class ExternalGradPulse : public GradPulse {
-
+  
  public:
 
     /**
@@ -65,12 +66,12 @@ class ExternalGradPulse : public GradPulse {
     /**
      * @see GradPulse::GetGradient
      */
-    virtual double   GetGradient  (double const time);
+    virtual double   GetGradient  (double const time) {return m_pulse_data.GetData(time); };
 
     /**
      * @see Pulse::SetTPOIs
      */
-    virtual void     SetTPOIs      ();
+    virtual void     SetTPOIs() { m_pulse_data.SetTPOIs(); } ;
 
 
  protected:
@@ -82,10 +83,8 @@ class ExternalGradPulse : public GradPulse {
      */
     string           GetInfo      ();
 
+    ExternalPulseData		   m_pulse_data; /**<contains the data*/
     string m_fname;                /**< @brief Filename containing the RF amps and phases  */
-    string m_fname_old;            /**< @brief Filename containing the RF amps and phases  */
-    vector<double> m_times;         /**< @brief My sample time points                          */
-    vector<double> m_magnitudes;    /**< @brief My corresponding amplitudes                    */
     double  m_gain;                 /**< @brief Amplification gain                             */
 
 };

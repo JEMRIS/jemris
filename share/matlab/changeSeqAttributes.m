@@ -4,8 +4,8 @@ function Seq=changeSeqAttributes(AttrName,AttrVal,Seq,handles)
 %
 
 %
-%  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
-%                                  Forschungszentrum Jülich, Germany
+%  JEMRIS Copyright (C) 2007-2010  Tony St??cker, Kaveh Vahedipour
+%                                  Forschungszentrum J??lich, Germany
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -44,10 +44,18 @@ if Seq.current
    %special case of external pulse shapes
    if ~isempty(strfind(upper(Seq.Name),'EXTERNAL')) && strcmp(upper(AttrName),'FILENAME')
        if exist(AttrVal,'file') == 2, return, end %file exists!
-       if exist(AttrVal,'file') ~= 1, return, end %value is not a (global) variable
-       eval(['global ',AttrVal])
-       eval(['val= ',AttrVal,';'])
-       [N,M]=size(val);
+       try
+        eval(['global ',AttrVal])
+        eval(['val= ',AttrVal,';'])
+        [N,M]=size(val);
+       catch
+           warning([AttrVal,' is neither an existing binary file nor a global variable'])
+           return;
+       end
+       if (N==0 && M==0)
+           warning([AttrVal,' is neither an existing binary file nor a global variable'])
+           return
+       end 
        AX='';
        IS_GRAD=0;
        for i=1:length(Seq.Attributes)

@@ -31,10 +31,13 @@
 #include "TxRxPhase.h"
 
 class AtomicSequence;
+class ExternalPulseData;
 
 //! Pulse Super Class. ABC for all RF and gradient pulses
 
 class Pulse :public Module {
+
+ friend class ExternalPulseData;
 
  public:
 
