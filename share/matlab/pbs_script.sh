@@ -15,8 +15,8 @@
 
 # Set the name of output file
 #PBS -o test
-#PBS -l nodes=8:ppn=4:quad
-##PBS -l nodes=8:ppn=8:oct
+##PBS -l nodes=8:ppn=4:quad
+#PBS -l nodes=4:ppn=8:oct
 
 # Send me email when job end
 ##PBS -M k.vahedipour@fz-juelich.de

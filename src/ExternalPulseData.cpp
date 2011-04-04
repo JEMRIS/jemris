@@ -91,6 +91,7 @@ bool  ExternalPulseData::ReadPulseShape (string fname, bool verbose) {
 
 	m_times.clear();
 	m_magnitudes.clear();
+	if (m_pulse->GetAxis() == AXIS_RF) m_phases.clear();
 	m_pulse->m_tpoi.Reset();
 
 	for (int i=0; i<iNumberOfTimePoints; ++i) {
