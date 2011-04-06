@@ -25,6 +25,7 @@
 #define ANALYTICRFPULSE_H_
 
 #include "RFPulse.h"
+#include "AnalyticPulseShape.h"
 
 /**
  * @brief Analytic RF pulse
@@ -68,16 +69,17 @@ class AnalyticRFPulse : public RFPulse {
      * @param  time The flip angle as double.
      * @return the Magnitude.
      */
-    virtual double GetMagnitude  (double time);
+    virtual double GetMagnitude (double const time) {return m_pulse_shape.GetShape(time); };
 
     /**
-     * @brief Get phase
-     *
-     * @param  mod  Module.
-     * @param  time Time.
-     * @return Phase.
+     * @brief Get AnalyticPulseShape pointer for phase evaluation
      */
-    inline static double getAnalyticPhase (Module* mod, double time) {return (((AnalyticRFPulse*) mod)->m_analytic_phase*180.0/PI);};
+    AnalyticPulseShape*	GetPulseShape(){return &m_pulse_shape;};
+
+    /**
+     * @see Pulse::SetTPOIs
+     */
+    virtual void     SetTPOIs() { m_pulse_shape.SetTPOIs(); } ;
 
 
  protected:
@@ -89,7 +91,7 @@ class AnalyticRFPulse : public RFPulse {
      */
     virtual string          GetInfo        ();
 
-    double m_analytic_phase;    /**< @brief Phase */
+    AnalyticPulseShape		   m_pulse_shape; /**<conputes pulse shape*/
 };
 
 #endif /*ANALYTICRFPULSE_H_*/

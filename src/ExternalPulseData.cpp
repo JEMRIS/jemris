@@ -45,13 +45,10 @@ double            ExternalPulseData::GetData (double const time)  {
 /***********************************************************/
 void  ExternalPulseData::SetTPOIs () {
 
-    m_pulse->m_tpoi.Reset();
+    m_pulse->Pulse::SetTPOIs();
 
     for (unsigned int i=0; i<m_times.size(); ++i)
 	m_pulse->m_tpoi + TPOI::set(m_times.at(i), -1.0);
-
-    for (unsigned int i = 0; i < m_pulse->GetNADC(); i++)
-        m_pulse->m_tpoi + TPOI::set(i*m_pulse->GetDuration()/m_pulse->GetNADC(), (m_pulse->m_phase_lock?World::instance()->PhaseLock:0.0));
 
 };
 
@@ -79,8 +76,8 @@ bool  ExternalPulseData::ReadPulseShape (string fname, bool verbose) {
 	ifstream fin(fname.c_str(), ios::binary);
 	if (!fin.is_open()) {
 	      if (verbose)
-	    	  cout	<< "Error in Module " << m_pulse->GetName()
-					<< ": ExternalRFPulse::Prepare can not read RF binary file " << fname << endl;
+		cout	<< "Error in Module " << m_pulse->GetName()
+			<< ": ExternalRFPulse::Prepare can not read RF binary file " << fname << endl;
 	      return false;
 	}
 	m_fname = fname;

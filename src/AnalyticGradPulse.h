@@ -25,6 +25,7 @@
 #define ANALYTICGRADPULSE_H_
 
 #include "GradPulse.h"
+#include "AnalyticPulseShape.h"
 
 /**
  * @brief Gradient with analytic shape
@@ -62,7 +63,13 @@ public:
     /**
      * See GradPulse::GetValue
      */
-    virtual double GetGradient (double const time);
+    virtual double GetGradient (double const time) {return m_pulse_shape.GetShape(time); };
+
+    /**
+     * @see Pulse::SetTPOIs
+     */
+    virtual void     SetTPOIs() { m_pulse_shape.SetTPOIs(); } ;
+
 
  protected:
 
@@ -72,6 +79,8 @@ public:
      * @return GradPulse::GetInfo plus info of the Shape
      */
     virtual string          GetInfo        ();
+
+    AnalyticPulseShape	m_pulse_shape; /**<computes the pulse shape*/
 
 };
 

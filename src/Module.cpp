@@ -160,8 +160,9 @@ void           Module::AddAllDOMattributes (bool show_hidden){
 			if (attrib->GetTypeID()==typeid(  string*).name()) sstr << (*((string*)   p));
 		}
 
-		//some exceptions (ugly): Constants in Analytic Pulses, Modules in DelayAtoms, NLG field terms in Gradients
+		//some exceptions (ugly): Constants/AnalyticTime in Analytic Pulses, Modules in DelayAtoms, NLG field terms in Gradients
 		if ( attrib_name.find("Constant",0) != string::npos && !attrib->IsPublic() ) continue;
+		if ( attrib_name.find("Analytic",0) != string::npos && !attrib->IsPublic() ) continue;
 		if ( attrib_name.find("Module"  ,0) != string::npos && !attrib->IsPublic() ) continue;
 		if ( attrib_name.find("NLG_"    ,0) != string::npos && !attrib->IsPublic() ) continue;
 

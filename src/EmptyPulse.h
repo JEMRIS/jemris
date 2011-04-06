@@ -25,6 +25,7 @@
 #define EMPTYPULSE_H_
 
 #include "Pulse.h"
+#include "AnalyticPulseShape.h"
 
 
 //! Prototype of an empty pulse
@@ -39,28 +40,21 @@ class EmptyPulse : public Pulse {
     EmptyPulse           () {};
 
     /**
-     * @brief Default copy constructor.
-     */
-    EmptyPulse           (const EmptyPulse&) {};
-
-    /**
      * @brief Default destructor.
      */
     ~EmptyPulse          () {};
 
     /**
-     * see Pulse::SetTPOIs()
+     * @brief Default copy constructor.
      */
-    virtual void    SetTPOIs  ();
-
-
+    EmptyPulse           (const EmptyPulse&) { m_pulse_shape.SetPulse(this); };
 
     /**
      *  See Prototype::Clone.
      */
     inline EmptyPulse*         Clone() const { return (new EmptyPulse(*this)); };
 
-;   /**
+    /**
      * @brief Prepare the hard RF pulse.
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
@@ -68,8 +62,23 @@ class EmptyPulse : public Pulse {
      */
     virtual bool Prepare (PrepareMode mode);
 
+    /**
+     * @brief Allows non-equdistant setting of ADCs via Shape attribute (GiNaC formula)
+     * @see Pulse::SetTPOIs()
+     */
+    virtual void    SetTPOIs  ();
 
  protected:
+   
+    /**
+     * Get informations
+     *
+     * @return Infos for display.
+     */
+    virtual string         GetInfo        ();
+
+
+    AnalyticPulseShape	   m_pulse_shape; /**<conputes pulse shape*/
 
 };
 

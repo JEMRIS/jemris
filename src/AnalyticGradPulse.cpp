@@ -26,57 +26,25 @@
 /***********************************************************/
 AnalyticGradPulse::AnalyticGradPulse  (const AnalyticGradPulse&) {
 
-	//SetExceptionalAttrib("Shape");
+	m_pulse_shape.SetPulse(this);
 
 };
 
 /***********************************************************/
 bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
 
-	bool btag = true;
+    //set attributes "Shape", "Diff", "Constants" and initialize GiNaC evaluation
+    if (mode != PREP_UPDATE) m_pulse_shape.PrepareInit(mode==PREP_VERBOSE);
 
-	// Automatically set a GiNaC expression for GetValue(T)
-	//
-	// Expression syntax example: a1*exp(-c1*T)*sin(c2*T)+a2
-	// T stands for the time, c1, c2,... for the constants Const1, ..., Const5 defined
-	// for this AnalyticGradPulse, and a1, a2, etc for further linked attributes from
-	// other modules, as usual.
-	ATTRIBUTE("Shape"    , m_analytic_value );
-	ATTRIBUTE("TPOIs"    , m_more_tpois     ); // Number of TPOIs along the analytical expression.
-	UNOBSERVABLE_ATTRIBUTE("Diff"     ); // Number of TPOIs along the analytical expression.
-	UNOBSERVABLE_ATTRIBUTE("Constants");
+    // Base class Prepare *before* analytic prepare of pulse shape
+    bool btag = ( GradPulse::Prepare(mode) && mode != PREP_UPDATE && m_pulse_shape.PrepareAnalytic(mode==PREP_VERBOSE) );
 
+    //Calculate area
+    if (btag) m_area = ( (HasDOMattribute("Diff") && GetDOMattribute("Diff")=="1") ? m_pulse_shape.m_analytic_integral : GetAreaNumeric(2000) );
 
-	if (mode !=PREP_UPDATE) GetAttribute("Shape")->ResetCurrentFunctionPointer();
-
-	// Base class Prepare; the GiNaC expression for Shape is set from Pulse::Prepare
-	btag = (GradPulse::Prepare(mode) && btag && m_analytic);
-
-	//Calculate area
- 	if (m_analytic) {
-
-		bool numericArea = true;
-
-		if (HasDOMattribute("Diff")) {
-
-				// special case: diff=1
-				// => area equals the anti-derivative computed from Pulse::prepare
-				string sdiff = GetDOMattribute("Diff");
-
-				if (sdiff=="1") {
-					m_area      = m_analytic_integral;
-					numericArea = false;
-				}
-
-		}
-
-		//standard case: compute numerical integral with 2000 sampling points
-		if ( numericArea )  m_area = GetAreaNumeric(2000);
-
-	}
 
     if (!btag && mode == PREP_VERBOSE)
-        cout << "\n warning in Prepare(1) of TRAPGRADPULSE " << GetName() << endl;
+        cout << "\n warning in Prepare(1) of AnalyticGradPulse " << GetName() << endl;
 
     if (mode != PREP_UPDATE) {
 		HideAttribute("Area"           );
@@ -84,18 +52,10 @@ bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
 		HideAttribute("SlewRate", false);
 	}
 
-	return btag;
+    return btag;
 
 };
 
-/***********************************************************/
-inline double AnalyticGradPulse::GetGradient (double const time) {
-
- 	if (!m_analytic) return 0.0;
-
- 	return 	GetAttribute("Shape")->EvalCompiledExpression(time,"AnalyticTime");
-
-};
 
 /***********************************************************/
 string          AnalyticGradPulse::GetInfo() {

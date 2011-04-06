@@ -36,14 +36,15 @@ bool              ExternalGradPulse::Prepare     (PrepareMode mode)   {
 
     ATTRIBUTE("Filename" , m_fname);
     ATTRIBUTE("Scale"    , m_scale);
-	if (mode != PREP_UPDATE) HideAttribute ("Duration");
 
-    //read data
-    bool btag = m_pulse_data.ReadPulseShape (m_fname, mode == PREP_UPDATE);
+	//read data
+	bool btag = m_pulse_data.ReadPulseShape (m_fname, mode == PREP_UPDATE);
 
 	if ( btag && m_tpoi.GetSize()>0 ) m_area = GetAreaNumeric(m_tpoi.GetSize());
 
-    btag = ( GradPulse::Prepare(mode) && btag);
+	btag = ( GradPulse::Prepare(mode) && btag);
+    
+	if (mode != PREP_UPDATE) HideAttribute ("Duration");
 
 	if (!btag && mode == PREP_VERBOSE)
         cout	<< "\n warning in Prepare(1) of ExternalGradPulse " << GetName()

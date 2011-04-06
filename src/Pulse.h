@@ -31,12 +31,14 @@
 #include "TxRxPhase.h"
 
 class AtomicSequence;
+class AnalyticPulseShape;
 class ExternalPulseData;
 
 //! Pulse Super Class. ABC for all RF and gradient pulses
 
 class Pulse :public Module {
 
+ friend class AnalyticPulseShape;
  friend class ExternalPulseData;
 
  public:
@@ -65,19 +67,6 @@ class Pulse :public Module {
      *  @brief  see Module::Prepare()
      */
     virtual bool Prepare   (PrepareMode mode) ;
-
-    /**
-     *  @brief  Does the Preparation of the "Shape" Attribute for
-     *  derived analytic Pulses.
-     *
-     *  This is a bit ugly: Instead for the derived classes Pulse<-RfPulse<-AnalyticRfPulse and
-     *  Pulse<-GradientPulse<-AnalyticGradientPulse a multiple inherited base class AnalyticPulse
-     *  would be nice.
-     *
-     * @param mode the PrepareMode
-     * @return success/failure of operation
-     */
-    bool PrepareAnalytic   (PrepareMode mode) ;
 
     /**
      * @brief Get the duration of this pulse.
@@ -173,12 +162,6 @@ class Pulse :public Module {
     double        m_initial_delay;     /**< Time shift at the beginning inside the atom */
     bool          m_phase_lock;        /**< Lock phase of ADCs to the phase of the last RF pulse event*/
 
-    unsigned int  m_more_tpois;        /**< For analytic evaluation of GetValue */
-    bool          m_analytic;          /**< For analytic evaluation of GetValue */
-    double        m_analytic_value;    /**< For analytic evaluation of GetValue */
-    double        m_analytic_time;     /**< For analytic evaluation of GetValue */
-    double        m_constant[20];      /**< For analytic evaluation of GetValue */
-    double        m_analytic_integral; /**< For analytic evaluation of GetValue */
 };
 
 #endif

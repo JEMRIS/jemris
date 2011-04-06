@@ -165,7 +165,6 @@ void Attribute::EvalExpression () {
 		return;	  
 	}
 
-
 	//collect symbols and corresponding member-values from observed attributes
 	GiNaC::lst numlist;
 	for (unsigned int i=0; i<m_subjects.size() ; i++) {
@@ -263,7 +262,7 @@ double Attribute::EvalCompiledExpression (double const val, string const attrib 
 					compile_ex(eai, get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fpi.at(m_num_fp));
 				}
 			}
- 			//cout << " compiling attribute " << GetName() << " of module " << GetPrototype()->GetName() << endl;
+ 			//cout << " compiling expression " << e << " of attribute " << GetName() << " in module " << GetPrototype()->GetName() << endl;
  		 	m_num_fp++;
 		}
 	 	catch (exception &p) {

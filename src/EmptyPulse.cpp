@@ -26,18 +26,20 @@
 /***********************************************************/
 bool EmptyPulse::Prepare  (PrepareMode mode) {
 
-	ATTRIBUTE("Shape"    , m_analytic_value );
-	
-	m_axis = AXIS_VOID;
+    m_axis = AXIS_VOID;
 
-	return Pulse::Prepare(mode);
+    //set attributes "Shape", "Diff", "Constants" and initialize GiNaC evaluation
+    if (mode != PREP_UPDATE) m_pulse_shape.PrepareInit(mode==PREP_VERBOSE);
+
+    // Base class Prepare && analytic prepare of pulse shape
+    return ( Pulse::Prepare(mode) && m_pulse_shape.PrepareAnalytic(mode==PREP_VERBOSE) );
 
 };
 
 /*****************************************************************/
 inline void  EmptyPulse::SetTPOIs () {
 
-	if (!m_analytic) {
+	if ( !m_pulse_shape.m_prepared ) {
 	  //standard way: equidistant ADC sampling
 	  Pulse::SetTPOIs();
 	}
@@ -58,3 +60,18 @@ inline void  EmptyPulse::SetTPOIs () {
 	}
 
 }
+
+/***********************************************************/
+string          EmptyPulse::GetInfo() {
+
+	stringstream s;
+	s << Pulse::GetInfo();
+
+	if ( HasDOMattribute("Shape") ) {
+	  string val = GetDOMattribute("Shape");
+	  s << " , Shape = ";
+	  if ( HasDOMattribute("Diff") ) s << " d/DT ";
+	  s <<  val;
+	}
+	return s.str();
+};

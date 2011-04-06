@@ -26,74 +26,35 @@
 /***********************************************************/
 AnalyticRFPulse::AnalyticRFPulse  (const AnalyticRFPulse& hrfp) {
 
-	m_analytic_phase = 0.0;
-	//SetExceptionalAttrib("Shape");
+	m_pulse_shape.SetPulse(this);
 
 };
 
 /***********************************************************/
 bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
 
-	bool btag = true;
 
-	//automatically set a GiNaC expression for GetValue(T)
-	//
-	//expression syntax example: a1*exp(-c1*T)*sin(c2*T)+a2
-	//T stands for the time, c1, c2,... for the constants Const1, ..., Const5 defined
-	//for this AnalyticRFPulse, and a1, a2, etc for further linked attributes from
-	//other modules, as usual.
-	ATTRIBUTE("Shape"    , m_analytic_value );
-	ATTRIBUTE("TPOIs"    , m_more_tpois     ); // Number of TPOIs along the analytical expression.
-	UNOBSERVABLE_ATTRIBUTE("Diff"     ); // Number of TPOIs along the analytical expression.
-	UNOBSERVABLE_ATTRIBUTE("Constants");
+    //set attributes "Shape", "Diff", "Constants" and initialize GiNaC evaluation
+    if (mode != PREP_UPDATE) m_pulse_shape.PrepareInit(mode==PREP_VERBOSE);
 
-	if (mode !=PREP_UPDATE) GetAttribute("Shape")->ResetCurrentFunctionPointer();
+    // Base class Prepare *before* analytic prepare of pulse shape
+    bool btag = ( RFPulse::Prepare(mode) && m_pulse_shape.PrepareAnalytic(mode==PREP_VERBOSE) );
 
-	//base class Prepare; the GiNaC expression for Shape is set from Pulse::Prepare
-	btag = (RFPulse::Prepare(mode) && btag && m_analytic);
-
-	//Calculate area
- 	if (m_analytic) {
-
-		bool numericArea = true;
-
-		if (HasDOMattribute("Diff")) {
-
-            // special case: diff=1
-            // => area equals the anti-derivative computed from Pulse::prepare
-            string sdiff = GetDOMattribute("Diff");
-
-            if (sdiff=="1") {
-                m_flip_angle = (180.0/PI)*m_analytic_integral;
-                numericArea  = false;
-            }
-		}
-	}
+    //Calculate flip angle
+    if (btag) m_flip_angle = (180.0/PI)*( (HasDOMattribute("Diff") && GetDOMattribute("Diff")=="1") ? m_pulse_shape.m_analytic_integral : GetIntegralNumeric(2000) );
 
     if (!btag && mode == PREP_VERBOSE)
-        cout << "\n warning in Prepare(1) of TRAPGRADPULSE " << GetName() << endl;
+        cout << "\n warning in Prepare(1) of AnalyticRFPulse " << GetName() << endl;
 
     if (mode != PREP_UPDATE) {
-		insertGetPhaseFunction( &AnalyticRFPulse::getAnalyticPhase );
-		HideAttribute("FlipAngle");
-	}
+      HideAttribute("FlipAngle");
+      HideAttribute("Bandwidth");
+    }
 
-	return btag;
-
-};
-
-/***********************************************************/
-inline double  AnalyticRFPulse::GetMagnitude  (double const time){
-
-	if (!m_analytic) return 0.0;
-
- 	double real = GetAttribute("Shape")->EvalCompiledExpression(time,"AnalyticTime");
-	double imag = GetAttribute("Shape")->GetImaginary();
-
-	m_analytic_phase = atan2(imag,real);
-	return sqrt(pow(imag,2)+pow(real,2)) ;
+    return btag;
 
 };
+
 
 /***********************************************************/
 string          AnalyticRFPulse::GetInfo() {

@@ -46,7 +46,7 @@ bool    SincRFPulse::Prepare  (PrepareMode mode) {
 
     //Calculate maximum amplitude from flipangle and duration:
     //numerically integrates pulse shape over 10000 sampling points
-    m_max_amplitude = 1;
+    m_max_amplitude = 1; //important: unit max amplitude before integral evaluation
     m_max_amplitude = (PI/180.0) * GetFlipAngle() / GetIntegralNumeric(10000);
 
     bool tag = RFPulse::Prepare(mode);

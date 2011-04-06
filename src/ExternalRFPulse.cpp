@@ -43,14 +43,15 @@ bool ExternalRFPulse::Prepare  (PrepareMode mode) {
     //read data
 	bool btag = m_pulse_data.ReadPulseShape (m_fname, mode == PREP_UPDATE) ;
 
+    if (mode != PREP_UPDATE) insertGetPhaseFunction( &ExternalPulseData::GetPhase );
+
+    btag = ( RFPulse::Prepare(mode) && btag);
+
     if (mode != PREP_UPDATE) {
-        insertGetPhaseFunction( &ExternalPulseData::GetPhase );
         HideAttribute ("Bandwidth",false);
         HideAttribute ("Duration");
     }
-
-btag = ( RFPulse::Prepare(mode) && btag);
-
+    
 	if (!btag && mode == PREP_VERBOSE)
 		cout	<< "\n warning in Prepare(1) of ExternalRFPulse " << GetName()
 				<< " : can not read binary file " << m_fname << endl;
