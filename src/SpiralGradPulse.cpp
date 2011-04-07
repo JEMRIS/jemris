@@ -29,7 +29,7 @@ double            SpiralGradPulse::GetGradient (double const time)  {
 
 	long index = (long) floor (time / m_grad_samp_int);
 
-	return m_amps [index];
+	return (m_inward) ? -m_amps [index] : m_amps [index]; 
 
 }
 
@@ -157,7 +157,7 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 			klast[ZC] = k[ZC];
 			
 			// Maximum gradient reached?
-			/*if (gabs >= m_max_grad && time_of_switch == 0.0) { 
+			/*if (gabs >= m_maxinwar_grad && time_of_switch == 0.0) { 
 				m_max_grad     = gabs;
 				time_of_switch = time;
 				max_phi        = phi;
