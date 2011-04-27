@@ -44,7 +44,12 @@ bool              ExternalGradPulse::Prepare     (PrepareMode mode)   {
 
 	btag = ( GradPulse::Prepare(mode) && btag);
     
-	if (mode != PREP_UPDATE) HideAttribute ("Duration");
+	if (mode != PREP_UPDATE) {
+	  HideAttribute ("Duration");
+	  HideAttribute ("Area");
+	  HideAttribute ("MaxAmpl",false);
+	  HideAttribute ("SlewRate",false);
+	}
 
 	if (!btag && mode == PREP_VERBOSE)
         cout	<< "\n warning in Prepare(1) of ExternalGradPulse " << GetName()

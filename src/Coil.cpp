@@ -118,7 +118,6 @@ void Coil::DumpSensMap (string fname) {
 /**********************************************************/
 double  Coil::GetPhase (double time) {
 
-  
     if (!m_complex) return m_phase;
 
     double position[3];
