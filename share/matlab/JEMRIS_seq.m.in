@@ -60,13 +60,24 @@ handles.dm=0;
 handles.cd=0;
 handles.ax=0;
 handles.CWD=pwd;
-handles.JemrisPath='@prefix@/bin';
-handles.JemrisShare='@prefix@/share/jemris/matlab';
-[s,w]=system('setenv');
-if s==0 % a TCSH
-    handles.JemrisCall=['setenv LD_LIBRARY_PATH ""; ',fullfile(handles.JemrisPath,'jemris')];
-else    % a BASH 
-     handles.JemrisCall=['LD_LIBRARY_PATH=""; ',fullfile(handles.JemrisPath,'jemris')];
+handles.win = (strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
+if (handles.win)
+    if (strcmp(computer,'PCWIN64'))
+        handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\Research Centre Juelich\jemris', 'Path')];
+    else
+        handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Research Centre Juelich\jemris', 'Path')];
+    end
+    handles.JemrisShare=[''];
+    handles.JemrisCall=[fullfile(handles.JemrisPath,'jemris.exe"')];
+else
+    handles.JemrisPath='@prefix@/bin';
+    handles.JemrisShare='@prefix@/share/jemris/matlab';
+    [s,w]=system('setenv');
+    if s==0 % a TCSH
+        handles.JemrisCall=['setenv LD_LIBRARY_PATH ""; ',fullfile(handles.JemrisPath,'jemris')];
+    else    % a BASH 
+        handles.JemrisCall=['LD_LIBRARY_PATH=""; ',fullfile(handles.JemrisPath,'jemris')];
+    end
 end
 %get all modules + attributes which are currently supported by JEMRIS
 [Modules,Params]=getAllModules(handles.JemrisCall,handles.CWD);
@@ -127,7 +138,11 @@ varargout{1} = handles;
 
 % --- runs jemris on the current seqence. This is *not* an object of the GUI!
 function call_jemris(hObject,handles)
+if (handles.win)
+ [status,dump]=system(sprintf('%s %s > .seq.out',handles.JemrisCall,fullfile(               handles.seqfile)));
+else
  [status,dump]=system(sprintf('%s %s > .seq.out',handles.JemrisCall,fullfile(handles.seqdir,handles.seqfile)));
+end
  if status==0
   C={};
   fid=fopen('.seq.out');
@@ -149,7 +164,11 @@ function call_jemris(hObject,handles)
 
 % --- Executes on button press in update.
 function update_Callback(hObject, eventdata, handles)
-writeXMLseq(handles,handles.Seq,fullfile(handles.seqdir,handles.seqfile));
+if (handles.win)
+	  writeXMLseq(handles,handles.Seq,                        handles.seqfile);
+else
+    writeXMLseq(handles,handles.Seq,fullfile(handles.seqdir,handles.seqfile));
+end
 set(handles.SeqNameTag,'String',['Sequence: ',handles.seqfile])
 handles.CWD=pwd;
 for i=1:length(handles.hpt);

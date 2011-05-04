@@ -52,14 +52,21 @@ for i=1:length(hax);set(hax{i},'color',[1 1 1],'visible','off');end
 handles.hax=hax;
 
 %how to call jemris
+handles.win=(strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
 handles.CWD=pwd;
-handles.JemrisPath='@prefix@/bin';
-handles.JemrisShare='@prefix@/share/jemris/matlab';
-[s,w]=system('setenv');
-if s==0 % a TCSH
-    handles.JemrisCall=['setenv LD_LIBRARY_PATH ""; ',fullfile(handles.JemrisPath,'jemris')];
-else    % a BASH
-     handles.JemrisCall=['LD_LIBRARY_PATH=""; ',fullfile(handles.JemrisPath,'jemris')];
+if (handles.win)
+    handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Research Centre Juelich\jemris', 'Path')];
+    handles.JemrisShare=[''];
+    handles.JemrisCall=[fullfile(handles.JemrisPath,'jemris.exe"')];
+else
+    handles.JemrisPath='@prefix@/bin';
+    handles.JemrisShare='@prefix@/share/jemris/matlab';
+    [s,w]=system('setenv');
+    if s==0 % a TCSH
+        handles.JemrisCall=['setenv LD_LIBRARY_PATH ""; ',fullfile(handles.JemrisPath,'jemris')];
+    else    % a BASH 
+        handles.JemrisCall=['LD_LIBRARY_PATH=""; ',fullfile(handles.JemrisPath,'jemris')];
+    end
 end
 
 %fixed cloil proerties; should be automatically read from XML, as for
@@ -86,7 +93,12 @@ guidata(hObject, handles);
 %external call to jemris !This is not a GUI function!
 function handles=call_jemris(hObject,handles) 
  disp('External jemris call. Calculating sensitivity maps ... please wait.')
- [status,dump]=system(sprintf('%s %s > .coil.out',handles.JemrisCall,fullfile(handles.seqdir,handles.seqfile)));
+	if (handles.win)
+		[status,dump]=system(sprintf('%s %s > .coil.out',handles.JemrisCall,handles.seqfile));
+	else
+		[status,dump]=system(sprintf('%s %s > .coil.out',handles.JemrisCall,fullfile(handles.seqdir,handles.seqfile)));
+	end
+
  if status
      C{1}='Error occured:';
      C{2}='';
