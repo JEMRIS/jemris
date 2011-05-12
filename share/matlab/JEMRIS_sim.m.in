@@ -93,7 +93,7 @@ else
     end
     %CLUSTER call works only, if the CWD belongs to cluster
     cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/srv/data/',cwd(n:end)];
-    handles.ClusterCall=sprintf('ssh mrcluster "cd %s; qsub /vol/share/jemris/matlab/pbs_script.sh"',cwd);
+    handles.ClusterCall=sprintf('ssh mrcluster "cd %s; qsub @prefix@/share/jemris/matlab/pbs_script.sh"',cwd);
 end
 
 %define how to call jemris / pjemris

@@ -1,52 +1,21 @@
 /**
-* \mainpage JEMRIS User Manual
+* \mainpage User guide
 \n
-<b> A short hands-on documentation to JEMRIS.</b>
+This section documents the usage of our simulator. It is split in four major parts:
 
-\n
-\n
-\section toc Table of Content
-\n
 
-\li <a href="ug_install.html">Installation</a>
+\li <a href="ug_install.shtml">Installation</a>
 
-\li <a href="ug_intro.html">Introduction</a>
-\n
-\n
-<B>User Guide</B>
 
-\li <a href="ug_JEMRIS_seq.html">MATLAB GUI for Sequence Development: \c JEMRIS_seq </a>
+\li <a href="ug_JEMRIS_seq.shtml">User interface</a>
 
-\li <a href="ug_JEMRIS_sim.html">MATLAB GUI for  Simulation: \c JEMRIS_sim </a>
+	This chapter introduces users to the different GUIs and command line.
 
-\li <a href="ug_JEMRIS_txrx.html">MATLAB GUI for Coil Array Layout: \c JEMRIS_txrx </a>
+\li <a href="ug_JEMRIS_tut.shtml">Tutorials</a>
 
-\li <a href="ug_command_line.html">Running JEMRIS from the Command Line </a>
-\n
-\n
-<B>Hands-On Tutorial</B>
+	Get through the first steps of implementing an EPI sequence from scratch. Get accostumed with the use of analytic gradient and RF pulses.
 
-\li <a href="ug_JEMRIS_tut.html">%First steps tutorial - Sequence</a>
+\li <a href="ug_ex_artifacts.shtml">Simulation samples</a>
 
-\li <a href="ug_JEMRIS_tut_sim.html">%First steps tutorial - Simulation</a>
-
-\li <a href="ug_JEMRIS_idt_one.html">%In depth tutorial - Analytic Pulses</a>
-
-\li <a href="ug_JEMRIS_idt_two.html">%In depth tutorial - Framework Extension</a>
-\n
-\n
-<B>Simulation Examples</B>
-
-\li <a href="ug_ex_artifacts.html">%Imaging Artifacts</a>
-
-\li <a href="ug_ex_selex.html">%Multidimensional Selective Excitation</a>
-
-\li <a href="ug_ex_nlg.html">%Position Encoding with Nonlinear Fields</a>
-
-\li <a href="ug_ex_ktblast.html">%Movement Artifacts in kt-BLAST Reconstruction</a>
-
-\n
-\n
-\n
-See also <a href="http://www.jemris.org">www.jemris.org</a> 
+	Complete simulation setups for download and tesing as well as results for comparison.
 */

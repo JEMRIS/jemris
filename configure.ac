@@ -387,6 +387,6 @@ if test x$mpi = xtrue; then
 fi
 
 
-AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile doc/userguide/Makefile doc/api/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m])
+AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile doc/userguide/Makefile doc/api/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh])
 
 AC_OUTPUT

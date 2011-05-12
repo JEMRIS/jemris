@@ -21,7 +21,7 @@ distribution on a cylinder is possible. Using this feature will delete all coils
 them with a new configuration. A distribution on a sphere will be made available soon (after publication of results).
 
 \section ug_coil_gui_Panels GUI Panels
-The GUI is divided in four different panels comprising all functionality:
+The GUI is devided in four different panels comprising all functionality:
 \li \ref ug_coil_gui_xml
 \li \ref ug_coil_gui_sens
 \li \ref ug_coil_gui_array
@@ -35,8 +35,8 @@ The GUI is divided in four different panels comprising all functionality:
 On this panel the name of the current XML coil array file is displayed in red. There are two buttons: 
 
 \li <b>"write XML"</b> As with the sequence GUI, this button overwrites the current XML coil file according to the
-recent changes made for the individual coils. It then invokes the external JEMRIS binary to (re-) calculate the sensitivity maps.
-The maps are stored in the current working directory (filenames "RXsensemap01.bin", "RXsensemap02.bin", ...).
+recent changes made for the indivudual coils. It then invokes the external jemris binary to (re-) calculate the sensitivity maps.
+The maps are stored in the current working directory (filnames "RXsensemap01.bin", "RXsensemap02.bin", ...).
 
 \li <b>"read XML"</b> Accordingly, this button undoes all recent changes on the coils and reads the current XML coil file.
 
@@ -45,14 +45,14 @@ Additionally, the output of the external jemris call is dumped below.
 \n
 
 \section ug_coil_gui_sens Sensitivity Map Panel
-On this panel the sensitivity map is plotted. Note that the magnitude sensitivity for each individual coil is normalized to 
-one within the FOV of the coil (see below for a definition of the coil FOV). Therefore, the superposition of the sensitivity
+On this panel the sensitivity map is plotted. Note that the magnitude senstivity for each individual coil is normalized to 
+one within the FOV of the coil (see below for a defintion of the coil FOV). Therefore, the superposition of the sensitivity
 may has values larger than one.
 
 The display of the sensitivity can be manipulated with four different selection boxes: 
 
 \li <b>"x-y slice" ["x-z-slice","y-z-slice","3-D"]</b> selects the possible views. The 3D view displays a contour of the
-sensitivity map.
+sensitivty map.
 
 \li <b>"Magnitude" ["Phase","Real","Imaginary"]</b> For complex coil sensitivity maps.
 
@@ -61,7 +61,7 @@ points in the direction of the coil (see below for definition of the direction).
 
 \li <b>"Show Sample" ["Hide Sample"]</b> Overlays a transparent view of the sample on the sensitivity map.
 The sample is read from the last generated output of the 
-<a href="ug_JEMRIS_sim.html">Simulation GUI \c JEMRIS_sim </a> in the current working directory.
+<a href="ug_JEMRIS_sim.shtml">Simulation GUI \c JEMRIS_sim </a> in the current working directory.
 
 \li <b>"All Coils" ["Active Coil"]</b> Either shows the sensitivity superposition of all coils or only the sensitivity map of the
 currently selected coil in the \ref ug_coil_gui_array.
@@ -99,31 +99,29 @@ There are several attributes which are common for all coil types:
 \li <b>"Xpos","Ypos","Zpos"</b> Coordinates of the coil centre.
 
 \li <b>"Azimuth","Polar"</b> Orientation of the coil. In case of the Biot-Savart loop, the azimuth and polar angle determine the
-direction of the normal vector on the loop. Similar, for the analytic coil, the angles specify a rotation of the coordinate system:
+direction of the normal vector on the loop. Similar, for the anaytic coil, the angles specify a rotation of the coordinate system:
 first, rotation of the x-y axes about the z-axis (azimuth angle), then rotation of the z-axis about the new x-axis (polar angle, or inclination).
 For the external coil these attributes are not used.
 
-\li <b>"Scale"</b> A scale factor for the magnitude sensitivity. A change of the scale is directly shown on the sensitivity map.
+\li <b>"Scale"</b> A scale factor for the mangitude sensitivity. A change of the scale is directly shown on the sensitivity map.
 
 \li <b>"Phase"</b> A phase shift for the complex sensitivity. A change of the phase is directly shown on the sensitivity map.
 
-\li <b>"Conj"</b> Complex conjugation of the spatial sensitivity. Boolean value: 1=complex conjugation, 0=do nothing. (The phase shift above is not conjugated.)
-
 For the next properties, which also apply to all three coil types, it is important to know how jemris internally handles
 coil sensitivities during the simulation. Each coil represents its sensitivity on a predefined grid which is calculated once
-in the beginning. Then, during simulation, the sensitivities are retrieved by linear interpolation on the grid. This is important
+in the beginning. Then, during simuation, the sensitivities are retrieved by linear interpolation on the grid. This is important
 to speed up the simulation since value retrieval has to take place at at every spin position and every time point of the MR
 sequence which is related to signal acquisition (in case of a receive coil) or RF pulses (in case of a transmit coil). The grid
 (usually the same for all coils in the array) has three attributes:
 
-\li <b>"Dim"</b> The dimension of the coil: has to be either 2 or 3 for 2D or 3D MRI simulations. 2D is always restricted to
+\li <b>"Dim"</b> The dimension of the coil: has to be either 2 or 3 for 2D or 3D MRI simulations. 2D is allways restricted to
 the x-y plane. If 3D simulations are performed with a 2D coil array, the sensitivity is constant along the z-axis. 
 
 \li <b>"Extent"</b> The size of the support region of the sensitivity map, i.e. the FOV of the coil.
 Outside the extend the sensitivity is zero. The unit is [mm].
 
 \li <b>"Points"</b> Number of sampling points of the grid along all spatial axes.
-If this number is large, sensitivity calculations take longer (especially in case of a 3D grid).
+If this number is large, sensitivity calculations take longer (espescially in case of a 3D grid).
 
 \n
 
@@ -133,7 +131,7 @@ Finally there are coil attributes specific to the type of the coil:
 
 \li <b>"Radius"</b> The radius of the loop. The unit is [mm].
 
-\li <b>"Mask"</b> A radius around the loop wire defining a torus within the field is masked to zero in order to suppress the 
+\li <b>"Mask"</b> A radius around the loop wire defining a torus within the field is masked to zero in order to surpress the 
 field close to the loop. The unit is [mm]. This is useful for visualization purposes.
 
 \subsection ug_coil_gui_analytic Analytic Coil
