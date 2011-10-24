@@ -100,8 +100,7 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 inline bool    TrapGradPulse::SetShape  (bool verbose){
 
 	//predefined area defintion for the flat top
-	if ( m_has_flat_top_area )
-	{
+	if ( m_has_flat_top_area ) {
 	       double dC = 2.0/fabs(2.0*m_slew_rate);
                SetArea( m_flat_top_area *( 1.0 + m_max_ampl*m_max_ampl*dC / fabs(m_flat_top_area) ) );
 	}

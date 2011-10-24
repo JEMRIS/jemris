@@ -40,10 +40,10 @@ bool Pulse::Prepare  (PrepareMode mode) {
 	m_type = MOD_PULSE;
 
 	//every Pulse might has Axis, Duration, ADCs, and an initial delay
-	ATTRIBUTE("Axis"        , m_axis          );
-	ATTRIBUTE("ADCs"        , m_adc           );
-	ATTRIBUTE("PhaseLock"   , m_phase_lock    );
-	ATTRIBUTE("InitialDelay", m_initial_delay );
+	ATTRIBUTE ("Axis"        , m_axis         );
+	ATTRIBUTE ("ADCs"        , m_adc          );
+	ATTRIBUTE ("PhaseLock"   , m_phase_lock   );
+	ATTRIBUTE ("InitialDelay", m_initial_delay);
 
 	return Module::Prepare(mode);
 
@@ -64,8 +64,11 @@ inline void  Pulse::SetTPOIs () {
 
 /***********************************************************/
 void Pulse::SetDuration (double val) {
+
     if (val<0.0) return;
+
     m_duration=val;
+
 };
 
 /***********************************************************/

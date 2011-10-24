@@ -29,7 +29,7 @@ double            SpiralGradPulse::GetGradient (double const time)  {
 
 	long index = (long) floor (time / m_grad_samp_int);
 
-	return (m_inward) ? -m_amps [index] : m_amps [index]; 
+	return (m_inward) ? -m_amps[index] : m_amps[index]; 
 
 }
 
@@ -165,13 +165,14 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 			
 		}
 		
-		if (m_inward>0)  {
+		if (m_inward)  {
 			
 			double* tmp = (double*) malloc ((m_samples+1)*sizeof(double)); 
-			std::reverse_copy (&m_amps[0], &m_amps[m_samples-1], &tmp[0]);
-			free (m_amps);
-			m_amps = tmp;
-			
+			std::reverse_copy (&m_amps[0], &m_amps[m_samples], &tmp[0]);
+			memcpy (&m_amps[0], &tmp[0], sizeof(double)*m_samples);
+			m_amps[m_samples] = 0.0;
+			free (tmp);
+
 		}
 		
 	}
@@ -187,7 +188,7 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 string          SpiralGradPulse::GetInfo() {
 
 	stringstream s;
-	s << GradPulse::GetInfo() << " , (beta,pitch,sampint)= (" << m_beta << "," << m_pitch << ")";
+	s << GradPulse::GetInfo() << " , (beta,pitch,sampint,inward)= (" << m_beta << "," << m_pitch << "," << m_inward << ")";
 
 	return s.str();
 
