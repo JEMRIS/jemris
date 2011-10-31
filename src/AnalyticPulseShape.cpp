@@ -164,3 +164,33 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
 };
 
 
+/***********************************************************/
+double  AnalyticPulseShape::GetAnalyticIntegral (bool verbose) {
+
+	//analytic differentiation. calculate analytic integral, if dif==1 (for gradients only)
+	if (m_pulse->HasDOMattribute("Diff")){
+		string sdiff =  m_pulse->GetDOMattribute("Diff");
+		int dif = atoi(sdiff.c_str());
+		if (dif == 1) {
+			try {
+				m_pulse->GetAttribute("Shape")->SetDiff(0);
+				m_analytic_time      =  m_pulse->GetDuration();
+				m_pulse->GetAttribute("Shape")->EvalExpression();
+				m_analytic_integral  =  m_analytic_value;
+			cout << m_pulse->GetName() << " : " << m_analytic_time << " " << m_analytic_value ;
+				m_analytic_time      = 0.0;
+				m_pulse->GetAttribute("Shape")->EvalExpression();
+				m_analytic_integral -=  m_analytic_value;
+			cout << " : " << m_analytic_time << " " << m_analytic_value;
+			cout << " : " << GetShape ( m_pulse->GetDuration() ) << " " << GetShape (0.0)  << endl;
+		 		m_pulse->GetAttribute("Shape")->SetDiff(dif,m_pulse->GetAttribute("AnalyticTime")->GetSymbol() );
+			} catch (exception &p) {
+			    if( verbose ) cout << "Error evaluating integral\n";
+			}
+		}
+	}
+
+	return m_analytic_integral; 
+
+};
+

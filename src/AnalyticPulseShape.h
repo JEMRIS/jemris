@@ -76,6 +76,8 @@ class AnalyticPulseShape {
      */
     bool     PrepareAnalytic(bool verbose);
 
+    double  GetAnalyticIntegral(bool verbose);
+
     /**
      * @see Pulse::SetTPOIs
      */

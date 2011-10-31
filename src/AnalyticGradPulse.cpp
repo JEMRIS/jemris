@@ -40,8 +40,8 @@ bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
     bool btag = ( GradPulse::Prepare(mode) && mode != PREP_UPDATE && m_pulse_shape.PrepareAnalytic(mode==PREP_VERBOSE) );
 
     //Calculate area
-    if (btag) m_area = ( (HasDOMattribute("Diff") && GetDOMattribute("Diff")=="1") ? m_pulse_shape.m_analytic_integral : GetAreaNumeric(2000) );
-
+    //if (btag) m_area = ( (HasDOMattribute("Diff") && GetDOMattribute("Diff")=="1") ? m_pulse_shape.GetAnalyticIntegral(mode==PREP_VERBOSE) : GetAreaNumeric(2000) );
+    m_area = GetAreaNumeric((int) (1000*GetDuration())); //TMP AnalyticIntegral is currently not working => always numeric evaluation ! 
 
     if (!btag && mode == PREP_VERBOSE)
         cout << "\n warning in Prepare(1) of AnalyticGradPulse " << GetName() << endl;
