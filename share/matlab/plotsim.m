@@ -184,7 +184,7 @@ if WHAT==1
  I=find(A(:,:,:,1));
  Np=length(I);
 
- T={'M0','T1 [msec]','T2 [msec]','\Delta\omega [Hz]'};
+ T={'M0','T1 [msec]','T2 [msec]','\Delta\omega [rad/sec]'};
 
  for i=1:4
   B=zeros(N);
@@ -196,7 +196,7 @@ if WHAT==1
       dBT2s = tan(pi*(rand(length(I),1)-.5)).*(R2S(I)-R2(I));
       a=max(R2S(I)-R2(I));
       dBT2s(abs(dBT2s)>2*a)=0;dBT2s((R2S(I)-R2(I))<0)=0;
-      B(I) = B(I) + 1000*dBT2s; %convert 1/T2prime to Hz
+      B(I) = B(I) + 1000*dBT2s; %convert 1/T2prime to rad/sec
   end
   axes(handles.hax{2+i})
   if N(3)>1;

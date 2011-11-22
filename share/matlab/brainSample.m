@@ -71,16 +71,16 @@ else
 end
 
 %tissuse parameters
-%        T1  T2 T2*[ms]  M0 CS[Hz]      Label
-tissue=[2569 329  158   1.00   0    ;  % 1 = CSF
-         833  83   69   0.86   0    ;  % 2 = GM
-         500  70   61   0.77   0    ;  % 3 = WM
-         350  70   58   1.00 220    ;  % 4 = Fat
-         900  47   30   1.00   0    ;  % 5 = Muscle / Skin
-        2569 329   58   1.00   0    ;  % 6 = Skin
-           0   0    0   0.00   0    ;  % 7 = Skull
-         833  83   69   0.86   0    ;  % 8 = Glial Matter
-         500  70   61   0.77   0    ;];% 9 = Meat
+%        T1  T2 T2*[ms]  M0 CS[rad/sec]      Label
+tissue=[2569 329  158   1.00   0         ;  % 1 = CSF
+         833  83   69   0.86   0         ;  % 2 = GM
+         500  70   61   0.77   0         ;  % 3 = WM
+         350  70   58   1.00 220*2*pi    ;  % 4 = Fat (CS @ 1.5 Tesla)
+         900  47   30   1.00   0         ;  % 5 = Muscle / Skin
+        2569 329   58   1.00   0         ;  % 6 = Skin
+           0   0    0   0.00   0         ;  % 7 = Skull
+         833  83   69   0.86   0         ;  % 8 = Glial Matter
+         500  70   61   0.77   0         ;];% 9 = Meat
 
 %parameter maps
 PARAMS={'M0','T1','T2','T2S','DB'};

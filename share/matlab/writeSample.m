@@ -8,7 +8,7 @@ function maxM0 = writeSample(varargin)
 % 1. writeSample(Sample) where Sample is a structure with 
 %    fields: M0,T1,T2,DB,NN,RES,OFFSET,FNAME}
 %     - M0,T1,T2,DB,NN have to be data cubes of the same size
-%     - DB is delta_B (off-resoance in Hz !), NN is not used so far by
+%     - DB is delta_B (off-resoance in rad/sec !), NN is not used so far by
 %       jemris ; if not specified, zero(size(M0)) is used for both.
 %     - RES and OFFSET are resolution and offsets in 3 dimension
 %       ! if RES and OFFSET, ofs are scalar, the same value is used for
