@@ -97,7 +97,7 @@ end
 
 %add suceptibility
 if add_susceptiblity
-  BrainSample.DB = BrainSample.DB + 1e6*DB*handles.sample.gamBo;
+  BrainSample.DB = BrainSample.DB + 2*pi*1e6*DB*handles.sample.gamBo;
 end
 
 return;
