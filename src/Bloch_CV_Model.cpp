@@ -74,11 +74,11 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
          + DeltaB + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;
 
     //NV_Ith_S is the solution magn. vector with components AMPL,PHASE,ZC
-    //important: restrict phase to [0, 2*PI]
-
-   // line commented out since new cvode manual explicitly warns about tempering with y. 
-   // Lets hope new cvode version can cope with high phase values...
-//    NV_Ith_S(y,PHASE) = fmod(NV_Ith_S(y,PHASE),6.28318530717958);
+    // check if double precision is still enough for sin/cos:
+    if (fabs(NV_Ith_S(y,PHASE))>1e11 ) {
+	//important: restrict phase to [0, 2*PI]
+	NV_Ith_S(y,PHASE) = fmod(NV_Ith_S(y,PHASE),6.28318530717958);
+    }
 
 
 
@@ -184,7 +184,7 @@ void Bloch_CV_Model::InitSolver    () {
 
     ((nvec*) (m_world->solverSettings))->y = N_VNew_Serial(NEQ);
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,AMPL )  = m_world->solution[AMPL] ;
-    NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,PHASE ) = m_world->solution[PHASE] ;
+    NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,PHASE ) = fmod(m_world->solution[PHASE],6.28318530717958) ;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,ZC )    = m_world->solution[ZC] ;
 
     ((nvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ);
