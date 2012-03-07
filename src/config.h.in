@@ -87,9 +87,6 @@
 /* Description */
 #undef HAVE_MKSTEMPS
 
-/* define that mpi is being used */
-#undef HAVE_MPI_H
-
 /* define that mpi supports threads */
 #undef HAVE_MPI_THREADS
 

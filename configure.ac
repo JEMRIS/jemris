@@ -237,18 +237,19 @@ if test x$MPICXX = xnone; then
 fi
 
 # find compiler and characteristics
-AC_MSG_CHECKING(for mpi.h)
-  AC_PREPROC_IFELSE(
-  [AC_LANG_SOURCE([[#include <mpi.h>]])],
-  [ 
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_MPI_H,1,[define that mpi is being used])
-  ],[AC_MSG_RESULT(no)])
+#AC_MSG_CHECKING(for mpi.h)
+#  AC_PREPROC_IFELSE(
+#  [AC_LANG_SOURCE([[#include <mpi.h>]])],
+#  [ 
+#    AC_MSG_RESULT(yes)
+#    AC_DEFINE(HAVE_MPI_H,1,[define that mpi is being used])
+#  ],[AC_MSG_RESULT(no)])
 
 cat >>conftest.cpp <<_ACEOF
 #include <mpi.h>
 int main(int argc, char** argv) {
   MPI::Init(argc, argv);
+  MPI::COMM_WORLD.Get_size();
   MPI::Finalize();
   return 0;
 }
@@ -258,6 +259,7 @@ cat >>conftest2.cpp <<_ACEOF2
 #include <mpi.h>
 int main(int argc, char** argv) {
   MPI::Init_thread(MPI_THREAD_MULTIPLE);
+  MPI::COMM_WORLD.Get_size();
   MPI::Finalize();
   return 0;
 }

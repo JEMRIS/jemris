@@ -31,7 +31,5 @@
 # Change to working directory
 cd $PBS_O_WORKDIR/
 # Start mpd ring run mpi program and exit mpd ring
-mpdboot --totalnum=`cat $PBS_NODEFILE | uniq | wc -l` -f $PBS_NODEFILE
 @MPIRUN@ -machinefile $PBS_NODEFILE @MPIRUN_PROC_OPT@ `cat $PBS_NODEFILE | wc -l|awk '{print $1}'` @prefix@/bin/pjemris simu.xml > .sim.out
-mpdallexit
 
