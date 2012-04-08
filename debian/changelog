@@ -1,3 +1,9 @@
+jemris (2.5.2-1) stable; urgency=low
+
+  * Major CVode interface adjusted. 90-180 produced z magnetisation.
+
+ -- Kaveh Vahedipour <k.vahedipour@fz-juelich.de>  Wed, 8 Apr 2012 21:11:25 +0200
+
 jemris (2.5-1) stable; urgency=low
 
   * Minor Simple complex conjugation of phase maps
@@ -6,7 +12,7 @@ jemris (2.5-1) stable; urgency=low
   * Minor XML IO unified to XMLIO. Preparation for HDF5 IO.
   * Minor Binary IORead/Write
   * Minor CVODE 2.6 support
-  * Fixed Adaptive accuracy in nummeric integration finally really working 
+  * Fixed Adaptive accuracy in nummeric integration finally really working
   * Fixed External RF pulses did not (re-)initialize phases
 
  -- Kaveh Vahedipour <k.vahedipour@fz-juelich.de>  Wed, 27 Apr 2011 10:34:25 +0200
@@ -22,7 +28,7 @@ jemris (2.4-1) stable; urgency=low
 jemris (2.3-1) stable; urgency=low
 
   * Major update release pre v3.
-  * MPI loadbalancing 
+  * MPI loadbalancing
   * MPI checkpoints
   * New Coil GUI
   * New Biot-Savart implementation
