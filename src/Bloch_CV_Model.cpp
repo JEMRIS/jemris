@@ -53,6 +53,7 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     double DeltaB = pW->deltaB;
 
     // update sample variables if they are dynamic:
+    dv->m_Diffusion->GetValue(time,position);
     dv->m_Motion->GetValue(time,position);
     dv->m_T2prime->GetValue(time,&DeltaB );
     dv->m_R1->GetValue(time,&r1 );

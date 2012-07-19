@@ -11,6 +11,7 @@
 #include "TrajectoryT2s.h"
 #include "Trajectory1D.h"
 #include "TrajectoryEmpty.h"
+#include "TrajectoryDiffusion.h"
 
 DynamicVariables* DynamicVariables::m_instance=0;
 
@@ -27,6 +28,7 @@ DynamicVariables* DynamicVariables::instance() {
     	m_instance->stub_r2 = new Trajectory1D();
     	m_instance->stub_m0 = new Trajectory1D();
     	m_instance->stub_empty = new TrajectoryEmpty();
+    	m_instance->stub_diff = new TrajectoryDiffusion();
 
 
     	// init Trajectories
@@ -36,6 +38,7 @@ DynamicVariables* DynamicVariables::instance() {
   	    m_instance->m_R1 = new Trajectory(m_instance->stub_r1);
   	    m_instance->m_R2 = new Trajectory(m_instance->stub_r2);
   	    m_instance->m_M0 = new Trajectory(m_instance->stub_m0);
+  	    m_instance->m_Diffusion = new Trajectory(m_instance->stub_diff);
 
 
   	    m_instance->m_changeT2=true;
@@ -54,6 +57,7 @@ DynamicVariables::~DynamicVariables() {
 	delete m_R1;
 	delete m_R2;
 	delete m_M0;
+	delete m_Diffusion;
 
 	//delete stubs:
 	delete stub_motion;
@@ -62,6 +66,7 @@ DynamicVariables::~DynamicVariables() {
 	delete stub_r2;
 	delete stub_m0;
 	delete stub_empty;
+	delete stub_diff;
 }
 /***********************************************************/
 void DynamicVariables::AddActiveCircle(double pos[3],double radius) {

@@ -17,6 +17,10 @@ class TrajectoryT2s;
 class Trajectory1D;
 class TrajectoryEmpty;
 
+class TrajectoryDiffusion;
+class Trajectory;
+
+
 struct Circle{
 	double x;
 	double y;
@@ -59,6 +63,7 @@ class DynamicVariables {
     Trajectory* m_R2;
     Trajectory* m_M0;
 
+    Trajectory* m_Diffusion;
 
  private:
 
@@ -85,6 +90,7 @@ class DynamicVariables {
     Trajectory1D* stub_r2;
     Trajectory1D* stub_m0;
     TrajectoryEmpty* stub_empty;
+    TrajectoryDiffusion* stub_diff;
 
 
 };

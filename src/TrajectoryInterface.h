@@ -42,6 +42,8 @@ public:
 	 */
 	virtual void LoadFile(string filename) =0;
 
+	virtual void UpdateTrajectory(bool init=false){};
+
 protected:
 	/**
 	 * @brief find data index for interpolation

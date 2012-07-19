@@ -92,14 +92,14 @@ Sample::Sample (long size) {
 }
 
 /**********************************************************/
-Sample::Sample (string fname) {
+Sample::Sample (string fname, int multiple) {
     Init();
 
     InitRandGenerator();
 
-    // create new array of spins and new multiarray for spacial distribution
+    // create new array of spins and new multiarray for spatial distribution
     ifstream fin (fname.c_str(), ios::binary);
-    Populate(&fin);
+    Populate(&fin,multiple);
     fin.close();
 
 }
@@ -115,7 +115,7 @@ void Sample::Populate(string fname) {
 
 }
 /**********************************************************/
-void Sample::Populate (ifstream* fin) {
+void Sample::Populate (ifstream* fin,int multiple) {
 
     long pos = 0;
 
@@ -169,12 +169,23 @@ void Sample::Populate (ifstream* fin) {
         }
 
     }
+    // copy sample if requested:
+    if (multiple>1) {
+    	long size = spins.size;
+    	Spin_data* data= spins.data;
+    	spins.data=NULL;
+    	CreateSpins(size*multiple);
+    	for (int i=0; i<multiple; i++){
+    		for (int k=0;k<size; k++){
+    			spins.data[i*size+k]=data[k];
+    		}
+    	}
+    	delete[] data;
+    }
     for (int i=0; i<spins.size; i++){
     	spins.data[i].index=(double) i;
     	m_spin_state.push_back(0);
     }
-
-
 }
 
 /**********************************************************/

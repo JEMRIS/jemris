@@ -30,7 +30,7 @@ int TrajectoryInterface::GetLowerIndex(double t) {
 	if ((t<= m_time[0]) || (t>=m_time.back())) {
 		if (t == m_time[0]) {ilo = 0;  return ilo;};
 		if (t == m_time.back()) {ilo = m_time.size()-2;  return ilo;};
-		cout << "Interpolation out of bounds! exit."<< endl;
+		cout << "Interpolation out of bounds! exit.(t= "<<t<<"; m_time[0]="<<m_time[0]<<"; m_time.back()="<<m_time.back()<< endl;
 		exit(-1);
 	}
 

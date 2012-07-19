@@ -9,6 +9,7 @@
 #define TRAJECTORY_H_
 
 #include <string>
+#include <iostream>
 using namespace std;
 class TrajectoryInterface;
 
@@ -28,6 +29,10 @@ public:
 	void LoadFile(string filename);
 
 	void SetStrategy(TrajectoryInterface *new_strategy) {m_strategy = new_strategy;};
+
+	void UpdateTrajectory(bool init=false);
+
+	TrajectoryInterface* GetStrategy(){cout << "THIS IS A DEBUG FUNCTION!" <<endl; return m_strategy;};
 };
 
 #endif /* TRAJECTORY_H_ */

@@ -86,7 +86,7 @@ class Sample {
      *
      * @param file Sample binary file
      */
-    Sample                              (string file);
+    Sample                              (string file,int multiple=1);
 
     /**
      * Constructor
@@ -268,7 +268,7 @@ class Sample {
      * @param fin  File input stream to the binary file containing the sample.
      * @param type Type of binary file
      */
-    void    Populate                    (ifstream* fin) ;
+    void    Populate                    (ifstream* fin,int multiple=1) ;
 
     double       m_val   [NO_SPIN_PROPERTIES];  /** < Copy of the spin properties asked for by GetValues */
     long         m_index [3];  /** < Sample dimension       */

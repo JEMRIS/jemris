@@ -18,5 +18,9 @@ void Trajectory::LoadFile(string filename){
 };
 
 
+void Trajectory::UpdateTrajectory(bool init){
+	m_strategy->UpdateTrajectory(init);
+};
+
 
 

@@ -96,7 +96,10 @@ void Simulator::SetWorld          () {
 void Simulator::SetSample         (string fsample) {
 
 	if (fsample.empty()) fsample = GetAttr(GetElem("sample"), "uri");
-	m_sample = new Sample (fsample);
+	string mult = GetAttr(GetElem("sample"), "multiple");
+	int multiple=1;
+	if (!mult.empty()) multiple = atoi(mult.c_str());
+	m_sample = new Sample (fsample,multiple);
 	m_world->TotalSpinNumber = m_sample->GetSize();
 	m_world->SetNoOfPools(m_sample->GetNoOfPools());
 	m_sample->ReorderSample();
@@ -112,7 +115,6 @@ void      Simulator::SetSample      (Sample* sample){
 	//re-setting of model and simulation-parameters
 	SetModel("CVODE");
 	SetParameter();
-
 
 };
 /**********************************************************/
@@ -235,6 +237,11 @@ void Simulator::SetParameter      () {
 	        if (!(ss >> r)) {cout << "Error reading active Areas; need 4 values per circle. (x/y/z/ radius)." << endl; return;}
 	        dynVar->AddActiveCircle(pos,r);
 	    }
+	}
+
+	string     diffusion = GetAttr(GetElem("sample"), "Diffusionfile");
+	if (!diffusion.empty()) {
+		dynVar->m_Diffusion->LoadFile(diffusion);
 	}
 
 }
