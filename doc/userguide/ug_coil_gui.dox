@@ -149,5 +149,4 @@ The size of the cube is taken from the above grid attributes. Note, that such ex
 the GUI: generate a global matlab variable which is a complex data cube with size matching the specified grid variables.
 Then write the name of the variable to the attribute "Filename". The GUI will automatically construct the necessary binary file.
 
-back to \ref toc.
 */

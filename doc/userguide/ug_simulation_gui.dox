@@ -1,0 +1,73 @@
+/**
+***************************************************
+* \page ug_JEMRIS_sim MRI %Simulator GUI JEMRIS_sim
+To start the simulator GUI, open \c "JEMRIS_sim" as before in the path where the sequence *.xml files are stored.
+In the following screenshot, the epi-sequence has been loaded into the GUI and was simulated for a brain phantom:
+
+\image html pics/sim_gui.jpg
+\image latex pics/sim_gui.eps
+\n
+Before the simulation, the sequence file has to be selected via "File->open Sequence".
+Additionally, coil array loops for transmit and receive may be loaded via the File menu (see \ref ug_JEMRIS_txrx).
+If no coils are specified, a uniform B1 sensitivity is assumed.
+
+
+\section ug_JEMRIS_sim_sample Object Properties
+Next, the sample to which the sequence is applied has to be specified. There are three predefined samples: a sphere, two
+interleaved spheres and a brain model. Since 3D simulations are very time consuming, these samples are defined as 2D slices,
+while for the brain model the desired slice can be selected using \c "slice" parameter. Here also 3D portions of the brain may
+be simulated by specifying the first and the last slice. For all samples, \c "{dx,dy}" specifies the distance between two
+neighboring spins. For larger distances, less spins need to be calculated and thus the simulation will be faster. However,
+artifacts are likely if too few spins are used in the simulation. The following physical properties of the object,
+the sample parameters, can be specified (one value per parameter in case of a sphere, two values per parameter in case of
+two spheres, and one factor per parameter in case of the brain phantom):
+
+\li <b>T1:</b> longitudinal relaxation time. Units: [ms].
+\li <b>T2:</b> transverse relaxation time. Units: [ms].
+\li <b>T2*:</b> effective transverse relaxation time (including a reversible decay). Units: [ms]. If not specified, no such
+                reversible components are simulated. If specified, remember that a high spin density per voxel is needed to
+		correctly simulate T2*-induced de- and rephasing effects.
+\li <b>M0:</b> equilibrium magnetization. Units: arbitrary.
+\li <b>CS :</b> chemical shift. Units: [kHz].
+\li <b>Radius (Sphere) / Slice (Brain):</b> The radius (radii) of the sphere(s), or the slice index in case of the
+       brain phantom. 
+
+In case of the brain phantom, the parameters T1,T2,T2*,M0, and CS are tissue parameters at 1.5 Tesla. The user may change
+them individually by specifying a constant factor. Setting T2*=0 will also omit any reversible signal decay. Further, for the
+brain phantom a realistic susceptibility-induced field variation may be included. 
+
+Finally, it is also possible to specify a user-defined object as a Matlab mat-file. An example file "userSample.mat" is located
+in Jemris' matlab installation directory (default /usr/local/share/jemris/matlab).
+
+
+\section ug_JEMRIS_sim_start Starting the Simulation
+After specifying the sample and the sequence, the \c "start simu" button calls JEMRIS. Its output is displayed in the
+"simulation message dump". After the simulation has finished, the results will be displayed in the lower right of the GUI.
+
+Besides the signal, the k-space and the image space can be displayed. However, the GUI capabilities for image reconstruction
+are very limited. Only 2D FFT of standard acquisition k-space acquisition order will result in the expected image.
+Other reconstructions have to be done by the user. For this purpose it is possible to store the simulated data with
+the "File->Save Signal mat-File" dialogue. This will store the vector "t", the temporal sampling, and a signal matrix "M" 
+with three columns representing x,y, and z component of the bulk magnetization. Additionally, an index vector "I" is stored
+indicating the start of a line in k-space (or, more precise, indicating changes of time differences in the temporal sampling). 
+
+\section ug_JEMRIS_sim_add Additional parameters
+On the right hand side there are three additional parameters controlling the simulation:
+
+\li <b> "increment to store M(t)":</b> The signal is the sum over all simulated spins. However, the information of each
+individual spin is present in the simulation and can be returned by JEMRIS. If this parameter is set to i, the
+magnetization of each individual spin is stored for every i-th readout event. <b>Caution:</b> if the increment is one than the
+complete magnetization is stored at every sampling point which may result in huge output files.
+
+\li <b>"concomitant fields":</b> account for concomitant fields introduced by the gradient field
+
+\li <b>"random noise":</b> adds random noise to the signal data. This is done by the GUI itself, thus in contrast to the other three parameters the noise may be specified  \em after the simulation.
+
+\section ug_JEMRIS_sim_par Parallelization
+Since no interaction of the spins are considered, the MR simulation is an inherently parallel problem. Thus to speed up the calculation JEMRIS can make use of multiple CPUs, either of a computer cluster or of a multi-core processor on a single workstation. The desired mode can be selected from the "Settings" dialog. To utilize multiple CPU cores on a single workstation the GUI must be able to log into the system without supplying a password, thus an ssh-key has to be installed in the system (see \ref ug_install_key). 
+
+
+back to \ref toc.
+***************************************************
+*/
+

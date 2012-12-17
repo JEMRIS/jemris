@@ -1,21 +1,112 @@
 /**
-* \mainpage User guide
+  \page ug_main User guide
+  \mainpage Welcome
+
+This is the automated doxygen documentation of the JEMRIS project.\n
+  \n
+The manual intends to give a brief hands-on introduction. \n
+  \n
+  \n
+ \subpage ug_intro \n \n
+ \subpage ug_install \n \n
+ \subpage ug_uis \n \n
+ \subpage ug_tutor \n \n
+ \subpage ug_ex \n \n
+  \n
+  \n
+  \n
+  \n
+  \n
+  \n
+  See also <a href="http://www.jemris.org">www.jemris.org</a>
+*/
+
+/**
+ \page ug_uis User Interfaces
+JEMRIS was developed in C++ to achieve usability as well as performance.
+It can be used from the command line, where  the configuration of the MR-simulation is done via several XML files.
+
+Additionally, three Matlab GUIs were developed: one for interactively designing the MRI sequence,
+another for defining the coil configuration, and one for the set-up and execution of the main simulator, respectively. 
+All Matlab GUIs follow the same procedure: construct a valid XML file from the user input, then call the external
+JEMRIS executables to compute the data, and finally read and visualise the result.
+
+Before starting the Matlab GUIs, the directory in which the JEMRIS m-files are located has to be added to
+the Matlab search path.
+Use e.g. <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/share/jemris/matlab</I> in a standard linux installation.
+
+ \subpage ug_JEMRIS_seq  \n 
+ Comprehensive GUI for setup of sequences. \n\n
+ \subpage ug_JEMRIS_sim  \n 
+ User interface for control of the simulation parameters as sample, noise etc. \n\n
+ \subpage ug_JEMRIS_txrx \n 
+ User interface for setting up transmit and receive arrays. \n\n
+ \subpage ug_command_line \n 
+ The command line. Learn to control jemris for batch submission etc. \n\n
+ */
+
+/**
+ \page ug_tutor Tutorials
+ \subpage ug_tutorial_epi_seq \n \n
+ \subpage ug_tutorial_epi_sim \n \n
+ \subpage ug_tutorial_selex1 \n \n
+ \subpage ug_tutorial_selex2 \n \n
+ */
+
+/**
+ \page ug_ex Examples
+ Detailed instructions to reproduce the simulations in the MRM jemris paper (1). \n
+ \n
+ \subpage ug_example_artifacts \n \n
+ \subpage ug_example_nlg \n \n
+ \subpage ug_example_ktblast \n \n
+ \subpage ug_example_selex \n \n
+ \n
+ \n
+ (1) Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder, N. Jon Shah. High-performance computing MRI simulations. Magnetic Resonance in Medicine. 2010, 64(1), 186 - 193.\n
+ */
+
+
+/**
+ \page ug_about About JEMRIS
+\section ug_version Version
+
+JEMRIS Version 2.6\n
+Copyright (C) 2006-2013  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\n
 \n
-This section documents the usage of our simulator. It is split in four major parts:
+
+\section ug_contact Contact
+
+JEMRIS is developed and maintained by ...
+
+Tony Stöcker, project founder (tony.stoecker(at)dzne.de) \n
+Framework design, sequence and solver implementation. \n
+\n
+Kaveh Vahedipour (k.vahedipour(at)fz-juelich.de) \n
+Framework design, parallel TX/RX, package maintenance, supercomputer implementation. \n
+\n
+Dr. Daniel Pflugfelder (d.pflugfelder(at)fz-juelich.de) \n
+MPI parallelisation, performance debugging, code optimisation, Temporal variations, Diffusion. \n
+\n
+
+\section ug_lit Reference
+
+If you use JEMRIS for research publications, please cite this paper:\n
+Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder, N. Jon Shah. High-performance computing MRI simulations. Magnetic Resonance in Medicine. 2010, 64(1), 186 - 193.
 
 
-\li <a href="ug_install.shtml">Installation</a>
-
-
-\li <a href="ug_JEMRIS_seq.shtml">User interface</a>
-
-	This chapter introduces users to the different GUIs and command line.
-
-\li <a href="ug_JEMRIS_tut.shtml">Tutorials</a>
-
-	Get through the first steps of implementing an EPI sequence from scratch. Get accostumed with the use of analytic gradient and RF pulses.
-
-\li <a href="ug_ex_artifacts.shtml">Simulation samples</a>
-
-	Complete simulation setups for download and tesing as well as results for comparison.
 */

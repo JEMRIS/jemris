@@ -4,7 +4,7 @@
 
 \n
 
-Sequence development in JEMRIS does not require any programming. The sequence is determined 
+JEMRIS sequence development does not require any programming. The sequence is determined 
 through an XML tree structure. A dedicated GUI allows to construct the tree structure for arbitrary
 complex MRI sequences.
 
@@ -31,11 +31,9 @@ design the sequences.
 \image latex pics/seq_tree.eps 
 \n 
 
-\section ug_JEMRIS_seq_intro Introduction to the sequence GUI
-JEMRIS_seq Before starting the %sequence GUI, the directory in which
-the JEMRIS_seq.m file is located has to be added to the MatLab
-path-variable (use e.g. <I> "addpath('<directoryname>')" </I>). Then
-change to the directory in which the %sequence xml-files are located
+\section ug_JEMRIS_seq_intro Introduction to the sequence GUI JEMRIS_seq
+
+Change to the directory in which the %sequence xml-files are located
 and type \c JEMRIS_seq to start the %sequence GUI.  The following
 picture shows a screenshot of the GUI with the EPI sequence loaded
 into it:
@@ -346,7 +344,6 @@ does not work, i.e. these attributes can not be observed by other modules! These
 
 \li \c "NLG_field": an analytical expression for non-linear gradient field can be specified to every gradient module. Use \c "X,Y,Z" as space variables, and \c "G" as gradient the value, e.g.  \c "NLG_field=X*G+0.001*X*G^2" will simulate a linear x-gradient field with a small quadratic term.
 
-back to \ref toc.
 ***************************************************
 */
 

@@ -1,3 +1,9 @@
 
+Create documentation with the command
+
+>> doxygen doxy.conf
+
+Doxygen version >= 1.8.2 needs to be installed!
+
 
 Find additional information under http://www.jemris.org.

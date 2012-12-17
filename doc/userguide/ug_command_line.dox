@@ -265,5 +265,4 @@ every 5 seconds checkpoints are stored to temporary hidden binary files the ".sp
 after successful completion. If however the simulation is unexpectedly stopped, a restart will continue at the last checkpoint.
 This is useful for huge simulations lasting several hours (or even days) where sudden crash e.g. due to power breakdown may occur.
 
-back to \ref toc.
 */

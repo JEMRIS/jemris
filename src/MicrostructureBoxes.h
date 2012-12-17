@@ -5,6 +5,29 @@
  *      Author: dpflug
  */
 
+
+/*
+ *  JEMRIS Copyright (C) 
+ *                        2006-2013  Tony Stöcker
+ *                        2007-2013  Kaveh Vahedipour
+ *                        2009-2013  Daniel Pflugfelder
+ *                                  
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 #ifndef MICROSTRUCTUREBOXES_H_
 #define MICROSTRUCTUREBOXES_H_
 
@@ -12,13 +35,23 @@
 #include <vector>
 
 
+/**
+ *@brief Box with diffusion connstant.
+ */
 struct box{
-double x,y,z;					//	position of box
-double size_x,size_y,size_z;	//	box extends from [x-size_x..x+size_x, y-size_y..y+size_y, z-size_z..z+size_z ]
-double D;						// 	Diffusion constant inside box
+double x;	/**<@brief x position of box */
+double y;	/**<@brief y position of box */
+double z;	/**<@brief z position of box */
+double size_x;	/**<@brief x box extends from [x-size_x..x+size_x] */
+double size_y;	/**<@brief y box extends from [y-size_y..y+size_y] */
+double size_z;	/**<@brief z box extends from [z-size_z..z+size_z] */
+double D;	/**<@brief Diffusion constant inside box */
 };
 
 
+/**
+ *@brief A microsructure composed of boxes
+ */
 class MicrostructureBoxes: public Microstructure {
 public:
 	MicrostructureBoxes();

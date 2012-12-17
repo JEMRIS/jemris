@@ -4,9 +4,6 @@
 * \page ug_intro Introduction
 
 \n
-This manual intends to give a hands-on introduction to JEMRIS. A comprehensive software manual does not yet exist. Every user is wellcome to start writing.
-
-\n
 \section ug_intro_summary Summary
 JEMRIS, the “Jülich Extensible MRI Simulator”, provides an MRI sequence development and simulation environment for the MRI community. The development was driven by the desire to achieve generality of simulated 3D MRI experiments reflecting modern MRI systems hardware. The accompanying computational burden is overcome by means of parallel computing. Many aspects are covered which have not hitherto been simultaneously investigated in general MRI simulations such as parallel transmit and receive, important off-resonance effects, non-linear gradients, and arbitrary spatiotemporal parameter variations at different levels. The latter can be used to simulate various types of motion, for instance. The JEMRIS user interface is very simple to use but, nevertheless, it presents few limitations. MRI sequences with arbitrary waveforms and complex inter-dependent modules are modelled in a GUI-based environment requiring no further programming. 
 
@@ -60,7 +57,6 @@ also very wellcome also any reaction might be shifted to the next major release 
 \n
 \n
 \n
-back to \ref toc.
 ***************************************************
 */
 

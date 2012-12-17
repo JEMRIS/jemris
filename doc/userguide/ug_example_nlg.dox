@@ -1,11 +1,8 @@
 /**
 ***************************************************
-* \page ug_example_nlg %Example 3: Position Encoding with Nonlinear Fields
+* \page ug_example_nlg %Example 2: Position Encoding with Nonlinear Fields
 
-This section provides the details for reproducing the results in Figure 3 of the manuscript. 
-
-Stöcker T, Vahedipour K, Pflugfelder D, Shah NJ. High Performance Computer MRI Simulations.
-Magnetic Resonance in Medicine. <b> in press.</b>
+This section provides an example on using nonlinear gradients with JEMRIS.
 
 \n
 First, create in Matlab a 1-D sample consisting of a repeated step function:
@@ -77,7 +74,6 @@ These simulations only need some seconds on a single CPU.
 
 \n
 
-back to \ref extoc.
 ***************************************************
 */
 

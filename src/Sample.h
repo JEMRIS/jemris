@@ -3,8 +3,11 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
- *                                  Forschungszentrum Jülich, Germany
+ *  JEMRIS Copyright (C) 
+ *                        2006-2013  Tony Stöcker
+ *                        2007-2013  Kaveh Vahedipour
+ *                        2009-2013  Daniel Pflugfelder
+ *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -49,7 +52,9 @@ enum fType  {
     IMPLICIT  /**< New type (x,y,z) ordered double values w/o spatial information in bin file */
 };
 
-//!brief Spin structure
+/**
+ * @brief a single classical spin
+ */
 struct Spin_data {
     double x;     /**< x-position of the spin                    		*/
     double y;     /**< x-position of the spin                    		*/
@@ -62,6 +67,9 @@ struct Spin_data {
     double index; /** the spin id; needed for pjemris (e.g. save evol)	*/
 };
 
+/**
+ * @brief a container of spins
+ */
 struct Spin {
     long    size; 		/**< Data size    */
     Spin_data *data;	/**< array of spins */

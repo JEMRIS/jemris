@@ -2,19 +2,14 @@
  *  @brief Implementation of JEMRIS main executable (sequential version)
  *
  *
- *  \mainpage JEMRIS API Reference
- *
- *  This is the API documentation of JEMRIS version 2.0
- *
- *  \n
- *  \n
- *  \n
- *  See also <a href="http://www.jemris.org">www.jemris.org</a>
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
- *                                  Forschungszentrum Jülich, Germany
+ *  JEMRIS Copyright (C) 
+ *                        2006-2013  Tony Stöcker
+ *                        2007-2013  Kaveh Vahedipour
+ *                        2009-2013  Daniel Pflugfelder
+ *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
