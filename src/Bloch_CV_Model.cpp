@@ -81,7 +81,7 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     // check if double precision is still enough for sin/cos:
     if (fabs(NV_Ith_S(y,PHASE))>1e11 ) {
 	//important: restrict phase to [0, 2*PI]
-	NV_Ith_S(y,PHASE) = fmod(NV_Ith_S(y,PHASE),6.28318530717958);
+	NV_Ith_S(y,PHASE) = fmod(NV_Ith_S(y,PHASE),6.283185307179586476925286766559005768394338798750211641949889185);
     }
 
 
