@@ -167,6 +167,9 @@ guidata(hObject, handles);
 
 % --- writes the simulation xml file. This is *not* an object of the GUI!
 function handles=write_simu_xml(handles,redraw)
+ %write MotionTrajectory again in case Variable has changed:
+ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles);
+
  %path defintions differ on cluster
  if strcmp(get(handles.ParCompTag,'Checked')   ,'on')
      jp='/vol/share/jemris/matlab';
@@ -186,6 +189,13 @@ function handles=write_simu_xml(handles,redraw)
  SAMP.Name='sample'     ; SAMP.Data=''; SAMP.Children=[]; 
  SAMP.Attributes(1).Name='name'; SAMP.Attributes(1).Value=sample.name;
  SAMP.Attributes(2).Name='uri';  SAMP.Attributes(2).Value=fullfile(cwd,sample.file);
+ if isfield(sample,'MotionFileName')
+    if strcmp(sample.MotionFileName,'')
+       % do nothing
+    else
+       SAMP.Attributes(end+1).Name='MotionTrajectory';SAMP.Attributes(end).Value=fullfile(cwd,sample.MotionFileName); 
+    end     
+ end
  %write binary sample file
  if isempty(handles.UserSample)
     T1=handles.sample.T1; T2=handles.sample.T2;  T2S=handles.sample.T2S;
@@ -592,6 +602,35 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function MotionTrajectoryVariable_Callback(hObject, eventdata, handles)
+failed=false;
+VarName=get(hObject,'string');
+MotionFileName='Motion.dat';
+if isempty(VarName)
+    failed=true;
+else
+    if evalin('base',['exist(''',VarName,''',''var'')'])
+        MotionVar=evalin('base',VarName);
+        if isnumeric(MotionVar) && ndims(MotionVar)==2 && size(MotionVar,2)==7
+            RotOrigin=[0 0 0];
+            save(MotionFileName,'RotOrigin','MotionVar','-ASCII');
+            handles.sample.MotionFileName=MotionFileName;
+        else
+           failed=true;
+           display([' ''' VarName ''' has wrong format. MotionTrajectory needs to be a nx7 variable whereas the 7 entries are:'])
+           display('time [ms], Dx/Dy/Dz ind [mm], rotation around x/y/z/ [degree]')
+        end
+    else
+       failed=true;
+       display([' ''' VarName ''' does not exist in workspace!'])
+    end
+end
+if failed
+    set(hObject,'string','');
+    handles.sample.MotionFileName='';
+end
+guidata(hObject, handles);
+
 function setNoise_Callback(hObject, eventdata, handles)
 handles.sim.RN=str2num(get(hObject,'String'));
 handles=write_simu_xml(handles,1);
@@ -884,4 +923,14 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% --- Executes during object creation, after setting all properties.
+function MotionTrajectoryVariable_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to MotionTrajectoryVariable (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
