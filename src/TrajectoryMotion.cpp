@@ -67,7 +67,7 @@ void TrajectoryMotion::LoadFile(string filename) {
     // time [ms]  translation x/y/z [mm] rotation around axis x/y/z [degree]
     // order of transformations: first rotate around x, then y, then z-axis; afterwards translate;
     // rotation around point m_rot_origin
-    double x,y,z;
+    double x;
     if (!(inFile >> m_rot_origin_x)) CERR;
     if (!(inFile >> m_rot_origin_y)) CERR;
     if (!(inFile >> m_rot_origin_z)) CERR;
@@ -75,12 +75,12 @@ void TrajectoryMotion::LoadFile(string filename) {
     while ((inFile >> x)) {
         m_time.push_back(x);
         if ((inFile >> x)) m_trans_x.push_back(x); else CERR;
-        if (inFile >> y) m_trans_y.push_back(x); else CERR;
-        if (inFile >> z) m_trans_z.push_back(x); else CERR;
+        if (inFile >> x) m_trans_y.push_back(x); else CERR;
+        if (inFile >> x) m_trans_z.push_back(x); else CERR;
 
         if (inFile >> x) m_rot_x.push_back(x/180*PI); else CERR;
-        if (inFile >> y) m_rot_y.push_back(x/180*PI); else CERR;
-        if (inFile >> z) m_rot_z.push_back(x/180*PI); else CERR;
+        if (inFile >> x) m_rot_y.push_back(x/180*PI); else CERR;
+        if (inFile >> x) m_rot_z.push_back(x/180*PI); else CERR;
     }
     inFile.close();
 
