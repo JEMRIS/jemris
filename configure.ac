@@ -1,5 +1,5 @@
 AC_PREREQ(2.61)
-AC_INIT(JEMRIS, [2.5.2], k.vahedipour@fz-juelich.de)
+AC_INIT(JEMRIS, [2.6], k.vahedipour@fz-juelich.de)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
@@ -14,6 +14,41 @@ AC_HEADER_STDC
 
 # Check for the host type
 AC_CANONICAL_HOST
+
+AC_ARG_ENABLE([documentation],
+     [  --enable-documentation          turn on documentation C++ library support (default: yes)],
+     [case "${enableval}" in
+       yes) documentation=true ;;
+       no)  documentation=false ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-documentation]) ;;
+     esac],[documentation=false])
+     AM_CONDITIONAL([DOCUMENTATION], [test x$documentation = xtrue])
+
+# Check for xsltproc & xmllint ()
+if test x$documentation = xtrue; then
+
+build_docs=yes
+
+XSLTPROC=
+AC_CHECK_PROGS([XSLTPROC], [xsltproc])
+if test -z "$XSLTPROC"; then
+  AC_MSG_WARN([xsltproc (from the libxslt source package) not found, not building documentation])
+  build_docs=no
+fi
+
+build_api=yes
+
+DOXYGEN=
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+if test -z "$DOXYGEN"; then
+  AC_MSG_WARN([xsltproc (from the libxslt source package) not found, not building documentation])
+  build_api=no
+fi
+
+fi
+
+AM_CONDITIONAL(BUILD_DOCS, test x$build_docs = xyes)
+AM_CONDITIONAL(BUILD_API,  test x$build_api  = xyes)
 
 # Checks for programs.
 AC_PROG_CXX
@@ -389,6 +424,6 @@ if test x$mpi = xtrue; then
 fi
 
 
-AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile doc/userguide/Makefile doc/api/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh])
+AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile doc/userguide/Makefile doc/userguide/doxy-jemris.conf doc/site/Makefile doc/site/nav.js share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh])
 
 AC_OUTPUT
