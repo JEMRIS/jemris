@@ -1,0 +1,41 @@
+
+var dir = '@prefix@/share/doc/jemris';	
+var loc = location.href;
+document.write ('<h3>jemris</h3>');
+document.write ('<ul>');
+document.write ('<li id="home"><a href="' + dir + '/index.html"><span>Home</span></a></li><li id="userguide"><a href="' + dir + '/api/html/ug_main.html"><span>User guide</span></a>');
+if (loc.match(/api\/html\/ug\_/g)) {
+	document.write ('<ul><li id="userguide"><a href="' + dir + '/api/html/ug_install.html"><span>Installation</span></a></li><li id="userguide"><a href="/api/html/ug_intro_introduction.shtml"><span>General concept</span></a></li></ul>');
+}
+document.write ('</li>');
+document.write ('<li id="apidocumentation"><a href="' + dir + '/api/html/annotated.html"><span>API documentation</span></a>');
+document.write ('</li>');
+document.write ('<li id="download"><a href="' + dir + '/download.html"><span>Download</span></a></li><li id="publications"><a href="'+dir+'/publications.html"><span>Publications</span></a></liz><li id="contact"><a href="'+dir+'/contact.html"><span>Contact</span></a></li><li id="getinvolved"><a href="'+dir+'/getinvolved.html"><span>Get involved</span></a></li>');
+document.write ('</ul>');
+
+/*
+	if (loc.match(/api\/html\/ug\_/g)) {
+		var el = document.getElementById('userguide');
+		el.setAttribute ('class', 'active');
+	} else if (loc.match(/api\/html/g)) {
+		var el = document.getElementById('api');
+		el.setAttribute ('class', 'active');
+	} else if (loc.match(/download.html/g)) {
+		var el = document.getElementById('download');
+		el.setAttribute ('class', 'active');
+	} else if (loc.match(/publications.html/g)) {
+		var el = document.getElementById('publications');
+		el.setAttribute ('class', 'active');
+	} else if (loc.match(/contact.html/g)) {
+		var el = document.getElementById('contact');
+		el.setAttribute ('class', 'active');
+	} else if (loc.match(/gettinginvolved.html/g)) {
+		var el = document.getElementById('gettinginvolved');
+		el.setAttribute ('class', 'active');
+	} else  {
+		var el = document.getElementById('index');
+		el.setAttribute ('class', 'active');
+	} 
+*/
+
+

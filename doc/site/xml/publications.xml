@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<main>
+  <title>publications</title>
+  <article>  
+	<![CDATA[
+
+<h1 class="isFirstInSlot">Publications</h1>
+<p>Tony St&ouml;cker, Kaveh Vahedipour, Daniel Pflugfelder, N. Jon Shah. <b>High-performance computing MRI simulations</b>. Magnetic Resonance in Medicine. 2010, 64(1), 186 - 193.</p>
+<p>Kaveh Vahedipour, Tony St&ouml;cker, N Jon Shah. <b>Partial fourier spatially selective excitation - a neglected potential</b>. Proc. 27th ESMRMB, Antalya, TR, 2009.</p>
+<p>Kaveh Vahedipour, N Jon Shah, Daniel Brenner, Frank Geschewski, Avdo Celik, J&ouml;rg Felder, Tony St&ouml;cker. <b>b1der: Multi-channel multi-dimensional spatially selective excitation of arbitrary magnetisation patterns</b>. Proc. 27th ESMRMB, Antalya, TR, 2009.</p>
+<p>Kaveh Vahedipour, N Jon Shah, Tony St&ouml;cker. <b>jemris 2.0: High Performance Computing Simulator for MRI</b>. Proc. 26th ESMRMB, Valencia, ES, 2008.</p>
+<p>Tony St&ouml;cker, Kaveh Vahedipour and N Jon Shah. <b>HPC Simulation of Magnetic Resonance Imaging</b>. Advances in Parallel Computing, 2008, 15(1), 155-164.</b>
+      ]]>
+  </article>
+</main> 

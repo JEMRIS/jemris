@@ -1,3 +1,2 @@
-EXTRA_DIST = README
-doc_DATA = $(EXTRA_DIST)
-SUBDIRS = api userguide
+EXTRA_DIST = README.TXT
+SUBDIRS = userguide site
