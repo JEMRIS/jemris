@@ -204,7 +204,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 apidir = $(DESTDIR)$(docdir)/api
 resdir = $(apidir)/res
-static_docs = res/doxygen.css res/tabs.css
+
+#static_docs = res/doxygen.css res/tabs.css
 DOXY_STAMP = doxygen-build.stamp
 DOXY_FILE = doxy-jemris.conf
 EXTRA_DIST = $(static_docs) $(DOXY_FILE).in
