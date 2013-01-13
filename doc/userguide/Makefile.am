@@ -1,7 +1,7 @@
 apidir = $(DESTDIR)$(docdir)/api
 resdir = $(apidir)/res
 
-static_docs = res/doxygen.css res/tabs.css
+#static_docs = res/doxygen.css res/tabs.css
 DOXY_STAMP = doxygen-build.stamp
 DOXY_FILE = doxy-jemris.conf
 
