@@ -1,0 +1,664 @@
+h1,h2,h3,h4,h5,h6 { 
+    font-family: Arial, sans-serif;
+    font-weight:bold; 
+    color:#494949;
+}
+        
+h1 { font-size: 1.8em;}
+h2 { font-size: 1.6em; margin-top: 3em;}
+h3 { font-size: 1.4em; margin-top: 1.5em;}
+h4 { font-size: 1.3em; margin-top: 1em;}
+h5 { font-size: 1.1em}
+h6 { font-size: 1.1em}
+        
+p { font-size:1.2em; line-height:1.4em; margin: 1em 0 0 0; }
+        
+/* ### Listen  #### */
+
+ul, ol, dl { line-height: 1em; margin:0em;}
+li { margin-left: 0; line-height: 1em; }
+        
+div#main ul.gross li {
+    line-height:1.3em;
+    margin-bottom:1em;
+    font-size:1.2em;
+}
+
+div#main {
+    margin-bottom:1em;
+}
+
+div#main li {
+
+}
+        
+dt { font-weight: bold }
+dd { margin: 0 0 1em 2em }
+    
+
+div#main ul.linkliste, div#teaserbox ul.linkliste { 
+    margin:1em 0 0 0;
+    padding:0; 
+}
+        
+div#teaserbox ul.linkliste { margin: 0 0 0 0 }
+        
+div#main ul li {
+    line-height: 1.5em;
+    list-style-type: square;
+
+}
+
+div.contents {
+    line-height:1.5em;
+    margin-bottom:0.1em;
+    font-size:1.2em;
+}
+
+div#main ul.linkliste li, div#teaserbox ul.linkliste li {
+    line-height:1.5em;
+    margin-bottom:0.1em;
+}
+    
+        div#teaserbox ul li{
+            font-size:1.1em;
+        }
+
+    
+    /* ### Textauszeichnung ### */
+    
+        cite, blockquote { font-style:italic }
+        blockquote { margin: 0 0 1em 1.5em }
+        
+        strong,b { font-weight: bold }
+        em,i { font-style:italic }
+        
+        pre, code { font-family: monospace; font-size: 1.1em; font-weight: bold;}
+        
+        acronym, abbr 
+        {
+            letter-spacing: .07em;
+            border-bottom: .1em dashed #c00;
+            cursor: help;
+        }            
+        
+        hr { border:0; height:0.1em; background-color:#797979; margin:1em 0 0 0 ; padding:0; }
+        
+        form { margin:0; padding:0; border:0; }
+        
+        span.unsichtbar {
+            position:absolute;
+            left:-1000px;
+            top:-1000px;
+            width:0;
+            height:0;
+            overflow:hidden;
+            display:inline;
+        }
+
+	.psub {vertical-align: top; width: 242px;}
+
+    /* ### Links ### */
+
+        a {color:#005B82; text-decoration:none;}
+        a.extern {font-style:italic;}
+        a:focus,
+        a:hover,
+        
+
+        a.intern, div#main a, div#teaserbox a, div#breadcrumb a {
+        }
+        
+        div#breadcrumb a { background-position:0px 3px; }
+
+        div#main a.imagelink, div#teaserbox a.imagelink {
+            border:0 black solid;
+            padding-left:0;
+        }
+
+        div#main a.emaillink, div#teaserbox a.emaillink {
+        }
+        
+        a.anker, div#main a.anker, div#teaserbox a.anker { 
+            padding-left:0;
+         }
+
+        p a { font-size:1.1em; }        
+
+        div#main_column a, div#teaser_column a { text-decoration:none;}
+        div#main_column a:focus, div#teaser_column a:focus { background-color:#CDDBE2; }
+       
+        div#header ul
+        {
+            margin:0;
+            padding:0;
+            border:0;
+            list-style-type:none;
+        }
+        
+        div#header li
+        {
+            margin:0;
+            padding:0;
+            border:0;
+            display:inline;
+        }
+    
+        div#main ul
+        {
+			margin-left: 20px;
+			margin-right:0px;
+			margin-top: 5px;
+			margin-bottom:10px;
+			list-style-type:square; 
+        }
+
+		div#main img {
+			max-width: 660px;
+			margin-bottom:5px
+		}
+        
+
+        div#main li
+        {
+            display:block;
+	    font-size:1.1em;
+        }
+    
+    /* ### Hauptmenu ### */            
+
+        div#header div#main_menu ul {
+            background-color:#fff;
+        }
+
+        div#header div#main_menu li a 
+        {
+            color:#005B82;
+            font-weight:bold;
+            background:#fff;
+            font-size:1.0em;
+
+        }
+		
+        div#header div#main_menu li a span
+        {
+            font-size:1.2em;
+        }
+                
+        div#header div#main_menu li a:hover, div#header div#main_menu li a:focus
+        {
+            text-decoration:none;
+            border-bottom:0.3em #9C9C9C solid;
+        }
+        
+        div#header div#main_menu li.active a
+        {
+            text-decoration:none;
+            border-bottom:0.3em #005B82 solid;
+        }
+        
+        div#header div#main_menu span.divider
+        {
+            padding-left:0.5em;
+            padding-right:0.5em;
+        }
+
+    /* ### Servicemenu ### */            
+    
+        div#header div#service_menu, div#header div#language_menu {
+            background-color:#fff;
+        }
+
+        div#header div#service_menu li a, div#header div#language_menu li a
+        {
+            color:#005B82;
+            background:#fff;
+            font-size:1.1em;
+        }
+        
+        div#header div#service_menu li a:hover, div#header div#language_menu li a:hover
+        {
+            color:#000000;
+            text-decoration:underline;
+        }
+        
+        div#header div#service_menu li.active a
+        {
+            color:#005B82;
+            font-weight:bold;
+        }
+        
+        div#header div#service_menu span.divider
+        {
+            padding-left:0.3em;
+            padding-right:0.3em;
+        }
+    
+        div#titel span
+        {
+            color:#FFFFFF;
+            font-size:2.2em;                
+        }
+    
+        div#thema_menu a
+        {
+            font-size:1.0em;
+            font-weight:bold;
+            background-color:#D6D6D6;
+            padding-left:1em;
+            padding-top:0.1em;
+        }
+
+        div#thema_menu a:hover
+        {
+            background-color:#EAEAEA;
+        }
+    
+        div#thema_menu a span
+        {
+            display:block;
+            margin-top:0.1em;
+            font-size:1.2em;
+        }
+    
+        div#navbox 
+        { 
+            position:relative;
+            padding:0; 
+            margin:0;
+            margin-left:2em;
+            width:20em;
+            height:1%;
+        }  
+    
+        div#navbox a span
+        {
+            display:block;
+            color:#fff;
+            padding-left:1em;
+            font-size:1.1em;
+        }
+        
+        div#navdummy
+        {
+            display:block;
+            background-color:#005B82;
+            width:20em;
+            height:8em;
+        }
+
+        div#navdummy div#mdhg {
+            position:relative;
+            color:#fff;
+            top:6em;
+            left:1em;
+        }
+
+        div#navdummy div#mdhg a {
+            color:#fff;
+            font-size:1em;
+            text-decoration:none;
+        }
+
+    /* ### erste Ebene ### */         
+    
+        div#navbox ul
+        {
+            position:relative;
+            margin:0;
+            padding:0;
+            width:20em;
+            margin-left:0em;
+            background-color:#FFFFFF;
+            height:100%;
+        }    
+    
+        div#navbox ul li a
+        {
+            display:block;
+            background-color:#005B82;
+            font-size:1em;
+            width:20em;
+            height:1%;
+            line-height:2.2em;
+            margin-bottom:0.1em;
+        }        
+        
+        div#navbox ul li a:hover { background-color:#6B93A8; }
+        div#navbox ul li a.active span { font-weight:bold; }
+
+    /* ### zweite Ebene ### */ 
+
+        div#navbox ul ul li a { background-color:#CDDBE2; margin-left:1em; width:19em; }        
+        div#navbox ul ul li a:hover { background-color:#E1EAEE; }
+        div#navbox ul ul li a span { color:#000; }
+        div#navbox ul ul li a.active span { font-weight:bold; }
+
+
+    /* ### dritte Ebene ### */ 
+
+        div#navbox ul ul ul li a { background-color:#D6D6D6; margin-left:2em; width:18em; }        
+        div#navbox ul ul ul li a span { color:#000; }
+        div#navbox ul ul ul li a:hover { background-color:#EAEAEA; }
+        div#navbox ul ul ul li a.active span { font-weight:bold; }
+
+    /* ### vierte Ebene ### */ 
+
+        div#navbox ul ul ul ul li a { background-color:#E6E6E6; margin-left:3em; width:17em; }
+        div#navbox ul ul ul ul li a span { color:#000; }
+        div#navbox ul ul ul ul li a:hover { background-color:#EAEAEA; }
+        div#navbox ul ul ul ul li a.active span { font-weight:bold; }
+
+/*
+**
+** linke Navigation
+**
+*************************/
+
+/************************
+**
+** Hauptbereich
+**
+**/
+
+        div#main_column_content
+        {
+            background-color:#fff;
+        }
+            
+            
+    /* ### Breadcrumb ### */
+
+        div#breadcrumb
+        {
+            margin-bottom:1.8em;
+            padding-top:1em;
+            padding-left:2.0em;
+        }
+        
+        div#breadcrumb a
+        {
+            display:inline;
+            font-size:1.1em;
+            margin-right:0.1em;
+            color:#005B82;
+        }
+        
+        div#breadcrumb a:hover
+        {
+            color:#000000;
+            text-decoration:underline;
+        }            
+    
+    
+    /* ### Haupttext ### */
+
+        div#balken
+        {
+            float:left;
+            background-color:#005B82;
+            width:0.8em;
+            height:15.0em;
+            margin-top:-0.1em;
+            margin-left:-1.1em;
+        }  
+
+        div#balken.GES { background-color:#D52D12; }  
+        div#balken.UMW { background-color:#E7AF12; }  
+        div#balken.INF { background-color:#CF6800; }  
+        div#balken.KEY { background-color:#A9B509; }  
+
+        div#main 
+        { 
+            position:relative;
+            top:-0.3em;
+            left:-1em;
+            padding-top:1.0em;
+            padding-left:2.5em; 
+            padding-right:2.5em; 
+            height:1%;
+            min-height:600px;
+        }
+        
+        div#main a.imagelink img, div#teaserbox a.imagelink img {
+        }
+
+        div#main img.fullwidth
+        {
+            float:inline;
+            padding:1.5em 1.5em 1.5em 1.5em;
+        }
+        
+        p.legende
+        {
+            font-size:1.1em;
+            color:#797979;
+            line-height:1.4em;
+        }
+
+        div#main div#pageintro { height:1%;  margin-top:0; }
+        div#main div#pageintro h1 { margin-bottom:0.5em; margin-top:0;}
+
+        div#main div.newsblock { height:1%;  margin-top:1.5em; }
+        div#main div.newsblock h2 { margin-bottom:0.5em; margin-top:0; }
+        /*22.08.08 BW*/
+	div#main div.newsblock p.leftclear { clear:left; margin:0; padding:0; }
+        
+        
+        p.articlelinks { margin-top:0.3em; }
+        
+        div#main div.textbild p {
+            margin:0.5em;
+        }
+
+        div#main div.textbild img.fullwidth {
+            padding-bottom:0;
+        }
+
+        ul.institutsliste {
+            margin-left:-1em;
+        }
+        
+        div#main table.vs_tabelle ul li {
+
+            font-size:1.0em;
+        }
+
+        table.vs_tabelle { width:47em; }
+        table.vs_tabelle th.vs_pic { width:5em; }
+        table.vs_tabelle th.vs_pic img { margin: 0 -1em -1em 0;}
+        table.vs_tabelle th.vs_kontakt { width:27em; }
+        table.vs_tabelle th.vs_aufgabe { width:15em; }
+        
+/*
+**
+** Hauptbereich
+**
+*************************/
+
+/************************
+**
+** Teaser
+**
+**/
+    
+    div#teaserbox { 
+        position:relative;
+        padding-top:1.0em;
+        padding-left:0em; 
+        padding-right:1.0em; 
+        margin-left:2em;
+        background-color:#fff;
+    }  
+    
+    div#teaserbox input.suchfeld
+    {
+        width:15em;
+        font-size:1.2em;
+        border: 0.1em solid #005B82;
+    }
+
+    div#teaserbox h2 { margin-bottom:0.5em; }
+    div.teaserentry img { margin:1em 0 0 0; border:0 solid white; }
+    
+    div#searchbox input#searchfield { border:0.1em #005F86 solid; width:13em; font-size:1.1em; color:#000;}
+    div#searchbox input#submitbutton { border:0.1em #005F86 solid; width:5em; font-size:1.1em; color:#005F86; cursor:pointer; background-color:#e6e6e6; }
+    div#searchbox input#submitbutton:hover { color:#000; text-decoration:underline;}
+    
+/*
+**
+** Teaser
+**
+*************************/
+
+/************************
+**
+** Presse
+**
+**/
+
+    div.presse_einleitung {
+    }
+    
+    div.presse_eintrag {
+        margin-left:12em;
+        width:27em;
+    }
+    
+    p.presse_datum {
+        text-align:right;
+        margin-right:0.5em;
+        width:7em;
+        float:left;
+    }
+    
+    div.presse_artikel h1, div.presse_artikel h2 {
+        margin-top:30;
+        padding:0;
+    }
+    
+    div.presse_artikel p.presse_artikeldatum {
+        margin-top:0;
+        margin-bottom:2em;
+        clear:both;
+    }
+    
+    div.presse_artikel div.presse_bilder img {
+        margin:0;
+    }
+    
+    div.presse_text img {
+        border:0;
+        margin:0;
+        padding:0;
+    }
+    
+    .pm_bildunterschrift {
+        float:none;
+        clear:both;
+        color:#797979;
+        font-size:1.1em;
+        margin-bottom:1em;
+    }
+    
+    div.presse_ansprechpartner {
+        margin-top:1em;
+        font-size:1.1em;
+    }
+    
+    div.presse_ansprechpartner a {
+        font-size:1em;
+    }    
+    
+    div.presse_ansprechpartner pre { 
+        font-family: Arial, sans-serif; 
+    }    
+
+/*
+**
+** Presse
+**
+*************************/
+
+
+/************************
+**
+** Stichworte
+**
+**/
+
+div#main a.alph {
+    background-image: url();
+    background-repeat: no-repeat;
+    background-position:left center;
+    padding-left:0;
+}
+
+div.letter { margin-bottom:0.5em; }
+
+div.list table { width:48em; }
+
+/*
+**
+** Stichworte
+**
+*************************/
+
+/************************
+**
+** Termine
+**
+**/
+
+    div.fs_date { margin-bottom:0.5em; padding-top:1em;}
+    div.fs_title { margin-bottom:-1em; }
+    div.fs_venue { margin-bottom:-1em; }
+    div.fs_text { margin-bottom:-1em; }
+
+/*
+**
+** Termine
+**
+*************************/
+
+
+/************************
+**
+** DnD Galery
+**
+**/
+       div#main table{
+       margin-top: 1em;
+}
+    	div#dnd_gallery table {
+    	    border-collapse:collapse;
+    	    border:0em black solid;
+    	}
+    	
+    	div#dnd_gallery td, div#dnd_gallery th {
+    	    border:0em black solid;
+    	    padding:0.3em;
+    	    font-size:1.2em;
+    	    background-color:#fff;
+    	}
+    
+    	div#dnd_gallery th {
+    	    background-color:#D6D6D6;
+    	    font-weight:bold;
+    	    text-align:center;
+    	    white-space:nowrap;
+    	}
+    
+        div#dnd_gallery td.dnd_pic_cell a {
+            font-size:1em;
+            background:#ffffff url();
+            padding-left:0;
+        }      
+        
+
+/*
+**
+** DnD Galery
+**
+*************************/
+
