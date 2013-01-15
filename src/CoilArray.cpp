@@ -24,6 +24,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "BinaryContext.h"
 #include "CoilArray.h"
 #include "Coil.h"
 #include "StrX.h"
@@ -127,12 +128,12 @@ void CoilArray::Initialize (string uri) {
 }
 
 /**************************************************/
-void CoilArray::InitializeSignals(long lADCs){
+void CoilArray::InitializeSignals (long lADCs) {
 
 	for (unsigned int i=0; i<GetSize(); i++)
 		m_coils[i]->InitSignal(lADCs);
 
-};
+}
 
 /**************************************************/
 void CoilArray::Receive (long lADC){
@@ -140,43 +141,139 @@ void CoilArray::Receive (long lADC){
 	for (unsigned int i=0; i<GetSize(); i++)
 		m_coils[i]->Receive(lADC);
 
-};
-
-/**********************************************************/
-void CoilArray::DumpSignals (string prefix, bool normalize) {
-	string tmp;
-	if (prefix != "") {
-		tmp = m_signal_prefix;
-		m_signal_prefix = prefix;
-	}
-
-	for (unsigned int i=0; i<GetSize(); i++) {
-	    stringstream sstr;
-		sstr << m_signal_prefix << setw(2) << setfill('0') << i+1 << ".bin";
-		m_coils[i]->GetSignal()->DumpTo(sstr.str(),normalize);
-	}
-
-	if (prefix != "") {
-		m_signal_prefix = tmp;
-	}
-
-
 }
 
 /**********************************************************/
-void CoilArray::DumpSensMaps(bool verbose) {
+IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 
-    string prefix = (m_mode==RX)?"RX":"TX";
+	/*	if (prefix != "")
+		m_signal_prefix = "channel";
+	
+	for (unsigned int i=0; i < GetSize(); i++) {
 
-    for (unsigned int i=0; i<GetSize(); i++) {
+	    m_coils[i]->GetSignal()->DumpTo(sstr.str(),normalize);
 
-        stringstream sstr;
-        sstr << prefix << "sensmap" << setw(2) << setfill('0') << i+1 << ".bin";
-        m_coils[i]->DumpSensMap(sstr.str());
-        if (verbose)
-        	cout << "Channel #" << i << ": Coil " << m_coils[i]->GetName() << " (" << m_coils[i]->GetClassType() << "): " << " dumps to " << sstr.str() << endl;
+		}*/
 
-    }
+
+	BinaryContext bc;
+	DataInfo      di;
+
+	bc.Initialize ("signals.h5", IO::OUT);
+
+	for (int c = 0; c < GetSize(); c++) {
+		
+		Repository* repository = m_coils[c]->GetSignal()->Repo();
+		RNG*        rng        = m_coils[c]->GetSignal()->Noise();
+
+		for (long i = 0; i < repository->Samples(); i++) {
+			
+			if (normalize) {
+				
+				for (int j = 0; j < repository->NProps(); j++) 
+					(*repository)[i*repository->NProps() + j] /= World::instance()->TotalSpinNumber;
+				
+				//dwelltime-weighted random noise
+				if (World::instance()->RandNoise > 0.0) {
+					
+					double dt =  1.0;
+					
+					if      (i                    > 0) dt = repository->TP(i  ) - repository->TP(i-1);
+					else if (repository->Samples() > 1) dt = repository->TP(i+1) - repository->TP(i  );
+					
+					//definition: Gaussian has std-dev World::instance()->RandNoise at a dwell-time of 0.01 ms
+					for (int j = 0; j < repository->Compartments(); j++) {
+						(*repository)[i*repository->NProps() + j*3 + 0] += World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
+						(*repository)[i*repository->NProps() + j*3 + 1] += World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
+					}
+					
+				}
+
+			}
+			
+		}
+		
+		di.fname   = "signals.h5";
+		
+		stringstream sstr;
+		sstr << setw(2) << setfill('0') << c;
+
+		di.ndim    = 2;
+		di.dims[0] = repository->Samples();
+		di.dims[1] = repository->NProps();
+		di.path    = "/signal/channels/";
+		di.dname   = sstr.str();
+		bc.SetInfo (di);
+		bc.WriteData (repository->Data());
+		
+		if (di.dname == "00") {
+			di.ndim    = 1;
+			di.dims[0] = repository->Samples();
+			di.path    = "/signal/";
+			di.dname   = "times";
+			bc.SetInfo (di);
+			bc.WriteData (repository->Times());
+		}
+
+
+	}
+
+	//REVISE
+	return IO::OK;
+	
+}
+
+/**********************************************************/
+IO::Status CoilArray::DumpSensMaps (bool verbose) {
+	
+	BinaryContext bc;
+	DataInfo      di;
+	IO::Status    ios = IO::OK;
+	
+	bc.Initialize (std::string("sensmaps.h5"), IO::OUT);
+	
+	if (bc.Status() != IO::OK)
+		return bc.Status();
+	
+	di.fname = "sensmaps.h5";
+    string mode = (m_mode==RX) ? "RX" : "TX";
+	
+	// Nx x Ny x Nz x Nc
+    di.ndim = 4;
+
+	di.dims[3] = m_coils[0]->GetPoints();
+	di.dims[2] = m_coils[0]->GetPoints();
+	di.dims[1] = (m_coils[0]->GetNDim() == 3) ? m_coils[0]->GetPoints() : 1;
+	di.dims[0] = m_coils.size();
+
+	long size = 1;
+	for (int i = 1; i < 4; i++)
+		size *= di.dims[i];
+
+	double* maps = (double*) malloc (m_coils.size()*size*sizeof(double));
+
+	di.path  = "/maps/" + mode;
+	di.dname = "magnitude";
+	bc.SetInfo(di);
+	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {
+		m_coils[i]->GridMap();
+		memcpy (&maps[n], m_coils[i]->MagnitudeMap(), sizeof(double)*size);
+		n += size; 
+	}
+	bc.WriteData (maps);
+
+	di.path  = "/maps/" + mode;
+	di.dname = "phase";
+	bc.SetInfo(di);
+	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {
+		memcpy (&maps[n],     m_coils[i]->PhaseMap(), sizeof(double)*size);
+		n += size; 
+	}
+	bc.WriteData (maps);
+	
+	return ios;
+	
+	free (maps);
 
 }
 
@@ -191,10 +288,11 @@ Coil* CoilArray::GetCoil(unsigned channel) {
 
 /**********************************************************/
 int CoilArray::ReadRestartSignal(){
-	// return: 0, if files successfully read; -2 if no files present; -1 if wrong restart files.
+
+	/*	// return: 0, if files successfully read; -2 if no files present; -1 if wrong restart files.
 	bool fail = false;
 	for (unsigned int i=0; i<GetSize();i++) {
-		Repository rep = m_coils[i]->GetSignal()->repository;
+		Repository rep = m_coils[i]->GetSignal()->m_repository;
 		ifstream tmp;
 	    stringstream sstr;
 		sstr << ".tmp_sig" << setw(2) << setfill('0') << i+1 << ".bin";
@@ -203,6 +301,7 @@ int CoilArray::ReadRestartSignal(){
 			if (i==0) return (-2); else fail=true;
 		}
 		tmp.seekg (0, ios::end);
+		// REVISE works only for single compartment
 		int length = tmp.tellg()/sizeof(double)/4;
 		if (length != rep.size) fail=true;
 		if (fail) {
@@ -220,6 +319,6 @@ int CoilArray::ReadRestartSignal(){
 			tmp.read ((char*) &(rep.mz[k]),sizeof(double));
 		}
 		tmp.close();
-	}
+		}*/
 	return (0);
 }

@@ -630,6 +630,7 @@ MPICXX
 MPI_FALSE
 MPI_TRUE
 LIBOBJS
+HDF5
 BOOST_FALSE
 BOOST_TRUE
 am__fastdepCC_FALSE
@@ -741,6 +742,7 @@ enable_option_checking
 enable_dependency_tracking
 enable_documentation
 enable_boost
+with_hdf5
 enable_mpi
 '
       ac_precious_vars='build_alias
@@ -1382,6 +1384,11 @@ Optional Features:
   --enable-documentation          turn on documentation C++ library support (default: yes)
   --enable-boost          turn on boost C++ library support (default: yes)
   --enable-mpi            turn on parallel jemris (default: yes)
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-hdf5             which hdf5 library to use
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -2797,7 +2804,7 @@ am__tar='$${TAR-tar} chof - "$$tardir"' am__untar='$${TAR-tar} xf -'
 
 
 
-$as_echo "#define SVN_REVISION \"1764M\"" >>confdefs.h
+$as_echo "#define SVN_REVISION \"1773M\"" >>confdefs.h
 
 
 # C++ project
@@ -5525,6 +5532,21 @@ fi
 done
 
 fi
+for ac_header in H5Cpp.h
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "H5Cpp.h" "ac_cv_header_H5Cpp_h" "$ac_includes_default"
+if test "x$ac_cv_header_H5Cpp_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_H5CPP_H 1
+_ACEOF
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: cannot find H5Cpp.h, hdf5 dump / read functionality unavailable!" >&5
+$as_echo "cannot find H5Cpp.h, hdf5 dump / read functionality unavailable!" >&6; }
+fi
+
+done
+
 
 # Checks for libraries.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for cos in -lm" >&5
@@ -6010,6 +6032,68 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
+
+# HDF5. Not mandatory.
+
+# Mac OSX needs libsz
+#case "$host" in
+#  *darwin*)
+#  AC_CHECK_LIB([sz],           [SZ_Compress], [], [AC_MSG_ERROR([cannot find libsz, bailing out])])
+#;;
+#esac
+
+
+# Check whether --with-hdf5 was given.
+if test "${with_hdf5+set}" = set; then :
+  withval=$with_hdf5;
+case $withval in
+  yes)
+    HDF5=' -lhdf5_cpp -lhdf5'
+    ;;
+  no)
+    HDF5=''
+    ;;
+  *)
+    HDF5=$withval
+    ;;
+esac
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for H5File in -lhdf5_cpp -lhdf5" >&5
+$as_echo_n "checking for H5File in -lhdf5_cpp -lhdf5... " >&6; }
+OLD_LIBS=$LIBS
+LIBS="${LIBS} -lhdf5_cpp -lhdf5"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <H5Cpp.h>
+int
+main ()
+{
+H5::H5File f ("t.h5", H5F_ACC_RDONLY);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+   hdf5_found=yes
+else
+  LIBS=$OLD_LIBS
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no. Cannot find libhdf5_cpp, hdf5 dump/read not available." >&5
+$as_echo "no. Cannot find libhdf5_cpp, hdf5 dump/read not available." >&6; }
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+if test "$hdf5_found" = yes; then
+
+$as_echo "#define HAVE_HDF5 1" >>confdefs.h
+
+   HDF5="-lhdf5_cpp -lhdf5"
+
+fi
 
 case "$target" in
 *-mingw*)
@@ -6687,7 +6771,6 @@ rm -f conftest.*
 
   CXX=$MPICXX
 fi
-
 
 ac_config_files="$ac_config_files Makefile src/Makefile doc/Makefile doc/userguide/Makefile doc/userguide/doxy-jemris.conf doc/site/Makefile doc/site/nav.js share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh"
 

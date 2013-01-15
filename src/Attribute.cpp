@@ -41,7 +41,7 @@
 	if (m_datatype == typeid(unsigned*).name() ) delete ((unsigned*) m_backup);
 	if (m_datatype == typeid(    bool*).name() ) delete ((    bool*) m_backup);
 	if (m_datatype == typeid(  string*).name() ) delete ((  string*) m_backup);
-};
+}
 
 /***********************************************************/
 void Attribute::AttachObserver (Attribute* attrib){
@@ -52,7 +52,7 @@ void Attribute::AttachObserver (Attribute* attrib){
 	m_observers.push_back(attrib);
 	attrib->AttachSubject(this);
 
-};
+}
 
 /***********************************************************/
 void Attribute::AttachSubject (Attribute* attrib){
@@ -63,14 +63,14 @@ void Attribute::AttachSubject (Attribute* attrib){
 	m_subjects.push_back(attrib);
 	attrib->AttachObserver(this);
 
-};
+}
 
 
 /***********************************************************/
 void Attribute::UpdatePrototype (Prototype* prot){
 	prot->Prepare(PREP_UPDATE);
 	if (prot->GetType() == MOD_PULSE) ((AtomicSequence*) prot->GetParent())->CollectTPOIs();
-};
+}
 
 /***********************************************************/
 bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, bool verbose){
@@ -142,7 +142,7 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
         return false;
 	}
     return true;
-};
+}
 
 /***********************************************************/
 void Attribute::EvalExpression () {
@@ -206,7 +206,7 @@ void Attribute::EvalExpression () {
 
 			if (m_compiled.size() == m_cur_fp ) m_compiled.push_back(false);
 		}
-};
+}
 
 /***********************************************************/
 double Attribute::EvalCompiledExpression (double const val, string const attrib ) {
@@ -295,7 +295,7 @@ double Attribute::EvalCompiledExpression (double const val, string const attrib 
 
 	return 0.0;
 
-};
+}
 
 /***********************************************************/
 double Attribute::EvalCompiledNLGExpression (double const x, double const y ,double const z, double const g ) {
@@ -359,6 +359,6 @@ double Attribute::EvalCompiledNLGExpression (double const x, double const y ,dou
 
 	return 0.0;
 
-};
+}
 
 

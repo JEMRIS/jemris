@@ -40,4 +40,4 @@ TxRxPhase::TxRxPhase() {
 double    TxRxPhase::getLinearPhase  (Module* mod, double time ) {
 	// set zero phase to center of Pulse Object. (True for e.g. sinc pulses, where main excitation is at center.)
     return ( (((RFPulse*) mod)->GetFrequency() * (time-((RFPulse*) mod)->GetDuration()/2))*180.0/PI ) ;
-};
+}

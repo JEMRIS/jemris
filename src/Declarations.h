@@ -27,6 +27,8 @@
 #ifndef DECLARATIONS_H_
 #define DECLARATIONS_H_
 
+#include <string>
+
 #define PI 3.14159265358979
 const double TIME_ERR_TOL = 1e-6; // Avoid CVODE warnings. Doesn't affect physics.
 
@@ -101,7 +103,7 @@ enum SensitivityMethod {
  */
 enum mode {
     RX,            /**< Receive  */
-    TX,            /**< Transmit */
+    TX            /**< Transmit */
 };
 
 /**
@@ -115,7 +117,68 @@ enum MpiTag {
 	SIG_TP,
 	SIG_MX,
 	SIG_MY,
-	SIG_MZ,
+	SIG_MZ
 };
+
+
+namespace IO {
+
+	/**
+	 * Binary io strategies
+	 */
+	enum Strategy {
+		SIMPLE,        /**< limited standard serialised data storage */
+		HDF5,          /**< Hirarchical data format 5                */
+		CDF,           /**< Common data format                       */
+		IOSTRATEGIES   /**< Leave this as last entry                 */
+	};
+	
+	/**
+	 * Binary io stati
+	 */
+	enum Status {
+		OK,                          /**< OK                                          */
+		EMPTY_FILE_NAME,             /**< Error: Empty file name                      */
+		FILE_NOT_FOUND,              /**< Error: File not found for reading           */ 
+		INSUFFICIENT_PRIVILEGES,     /**< Error: Insufficient privileges or disk full */
+		HDF5_FILE_I_EXCEPTION,       /**< Error: HDF5 general                         */
+		HDF5_DATASET_I_EXCEPTION,    /**< Error: HDF5 dataset                         */
+		HDF5_DATASPACE_I_EXCEPTION,  /**< Error: HDF5 dataspace                       */
+		HDF5_DATATYPE_I_EXCEPTION,    /**< Error: HDF5 datatype                        */
+		UNMATCHED_DIMENSIONS,
+		LAST_STATUS_ENTRY
+	};
+
+	static std::string StatusMessage[LAST_STATUS_ENTRY]  = {
+		std::string("IO notice: OK."),
+		std::string("IO error: Empty file name."),
+		std::string("IO error: File not found."),
+		std::string("IO error: Insufficient privileges."),
+		std::string("IO error: HDF5, general file excption."),
+		std::string("IO error: HDF5, dataset exception."),
+		std::string("IO error: HDF5, dataspace exception."),
+		std::string("IO error: HDF5, datatype exception.")
+	};
+		
+	
+	/**
+	 * Binary io modes
+	 */
+	enum Mode {
+		IN, /**< Read access */
+		OUT /**< R/W  access */
+	};
+	
+}
+
+namespace Sim {
+	
+	/*enum Result {
+		OK,
+		NAN,
+		DIVISION_BY_ZERO
+		};*/
+	
+}
 
 #endif /*DECLARATIONS_H_*/

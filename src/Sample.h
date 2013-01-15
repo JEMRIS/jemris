@@ -46,33 +46,252 @@ using std::ofstream;
 using namespace std;
 XERCES_CPP_NAMESPACE_USE
 
-//!Binary file type
-enum fType  {
-    EXPLICIT, /**< Old type (x,y,z) coords as last of 8 values per spin */
-    IMPLICIT  /**< New type (x,y,z) ordered double values w/o spatial information in bin file */
-};
 
 /**
- * @brief a single classical spin
+ * Defined for memory allocation testing.
  */
-struct Spin_data {
-    double x;     /**< x-position of the spin                    		*/
-    double y;     /**< x-position of the spin                    		*/
-    double z;     /**< x-position of the spin                    		*/
-    double m0;    /**< equilibrium magnetisation                 		*/
-    double r1;    /**< longitudinal relaxation rate              		*/
-    double r2;    /**< transverse relaxation rate                		*/
-    double r2s;   /**< effective transverse relaxation rate      		*/
-    double db;    /**< 'Delta B' - any off-resoance at this spin 		*/
-    double index; /** the spin id; needed for pjemris (e.g. save evol)	*/
+static int ens_alloc = 0;
+
+
+/**
+ * @brief Spin ensemble
+ */
+struct Ensemble {
+
+	unsigned m_ndim ;     /**< # of dimensions                                                      */
+	long     m_dims[256]; /**< Specific dimensions (arbitrary maximum to way too high limit of 256) */
+    double*  m_data;      /**< Actual serialized data (Data is stored column-major)                 */
+	long     m_nspins;    /**< Live spins (i.e. Spins with M0 > 0)                                  */
+
+	/**
+	 * @brief      Construct
+	 */
+	Ensemble () {
+
+		m_nspins = 0;
+		m_ndim   = 0;
+
+		for (unsigned i = 0; i < 256; i++)
+			m_dims[i] = 0;
+
+	}
+
+
+	/**
+	 * @brief      Destruct
+	 */
+	~Ensemble () {
+
+		Clear();
+
+	}
+
+
+	/**
+	 * @brief       Number of raw data elements
+	 * 
+	 * @return      Number of elements in data store
+	 */
+	inline long 
+	Size () {
+
+		return NSpins() * NProps();
+
+	};
+
+
+	/**
+	 * @brief       Number of spins in data store
+	 *
+	 * @return      Number of spins in data store
+	 */
+	inline long 
+	NSpins () {
+
+		return m_nspins;
+
+	};
+
+
+	/**
+	 * @brief       Innermost data dimension containing physical parameters of every isochromat
+	 *
+	 * @return      Number of physical and spatial properties of every spin
+	 */
+	inline long
+	NProps () const {
+
+		return m_dims[0];
+
+	};
+	
+
+	/**
+	 * @brief        Reference to innermost data dimensions
+	 *
+	 * @return       Reference to number of physical and spatial properties of every spin. 
+	 */
+	inline long&
+	NProps () {
+
+		return m_dims[0];
+
+	};
+	
+
+	/**
+	 * @brief       Clear data store and dimensions.
+	 */
+	inline void 
+	Clear () {
+
+		// Reset dimensions
+		m_nspins = 0;
+		for (unsigned i = 1; i < 256; i++)
+			m_dims[i] = 0;
+
+		// Free RAM
+		if (ens_alloc) {
+			free (m_data);
+			ens_alloc--;
+		}
+		
+	};
+	
+
+	/**
+	 * @brief       Clear data store and dimensions.
+	 */
+	inline void 
+	ClearData () {
+
+		// Free RAM
+		if (ens_alloc) {
+			free (m_data);
+			ens_alloc--;
+		}
+		
+	};
+	
+
+	/**
+	 * @brief  Initialize data store with dimensions and number of non-zero spins
+	 *
+	 * @param  ndim Number of dimensions
+	 * @param  dims Actual dimensions
+	 * @param  live Live (non-zero) spins
+	 */ 
+	inline void 
+	Init (int ndim, long* dims, long live) {
+
+		// Set dimensionality
+		m_ndim     = ndim; 
+
+		// Copy actual dimensions
+		memcpy (m_dims, dims, ndim*sizeof(long));
+
+		// Add spatial dimensions 
+		m_dims[0] += 4;
+
+		// Set number of live spins (Generally less spins may have M0 > 0)
+		m_nspins   = live;
+
+		// Allocate RAM and zero fields
+		Allocate();
+		Zero();
+
+	};
+
+	
+	/**
+	 * @brief      Allocate RAM
+	 */ 
+	inline void
+	Allocate () {
+
+		m_data     = (double*) malloc (NSpins() * NProps() * sizeof(double));
+		ens_alloc++;
+
+	};
+
+
+	/**
+	 * @brief     Zero data 
+	 */
+	inline void 
+	Zero () {
+
+		for (int i = 0; i < Size(); i++)
+			m_data [i] = 0.0;
+
+	};
+
+
+	/**
+	 * @brief  Initialize data store number of non-zero spins only (MPI slaves)
+	 *
+	 * @param  live Live (non-zero) spins
+	 */ 
+	inline void 
+	Init (long live) {
+
+		m_nspins   = live;
+		Allocate();
+		Zero();
+
+
+	};
+
+
+	/**
+	 * @brief       Dimensions
+	 *
+	 * @return      Dimensions of the ensemble
+	 */
+	inline long*
+	Dims () {
+
+		return m_dims;
+
+	};
+
+
+	/**
+	 * @brief       Access to position in store
+	 * @param  pos  Desired position 
+	 * @return      Reference to pos-th value in the store
+	 */
+	inline double
+	&operator[]     (long pos) {
+		
+		assert(pos >= 0);
+		assert(pos <  Size());
+		
+		return m_data[pos];
+		
+	};
+
+	/**
+	 * @brief       Access to data
+	 *
+	 * @return      Reference to data
+	 */
+	inline double*
+	Data            () {
+		
+		return m_data;
+		
+	};
+
 };
+
 
 /**
  * @brief a container of spins
  */
 struct Spin {
     long    size; 		/**< Data size    */
-    Spin_data *data;	/**< array of spins */
+    Ensemble *data;	/**< array of spins */
 };
 
 
@@ -114,7 +333,7 @@ class Sample {
      * init variables which are same for all constructors
      *
      */
-    void Init();
+    virtual void Prepare (std::string fname = "");
 
     /**
      * @brief delete the spin structure
@@ -136,6 +355,20 @@ class Sample {
     long    GetSize                     ();
 
     /**
+     * Get number of spin properties including spatial
+     *
+     * @return Numnber of spin properties
+     */
+    inline long    GetNProps            () {return m_ensemble.NProps();};
+
+    /**
+     * Get number of spin properties including spatial
+     *
+     * @return Numnber of spin properties
+     */
+    inline long*   GetSampleDims        () {return m_ensemble.Dims();};
+
+    /**
      * Get a subset of this sample
      *
      * @param n    N-th subset
@@ -144,46 +377,43 @@ class Sample {
     Sample* GetSubSample                (int n, long size);
 
     /**
-     * Get values
+     * @brief Get values for spin l and deliver them in val.
      *
-     * More elaborate description here please
-     *
-     * @param l More elaborate description here please
+     * @param l   Spin number
+     * @param val Output container
      */
-    double* GetValues                   (long l) ;
+    void GetValues                   (long l, double* val) ;
 
     /**
-     * Get resolution
+     * @brief Get grid resolution
      *
-     * More elaborate description here please
-     *
-     * @param l More elaborate description here please
+     * @return Grid resolution
      */
     double* GetResolution()  { return m_res; };
 
     /**
-     * Initialize the randome number generator
+     * @brief Initialize the randome number generator
      *
      * @param val any integer
      */
     void    InitRandGenerator   (int val=1) { m_rng = RNG( val * (long ) clock() ); };
 
     /**
-     * Set the random local field fluctuations.
+     * @brief Set the random local field fluctuations.
      *
      * @param val R2Prime (Shaping parameter of the Lorentz distribution in kHz).
      */
     void    SetR2Prime   (double val) {m_r2prime = val;};
 
     /**
-     * Set the position randomness in per cent of the cartesian resolution.
+     * @brief Set the position randomness in per cent of the cartesian resolution.
      *
      * @param val Percentage width of the Gaussian distribution.
      */
     void    SetPositionRandomness   (double val) {m_pos_rand_perc = val;};
 
     /**
-     * @Brief Get off-resonance of a specific spin.
+     * @brief Get off-resonance of a specific spin.
      *
      * The off-resonance is given by the deterministic value, read by Populate from the binary
      * file, plus the random field fluctuation specified by SetR2Prime.
@@ -199,12 +429,12 @@ class Sample {
      *
      * @param file Sample binary file
      */
-    void Populate (string file);
+	virtual IO::Status Populate (string file);
 
     /**
      * returns pointer to sample data (needed for MPI send/receive)
      */
-    Spin_data* GetSpinsData() {return spins.data;};
+    double* GetSpinsData() {return m_ensemble.Data();};
 
     /**
      * can set a method to reorder the sample (do nothing, shuffle sample,... )
@@ -260,26 +490,33 @@ class Sample {
     /**
      * Set Time interval in seconds after which new spins are sent (approx. value.)
      */
-    void SetTimeInterval(double val) {m_sent_interval=val;};
+    void    SetTimeInterval(double val) {m_sent_interval=val;};
 
-    bool IsRestart() {return m_is_restart;};
+    bool    IsRestart() {return m_is_restart;};
 
+	void    GetHelper (double* target);
+
+	double* GetHelper ();
+
+	long    GetHelperSize ();
+	
 	// HACK
-	int  GetNoOfPools () {return 1;};
+	int     GetNoSpinCompartments ();
+	
+	void    SetNoSpinCompartments (int n);
+	
+	void    CreateHelper (long l);
+	
+	void    CopyHelper (double* out);
 
- private:
-    Spin         spins;      /** < My private spins structure          */
+	virtual void CropEnumerate ();
+	
 
-    /**
-     * Populate sample with given type and binary source
-     *
-     * @param fin  File input stream to the binary file containing the sample.
-     * @param type Type of binary file
-     */
-    void    Populate                    (ifstream* fin,int multiple=1) ;
+ protected:
+	Ensemble     m_ensemble;
 
-    double       m_val   [NO_SPIN_PROPERTIES];  /** < Copy of the spin properties asked for by GetValues */
-    long         m_index [3];  /** < Sample dimension       */
+
+    long         m_index [3];  /** < Sample dimensions      */
     double       m_res   [3];  /** < Sample resolution [mm] */
     double       m_offset[3];  /** < Sample offeset to {0,0,0} origin */
 
@@ -304,6 +541,10 @@ class Sample {
 
     double			m_total_cpu_time;
     double			m_no_spins_done;
+
+	double*         m_helper;
+	int             m_helper_size;
+	int             m_no_spin_compartments;
 
 };
 

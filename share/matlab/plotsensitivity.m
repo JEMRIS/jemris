@@ -46,72 +46,56 @@ end
 %loop over coil(s)
 CENT=cell(NC,1); AZIM=cell(NC,1); POL =cell(NC,1); NAME=cell(NC,1);
 for i=COILS
- if ~handles.CoilArray.Children(i).HasMap,continue,end
- NA=length(handles.CoilArray.Children(i).Attributes);
- scale = 1; N=0; DIM=0; AxLim=[0 0]; phas=0; cs=1;
- AZIM{i}=NaN;  POL{i}=NaN;  CENT{i}=[0 0 0];
- NAME{i}=handles.CoilArray.Children(i).CoilName;
- for j=1:NA
-     if strcmpi('PHASE',handles.CoilArray.Children(i).Attributes(j).Name)
-         phas = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
-     end
-     if strcmpi('CONJ',handles.CoilArray.Children(i).Attributes(j).Name)
-         cs = 2*(.5-str2double(handles.CoilArray.Children(i).Attributes(j).Value));
-     end
-     if strcmpi('SCALE',handles.CoilArray.Children(i).Attributes(j).Name)
-         scale = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
-     end
-     if strcmpi('DIM',handles.CoilArray.Children(i).Attributes(j).Name)
-         DIM   = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
-     end
-     if strcmpi('AZIMUTH',handles.CoilArray.Children(i).Attributes(j).Name)
-         AZIM{i}= str2double(handles.CoilArray.Children(i).Attributes(j).Value);
-     end
-     if strcmpi('POLAR',handles.CoilArray.Children(i).Attributes(j).Name)
-         POL{i} = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
-     end
-     if strcmpi('EXTENT',handles.CoilArray.Children(i).Attributes(j).Name)
-         v     = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
-         AxLim = 0.5*[-v v]; 
-     end
-     if strcmpi('POINTS',handles.CoilArray.Children(i).Attributes(j).Name)
-         N     = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
-     end
-     ax={'X','Y','Z'};
-     for k=1:3
+    if ~handles.CoilArray.Children(i).HasMap,continue,end
+    NA=length(handles.CoilArray.Children(i).Attributes);
+    scale = 1; N=0; DIM=0; AxLim=[0 0]; phas=0;
+    AZIM{i}=NaN;  POL{i}=NaN;  CENT{i}=[0 0 0];
+    NAME{i}=handles.CoilArray.Children(i).CoilName;
+    for j=1:NA
+        if strcmpi('PHASE',handles.CoilArray.Children(i).Attributes(j).Name)
+            phas = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
+        end
+        if strcmpi('SCALE',handles.CoilArray.Children(i).Attributes(j).Name)
+            scale = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
+        end
+        if strcmpi('DIM',handles.CoilArray.Children(i).Attributes(j).Name)
+            DIM   = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
+        end
+        if strcmpi('AZIMUTH',handles.CoilArray.Children(i).Attributes(j).Name)
+            AZIM{i}= str2double(handles.CoilArray.Children(i).Attributes(j).Value);
+        end
+        if strcmpi('POLAR',handles.CoilArray.Children(i).Attributes(j).Name)
+            POL{i} = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
+        end
+        if strcmpi('EXTENT',handles.CoilArray.Children(i).Attributes(j).Name)
+            v     = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
+            AxLim = 0.5*[-v v]; 
+        end
+        if strcmpi('POINTS',handles.CoilArray.Children(i).Attributes(j).Name)
+            N     = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
+        end
+        ax={'X','Y','Z'};
+        for k=1:3
          as = handles.CoilArray.Children(i).Attributes(j).Name;
          if strcmpi([ax{k},'POS'],as)
              CENT{i}(k) = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
          end
-     end
- end
- f=fopen(sprintf('RXsensmap%02d.bin',i));
- a=fread(f,inf,'double'); fclose(f); 
- a=[a(1:2:end)/max(a(1:2:end));a(2:2:end)];
- if DIM==3;
-         a=reshape(abs(a(1:N^3)),[N N N]).*exp(cs*sqrt(-1)*reshape(a(1+N^3:2*N^3),[N N N]));
- elseif DIM==2;
-         a=reshape(abs(a(1:N^2)),[N N]).*exp(cs*sqrt(-1)*(phas*pi/180+reshape(a(1+N^2:2*N^2),[N N])));
- else
-     disp('Dim must be 2 or 3'),set(gca,'visible','off');return;
- end
- if i==1 || length(COILS)==1
-     A=scale*a;
-     x1 = [AxLim(1):diff(AxLim)/(N-1):AxLim(2)];
- elseif isequal(size(a),size(A))
-     A=A+scale*a;
- else %strange: coils have different interpolation-grids => refer all to the first!
-     x = [AxLim(1):diff(AxLim)/(N-1):AxLim(2)];
-     if DIM==3
-        ai = interp3(x,x,x,a,x1,x1',x1);
-     else
-        ai = interp2(x,x,a,x1,x1');
-     end
-     %size(A),size(a),size(ai)
-     A=A+scale*ai;
-     N=size(A);
- end
+        end
+    end
+    
+    a = hdf5read ('sensmaps.h5', '/maps/RX/magnitude') .* exp (sqrt(-1) * hdf5read ('sensmaps.h5', '/maps/RX/phase'));
+    a = a / max (abs(a(:)));
+    
 end
+
+if (length(COILS) == 1)
+    A = scale*a(:,:,:,i);
+    x1 = [AxLim(1):diff(AxLim)/(N-1):AxLim(2)];
+else
+    A = sum(a,4);
+end
+
+
 if ~exist('A','var'),set(gca,'visible','off');return;end
 %A=A/NC;%to scale or not to scale?
 
@@ -140,7 +124,7 @@ ax = [AxLim(1):diff(AxLim)/(N-1):AxLim(2)];
 ay = ax;
 az = AxLim(1)+(NS-.5)*diff(AxLim)/(N-1);
 switch T
-    case 'x-y slice'
+  case 'x-y slice'
         S  = A(:,:,NS);
         XL = 'X'; YL='Y'; ZL='Z';
         ix=1;iy=2;iz=0;
@@ -243,14 +227,18 @@ hold off
 %%%
 function addSample(Max,Min,az,handles)
 if get(handles.HideSampleMenu,'Value') == 2, return, end
-f=fopen('sample.bin'); A=fread(f,Inf,'double'); fclose(f);
- N=zeros(1,3); res=N; offset=N;
- for i=1:3
-     N(i)=A(1+(i-1)*3);
-     res(i)=A(2+(i-1)*3);
-     offset(i)=A(1+(i-1)*3);
- end
- A=A(10:end); A=reshape(A,[5 N]); A=permute(A,[2 3 4 1]); 
+
+handles.sample.file = 'sample.h5';
+ A      = hdf5read (handles.sample.file, '/sample/data');
+ res    = hdf5read (handles.sample.file, '/sample/resolution');
+ offset = hdf5read (handles.sample.file, '/sample/offset');
+ N=zeros(1,3);
+ 
+ N(1) = size(A,2);
+ N(2) = size(A,3);
+ N(3) = size(A,4);
+ 
+ A=permute(A,[2 3 4 1]); 
  A=A(:,:,:,1); A(find(A))=Max+(Max-Min)/49; A(find(A==0))=NaN;
  x=([0:N(1)-1]-N(1)/2)*res(1);%+offset(i);
  y=([0:N(2)-1]-N(2)/2)*res(2);%+offset(i);

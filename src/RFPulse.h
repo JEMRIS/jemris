@@ -96,7 +96,7 @@ class RFPulse : public Pulse, public TxRxPhase {
     /**
      * @brief       Set the CoilArray channel of this RF pulse.
      *
-     * @param fa Flip angle.
+     * @param ch    Channel
      */
     inline void    SetChannel  (int ch) {m_channel = ch; };
 
@@ -144,7 +144,7 @@ class RFPulse : public Pulse, public TxRxPhase {
     /**
      * @brief Get the CoilArray for this RF pulse.
      *
-     * @param pCA Pointer to the CoilArray
+     * @return Pointer to the CoilArray
      */
     CoilArray*     GetCoilArray () {return m_coil_array;};
 

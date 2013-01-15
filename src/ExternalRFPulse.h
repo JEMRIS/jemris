@@ -3,11 +3,8 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
- *                        2007-2013  Kaveh Vahedipour
- *                        2009-2013  Daniel Pflugfelder
- *                                  
+ *  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
+ *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,7 +25,6 @@
 #define EXTERNALRFPULSE_H_
 
 #include "RFPulse.h"
-#include "ExternalPulseData.h"
 
 /**
  * @brief RF pulse with external pulse shape
@@ -65,26 +61,20 @@ class ExternalRFPulse : public RFPulse {
      */
     virtual bool Prepare  (PrepareMode mode);
 
-
-    /**
-     * @see Pulse::SetTPOIs
-     */
-    virtual void     SetTPOIs() { m_pulse_data.SetTPOIs(); } ;
-
     /**
      * @brief Returns a constant Magnitidue for all times.
      *
      * @param time The flip angle as double.
      * @return the Magnitude.
      */
-    virtual double   GetMagnitude  (double time ){return m_pulse_data.GetData(time); };
+    virtual double   GetMagnitude  (double time );
 
     /**
-     * @brief Get function pointer to phase evaluation
+     * @brief Set my time points of interest
      */
-    ExternalPulseData*	GetPulseData(){return &m_pulse_data;};
+    virtual void     SetTPOIs () ;
 
- private:
+ protected:
 
     /**
      * @brief Get informations on this external gradient
@@ -93,9 +83,14 @@ class ExternalRFPulse : public RFPulse {
      */
     string           GetInfo      ();
 
-    ExternalPulseData		   m_pulse_data; /**<contains the data*/
     string m_fname;                /**< @brief Filename containing the RF amps and phases  */
+	string m_dname;                /**< @brief Data name                                   */
     double m_scale;                /**< @brief Scaling factor for the amps                 */
+    double m_external_phase;       /**< @brief External phase                              */
+	long           m_samples;      /**< @brief Number of samples of the RF pulse           */
+    vector<double> m_times;        /**< @brief Vector of Times correlated to the RF events */
+    vector<double> m_magnitudes;   /**< @brief Vector of magnitudes                        */
+    vector<double> m_phases;       /**< @brief Vector of phases                            */
 };
 
 #endif /*HARDRFPULSE_H_*/

@@ -33,12 +33,12 @@
 
 void Trajectory::GetValue(double time, double *value){
 	m_strategy->GetValue(time, value);
-};
+}
 
 
 void Trajectory::LoadFile(string filename){
 	m_strategy->LoadFile(filename);
-};
+}
 
 
 void Trajectory::UpdateTrajectory(bool init){

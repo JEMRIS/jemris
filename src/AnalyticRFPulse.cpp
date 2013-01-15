@@ -31,7 +31,7 @@ AnalyticRFPulse::AnalyticRFPulse  (const AnalyticRFPulse& hrfp) {
 
 	m_pulse_shape.SetPulse(this);
 
-};
+}
 
 /***********************************************************/
 bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
@@ -56,7 +56,7 @@ bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
 
     return btag;
 
-};
+}
 
 
 /***********************************************************/
@@ -72,4 +72,4 @@ string          AnalyticRFPulse::GetInfo() {
 	s <<  val;
 
 	return s.str();
-};
+}

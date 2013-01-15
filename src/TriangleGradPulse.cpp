@@ -35,7 +35,7 @@ TriangleGradPulse::TriangleGradPulse  (const TriangleGradPulse&) {
 
 	m_amplitude		= 0.0;
 	m_triangle_type	= TRIANGLE_UP;
-};
+}
 
 /***********************************************************/
 bool TriangleGradPulse::Prepare  (PrepareMode mode) {
@@ -81,7 +81,7 @@ bool TriangleGradPulse::Prepare  (PrepareMode mode) {
 
 	return btag;
 
-};
+}
 
 /***********************************************************/
 inline double TriangleGradPulse::GetGradient (double const time) {
@@ -96,7 +96,7 @@ inline double TriangleGradPulse::GetGradient (double const time) {
 
 	return 0.0;
 
-};
+}
 
 /***********************************************************/
 string          TriangleGradPulse::GetInfo() {
@@ -108,4 +108,4 @@ string          TriangleGradPulse::GetInfo() {
 	s << GradPulse::GetInfo() << " , Amplitude = " << m_amplitude << " , Type = " << type ;
 	return s.str();
 
-};
+}

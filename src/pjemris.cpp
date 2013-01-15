@@ -97,19 +97,25 @@ int main (int argc, char *argv[]) {
 
 	//SLAVES: receives the (sub)sample, Simulate model, then sends (sub)signal(s) of each coil
 	if ( my_rank != master) {
+
 		Sample* dummy = new Sample(0);
 		psim->SetSample(dummy);
-		Mpi2Evolution::OpenFiles((int) psim->GetSample()->IsRestart());
+		Mpi2Evolution::OpenFiles ((int) psim->GetSample()->IsRestart());
 		pW->saveEvolFunPtr = &Mpi2Evolution::saveEvolution;
 		psim->SetSample( mpi_receive_sample(master, tag) );
 		psim->GetSample()->InitRandGenerator( my_rank );
 		psim->Simulate(false); //false = do not Dump signal to binary file !
 		bool SpinsLeft = true;
+
 		while (true) {
+
 			SpinsLeft = mpi_recieve_sample_paket(psim->GetSample(),	psim->GetRxCoilArray());
+
 			if (!SpinsLeft)
 				break;
+
 			psim->Simulate(false); // false = do not Dump signal to binary file !
+
 		}
 	}
 
@@ -120,7 +126,7 @@ int main (int argc, char *argv[]) {
 	MPI::COMM_WORLD.Barrier();
 	double t2 = MPI::Wtime();
 	if ( my_rank == master)
-		cout << endl << "MPI Process Wtime = " << t2-t1 << " seconds" << endl << "Finished" << endl << flush;
+		printf ("\n\nActual simulation took %.2f seconds.\n", t2-t1);
 	MPI::Finalize();
 
 	return 0;

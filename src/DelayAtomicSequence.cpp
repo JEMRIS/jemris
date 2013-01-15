@@ -42,7 +42,7 @@ DelayAtomicSequence::DelayAtomicSequence  (const DelayAtomicSequence& as) {
 	m_mod_start  = NULL;
 	m_mod_stop   = NULL;
 
-};
+}
 
 /***********************************************************/
 bool DelayAtomicSequence::Prepare (PrepareMode mode) {
@@ -200,5 +200,5 @@ string          DelayAtomicSequence::GetInfo () {
 
 	return ret;
 
-};
+}
 

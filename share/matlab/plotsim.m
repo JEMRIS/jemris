@@ -49,8 +49,9 @@ if WHAT~=1
  for i=1:length(handles.rxca)
    channel=handles.channel;
    if channel>0
-       f=fopen(sprintf('signal%02d.bin',channel)); A=fread(f,Inf,'double','l');fclose(f);
-       n=size(A,1)/4; A=reshape(A,4,n)';ti=A(:,1);[ti,J]=sort(ti);Mi(:,:,i)=A(J,2:4);
+       A = (hdf5read ('signals.h5', sprintf('/signal/channels/%02i',channel-1)))';
+       ti= hdf5read ('signals.h5', sprintf('/signal/times'));
+       [ti,J]=sort(ti);Mi(:,:,i)=A(J,:);
        d=diff(diff(ti));d(d<1e-5)=0;Ii=[0;find(d)+1;length(ti)];
        t=[t;ti];M=[M;Mi];I=[I;Ii];
    else
@@ -180,7 +181,15 @@ if WHAT==1
         offset(i)=A(1+(i-1)*3);
     end
 
- A=A(10:end); A=reshape(A,[5 N]); A=permute(A,[2 3 4 1]); %permutes to (X,Y,Z,type)
+ A      = hdf5read (handles.sample.file, '/sample/data');
+ res    = hdf5read (handles.sample.file, '/sample/resolution');
+ offset = hdf5read (handles.sample.file, '/sample/offset');
+
+ N(1) = size(A,2);
+ N(2) = size(A,3);
+ N(3) = size(A,4);
+ 
+A=permute(A,[2 3 4 1]); %permutes to (X,Y,Z,type)
  I=find(A(:,:,:,1));
  Np=length(I);
 

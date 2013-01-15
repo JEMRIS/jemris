@@ -39,6 +39,8 @@ bool HardRFPulse::Prepare  (PrepareMode mode) {
 
 	return b;
 
-};
+}
+
+
 
 

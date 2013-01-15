@@ -24,7 +24,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 #include "Bloch_CV_Model.h"
 #include "DynamicVariables.h"
 
@@ -197,7 +196,7 @@ void Bloch_CV_Model::InitSolver    () {
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,ZC )    = ATOL3*m_accuracy_factor;
 
     m_reltol = RTOL*m_accuracy_factor;
-    
+
 //cvode2.5:
     int flag;
 #ifndef CVODE26
@@ -265,7 +264,7 @@ bool Bloch_CV_Model::Calculate(double next_tStop){
 	if(m_reltol < 1e-10) { m_world->solverSuccess=true; }
 	
 	return m_world->solverSuccess;
-};
+}
 
 /**********************************************************/
 void Bloch_CV_Model::PrintFinalStats () {
@@ -274,4 +273,4 @@ void Bloch_CV_Model::PrintFinalStats () {
 //    printf("nst = %-6ld nfe  = %-6ld nsetups = %-6ld \n", m_iopt[NST], m_iopt[NFE] , m_iopt[NSETUPS]);
 //    printf("nni = %-6ld ncfn = %-6ld netf = %ld\n \n"   , m_iopt[NNI], m_iopt[NCFN], m_iopt[NETF]);
 
-};
+}

@@ -27,6 +27,7 @@
 #include "Sequence.h"
 #include "ConcatSequence.h"
 #include "AtomicSequence.h"
+#include <stdio.h>
 
 /***********************************************************/
 bool    Sequence::Prepare(PrepareMode mode){
@@ -56,7 +57,7 @@ bool    Sequence::Prepare(PrepareMode mode){
 
     return btag;
 
-};
+}
 
 /***********************************************************/
 void Sequence::SeqDiag (string fname ) {
@@ -66,7 +67,7 @@ void Sequence::SeqDiag (string fname ) {
 	WriteSeqFile(&fout,time);
 	fout.close();
 
-};
+}
 
 /***********************************************************/
 void  Sequence::WriteSeqFile (ofstream* pfout, double& time) {
@@ -121,7 +122,7 @@ void  Sequence::WriteSeqFile (ofstream* pfout, double& time) {
 
 	}
 
-};
+}
 
 /***********************************************************/
 long  Sequence::GetNumOfADCs () {

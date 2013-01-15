@@ -49,7 +49,7 @@ void TPOI::operator + (const TPOI::set& data) {
     m_time.push_back(  data.dtime );
     m_phase.push_back( data.dphase );
   
-};
+}
 
 
 /***********************************************************/

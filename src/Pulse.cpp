@@ -35,7 +35,7 @@ Pulse::Pulse  () {
 	m_initial_delay     = 0.0;
 	m_phase_lock        = false;
 
-};
+}
 
 /***********************************************************/
 bool Pulse::Prepare  (PrepareMode mode) {
@@ -50,7 +50,7 @@ bool Pulse::Prepare  (PrepareMode mode) {
 
 	return Module::Prepare(mode);
 
-};
+}
 
 
 /***********************************************************/
@@ -63,7 +63,7 @@ inline void  Pulse::SetTPOIs () {
     for (unsigned i = 0; i < GetNADC(); i++)
     	m_tpoi + TPOI::set((i+1)*GetDuration()/(GetNADC()+1), (m_phase_lock?World::instance()->PhaseLock:0.0) );
 
-};
+}
 
 /***********************************************************/
 void Pulse::SetDuration (double val) {
@@ -72,7 +72,8 @@ void Pulse::SetDuration (double val) {
 
     m_duration=val;
 
-};
+}
+
 
 /***********************************************************/
 string          Pulse::GetInfo() {
@@ -92,4 +93,4 @@ string          Pulse::GetInfo() {
 
 	return s.str();
 
-};
+}

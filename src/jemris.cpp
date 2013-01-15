@@ -62,10 +62,10 @@ void do_simu (Simulator* sim) {
 	cout << "TxArray  : " << sim->GetAttr(sim->GetElem("TXcoilarray"), "uri") << endl;
 	cout << "RxArray  : " << sim->GetAttr(sim->GetElem("RXcoilarray"), "uri") << endl;
 	cout << "Sequence : " << sim->GetAttr(sim->GetElem("sequence"),"uri")<< endl;
-	//sim->GetSequence()->DumpTree();
-	cout << "\n\n simulating ...\n";
+	cout << endl;
 	sim->Simulate();
-	cout << "Finished ! \n";
+	cout << endl;
+	cout << endl;
 }
 
 int main (int argc, char *argv[]) {
@@ -77,7 +77,7 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	string input(argv[1]);
+	string input (argv[1]);
 
 	//CASE 1: Dump list of modules in xml file
 	if (input == "modlist")  {
@@ -100,9 +100,12 @@ int main (int argc, char *argv[]) {
 	}
 
 	//CASE 3: try simulation from Simulator xml-file
-	Simulator sim(input);
+	Simulator sim (input);
 	if (sim.GetStatus()) {
+		static clock_t runtime = clock();
 		do_simu(&sim);
+		runtime = clock() - runtime;
+		printf ("Actual simulation took %.2f seconds.\n", runtime / 1000000.0);
 		return 0;
 	}
 

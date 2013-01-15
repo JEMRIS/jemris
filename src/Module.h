@@ -83,7 +83,7 @@ class Module : public Prototype {
      */
     virtual void GetValue (double * dAllVal,   double const time) {};
 
-    /**
+    /*
      * @brief Get values for available Transmit coils for simulation only.
      *
      * Get the values for each Transmit channel in this atomic sequence. And
@@ -211,7 +211,10 @@ class Module : public Prototype {
     /**
      * @brief Create a DOM tree where all expressions are evaluated (for IDEA)
      *
-     * @param node the DOM
+     * @param doc    Document
+     * @param node   Node
+     * @param append Append to node?
+     *
      * @return success or failure
      */
      bool StaticDOM(DOMDocument* doc, DOMNode* node, bool append = true);

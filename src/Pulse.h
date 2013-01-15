@@ -119,7 +119,6 @@ class Pulse :public Module {
      */
     inline unsigned int  GetNADC  () { return m_adc;  };
 
-;
 
     /**
      * @brief Set number of ADCs

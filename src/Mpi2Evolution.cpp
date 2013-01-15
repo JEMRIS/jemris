@@ -48,7 +48,7 @@ Mpi2Evolution::Mpi2Evolution() {
 void SetSaveFunction() {
 	World* pW = World::instance();
 	pW->saveEvolFunPtr = &Mpi2Evolution::saveEvolution;
-};
+}
 
 /*****************************************************************************/
 void Mpi2Evolution::OpenFiles(int is_restart){

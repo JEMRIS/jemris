@@ -44,7 +44,7 @@ double    GaussianRFPulse::GetMagnitude  (double time ){
    double t  = time-GetDuration()/2;
    return ( m_max_amplitude*exp(-pow(t,2)/(2*PI*pow(t0,2)) ) ) ;
 
-};
+}
 
 /*****************************************************************/
 inline void  GaussianRFPulse::SetTPOIs () {

@@ -57,7 +57,7 @@ public:
      */
     inline Parameters* Clone() const { return instance(); };
 
-;
+
 
     /**
      * @see Prototype::Prepare()

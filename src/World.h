@@ -49,7 +49,7 @@ class World {
      /**
       * @brief Default destructor
       */
-     virtual ~World   () { m_instance=0; };
+	virtual ~World   ();
 
     /**
      * @brief Get sole instance of the sequence tree
@@ -65,39 +65,76 @@ class World {
     double ConcomitantField (double* G);
 
 	/**
-	 * @brief    Set number of sample pools 
+	 * @brief    Set number of spinproperties
 	 *
-	 * @param n  Number of pools
+	 * @param n  Number of spin properties
 	 */
-	void   SetNoOfPools (int n) {m_noofpools=1;};
+	void   SetNoOfSpinProps (int n); 
 
 	/**
-	 * @brief    Set number of sample pools 
+	 * @brief    Get number of spin properties
 	 *
-	 * @param n  Number of pools
+	 * @return   Number of spin properties
 	 */
-	int    GetNoOfPools () {return m_noofpools;};
+	int    GetNoOfSpinProps () {return m_noofspinprops;};
 
-    /**
+
+	/**
+	 * @brief  Reference to helper array
+	 */
+	double*    Helper () {
+		return helper;
+	};
+
+
+	/**
+	 * @brief    Initilize helper array
+	 *
+	 * @param size Size of helper array
+	 */
+	void InitHelper (long size);
+
+
+	/**
+	 * @brief    Number of compartments
+	 *
+	 * @return   Number of compartments
+	 */
+	int GetNoOfCompartments ();
+
+
+	/**
+	 * @brief Set number of compartments to
+	 *
+	 * @param n Number of compartments
+	 */
+	void SetNoOfCompartments (int n);
+
+
+	/**
      * @brief Pointer to the evolution saving function
+     *
+     * @param l NEEDS documenting
+     * @param b NEEDS documenting
      */
-    void      (*saveEvolFunPtr)(long, bool)  ;
+    void      (*saveEvolFunPtr)(long l, bool b)  ;
 
     void*             solverSettings ;      /**< @brief Arbitrary solver settings  */
     bool              solverSuccess;	    /**< @brief true, if last calculation successful */
+
+	void*             auxiliary;           /**< @brief Auxiliary data any kind of container needed for static methods can go here */
 
     long              SpinNumber;		    /**< @brief Number of the current spin*/
     long              TotalSpinNumber;      /**< @brief Total number of spins*/
     long              TotalADCNumber;       /**< @brief Total number of spins*/
 
     double*           Values;               /**< @brief Values of the current spin (position and physical parameters) */
-    double            InitValues[NO_SPIN_PROPERTIES];        /**< @brief For initialization of Values */
     double            time;                 /**< @brief Current time point (in atom) */
     double            total_time;           /**< @brief Current time point (absolut time) */
     double            phase;                /**< @brief Receiver phase taken from the TPOIs*/
     double            PhaseLock;            /**< @brief Locked Phase (the phase set by the last RF pulse)*/
     double            deltaB;               /**< @brief Any off-resonance terms*/
-    double            solution[3];          /**< @brief Solution [M_r, phi, M_z] at the current time point*/
+    double*           solution;          /**< @brief Solution [M_r, phi, M_z] at the current time point*/
 
     double            RandNoise;            /**< @brief percentage of random noise added to the signal */
     double            GMAXoverB0;           /**< @brief Constant for the concomittant field term */
@@ -117,8 +154,11 @@ class World {
 
     long			  m_startSpin;			/**< @brief start calculation with this spin ( in case of restart)  */
 
-	int               m_noofpools;          /**< @brief # of pools in sample */
+	int               m_noofspinprops;      /**< @brief # of spin properties */
+	int               m_noofspincompartments; /** Number of spin compartments (i.e. MT pools etc.)*/
 
+	double*           helper;             /** @brief Any additional data necessary for solving the model. (i.e. Global MT exchange matrix) */
+	
  private:
 
     /**

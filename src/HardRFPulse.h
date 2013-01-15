@@ -49,10 +49,10 @@ class HardRFPulse : public RFPulse {
     /**
      * @brief Default destructor.
      */
-    ~HardRFPulse () {};
+    virtual ~HardRFPulse () {};
 
     /**
-     *  @See Prototype::Clone
+     *  @see Prototype::Clone
      */
     inline HardRFPulse* Clone() const { return (new HardRFPulse(*this)); }
 ;

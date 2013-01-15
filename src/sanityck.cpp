@@ -200,7 +200,7 @@ int main (int argc, char *argv[]) {
 		cout << endl << "Test Case 2: producing simulated signals" << endl;
 		cout << "========================================"<< endl << endl;
 
-		Simulator sim(	path+"/approved/simu.xml",path+"/approved/sample.bin",
+		Simulator sim(	path+"/approved/simu.xml",path+"/approved/sample.h5",
 				path+"/approved/uniform.xml",path+"/approved/uniform.xml",
 				path+seq[0],"CVODE");
 
@@ -254,7 +254,7 @@ int main (int argc, char *argv[]) {
 		cout << endl << "Test Case 3: producing simulated signals" << endl;
 		cout << "========================================"<< endl << endl;
 
-		Simulator sim(	path+"/approved/simu.xml",path+"/approved/sample.bin",
+		Simulator sim(	path+"/approved/simu.xml",path+"/approved/sample.h5",
 				path+coils[0],path+coils[0],
 				path+"epi.xml","CVODE");
 

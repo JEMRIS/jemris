@@ -39,7 +39,7 @@ Module::Module() {
 	m_duration      = 0.0  ;
 	m_calls         = 0    ;
 
-};
+}
 
 /***********************************************************/
 void            Module::Initialize (DOMNode* node) {
@@ -67,7 +67,7 @@ bool Module::Prepare  (PrepareMode mode){
 
 	return Prototype::Prepare(mode);
 
-};
+}
 
 /***********************************************************/
 Module* Module::GetPrototypeByAttributeValue(string name, string attrib) {
@@ -104,7 +104,7 @@ int             Module::GetNumberOfChildren () {
     vector<Module*> vc=GetChildren();
     return vc.size();
 
-};
+}
 
 /***********************************************************/
 bool            Module::InsertChild (string name){
@@ -123,7 +123,7 @@ bool            Module::InsertChild (string name){
 
 	return true;
 
-};
+}
 
 /***********************************************************/
 bool            Module::AddDOMattribute    (const string attribute, const string value){
@@ -135,7 +135,7 @@ bool            Module::AddDOMattribute    (const string attribute, const string
 
 	return true;
 
-};
+}
 
 /***********************************************************/
 void           Module::AddAllDOMattributes (bool show_hidden){
@@ -238,7 +238,7 @@ void           Module::AddAllDOMattributes (bool show_hidden){
 		}
 	}
 */
-};
+}
 
 /***********************************************************/
 void    Module::DumpTree (string file, Module* mod,int ichild, int level) {
@@ -315,7 +315,7 @@ void    Module::DumpTree (string file, Module* mod,int ichild, int level) {
 		delete pfout;
 	}
 
-};
+}
 
 /***********************************************************/
 bool           Module::WriteStaticXML (string xml_file) {
@@ -351,7 +351,7 @@ bool           Module::WriteStaticXML (string xml_file) {
 
 	return true;
 
-};
+}
 
 /***********************************************************/
 bool Module::StaticDOM(DOMDocument* doc, DOMNode* node, bool append){
@@ -450,5 +450,5 @@ bool Module::StaticDOM(DOMDocument* doc, DOMNode* node, bool append){
 
 */
 	return ret;
-};
+}
 

@@ -110,8 +110,7 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 		double g    [3];
 		double gabs           = 0.0;
 
-		if (!m_amps)
-			m_amps            = (double*) malloc ((m_samples+1)*sizeof(double));
+		m_amps            = (double*) malloc ((m_samples+1)*sizeof(double));
 		
 		k[XC]                 = 0.0;
 		k[YC]                 = 0.0;
@@ -160,11 +159,11 @@ bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 			klast[ZC] = k[ZC];
 			
 			// Maximum gradient reached?
-			/*if (gabs >= m_maxinwar_grad && time_of_switch == 0.0) { 
+			if (gabs >= m_max_grad && time_of_switch == 0.0) { 
 				m_max_grad     = gabs;
 				time_of_switch = time;
 				max_phi        = phi;
-				}*/
+			}
 			
 		}
 		
@@ -195,7 +194,7 @@ string          SpiralGradPulse::GetInfo() {
 
 	return s.str();
 
-};
+}
 
 
 /**********************************************************/
@@ -204,4 +203,4 @@ SpiralGradPulse::~SpiralGradPulse ()  {
 	//if (m_amps)
 	//delete [] m_amps;
 
-};
+}

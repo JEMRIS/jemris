@@ -216,7 +216,7 @@ class Prototype {
     /**
      * @brief Check if an attribute exist.
      *
-     * @param key        The name of the attribute
+     * @param name       The name of the attribute
      * @return           Success/Failure of operation.
      */
     inline bool HasAttribute (string name) {if (GetAttribute(name)==NULL) return false; else return true;};
@@ -268,7 +268,7 @@ class Prototype {
     /**
      * @brief Notify all observers of an attribute.
      *
-     * @param private member variable.
+     * @param val member variable.
      * @return true, if member has changed
      */
     template <typename T> bool Notify (const T& val) {
@@ -278,7 +278,7 @@ class Prototype {
     	    if (iter->second->GetAddress() == ((void*) &val) ) return iter->second->Notify(val);
 
     	return false;
-    };
+    }
 
     /**
      * @brief Check the state of an attribute.

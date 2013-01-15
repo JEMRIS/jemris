@@ -95,6 +95,7 @@ if test x$boost = xtrue; then
 		[AC_DEFINE(HAVE_BOOST,1,[boost is available])],
     	[AC_MSG_RESULT([cannot find boost ellint_1.hpp and/or ellint_2.hpp, Biot-Savart-Loop not available])])
 fi
+AC_CHECK_HEADERS([H5Cpp.h],          [], [AC_MSG_RESULT([cannot find H5Cpp.h, hdf5 dump / read functionality unavailable!])])
 
 # Checks for libraries.
 AC_CHECK_LIB([m],                   [cos],                    , [AC_MSG_ERROR([cannot find libm, bailing out])])
@@ -232,6 +233,44 @@ AC_TRY_COMPILE([#include <xercesc/dom/DOM.hpp>],
     [AC_DEFINE(XSEC_XERCES_DOMENTITYINPUTENCODING,[],[Description])],
     [AC_MSG_RESULT([no])])
 
+
+# HDF5. Not mandatory. 
+
+# Mac OSX needs libsz
+#case "$host" in
+#  *darwin*)
+#  AC_CHECK_LIB([sz],           [SZ_Compress], [], [AC_MSG_ERROR([cannot find libsz, bailing out])])
+#;;
+#esac
+
+AC_ARG_WITH(hdf5,[  --with-hdf5             which hdf5 library to use],[
+case $withval in
+  yes)
+    HDF5=' -lhdf5_cpp -lhdf5'
+    ;;
+  no)
+    HDF5=''
+    ;;
+  *)
+    HDF5=$withval
+    ;;
+esac
+])
+
+AC_MSG_CHECKING([for H5File in -lhdf5_cpp -lhdf5])
+OLD_LIBS=$LIBS
+LIBS="${LIBS} -lhdf5_cpp -lhdf5"
+AC_TRY_LINK([#include <H5Cpp.h>],
+   [H5::H5File f ("t.h5", H5F_ACC_RDONLY);],
+   [AC_MSG_RESULT([yes])]
+   hdf5_found=yes,
+   [LIBS=$OLD_LIBS]
+   [AC_MSG_RESULT([no. Cannot find libhdf5_cpp, hdf5 dump/read not available.])])
+if test "$hdf5_found" = yes; then
+   AC_DEFINE([HAVE_HDF5], [1], [HDF5 found])
+   HDF5="-lhdf5_cpp -lhdf5"
+   AC_SUBST(HDF5)
+fi
 
 case "$target" in 
 *-mingw*) 
@@ -422,7 +461,6 @@ if test x$mpi = xtrue; then
   AC_PROG_MPICXX($mpicxx_list)
   CXX=$MPICXX
 fi
-
 
 AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile doc/userguide/Makefile doc/userguide/doxy-jemris.conf doc/site/Makefile doc/site/nav.js share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh])
 

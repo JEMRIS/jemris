@@ -57,7 +57,7 @@ class EmptyPulse : public Pulse {
      */
     inline EmptyPulse*         Clone() const { return (new EmptyPulse(*this)); };
 
-    /**
+   /**
      * @brief Prepare the hard RF pulse.
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.

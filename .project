@@ -30,10 +30,6 @@
 					<value>make</value>
 				</dictionary>
 				<dictionary>
-					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc:/JEMRIS/src}</value>
-				</dictionary>
-				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
 					<value>clean</value>
 				</dictionary>
@@ -63,7 +59,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.useDefaultBuildCmd</key>
-					<value>true</value>
+					<value>false</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>

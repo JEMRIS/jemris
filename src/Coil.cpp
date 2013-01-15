@@ -30,62 +30,68 @@
 
 /**********************************************************/
 Coil::~Coil() {
-	if (m_signal   != NULL) delete m_signal;
-	if (m_sens_mag != NULL) vaDelete(m_sens_mag);
-	if (m_sens_pha != NULL) vaDelete(m_sens_pha);
+	
+	if (m_signal   != NULL) delete    m_signal;
+	if (m_sens_mag != NULL) vaDelete (m_sens_mag);
+	if (m_sens_pha != NULL) vaDelete (m_sens_pha);
+	
 }
 
 /**********************************************************/
 void Coil::Initialize (DOMNode* node) {
-
+	
 	m_sens_mag = NULL;
 	m_sens_pha = NULL;
 	m_node    = node;
-
+	
 	string s = StrX(((DOMElement*) node)->getAttribute (StrX("Name").XMLchar() )).std_str() ;
-
+	
 	if (s.empty()) {
 		((DOMElement*) node)->setAttribute(StrX("Name").XMLchar(),node->getNodeName());
 		SetName( StrX(node->getNodeName()).std_str() );
 	}
-
-
+	
+	
 }
 
 /**********************************************************/
 void Coil::InitSignal(long lADCs) {
-
+	
     if (m_signal!=NULL)
         delete m_signal;
-
-    m_signal = new Signal(lADCs);
-
+	
+    m_signal = new Signal (lADCs, World::instance()->GetNoOfCompartments());
+	
 }
 
 /**********************************************************/
 void Coil::Receive (long lADC) {
-//  normalization by TotalSpinnumber moved to 'Signal->DumpTo'
+	
+    m_signal->Repo()->TP(lADC) = World::instance()->time;
+	
+    double sens  = GetSensitivity (m_signal->Repo()->TP(lADC));
+    double phase = GetPhase       (m_signal->Repo()->TP(lADC));
+	
+	long   pos   = m_signal->Repo()->Position(lADC); 
+	
+	double tm    = 0.0;
 
-    m_signal->repository.tp[lADC]  = World::instance()->time;
+	for (int i = 0; i < m_signal->Repo()->Compartments(); i++) {
 
-    double sens  = GetSensitivity(m_signal->repository.tp[lADC]);
-    double phase = GetPhase(m_signal->repository.tp[lADC]);
+		tm = - World::instance()->phase + phase + World::instance()->solution[PHASE+ i*3];
 
-    m_signal->repository.mx[lADC] +=  sens
-        * World::instance()->solution[AMPL]* cos (- World::instance()->phase + phase + World::instance()->solution[PHASE]);
+		m_signal->Repo()->at(pos +     i*3) +=  sens  * World::instance()->solution[i*3 + AMPL] * cos (tm);
+		m_signal->Repo()->at(pos + 1 + i*3) +=  sens  * World::instance()->solution[i*3 + AMPL] * sin (tm);
+		m_signal->Repo()->at(pos + 2 + i*3) +=  sens  * World::instance()->solution[i*3 + 2];
 
-    m_signal->repository.my[lADC] +=  sens
-		* World::instance()->solution[AMPL]* sin (- World::instance()->phase + phase + World::instance()->solution[PHASE]);
 
-    m_signal->repository.mz[lADC] += sens
-		* World::instance()->solution[ZC];
+	}
 
 }
 
 /**********************************************************/
-void Coil::DumpSensMap (string fname) {
+void Coil::GridMap () {
 
-    ofstream fout(fname.c_str() , ios::binary);
     double position[3]  = {0.0,0.0,0.0};
     double max = 0.0;
 
@@ -100,23 +106,35 @@ void Coil::DumpSensMap (string fname) {
             for (int i=0; i<m_points; i++) {
 
                 position [XC] = i*m_extent/m_points-m_extent/2;
-                //dump magnitude and store it to array
                 double mag   = GetSensitivity(position);
                 m_sens_mag[i][j][k] = mag;
-                if (fname != "") fout.write((char*)(&(mag)), sizeof(mag));
                 max = (max>mag?max:mag);
-                //dump phase and store it to array
                 double pha   = GetPhase(position);
                 if (pha != 0.0) m_complex = true;
                 m_sens_pha[i][j][k] = pha;
-                if (fname != "") fout.write((char*)(&(pha)), sizeof(pha));
             }
         }
     }
     m_norm = 1/max;
-    fout.close();
 
 }
+
+double* Coil::PhaseMap () {
+	return &m_sens_pha[0][0][0];
+}
+
+double* Coil::MagnitudeMap () {
+	return &m_sens_mag[0][0][0];
+}
+
+int Coil::GetPoints () {
+	return m_points;
+}
+
+unsigned Coil::GetNDim () {
+	return m_dim;
+}
+
 
 /**********************************************************/
 double  Coil::GetPhase (double time) {
@@ -132,12 +150,11 @@ double  Coil::GetPhase (double time) {
 
     double sign = (m_conjugate?-1.0:1.0);
 	
-    if (m_interpolate) {
+    if (m_interpolate)
 		return (m_phase + sign*InterpolateSensitivity(position,false));
-	}
-	else {
+	else
 		return (m_phase + sign*GetPhase(position));
-	}
+
 }
 
 /**********************************************************/
@@ -217,6 +234,7 @@ bool Coil::Prepare  (PrepareMode mode) {
 	m_extent  = 0;
 	m_points  = 0;
 	m_complex = false;
+	m_conjugate = false;
 	m_conjugate = false;
 
 	ATTRIBUTE("XPos"   , m_position [XC]);

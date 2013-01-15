@@ -50,25 +50,16 @@ World* World::instance() {
         m_instance->saveEvolOfstream    = NULL;
         m_instance->saveEvolFunPtr      = &Model::saveEvolution;
         m_instance->solverSuccess       = true;
-        m_instance->m_noofpools         = 1;
-
+        m_instance->m_noofspinprops     = 9;
 
         m_instance->pAtom               = NULL;
         m_instance->pStaticAtom         = NULL;
-        m_instance->pAtom               = NULL;
-
-        for (int i=0; i<3; i++)
-            m_instance->solution[i]     =  0.0;
-
-        for (int i=0; i<NO_SPIN_PROPERTIES; i++)
-            m_instance->InitValues[i]   =  0.0;
-
-        m_instance->Values              = m_instance->InitValues;
 
         m_instance->m_myRank            = -1;
         m_instance->m_useLoadBalancing  = true;
         m_instance->m_no_processes      = 1;  /* default: serial jemris */
         m_instance->m_startSpin         = 0;
+
     }
 
     return m_instance;
@@ -78,7 +69,61 @@ World* World::instance() {
 /***********************************************************/
 double World::ConcomitantField (double* G) {
 
-        if (GMAXoverB0==0.0) return 0.0;
-        return ((0.5*GMAXoverB0)*(pow(G[0]*Values[ZC]-0.5*G[2]*Values[XC],2) + pow(G[1]*Values[ZC]-0.5*G[2]*Values[YC],2))) ;
+	if (GMAXoverB0==0.0) 
+		return 0.0;
 
-};
+	return ((0.5*GMAXoverB0)*(pow(G[0]*Values[ZC]-0.5*G[2]*Values[XC],2) + pow(G[1]*Values[ZC]-0.5*G[2]*Values[YC],2))) ;
+
+}
+
+void World::SetNoOfSpinProps (int n) { 
+
+	// valid also for multi pool sample
+	if ( m_noofspincompartments > 1 ){
+		int m_ncoprops =  (n - 4) / m_noofspincompartments;
+		m_noofspinprops = n;
+		Values = new double [n*m_ncoprops];
+		for ( int i = 0; i < n; i++ )
+			for ( int j = 0; j<m_ncoprops; j++ )
+				Values [m_ncoprops*j+i] = 0.0;
+	}else{
+		m_noofspinprops = n;
+		Values = new double [n];
+		for ( int i = 0; i < n; i++ )
+			Values [i] = 0.0;
+	}
+}
+
+void World::InitHelper (long size)  {
+	if (size > 0)
+		helper = (double*) malloc (size * sizeof(double));
+
+}
+
+int World::GetNoOfCompartments () {
+	return m_noofspincompartments;
+}
+
+void World::SetNoOfCompartments (int n) {
+
+	// We will potentially get as many solutions for m[x-z] as compartments.
+	m_noofspincompartments = n;
+	if (!solution) {
+		solution = new double [m_noofspincompartments * 3];
+	}
+
+
+}
+   
+
+World::~World () { 
+	
+	m_instance=0; 
+	
+	if (helper)
+		free (helper);
+	
+	if (Values)
+		delete Values; 
+	
+}

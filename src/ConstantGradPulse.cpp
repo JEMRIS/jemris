@@ -30,7 +30,7 @@
 ConstantGradPulse::ConstantGradPulse  (const ConstantGradPulse&) {
 
 	m_amplitude = 0.0;
-};
+}
 
 /***********************************************************/
 bool ConstantGradPulse::Prepare  (PrepareMode mode) {
@@ -54,14 +54,14 @@ bool ConstantGradPulse::Prepare  (PrepareMode mode) {
 
 	return btag;
 
-};
+}
 
 /***********************************************************/
 inline double ConstantGradPulse::GetGradient (double const time) {
 
 	return m_amplitude;
 
-};
+}
 
 /***********************************************************/
 string          ConstantGradPulse::GetInfo() {
@@ -70,4 +70,4 @@ string          ConstantGradPulse::GetInfo() {
 	s << GradPulse::GetInfo() << " , Amplitude = " << m_amplitude ;
 	return s.str();
 
-};
+}

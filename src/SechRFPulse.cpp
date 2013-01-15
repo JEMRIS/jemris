@@ -29,7 +29,7 @@
 SechRFPulse::SechRFPulse  (const SechRFPulse&) {
 	   m_flip_angle = 210.0; // siemens ...
 	   m_duration   = 5.12;  // ... Values (?)
-};
+}
 
 /***********************************************************/
 bool SechRFPulse::Prepare  (PrepareMode mode) {
@@ -59,7 +59,7 @@ double    SechRFPulse::GetMagnitude  (double time ){
    m_sech_phase = 27.0+atan2(fi,fr)*180.0/PI;
    return ( m_max_amplitude*sqrt(pow(fr,2)+pow(fi,2)) ) ;
 
-};
+}
 
 /*****************************************************************/
 inline void  SechRFPulse::SetTPOIs () {

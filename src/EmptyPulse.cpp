@@ -37,7 +37,7 @@ bool EmptyPulse::Prepare  (PrepareMode mode) {
     // Base class Prepare && analytic prepare of pulse shape
     return ( Pulse::Prepare(mode) && m_pulse_shape.PrepareAnalytic(mode==PREP_VERBOSE) );
 
-};
+}
 
 /*****************************************************************/
 inline void  EmptyPulse::SetTPOIs () {
@@ -77,4 +77,4 @@ string          EmptyPulse::GetInfo() {
 	  s <<  val;
 	}
 	return s.str();
-};
+}

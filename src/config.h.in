@@ -50,6 +50,12 @@
 /* Define to 1 if you have the <ginac/ginac.h> header file. */
 #undef HAVE_GINAC_GINAC_H
 
+/* Define to 1 if you have the <H5Cpp.h> header file. */
+#undef HAVE_H5CPP_H
+
+/* HDF5 found */
+#undef HAVE_HDF5
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 

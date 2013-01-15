@@ -52,7 +52,7 @@ end
 %check structure
 if ~isfield(Sample,'RES')   , Sample.RES=1   ;             end
 if ~isfield(Sample,'OFFSET'), Sample.OFFSET=0;             end
-if ~isfield(Sample,'FNAME') , Sample.FNAME = 'sample.bin'; end
+if ~isfield(Sample,'FNAME') , Sample.FNAME = 'sample.h5'; end
 if ~isfield(Sample,{'M0','T1','T2'})
     error('fields missing in input structure')
 end
@@ -62,17 +62,6 @@ if ~isfield(Sample,'NN'), Sample.NN =zeros(size(Sample.M0)); end
 
 
 %write binary file
-f=fopen(Sample.FNAME,'w','a');
-
-[Nx,Ny,Nz]=size(Sample.M0);
-N=[Nx Ny Nz];
-
-for i=1:3; 
-    fwrite(f,N(i),'double');
-    fwrite(f,Sample.RES(min([i length(Sample.RES)])),'double');
-    fwrite(f,Sample.OFFSET(min([i length(Sample.OFFSET)])),'double');
-end
-
 A(:,:,:,1)=Sample.M0;
 I=find(Sample.T1); R1 =zeros(size(Sample.T1));  R1(I) =1./Sample.T1(I);
 I=find(Sample.T2); R2 =zeros(size(Sample.T2));  R2(I) =1./Sample.T2(I);
@@ -84,9 +73,20 @@ A(:,:,:,5)=Sample.DB;
 
 %save 4D data array for JEMRIS in the order (type , X, Y, Z)
 A=permute(A,[4 1 2 3]); 
-fwrite(f,A,'double');
+%fwrite(f,A,'double');
 
-fclose(f);
+A_details.Name     = 'data';
+A_details.Location = '/sample';
+
+res_details.Name   = 'resolution';
+res_details.Location = '/sample';
+
+offset_details.Name = 'offset';
+offset_details.Location = '/sample';
+
+!rm sample.h5
+hdf5write (Sample.FNAME, A_details, A, res_details, [Sample.RES Sample.RES Sample.RES], ...
+           offset_details, [Sample.OFFSET Sample.OFFSET Sample.OFFSET]);
 
 maxM0 = max(Sample.M0(:));
 

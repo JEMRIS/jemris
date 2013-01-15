@@ -48,13 +48,20 @@ class Simulator {
 	/**
 	 * @brief Construct a new simulator with given XML descriptor
 	 *
-	 * @param fname XML cofguration file
+	 * @param fname     File name of XML configuration
+	 * @param fsample   File name of sample
+	 * @param ftxarray  File name of RX array
+	 * @param frxarray  File name of TX array
+	 * @param fsequence File name of sequence
+	 * @param fmodel    Model name
 	 */
-	Simulator        (string fname, string fsample   = "",
-					string frxarray  = "",
-					string ftxarray  = "",
-					string fsequence = "",
-					string fmodel    = "");
+	Simulator        (
+			std::string fname,
+			std::string fsample   = "",
+			std::string frxarray  = "",
+			std::string ftxarray  = "",
+			std::string fsequence = "",
+			std::string fmodel    = "");
 
 
 	/**

@@ -25,6 +25,7 @@
  */
 
 #include "ExternalCoil.h"
+#include "BinaryContext.h"
 
 /***********************************************************/
 ExternalCoil::~ExternalCoil () {
@@ -50,33 +51,74 @@ double ExternalCoil::GetPhase(double* position) {
 }
 
 /***********************************************************/
-bool ExternalCoil::Prepare(PrepareMode mode) {
-
-    bool success = true;
-    double temp  = 0.0;
+bool ExternalCoil::Prepare (PrepareMode mode) {
 
     ATTRIBUTE("Filename" , m_fname);
+    ATTRIBUTE("Channel"  , m_channel);
 
     Coil::Prepare(mode);
+	IO::Status ios     = LoadMap();
 
-    ifstream fin(m_fname.c_str(), ios::binary);
+	return (ios == IO::OK) ? true : false; 
 
-    for (int k=0; k< (m_dim==3?m_points:1); k++) {
-		for (int j=0; j<m_points; j++){
-            for (int i=0; i<m_points; i++) {
-                fin.read((char *)(&temp), sizeof(double));
-                m_sens_mag[i][j][k] = temp;
-                fin.read((char *)(&temp), sizeof(double));
-                if (temp != 0.0) m_complex = true;
-                m_sens_pha[i][j][k] = temp;
-				//cout << "i: " << i << ", j: " << j << ", k: " << k << " --- " << m_sens_map[i][j][k] << endl;
-            }
-		}
-	}
+}
 
-    fin.close();
+/**********************************************************/
+IO::Status ExternalCoil::LoadMap () {
 
-    return success;
+	BinaryContext bc;
+	DataInfo      di;
+	IO::Status   ios = IO::OK;
+
+	bc.Initialize (m_fname, IO::IN);
+	if (bc.Status() != IO::OK)
+		return bc.Status();
+
+	std::stringstream sstr;
+	sstr << "/maps/";
+	if (m_mode == RX)
+		sstr << "RX" ;
+	else
+		sstr << "TX" ;
+	sstr << "/magnitude";
+
+	di = bc.GetInfo (sstr.str());
+	if (bc.Status() != IO::OK)
+		return bc.Status();
+
+	double* tmpdat = (double*) malloc (di.GetSize() * sizeof(double));
+
+	bc.ReadData(tmpdat);
+	if (bc.Status() != IO::OK)
+		return bc.Status();
+
+	int size = pow(m_points,m_dim);
+	int pos  = m_channel*size;
+
+	memcpy (&(m_sens_mag[0][0][0]), &tmpdat[pos], size * sizeof(double));
+
+	sstr.str("");
+
+	sstr << "/maps/";
+
+	if (m_mode == RX)
+		sstr << "RX" ;
+	else
+		sstr << "TX" ;
+
+	sstr << "/phase";
+
+	di = bc.GetInfo (sstr.str());
+	if (bc.Status() != IO::OK)
+		return bc.Status();
+
+	bc.ReadData(tmpdat);
+	if (bc.Status() != IO::OK)
+		return bc.Status();
+
+	memcpy (&(m_sens_pha[0][0][0]), &tmpdat[pos], size * sizeof(double));
+
+	return ios;
 
 }
 

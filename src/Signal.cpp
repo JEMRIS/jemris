@@ -32,89 +32,41 @@ using namespace std;
 
 #include "Signal.h"
 #include "World.h"
-
+#include "BinaryContext.h"
 
 
 /**********************************************************/
-Signal::~Signal  () {
+Signal::Signal   (long samples) {
 
- delete[] repository.tp;
- delete[] repository.mx;
- delete[] repository.my;
- delete[] repository.mz;
+	m_repository.Initialize (samples, 1);
 
 }
 
 /**********************************************************/
-Signal::Signal   (long size) {
-
+Signal::Signal   (long samples, int compartments) {
+	
 	//InitRandGenerator();
-
-	repository.size = size;
-	repository.tp   = new double[size];
-	repository.mx   = new double[size];
-	repository.my   = new double[size];
-	repository.mz   = new double[size];
-
-	for (long i = 0; i < size; i++) {
-		repository.tp[i] = 0.0;
-		repository.mx[i] = 0.0;
-		repository.my[i] = 0.0;
-		repository.mz[i] = 0.0;
-	}
+	m_repository.Initialize (samples, compartments);
 
 }
+
 
 /**********************************************************/
 void Signal::ReadFrom (char* fname) {
 
-	ifstream fin (fname, ios::binary);
+	/*	ifstream fin (fname, ios::binary);
 
-	for (long i = 0; i < repository.size; i++) {
+	for (long i = 0; i < m_repository.size; i++) {
 
-		fin.read((char*)(&(repository.tp[i])), sizeof(repository.tp[i]));
-		fin.read((char*)(&(repository.mx[i])), sizeof(repository.mx[i]));
-		fin.read((char*)(&(repository.my[i])), sizeof(repository.my[i]));
-		fin.read((char*)(&(repository.mz[i])), sizeof(repository.mz[i]));
-
-	}
-
-	fin.close();
-
-}
-
-/**********************************************************/
-void Signal::DumpTo   (string fname, bool normalize) {
-
-	ofstream fout(fname.c_str() , ios::binary);
-	World* pw = World::instance();
-
-	for (long i = 0; i < repository.size; i++) {
-
-		if (normalize) {
-			repository.mx[i] /= pw->TotalSpinNumber;
-			repository.my[i] /= pw->TotalSpinNumber;
-			repository.mz[i] /= pw->TotalSpinNumber;
-
-			//dwelltime-weighted random noise
-			if (pw->RandNoise > 0.0)
-			{
-				double dt =  1;
-				if (i>0)					dt = repository.tp[i]-repository.tp[i-1];
-				else if (repository.size>1)	dt = repository.tp[i+1]-repository.tp[i];
-				//definition: Gaussian has std-dev pw->RandNoise at a dwell-time of 0.01 ms
-				repository.mx[i] += pw->RandNoise*m_rng.normal()*0.1/sqrt(dt);
-				repository.my[i] += pw->RandNoise*m_rng.normal()*0.1/sqrt(dt);
-			}
-		}
-
-		fout.write((char*)(&(repository.tp[i])), sizeof(repository.tp[i]));
-		fout.write((char*)(&(repository.mx[i])), sizeof(repository.mx[i]));
-		fout.write((char*)(&(repository.my[i])), sizeof(repository.my[i]));
-		fout.write((char*)(&(repository.mz[i])), sizeof(repository.mz[i]));
+		fin.read((char*)(&(m_repository[i                             ])), sizeof(double));
+		fin.read((char*)(&(m_repository[i +     m_repository.Samples()])), sizeof(double));
+		fin.read((char*)(&(m_repository[i + 2 * m_repository.Samples()])), sizeof(double));
+		fin.read((char*)(&(m_repository[i + 3 * m_repository.Samples()])), sizeof(double));
 
 	}
 
-	fout.close();
+	fin.close();*/
 
 }
+
+

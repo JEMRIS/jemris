@@ -30,18 +30,239 @@
 #include "rng.h"
 
 #include <string>
+#include <assert.h>
 using namespace std;
+
+
+/**
+ * @brief Defined for robust memory handling
+ */
+static int sig_alloc = 0;
+
 
 /**
  *  @brief  Signal repository structure
  */
 struct Repository {
 
-    long    size;   /**< Data size                     */
-    double* tp;     /**< Time points                   */
-    double* mx;     /**< Magnetisations in X direction */
-    double* my;     /**< Magnetisations in Y direction */
-    double* mz;     /**< Magnetisations in Z direction */
+	long     m_noofsamples;      /**< Number of samples             */
+	int      m_noofcompartments; /** < Number of compartments       */
+	double*  m_times;
+	double*  m_data;             /**< Data (column major)           */
+
+
+	/**
+	 * @brief Construct
+	 */
+	Repository () {
+
+		m_data  = 0;
+		m_times = 0;
+		
+		m_noofcompartments = 1; 
+		m_noofsamples      = 0;
+		
+	};
+
+
+	/**
+	 * @brief Destruct
+	 */
+	~Repository () {
+
+		if (sig_alloc) {
+			free (m_data);
+			free (m_times);
+			sig_alloc --;
+		}
+	
+	}
+
+
+	/**
+	 * @brief Size of bulk data (i.e. number of elemments of m_data)
+	 *
+	 * @return Size
+	 */
+	long Size() {
+
+		return m_noofsamples * (long) NProps();
+
+	};
+
+
+	/**
+	 * @brief Reference to data repository
+	 *
+	 * @return Refernce to data repository
+	 */
+	double* Data () {
+
+		return m_data;
+
+	};
+	
+
+	/**
+	 * @brief Reference to time point repository
+	 *
+	 * @return Refernce to time point repository
+	 */
+	double* Times () {
+
+		return m_times;
+
+	};
+	
+
+	/**
+	 * @brief Number of samples
+	 *
+	 * @return Number of samples
+	 */
+	inline const long Samples () const {
+		
+		return m_noofsamples;
+		
+	};
+
+
+	/**
+	 * @brief Number of compartments
+	 *
+	 * @return Number of compartments
+	 */
+	inline const int Compartments () const {
+		
+		return m_noofcompartments;
+		
+	};
+
+
+	/**
+	 * @brief Number of properties per compartment
+	 *
+	 * @return Number of properties per compartment
+	 */
+	inline const int NProps () const {
+		
+		return 3 * m_noofcompartments;
+		
+	};
+
+
+	/**
+	 * @brief Time of given sample index
+	 *
+	 * @return Time of given sample index
+	 */
+	inline const double TP (long l) const {
+		
+		return m_times[l];
+		
+	};
+
+
+	/**
+	 * @brief Reference to time of given sample index
+	 *
+	 * @return reference to the time point of given sample index
+	 */
+	inline double& TP (long l) {
+
+		return m_times[l];
+
+	};
+
+
+	/**
+	 * @brief Reference to data of given sample index 
+	 */
+	inline const long Position (long l) const {
+
+		return l*NProps();
+
+	};
+
+
+	/**
+	 * @brief Occupy RAM and set some dimensions
+	 */
+	inline const void Initialize (long samples, int compartments) {
+
+		assert (samples      > 0);
+		assert (compartments > 0);
+
+		m_noofcompartments = compartments;
+		m_noofsamples      = samples;
+
+		m_data         = (double*) malloc (Size()    * sizeof (double));
+		m_times        = (double*) malloc (Samples() * sizeof (double));
+		sig_alloc ++;
+
+		for (int i = 0; i < Size(); i++) 
+			m_data[i]  = 0.0;
+
+		for (int i = 0; i < Samples(); i++) 
+			m_times[i] = 0.0;
+
+	};
+
+
+	/**
+	 * @brief       Value at position in store
+	 * @param  pos  Desired position 
+	 * @return      Reference to pos-th value in the store
+	 */
+	inline double
+	&operator[]     (long pos) {
+		
+		assert(pos >= 0);
+		assert(pos <  Size());
+		
+		return m_data[pos];
+		
+	};
+	
+	/**
+	 * @brief       Access to position in store
+	 * @param  pos  Desired position 
+	 * @return      Reference to pos-th value in the store
+	 */
+	inline const double
+	operator[]     (long pos)  const {
+		
+		return m_data[pos];
+		
+	};
+	
+	/**
+	 * @brief       Value at position in store
+	 * @param  pos  Desired position 
+	 * @return      Reference to pos-th value in the store
+	 */
+	inline double&     
+	at (long pos) {
+		
+		assert(pos >= 0);
+		assert(pos <  Size());
+		
+		return m_data[pos];
+		
+	};
+	
+	/**
+	 * @brief       Access to position in store
+	 * @param  pos  Desired position 
+	 * @return      Reference to pos-th value in the store
+	 */
+	inline const double
+	at (long pos)  const {
+		
+		return m_data[pos];
+		
+	};
+	
 
 };
 
@@ -53,29 +274,34 @@ class Signal {
 
  public:
 
+
 	/**
-	 * Default constructor
+	 * @brief Default constructor
 	 */
 	Signal               () {};
 
-	/**
-	 * Destructor
-	 */
-	virtual ~Signal      ();
 
 	/**
-	 * Instatiate a signal object of given size
+	 * @brief Default destructor
+	 */
+	~Signal              () {};
+
+
+	/**
+	 * Instantiate a signal object of given size
 	 *
 	 * @param size Number of signal definition points
 	 */
     Signal              (long size);
 
+
 	/**
-	 * Dump binary data to file
+	 * Instantiate a signal object of given size
 	 *
-	 * @param fname File name
+	 * @param size Number of signal definition points
+	 * @param compartments Number of signal compartments
 	 */
-	void    DumpTo      (string fname, bool normalize=true);
+    Signal              (long size, int compartments);
 
 	/**
 	 * Read in binary data from file
@@ -86,23 +312,47 @@ class Signal {
 
 
 	/**
-	 * Get the size of the signal.
+	 * Get the number of samples of the data
 	 *
-	 * @return Size of this signa.
+	 * @return Number of the samples.
 	 */
-	long    GetSize(){return repository.size;};
+	const long    GetSize()  {
+		return m_repository.Samples();
+	};
 
 
 	/**
-     * Initialize the randome number generator
+	 * Access repository
+	 *
+	 * @return Number of the samples.
+	 */
+	Repository*    Repo ()  {
+		return &m_repository;
+	};
+
+
+	/**
+     * Initialize the random number generator
      *
-     * @param val any integer
+     * @param val Any integer (default 1)
      */
-    void    InitRandGenerator   (int val=1) { m_rng = RNG( val * (long ) clock() ); };
+    void    InitRandGenerator   (int val=1) { 
+		m_rng = RNG( val * (long ) clock() ); 
+	};
 
+	/**
+     * Initialize the random number generator
+     *
+     * @param val Any integer (default 1)
+     */
+    RNG*    Noise   () { 
+		return &m_rng;
+	};
 
-    RNG        m_rng;      /** < random number generator*/
-	Repository repository; /**< @brief Signal repository */
+private:
+	
+    RNG        m_rng;        /**< @brief random number generator */
+	Repository m_repository; /**< @brief Signal repository       */
 
 };
 

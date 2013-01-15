@@ -41,7 +41,7 @@ CoilPrototypeFactory::CoilPrototypeFactory () {
 	m_Clonables.insert( pair<string,Coil*>( "IDEALCOIL"     , new IdealCoil()      ));
 	m_Clonables.insert( pair<string,Coil*>( "EXTERNALCOIL"  , new ExternalCoil()   ));
 
-};
+}
 
 /***********************************************************/
 Coil* CoilPrototypeFactory::get (string name) {

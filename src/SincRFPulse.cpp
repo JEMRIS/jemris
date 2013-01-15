@@ -35,7 +35,7 @@ SincRFPulse::SincRFPulse  (const SincRFPulse& hrfp) {
    m_zeros      = 3.0;
    m_alpha      = 0.5;
 
-};
+}
 
 /*****************************************************************/
 bool    SincRFPulse::Prepare  (PrepareMode mode) {
@@ -58,7 +58,7 @@ bool    SincRFPulse::Prepare  (PrepareMode mode) {
     if (mode != PREP_UPDATE) HideAttribute("Duration");
 
     return tag;
-};
+}
 
 /*****************************************************************/
 double    SincRFPulse::GetMagnitude  (double time ){
@@ -69,7 +69,7 @@ double    SincRFPulse::GetMagnitude  (double time ){
 
    return ( m_max_amplitude*(1.0-m_alpha+m_alpha*cos(PI*t/(m_zeros*t0)))*sinct ) ;
 
-};
+}
 
 /*****************************************************************/
 inline void  SincRFPulse::SetTPOIs () {
@@ -90,4 +90,4 @@ string          SincRFPulse::GetInfo() {
 
 	return s.str();
 
-};
+}

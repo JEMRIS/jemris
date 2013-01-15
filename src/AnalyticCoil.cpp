@@ -68,7 +68,7 @@ bool AnalyticCoil::Prepare (PrepareMode mode) {
 	//test GiNaC evaluation: calculate the sensitivities on a grid
 	if (m_analytic) {
 		try {
-			DumpSensMap("");
+			GridMap();
 		} catch (exception &p) {
 			if (mode == PREP_VERBOSE) {
 				cout	<< "Warning in " << GetName() << ": attribute Sensitivity"

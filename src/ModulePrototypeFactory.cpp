@@ -51,7 +51,7 @@ ModulePrototypeFactory::~ModulePrototypeFactory() {
 	map<string,Module*>::iterator it;
 	for( it = m_Clonables.begin(); it != m_Clonables.end(); it++ )
 		delete it->second ;
-};
+}
 
 /***********************************************************/
 ModulePrototypeFactory::ModulePrototypeFactory () {
@@ -74,7 +74,7 @@ ModulePrototypeFactory::ModulePrototypeFactory () {
 	m_Clonables.insert( pair<string,Module*>( "ATOMICSEQUENCE",      new AtomicSequence      () ));
 	m_Clonables.insert( pair<string,Module*>( "DELAYATOMICSEQUENCE", new DelayAtomicSequence () ));
 
-};
+}
 
 /***********************************************************/
 Module* ModulePrototypeFactory::GetModule     (string name)                    {

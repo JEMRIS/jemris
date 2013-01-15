@@ -85,9 +85,12 @@ class ExternalCoil : public Coil {
      */
     virtual bool Prepare  (PrepareMode mode);
 
+	IO::Status LoadMap ();
+
  private:
 
      string    m_fname;        /**< @brief URI of the sensitivity map  */
+	 int       m_channel;      /**< @brief my channel */
 
 };
 #endif /*EXTERNALCOIl_H_*/

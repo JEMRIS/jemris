@@ -36,7 +36,7 @@ AtomicSequence::AtomicSequence  (const AtomicSequence& as) {
 	m_phi           = 0.0;
 	m_non_lin_grad  = false;
 
-};
+}
 
 /***********************************************************/
 bool    AtomicSequence::Prepare(PrepareMode mode) {
@@ -52,7 +52,7 @@ bool    AtomicSequence::Prepare(PrepareMode mode) {
 
 	return tag;
 
-};
+}
 
 /***********************************************************/
 double     AtomicSequence::GetDuration  () {
@@ -71,7 +71,7 @@ double     AtomicSequence::GetDuration  () {
 
 	return( dDuration );
 
-};
+}
 
 /***********************************************************/
 void      AtomicSequence::GetValue (double * dAllVal, double const time) {
@@ -116,7 +116,7 @@ void      AtomicSequence::GetValue (double * dAllVal, double const time) {
 
     Rotation(&dAllVal[2]);
 
-};
+}
 
 /***********************************************************/
 void AtomicSequence::Rotation (double * Grot) {
@@ -165,7 +165,7 @@ void AtomicSequence::CollectTPOIs() {
 	m_tpoi.Sort();
 	m_tpoi.Purge();
 
-};
+}
 /***********************************************************/
 string          AtomicSequence::GetInfo() {
 
@@ -175,4 +175,4 @@ string          AtomicSequence::GetInfo() {
 
 	return s.str();
 
-};
+}

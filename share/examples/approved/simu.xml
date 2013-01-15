@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <simulate name="JEMRIS">
-   <sample name="sphere" uri="sample.bin"/>
+   <sample name="sphere" uri="sample.h5"/>
    <RXcoilarray uri="uniform.xml"/>
    <TXcoilarray uri="uniform.xml"/>
    <parameter PositionRandomness="0"/>

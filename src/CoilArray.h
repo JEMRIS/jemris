@@ -110,13 +110,13 @@ class CoilArray  {
      * @brief Dump all signals
      * Dump the signals from all coils to discrete files.
      */
-    void DumpSignals       (string tmp_prefix = "", bool normalize = true);
+	IO::Status DumpSignals       (string tmp_prefix = "", bool normalize = true);
 
     /**
      * @brief Dump all sensitivities
      * Dump the sensitivities from all coils to discrete files.
      */
-    void DumpSensMaps      (bool verbose = false);
+	IO::Status DumpSensMaps      (bool verbose = false);
 
 
     /**

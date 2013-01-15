@@ -102,6 +102,10 @@ class Model {
 	 *
 	 * Calculate specific solution in an atomic sequence
 	 * All setting for the computation are in m_World
+	 *
+	 * @param next_tStop Next time stop
+	 *
+	 * @return       Result
 	 */
 	virtual bool Calculate(double next_tStop) = 0;
 

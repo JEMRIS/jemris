@@ -155,7 +155,7 @@ class Attribute {
     /**
      * @brief  Get the imaginary part the attribute's evaluation.
      *
-     * @param val The imaginary part
+     * @return The imaginary part
      */
     double GetImaginary()    { return m_imaginary; }
 
@@ -170,6 +170,7 @@ class Attribute {
      * @brief  Set the number of symbolic differentiations of the attribute's expression.
      *
      * @param val The order of the derivative
+     * @param sym Symbol
      */
     void SetDiff(int val=0, string sym="diff")    { m_diff = val; m_sym_diff = sym; }
 
@@ -260,6 +261,7 @@ class Attribute {
      * @param x		x position of spin
      * @param y		y position of spin
      * @param z		z position of spin
+     * @param g     gradient
      * @return		expression evaluation
      */
     double EvalCompiledNLGExpression (double const x, double const y, double const z, double const g );
@@ -315,7 +317,7 @@ class Attribute {
         }
 
     	return true;
-    };
+    }
     
     /**
      * @brief Check the state of the value represented by this attribute.
@@ -332,14 +334,14 @@ class Attribute {
     /**
      * @brief Append a new observer of this attribute.
      *
-     * @param attr   The observing attribute.
+     * @param attrib   The observing attribute.
      */
     void AttachObserver (Attribute* attrib);
 
     /**
      * @brief Append a new subject observed by this this attribute.
      *
-     * @param attr   The observed attribute.
+     * @param attrib   The observed attribute.
      */
     void AttachSubject (Attribute* attrib);
 
@@ -364,7 +366,7 @@ class Attribute {
     template <typename T> void WriteMember (const T& val) {
     	*((T*) m_address) = val;
     	Notify(val);
-    };
+    }
 
     /**
      * @brief get the member variable of this attribute
@@ -375,7 +377,7 @@ class Attribute {
     	T d = *((T*) m_address);
     	if (isnan(d)) return 0;
     	return d;
-    };
+    }
 
     /**
      * @brief Initialize private members.
@@ -407,8 +409,8 @@ class Attribute {
     	m_datatype      = typeid(T*).name();
     	T* p            = new T(val);
     	m_backup        = (void*) p;
-};
-
+	}
+	
 	bool       		m_public;		/**< @brief Indicating whether the attribute is accessible through XML. */
 	bool       		m_observable;	/**< @brief Indicating whether the attribute is observable. */
 	bool       		m_dynamic;		/**< @brief Indicating whether the attribute dynamically changes its value in runtime. */

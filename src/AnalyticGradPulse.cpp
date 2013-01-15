@@ -31,7 +31,7 @@ AnalyticGradPulse::AnalyticGradPulse  (const AnalyticGradPulse&) {
 
 	m_pulse_shape.SetPulse(this);
 
-};
+}
 
 /***********************************************************/
 bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
@@ -57,7 +57,7 @@ bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
 
     return btag;
 
-};
+}
 
 
 /***********************************************************/
@@ -74,4 +74,4 @@ string          AnalyticGradPulse::GetInfo() {
 
 	return s.str();
 
-};
+}

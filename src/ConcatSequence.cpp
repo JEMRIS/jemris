@@ -31,7 +31,7 @@
 ConcatSequence::ConcatSequence  (const ConcatSequence& cs ) {
     m_repetitions = 1;
     m_counter = 0;
-};
+}
 
 /***********************************************************/
 bool    ConcatSequence::Prepare(PrepareMode mode){
@@ -44,20 +44,20 @@ bool    ConcatSequence::Prepare(PrepareMode mode){
 	if (mode != PREP_UPDATE)	SetRepCounter( 0);
 
         return Sequence::Prepare(mode);
-};
+}
 
 /***********************************************************/
 void   ConcatSequence::SetRepCounter  (unsigned int val,bool record){
 	m_counter=val;
 	if ( m_counter != GetMyRepetitions() )
 		Notify(m_counter);
-} ;
+}
 
 /***********************************************************/
 void    ConcatSequence::SetRepetitions (unsigned int val){
 
    if (val) m_repetitions = val;
-};
+}
 
 /***********************************************************/
 double     ConcatSequence::GetDuration  (){
@@ -76,7 +76,7 @@ double     ConcatSequence::GetDuration  (){
 
 	return duration;
 
-};
+}
 
 /***********************************************************/
 int  ConcatSequence::GetNumOfTPOIs (){
@@ -90,7 +90,7 @@ int  ConcatSequence::GetNumOfTPOIs (){
 
 	return ntp;
 
-};
+}
 
 /***********************************************************/
 void  ConcatSequence::GetValue (double * dAllVal, double const time) {
@@ -112,7 +112,7 @@ void  ConcatSequence::GetValue (double * dAllVal, double const time) {
 
         cout << "???" << endl; //this should never happen !!!
 
-};
+}
 /***********************************************************/
 /*
 bool ConcatSequence::StaticDOM(DOMDocument* doc, DOMNode* node){
@@ -126,7 +126,7 @@ bool ConcatSequence::StaticDOM(DOMDocument* doc, DOMNode* node){
                   ret = ( children[j]->StaticDOM(doc, concat) && ret);
 
 	return ret;
-};
+}
  */
 /***********************************************************/
 string          ConcatSequence::GetInfo() {
@@ -134,4 +134,4 @@ string          ConcatSequence::GetInfo() {
 	stringstream s;
 	s << " Repetitions = " << m_repetitions;
 	return s.str();
-};
+}

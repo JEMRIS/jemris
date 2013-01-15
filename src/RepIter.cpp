@@ -33,7 +33,7 @@ RepIter::RepIter (ConcatSequence* cs, unsigned int rc) {
   m_cs=cs;
   m_RC=rc;
 
-};
+}
 
 /***********************************************************/
 RepIter RepIter::operator= (const RepIter &rhs) {
@@ -42,7 +42,7 @@ RepIter RepIter::operator= (const RepIter &rhs) {
   m_RC = rhs.m_RC;
   return *this;
 
-};
+}
 
 /***********************************************************/
 RepIter RepIter::operator++ (int) {
@@ -50,7 +50,7 @@ RepIter RepIter::operator++ (int) {
   m_cs->SetRepCounter(++m_RC);
   return *this;
 
-};
+}
 
 /***********************************************************/
 RepIter RepIter::operator++(){
@@ -58,4 +58,4 @@ RepIter RepIter::operator++(){
   m_cs->SetRepCounter(++m_RC);
   return *this;
 
-};
+}

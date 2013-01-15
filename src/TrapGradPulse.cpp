@@ -40,11 +40,11 @@ TrapGradPulse::TrapGradPulse        (const TrapGradPulse& hrfp) {
 	m_ramp_dn_time	    = 0.0;
 	m_slope_up	    = 0.0;
 	m_slope_dn	    = 0.0;
-};
+}
 
-TrapGradPulse::TrapGradPulse        ()                          {};
+TrapGradPulse::TrapGradPulse        ()                          {}
 
-TrapGradPulse::~TrapGradPulse       ()                          {};
+TrapGradPulse::~TrapGradPulse       ()                          {}
 
 TrapGradPulse* TrapGradPulse::Clone () const  { return (new TrapGradPulse(*this)); }
 
@@ -96,7 +96,7 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
         if (!btag && mode == PREP_VERBOSE)
                 cout << "\n warning in Prepare(1) of TRAPGRADPULSE " << GetName() << endl;
 	return btag;
-};
+}
 
 
 /***********************************************************/
@@ -142,7 +142,7 @@ inline bool    TrapGradPulse::SetShape  (bool verbose){
 	//standard case: Calculate trapezoid in shortest possible time
 	SetTrapezoid();
 	return true;
-};
+}
 
 /***********************************************************/
 inline void    TrapGradPulse::SetTrapezoid  (){
@@ -186,7 +186,7 @@ inline void    TrapGradPulse::SetTrapezoid  (){
 
 
 	return;
-};
+}
 
 /***********************************************************/
 inline double  TrapGradPulse::GetGradient  (double const time){
@@ -210,7 +210,7 @@ inline double  TrapGradPulse::GetGradient  (double const time){
 	else
         	return (m_amplitude + (time - m_ramp_up_time - m_flat_top_time) * m_slope_dn );
 
-};
+}
 
 /***********************************************************/
 inline void  TrapGradPulse::SetTPOIs () {
@@ -243,4 +243,4 @@ string          TrapGradPulse::GetInfo() {
 		s << " , FlatTop: (Area,time)= (" << m_flat_top_area << "," << m_flat_top_time << ")";
 
 	return s.str();
-};
+}

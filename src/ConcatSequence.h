@@ -105,6 +105,7 @@ class ConcatSequence : public Sequence {
      * @brief Set the current repetition counter of this ConcatSequence.
      *
      * @param val The current repetition counter.
+     * @param record Record (default false)
      */
     void            SetRepCounter  (unsigned int val, bool record=false);
 
@@ -129,13 +130,15 @@ class ConcatSequence : public Sequence {
      */
     RepIter end()  { return RepIter(this,m_repetitions); }
 
-    /**
-      * @brief Create a DOM tree where all expressions are evaluated (for IDEA)
-      *
-      * @param node the DOM
-      * @return success or failure
-      */
-       //virtual bool StaticDOM(DOMDocument* doc, DOMNode* node);
+    /*
+     * @brief Create a DOM tree where all expressions are evaluated (for IDEA)
+     *
+     * @param doc  Document
+     * @param node Node
+     *
+     * @return success or failure
+     */
+    //virtual bool StaticDOM(DOMDocument* doc, DOMNode* node);
 
  protected:
     /**

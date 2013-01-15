@@ -90,7 +90,7 @@ public:
      * @param val  The new frequency of the puls.
      */
     inline void   SetFrequency          (double val)   {  m_frequency = val;};
-;
+
 
     /**
      * @brief A general purpose linear additive phase term.

@@ -37,7 +37,7 @@ RFPulse::RFPulse  () {
     m_bw            =0.0;
     m_initial_phase =0.0;
 
-};
+}
 
 /*****************************************************************/
 bool RFPulse::Prepare  (PrepareMode mode) {
@@ -62,7 +62,7 @@ bool RFPulse::Prepare  (PrepareMode mode) {
 
 	return b;
 
-};
+}
 
 /*****************************************************************/
 void    RFPulse::insertGetPhaseFunction(double (*FGetPhase)(Module*, double)) {
@@ -72,7 +72,7 @@ void    RFPulse::insertGetPhaseFunction(double (*FGetPhase)(Module*, double)) {
 
     return;
 
-};
+}
 
 /*****************************************************************/
 void RFPulse::GetValue (double * dAllVal, double const time) {
@@ -114,7 +114,7 @@ void RFPulse::GetValue (double * dAllVal, double const time) {
 	dAllVal[0] = sqrt(pow(B1x,2.0) + pow(B1y,2.0));
 	dAllVal[1] = atan2(B1y,B1x);
 
-};
+}
 
 /***********************************************************/
 double RFPulse::GetIntegralNumeric (int steps) {
@@ -127,7 +127,7 @@ double RFPulse::GetIntegralNumeric (int steps) {
 
     return (Sum*DeltaT) ;
 
-};
+}
 
 /***********************************************************/
 string          RFPulse::GetInfo () {
@@ -136,4 +136,4 @@ string          RFPulse::GetInfo () {
 	s << Pulse::GetInfo() << " , (Flipangle,Phase,Bandwidth,Channel) = (" << m_flip_angle << "," << GetInitialPhase() << "," << m_bw << "," << m_channel << ") ";
 	return s.str();
 
-};
+}

@@ -25,297 +25,344 @@
  */
 
 #include "Sample.h"
-#include <math.h>
 #include "World.h"
 #include "SampleReorderStrategyInterface.h"
 #include "SampleReorderShuffle.h"
 #include "CoilArray.h"
+#include "BinaryContext.h"
 
-
-/**********************************************************/
-void Sample::Init(){
-    spins.size = 0;
-    m_r2prime = 0.0;
-    m_pos_rand_perc = 1.0;
-    for (int i=0;i<NO_SPIN_PROPERTIES;++i) m_val[i] = 0.0;
-    for (int i=0;i<3;++i) { m_res[i] = 0.0; m_offset[i] = 0.0; }
-
-    m_reorder_strategy=NULL;
-
-    m_max_paket_size=10000;
-    m_min_paket_size=10;
-    m_next_spin_to_send=0;
-    m_is_restart=false;
-    m_sent_interval=30;
-
-}
-/**********************************************************/
-Sample::Sample () {
-	Init();
-}
+#include <math.h>
 
 /**********************************************************/
-Sample::~Sample() {
-	ClearSpins();
-	if (m_reorder_strategy != NULL)
-		delete m_reorder_strategy;
-}
+void Sample::Prepare (std::string fname) {
 
-/**********************************************************/
-void Sample::ClearSpins() {
+    m_r2prime              = 0.0;
+    m_pos_rand_perc        = 1.0;
+	
+    for (int i=0;i<3;++i) { 
+		m_res[i]           = 0.0; 
+		m_offset[i]        = 0.0; 
+	}
+	
+    m_reorder_strategy     = NULL;
+	
+    m_max_paket_size       = 10000;
+    m_min_paket_size       = 10;
+    m_next_spin_to_send    = 0;
+    m_is_restart           = false;
+    m_sent_interval        = 30;
+	m_no_spins_done        = 0;
+	m_total_cpu_time       = 0.0;
 
- spins.size = 0;
- delete[] spins.data;
+	// Standard sample has only one compartment
+	m_no_spin_compartments = 1;
 
-}
-
-/**********************************************************/
-void Sample::CreateSpins(long size) {
-    spins.size = size;
-    spins.data = new Spin_data[size];
-
-    for (long i = 0; i < size; i++) {
-		spins.data[i].x  = 0.0;
-		spins.data[i].y  = 0.0;
-		spins.data[i].z  = 0.0;
-		spins.data[i].m0 = 0.0;
-		spins.data[i].r1 = 0.0;
-		spins.data[i].r2 = 0.0;
-		spins.data[i].r2s= 0.0;
-		spins.data[i].db = 0.0;
-		spins.data[i].index = 0.0;
-    }
-}
-
-/**********************************************************/
-Sample::Sample (long size) {
-	Init();
-
-    CreateSpins(size);
-}
-
-/**********************************************************/
-Sample::Sample (string fname, int multiple) {
-    Init();
+	m_helper_size          = 0;
 
     InitRandGenerator();
 
-    // create new array of spins and new multiarray for spatial distribution
-    ifstream fin (fname.c_str(), ios::binary);
-    Populate(&fin,multiple);
-    fin.close();
+	if (fname != "")
+		Populate(fname);
+	
+}
+
+
+/**********************************************************/
+void Sample::ClearSpins() {
+	
+	m_ensemble.Clear();
+	
+}
+
+
+/**********************************************************/
+void Sample::CreateSpins(long l) {
+	
+	m_ensemble.Init (l);
+	
+}
+
+/**********************************************************/
+Sample::Sample () {
+
+	Prepare();
+
+}
+
+
+/**********************************************************/
+Sample::~Sample() {
+
+	m_ensemble.Clear();
+
+	if (m_reorder_strategy != NULL)
+		delete m_reorder_strategy;
+
+	if (m_helper_size)
+		free (m_helper);
+
+}
+
+
+/**********************************************************/
+void Sample::CreateHelper (long l) {
+
+	if (l > 0) {
+		m_helper_size = l;
+		m_helper = (double*) malloc (l * sizeof(double));
+	}
+
+}
+
+
+/**********************************************************/
+Sample::Sample (long size) {
+
+	Prepare();
+
+}
+
+
+/**********************************************************/
+Sample::Sample (string fname, int multiple) {
+
+	Prepare (fname);
+	CropEnumerate();
 
 }
 
 /**********************************************************/
-void Sample::Populate(string fname) {
+IO::Status Sample::Populate (string fname) {
 
-    if ( GetSize() > 0 ) ClearSpins();
+	// Binary interface
+	BinaryContext bc;
+	DataInfo      di;
+	bool          grid = false;
 
-    ifstream fin (fname.c_str(), ios::binary);
-    Populate(&fin);
-    fin.close();
+	bc.Initialize (fname, IO::IN);
+	if (bc.Status() != IO::OK)
+		return bc.Status();
 
+	// ----------------------------------------------------
+	// Physical parameters of spins
+	di = bc.GetInfo (std::string("/sample/data"));
+	if (bc.Status() != IO::OK)
+		return bc.Status();
+
+	double* tmpdat = (double*) malloc (di.GetSize() * sizeof(double));
+	int    tmpndim = di.ndim;
+	long   tmpdims [4];
+	int    size    = 1;
+
+	for (int i = 0; i<tmpndim; i++) {
+		tmpdims[tmpndim-1-i] = di.dims[i];
+		size *= di.dims[i];
+	}
+
+	int    nprops  = tmpdims[0];
+	size = size / nprops;
+
+	for (int i = tmpndim; i < 4; i++)
+		tmpdims[i] = 1;
+
+	memcpy (m_index, &tmpdims[1], 3*sizeof(long));
+
+	// Retrieve data from file
+	bc.ReadData(tmpdat);
+	if (bc.Status() != IO::OK)
+		return bc.Status();
+	// ----------------------------------------------------
+
+	// ----------------------------------------------------
+	di = bc.GetInfo (std::string("/sample/resolution"));
+	if (bc.Status() == IO::OK) {
+		grid = true;
+		bc.ReadData (m_res);
+		if (bc.Status() != IO::OK)
+			return bc.Status();
+	} else 
+		grid = false; 
+	// ----------------------------------------------------
+
+	// ----------------------------------------------------
+	di = bc.GetInfo (std::string("/sample/offset"));
+	if (bc.Status() == IO::OK) {
+		bc.ReadData (m_offset);
+		if (bc.Status() != IO::OK)
+			return bc.Status();
+	} 
+	// ----------------------------------------------------
+
+	if (grid) {
+
+		m_ensemble.Init (tmpndim, tmpdims, size);
+		
+		int  nprop = tmpdims[0] + 4;
+		long n     = 0;
+		
+		for (long nz = 0; nz < m_index[ZC]; nz++)
+			for (long ny = 0; ny < m_index[YC]; ny++)
+				for (long nx = 0; nx < m_index[XC]; nx++, n++) {
+					
+					long epos = n * nprop;
+					long spos = n * tmpdims[0];
+					
+					if (tmpdat[spos] > 0) {
+						
+						// Copy values over
+						memcpy (&m_ensemble[M0 + epos], &tmpdat[spos], sizeof(double)*tmpdims[0]);
+
+						// Interpolate spatial position
+						m_ensemble[XC+epos] = (nx-0.5*(m_index[XC]-1))*m_res[XC]+m_offset[XC];
+						m_ensemble[YC+epos] = (ny-0.5*(m_index[YC]-1))*m_res[YC]+m_offset[YC];
+						m_ensemble[ZC+epos] = (nz-0.5*(m_index[ZC]-1))*m_res[ZC]+m_offset[ZC];
+						
+						// Assign counter id (dpflug: Could be randomized here)
+
+					}
+
+				}
+		
+	} else {
+
+		tmpdims[0] -= 4;
+		m_ensemble.Init (tmpndim, tmpdims, size);
+		
+		memcpy (&m_ensemble[0], tmpdat, m_ensemble.Size()*sizeof(double));
+
+
+	}
+
+	free (tmpdat);
+
+	return bc.Status();
+	
 }
-/**********************************************************/
-void Sample::Populate (ifstream* fin,int multiple) {
-
-    long pos = 0;
-
-    double read = 0.0;
-
-    for (short i = 0; i < 3; i++) {
-        fin->read((char*)(&(read)),        sizeof(double));
-        m_index[i] = (long) read;
-        fin->read((char*)(&(m_res[i])),    sizeof(double));
-        fin->read((char*)(&(m_offset[i])), sizeof(double));
-    }
-
-    //case 1 : spins stored on cartesian grid
-    if (m_index[1] > 0) {
-
-	CreateSpins(m_index[XC]*m_index[YC]*m_index[ZC]); //creates too much spins ... who cares
-
-	 for (long z=0; z < m_index[ZC]; z++)
-	    for (long y=0; y < m_index[YC]; y++)
-	        for (long x=0; x < m_index[XC]; x++) {
-
-	            fin->read((char*)(&(spins.data[pos].m0)), sizeof(double));
-	            fin->read((char*)(&(spins.data[pos].r1)), sizeof(double));
-	            fin->read((char*)(&(spins.data[pos].r2)), sizeof(double));
-	            fin->read((char*)(&(spins.data[pos].r2s)),sizeof(double));
-	            fin->read((char*)(&(spins.data[pos].db)), sizeof(double));
-
-	            spins.data[pos].x = (x-0.5*(m_index[XC]-1))*m_res[XC]+m_offset[XC];
-	            spins.data[pos].y = (y-0.5*(m_index[YC]-1))*m_res[YC]+m_offset[YC];
-	            spins.data[pos].z = (z-0.5*(m_index[ZC]-1))*m_res[ZC]+m_offset[ZC];
-
-	            if (spins.data[pos].m0 > 0.0) { pos++; }
-	        }
-		spins.size = pos;
-
-    //case 2 : spins stored as tuple (POSx,POSy,POSz,Mo,R1,R2,DB,CS) in binary file
-    } else {
-
-	CreateSpins(m_index[0]); //first 'index-dimension' now is the number of spins!
-        for (pos=0; pos < m_index[0]; pos++) {
-
-               fin->read((char*)(&(spins.data[pos].x)) , sizeof(double));
-               fin->read((char*)(&(spins.data[pos].y)) , sizeof(double));
-               fin->read((char*)(&(spins.data[pos].z)) , sizeof(double));
-               fin->read((char*)(&(spins.data[pos].m0)), sizeof(double));
-               fin->read((char*)(&(spins.data[pos].r1)), sizeof(double));
-               fin->read((char*)(&(spins.data[pos].r2)), sizeof(double));
-               fin->read((char*)(&(spins.data[pos].r2s)),sizeof(double));
-               fin->read((char*)(&(spins.data[pos].db)), sizeof(double));
-
-        }
-
-    }
-    // copy sample if requested:
-    if (multiple>1) {
-    	long size = spins.size;
-    	Spin_data* data= spins.data;
-    	spins.data=NULL;
-    	CreateSpins(size*multiple);
-    	for (int i=0; i<multiple; i++){
-    		for (int k=0;k<size; k++){
-    			spins.data[i*size+k]=data[k];
-    		}
-    	}
-    	delete[] data;
-    }
-    for (int i=0; i<spins.size; i++){
-    	spins.data[i].index=(double) i;
-    	m_spin_state.push_back(0);
-    }
-}
 
 /**********************************************************/
-Sample* Sample::GetSubSample (int n, long size){
+void Sample::CropEnumerate () {
+	
+	int  nsize = 0;
+	long osize = m_ensemble.NSpins();
+ 	int nprops = m_ensemble.NProps();
 
-   long N    = GetSize();
+	double* tmp = (double*) malloc (osize * nprops * sizeof(double));
+	memcpy (tmp, m_ensemble.Data(), osize * nprops * sizeof(double));
 
-   if (n >size || size>N) return NULL;
+	for (int i = 0; i < osize; i++)
+		if (m_ensemble[i * nprops + M0] > 0)
+			nsize++;
 
-   long l    = N%(size);
-   long k    = N/(size)+(n>l?0:1);
-   long ibeg = (n-1) * k+ (n>l?l:0);
-   long iend =  n    * k - 1 + (n>l?l:0);
+	m_ensemble.ClearData();
+	m_ensemble.Init(nsize);
+	
+	int n = 0;
+	for (int i = 0; i < osize; i++) 
+		if (tmp[i * nprops + M0] > 0) {
 
-   Sample* subSample = new Sample(iend-ibeg+1);
+			long npos = n * nprops;
 
-   for (long i=ibeg ,u=0;i<=iend;i++,u++) {
-         subSample->spins.data[u].x  = spins.data[i].x;
-         subSample->spins.data[u].y  = spins.data[i].y;
-         subSample->spins.data[u].z  = spins.data[i].z;
-         subSample->spins.data[u].m0 = spins.data[i].m0;
-         subSample->spins.data[u].r1 = spins.data[i].r1;
-         subSample->spins.data[u].r2 = spins.data[i].r2;
-         subSample->spins.data[u].r2s= spins.data[i].r2s;
-         subSample->spins.data[u].db = spins.data[i].db;
-         subSample->spins.data[u].index = spins.data[i].index;
+			memcpy (&m_ensemble[npos], &tmp[i * nprops] , nprops * sizeof(double));
+			m_ensemble[npos + nprops - 1] = n;
+			m_spin_state.push_back(0);
+			n++;
 
-   }
+		}
 
-   return (subSample);
-
+	free (tmp);
 }
 
 /**********************************************************/
 long    Sample::GetSize   ()       {
-	return spins.size;
+	return m_ensemble.NSpins();
 }
 
 /**********************************************************/
-double* Sample::GetValues (long l) {
+void Sample::GetValues (long l, double* val) {
 
 	//copy the properties of the l-th spin to m_val
-         m_val[XC]  = spins.data[l].x;
-         m_val[YC]  = spins.data[l].y;
-         m_val[ZC]  = spins.data[l].z;
-         m_val[M0]  = spins.data[l].m0;
-         m_val[R1]  = spins.data[l].r1;
-         m_val[R2]  = spins.data[l].r2;
-         m_val[R2S] = spins.data[l].r2s;
-         m_val[DB]  = spins.data[l].db;
-         m_val[ID]  = spins.data[l].index;
+
+	memcpy (val, &m_ensemble[l*m_ensemble.NProps()], m_ensemble.NProps() * sizeof (double));
 
 	//add position randomness of spin position
-	m_val[XC] += m_rng.normal()*m_res[XC]*m_pos_rand_perc/100.0;
-	m_val[YC] += m_rng.normal()*m_res[YC]*m_pos_rand_perc/100.0;
-	m_val[ZC] += m_rng.normal()*m_res[ZC]*m_pos_rand_perc/100.0;
+	val[XC] += m_rng.normal()*m_res[XC]*m_pos_rand_perc/100.0;
+	val[YC] += m_rng.normal()*m_res[YC]*m_pos_rand_perc/100.0;
+	val[ZC] += m_rng.normal()*m_res[ZC]*m_pos_rand_perc/100.0;
 
-	return m_val;
 }
 
 /**********************************************************/
 double  Sample::GetDeltaB (long pos) {
 
-	//copy the properties of the l-th spin to m_val (if p<0 use the last copy)
-	if (pos>=0) GetValues(pos);
-
 	//get off-resonance : convert m_val from [Hz] to [kHz] and add the Lorentzian random offset
-	double r2prime = ((m_val[R2S]>m_val[R2])?(m_val[R2S]-m_val[R2]):0.0);
-	return ( 0.001*m_val[DB] + tan(PI*(m_rng.uniform()-.5))*r2prime );
+	double r2prime = (
+					  (World::instance()->Values[R2S] > World::instance()->Values[R2]) ?
+					  (World::instance()->Values[R2S] - World::instance()->Values[R2]) : 0.0);
+
+	return ( 0.001*World::instance()->Values[DB] + tan(PI*(m_rng.uniform()-.5))*r2prime );
+
 }
 
 /**********************************************************/
 void  Sample::ReorderSample() {
-	if (m_reorder_strategy != NULL) {
+	/*if (m_reorder_strategy != NULL) {
 		m_reorder_strategy->Execute(&spins);
-	}
+		}*/
 }
+
 /**********************************************************/
 void Sample::SetReorderStrategy(string strat){
 	if (m_reorder_strategy!=NULL) delete m_reorder_strategy;
 
-	if (strat=="shuffle") m_reorder_strategy = new SampleReorderShuffle();
+	//if (strat=="shuffle") m_reorder_strategy = new SampleReorderShuffle();
 
 }
+
 /**********************************************************/
 void  Sample::GetScatterVectors(int *sendcount, int *displs, int size) {
+
 	World* pw = World::instance();
 	m_spins_sent.resize(size);
 	m_last_offset_sent.resize(size);
 
 	timeval dummy;
 	gettimeofday(&dummy,NULL);
-
+	
 	if (!m_is_restart) {
 		if (!(pw->m_useLoadBalancing)) {
-				// send all at once:
-				int count = (int) (( (double) GetSize() ) / ((double) (size - 1) ) + 0.01);
-				int rest  = (int) (fmod((double) GetSize() , (double) (size - 1) ) + 0.01);
-
-				// no spin data for master:
-				displs[0]	= 0;
-				sendcount[0]= 0;
-
-				for (int i=1;i<size;i++) {
-					sendcount[i] 	= count;
-					if (rest > 0) {
-						sendcount[i]++;
-						rest--;
-					}
-					displs[i]=displs[i-1]+sendcount[i-1];
-					// bookkeeping
-					m_spins_sent[i]=sendcount[i];
-					m_last_offset_sent[i]=displs[i];
-					if (sendcount[i]>0)
-						ReportSpin(displs[i],displs[i]+sendcount[i]-1,1);
+			// send all at once:
+			int count = (int) (( (double) GetSize() ) / ((double) (size - 1) ) + 0.01);
+			int rest  = (int) (fmod((double) GetSize() , (double) (size - 1) ) + 0.01);
+			
+			// no spin data for master:
+			displs[0]	= 0;
+			sendcount[0]= 0;
+			
+			for (int i=1;i<size;i++) {
+				sendcount[i] 	= count;
+				if (rest > 0) {
+					sendcount[i]++;
+					rest--;
 				}
-				m_next_spin_to_send = GetSize();
-				m_last_time.resize(size,dummy);
-
-				return;
+				displs[i]=displs[i-1]+sendcount[i-1];
+				// bookkeeping
+				m_spins_sent[i]=sendcount[i];
+				m_last_offset_sent[i]=displs[i];
+				if (sendcount[i]>0)
+					ReportSpin(displs[i],displs[i]+sendcount[i]-1,1);
 			}
+			m_next_spin_to_send = GetSize();
+			m_last_time.resize(size,dummy);
+			
+			return;
 		}
+	}
 	// now get scatter in case of restart/loadbalancing:
 	displs[0]	= 0;
 	sendcount[0]= 0;
 
 	int spins_left = pw->TotalSpinNumber;
+
 	if (m_is_restart) spins_left = SpinsLeft();
 
 	int maxNoSpins = spins_left / size / 2;
@@ -323,11 +370,13 @@ void  Sample::GetScatterVectors(int *sendcount, int *displs, int size) {
 	if (maxNoSpins>m_max_paket_size) maxNoSpins=m_max_paket_size;
 
 	for (int i=1;i<size;i++) {
+
 		int noToSent = i*m_min_paket_size;
 		if (noToSent > maxNoSpins) {
 			noToSent=(int) m_rng.uniform(m_min_paket_size,maxNoSpins);
 		}
 		displs[i]=displs[i-1]+sendcount[i-1];
+
 		if ((noToSent + displs[i])>GetSize()) noToSent = GetSize()-displs[i];
 		if (displs[i]==GetSize()) noToSent = 0;
 		if ((m_is_restart) && (noToSent!=0)) {
@@ -350,8 +399,10 @@ void  Sample::GetScatterVectors(int *sendcount, int *displs, int size) {
 		// bookkeeping
 		m_spins_sent[i]=sendcount[i];
 		m_last_offset_sent[i]=displs[i];
+
 		if (sendcount[i]>0)
 			ReportSpin(displs[i],displs[i]+sendcount[i]-1,1);
+		
 	}
 	m_last_time.resize(size,dummy);
 	m_next_spin_to_send = displs[size-1] + sendcount[size-1];
@@ -396,7 +447,7 @@ void Sample::GetNextPacket(int &NoSpins, int &NextSpinToSend, int ID) {
 			NoSpins += (m_rng.uniform()-0.5)*0.1*NoSpins;
 			//decrease NoSpins towards end of simulation:
 			int EndNoSpins = floor(((double) spinsleft)/2.0/((double) m_last_time.size()-1));
-			if(NoSpins > EndNoSpins) NoSpins = EndNoSpins;
+			if (NoSpins > EndNoSpins) NoSpins = EndNoSpins;
 		}
 		if (NoSpins > m_max_paket_size) NoSpins = m_max_paket_size;
 		if (NoSpins < m_min_paket_size)	NoSpins = m_min_paket_size;
@@ -474,6 +525,7 @@ int Sample::ReadSpinsState() {
 
 	return (0);
 }
+
 /**********************************************************/
 void Sample::ClearSpinsState() {
 	World* pw = World::instance();
@@ -481,6 +533,7 @@ void Sample::ClearSpinsState() {
 	for (unsigned int i=0; i<m_spin_state.size();i++) m_spin_state[i]=0;
 	m_is_restart = false;
 }
+
 /**********************************************************/
 int Sample::SpinsLeft() {
 	int count=0;
@@ -488,4 +541,37 @@ int Sample::SpinsLeft() {
 		if (m_spin_state[i]==0) count++;
 	}
 	return count;
+}
+
+/*********************************************************/
+void Sample::GetHelper (double* target) {	
+	memcpy (target, m_helper, m_helper_size * sizeof (double)); 
+}
+
+/*********************************************************/
+double* Sample::GetHelper () {	
+	return m_helper;
+}
+
+/*********************************************************/
+long Sample::GetHelperSize () {	
+	return m_helper_size;
+}
+
+/*********************************************************/
+int Sample::GetNoSpinCompartments () {	
+	return m_no_spin_compartments;
+}
+
+/*********************************************************/
+void Sample::SetNoSpinCompartments (int n) {	
+	m_no_spin_compartments = n;
+}
+
+/*********************************************************/
+void Sample::CopyHelper (double* out) {
+	
+	if (GetHelperSize())
+		memcpy (out, m_helper, GetHelperSize() * sizeof(double));
+	
 }

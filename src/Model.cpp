@@ -30,9 +30,11 @@
 #include "RFPulse.h"
 #include "DynamicVariables.h"
 #include "config.h"
+
 #ifdef HAVE_MPI_THREADS
-	#include "mpi.h"
+#include "mpi.h"
 #endif
+
 #include "time.h"
 #include "Trajectory.h"
 
@@ -54,13 +56,15 @@ void Model:: Prepare (CoilArray* pRxCoilArray, CoilArray* pTxCoilArray, ConcatSe
     m_concat_sequence  = pConcatSequence;
     m_sample           = pSample;
 
-};
+}
 
 /**************************************************/
 void Model::Solve() {
 
     //problem size
     m_world->TotalSpinNumber = m_sample->GetSize();
+	m_world->SetNoOfCompartments(m_sample->GetNoSpinCompartments());
+	m_world->SetNoOfSpinProps(m_sample->GetNProps());
     m_world->TotalADCNumber  = m_concat_sequence->GetNumOfADCs();
 
     //obtain solution for each spin in the sample
@@ -69,35 +73,46 @@ void Model::Solve() {
         m_world->SpinNumber = lSpin;
         double dTime  = 0.0;
         long   lIndex = 0;
-
+		
         //Prepare sequence
         m_concat_sequence->Prepare(PREP_INIT);
-
+		
         //get current spin properties
-        m_world->Values = m_sample->GetValues(lSpin);
+        m_sample->GetValues(lSpin, m_world->Values);
 
+		// Get helper size, initialise and fill.
+		m_world->InitHelper(m_sample->GetHelperSize());
+		m_sample->GetHelper(m_world->Helper());
+		
         //check for activation
         DynamicVariables*  dynvar = DynamicVariables::instance();
         dynvar->SetActivation();
         dynvar->m_Diffusion->UpdateTrajectory(true);
 
+        int m_ncoprops =  (m_world->GetNoOfSpinProps () - 4) / m_world->GetNoOfCompartments();
         //start with equilibrium solution
-        m_world->solution[0]=0.0;
-        m_world->solution[1]=0.0;
-        m_world->solution[2]=m_world->Values[M0];
+		for (int i = 0; i < m_world->GetNoOfCompartments(); i++) {
+			//start with equilibrium solution
+			m_world->solution[0+i*3]=0.0;
+			m_world->solution[1+i*3]=0.0;
+			m_world->solution[2+i*3]=m_world->Values[i*m_ncoprops+3]; // Values in world [0] to [2] are the x,y,z coordinates, followed by the M0, R1, R2, DB for each pool
+
+		//	cout <<"im Model solution initatilsation" << " Mz "<< m_world->solution[2+i*3]<<" Mx " << m_world->solution[0+i*3]<< " My "<< m_world->solution[1+i*3]<< endl;
+		}
 
         //off-resonance from the sample
         m_world->deltaB = m_sample->GetDeltaB();
-
+		
         //update progress counter
         if (m_do_dump_progress)
-        	UpdateProcessCounter(lSpin);
-
+		 	UpdateProcessCounter(lSpin);
+		
         //Solve while running down the sequence tree
         RunSequenceTree(dTime, lIndex, m_concat_sequence);
 
         //dump restart info:
         DumpRestartInfo(lSpin);
+
     }
 
 }
@@ -105,54 +120,60 @@ void Model::Solve() {
 /**************************************************/
 void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* module) {
 
+	int ncomp  = m_world->GetNoOfCompartments();
+	int nprops = m_world->GetNoOfSpinProps();
+	int cprops = (nprops - 4) / ncomp;
+	
 	//recursive call for each repetition of all concat sequences
 	if (module-> GetType() == MOD_CONCAT)	{
-
+		
 		vector<Module*> children = module->GetChildren();
-		ConcatSequence* pCS = (ConcatSequence*) module;
-
+		ConcatSequence* pCS      = (ConcatSequence*) module;
+		
 		for (RepIter r=pCS->begin(); r<pCS->end(); ++r)
 			for (unsigned int j=0; j<children.size() ; ++j)
 				RunSequenceTree(dTimeShift, lIndexShift, children[j]);
-	}
 
+	}
+	
 	//call Calculate for each TPOI in Atom
 	if (module-> GetType() == MOD_ATOM)	{
-
+		
 		m_world->pAtom = (AtomicSequence*) module;
 		InitSolver();
-
-		vector<Module*> children = module->GetChildren();
-		bool bCollectTPOIs = false;
-
+		
+		vector<Module*> children      = module->GetChildren();
+		bool            bCollectTPOIs = false;
+		
 		//dynamic changes of ADCs
 		for (unsigned int j=0; j<children.size() ; ++j) {
-
+			
 			Pulse* p = (Pulse*) children[j];
-
+			
 			//Reset TPOIs for phaselocking events
 			if (p->GetPhaseLock ()) {
 			    p->SetTPOIs () ;
 				bCollectTPOIs = true;
 			}
-
+			
 			//set the transmitter coil (only once, i.e. at the first spin)
 			if (m_world->SpinNumber == 0)
 				if (p->GetAxis() == AXIS_RF)
-					((RFPulse*) p)->SetCoilArray(m_tx_coil_array);
+					((RFPulse*) p)->SetCoilArray (m_tx_coil_array);
 		}
+		
 
 		//temporary storage
-		double dtsh = dTimeShift;
-		long   ladc = lIndexShift;
-		int    iadc = m_world->pAtom->GetNumOfADCs();
-		double* dmxy = new double[iadc];
-		double* dmph = new double[iadc];
-		double* dmz  = new double[iadc];
-		double dMt   = m_world->solution[0];
-		double dMp   = m_world->solution[1];
-		double dMz   = m_world->solution[2];
-
+		double  dtsh = dTimeShift;
+		long    ladc = lIndexShift;
+		int     iadc = m_world->pAtom->GetNumOfADCs();
+		double* dmxy = new double[iadc*m_world->GetNoOfCompartments()];
+		double* dmph = new double[iadc*m_world->GetNoOfCompartments()];
+		double* dmz  = new double[iadc*m_world->GetNoOfCompartments()];
+		double  dMt  = m_world->solution[0];
+		double  dMp  = m_world->solution[1];
+		double  dMz  = m_world->solution[2];
+		
 		iadc=0;
 
 		if (bCollectTPOIs) m_world->pAtom->CollectTPOIs () ;
@@ -170,7 +191,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 
 			// search next tStop:
 			if (next_tStop < m_world->time) {
-				int j=i+1;
+				int  j          = i+1;
 				bool found_next = false;
 				while((j<noTPOIS) && (!found_next)) {
 					if (m_world->pAtom->GetTPOIs()->GetPhase(j) < 0.0) {
@@ -182,17 +203,20 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				if (found_next == false) next_tStop = 1e200;
 			}
 
-			//if numerical error occures in calculation, repeat the current atom with increased accuracy
+			//if numerical or occures in calculation, repeat the current atom with increased accuracy
 			if (!Calculate(next_tStop)) {				
 				//remove wrong contribution to the signal(s)
 				iadc=0;
-				for (int j=0;j<i;++j) {
+				for (int j=0; j < i; ++j) {
 				  m_world->phase = m_world->pAtom->GetTPOIs()->GetPhase(j);
-				  if (m_world->phase<0.0) continue;
+				  if (m_world->phase < 0.0) continue;
 				  m_world->time  = dtsh + m_world->pAtom->GetTPOIs()->GetTime(j);
-				  m_world->solution[AMPL]  = -dmxy[iadc];
-				  m_world->solution[PHASE] =  dmph[iadc];
-				  m_world->solution[ZC]    =  -dmz[iadc];
+				  for (int k = 0; k < m_world->GetNoOfCompartments(); k++) {
+					  int os = k*3;
+					  m_world->solution[os+AMPL]  = -dmxy[os+iadc];
+					  m_world->solution[os+PHASE] =  dmph[os+iadc];
+					  m_world->solution[os+ZC]    =  -dmz[os+iadc];
+				  }
 				  m_rx_coil_array->Receive(ladc+iadc);
 				  iadc++;
 				}
@@ -211,7 +235,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				return;
 			}
 
-			if (m_world->phase<0.0) continue;	//negative receiver phase == no ADC !
+			if (m_world->phase < 0.0) continue;	//negative receiver phase == no ADC !
 
 			m_world->time  += dTimeShift;
 			m_rx_coil_array->Receive(lIndexShift++);
@@ -220,6 +244,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 			dmxy[iadc] = m_world->solution[AMPL];
 			dmph[iadc] = m_world->solution[PHASE];
 			dmz[iadc]  = m_world->solution[ZC];
+
 			iadc++;
 
 			//write time evolution
@@ -314,22 +339,39 @@ void Model::DumpRestartInfo(long lSpin){
 		}
 	}
 }
+
+/*************************************************************************/
+void progressbar (int percent) {
+
+	static string bars   = "***************************************************";
+	static string blancs = "                                                   ";
+
+	cout << "\rSimulating | "; 
+	cout << bars.substr(0, percent/2) << " " <<  blancs.substr(0, 50-percent/2) << "| " <<setw(3) << setfill(' ') << percent << "% done";
+
+	flush(cout);
+
+}
+
 /*************************************************************************/
 void Model::UpdateProcessCounter(long lSpin) {
+	
 	if ((m_world->m_myRank > 0 )){
-	// parallel jemris:
+
+		// parallel jemris:
+
 #ifdef HAVE_MPI_THREADS
-// with pthreads: use continuous progress bar:
+		// with pthreads: use continuous progress bar:
 		//update progress counter (parallel jemris)
 		static time_t lasttime=time(NULL);
 		static long lastspin=lSpin-1;
 		int spinsDone =0;
 		int WaitTime=2; //update progress every 2s
-
+		
 		if (((time(NULL)-lasttime)>WaitTime ) || (lSpin + 1 == m_world->TotalSpinNumber )) {
 			spinsDone = lSpin - lastspin;
 			MPI::COMM_WORLD.Send(&spinsDone,1,MPI_INT,0,SPINS_PROGRESS);
-
+			
 			if (lSpin + 1 == m_world->TotalSpinNumber )
 				lastspin = -1;
 			else
@@ -338,9 +380,9 @@ void Model::UpdateProcessCounter(long lSpin) {
 			lasttime = time(NULL);
 		}
 #endif
+
 	} else {
-		// serial jemris progress bar:
-		//progress counter
+
 		static int progress_percent = -1;
 
 		//update progress counter (serial jemris/pjemris without threads support)
@@ -351,6 +393,12 @@ void Model::UpdateProcessCounter(long lSpin) {
 			ofstream fout(".jemris_progress.out" , ios::out);
 			fout << progr;
 			fout.close();
+			progressbar(progr);
 		}
 	}
+
+
+
+
 }
+

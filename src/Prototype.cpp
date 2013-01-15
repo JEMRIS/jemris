@@ -34,7 +34,7 @@ void Prototype::SetName (string name) {
 	if (m_node == NULL) return;
     ((DOMElement*) m_node)->setAttribute( StrX("Name").XMLchar(), StrX(name).XMLchar() );
 
-};
+}
 
 /***********************************************************/
 bool Prototype::ReplaceString(string& str, const string& s1, const string& s2) {
@@ -53,7 +53,7 @@ bool Prototype::ReplaceString(string& str, const string& s1, const string& s2) {
 
 	return ret;
 
-};
+}
 
 /***********************************************************/
 vector<string>  Prototype::Tokenize(const string& str, const string& delimiters ) {
@@ -81,7 +81,7 @@ Attribute*	Prototype::GetAttribute(string name){
 	if( iter != m_attributes.end() ) return iter->second;
 	return NULL;
 
-};
+}
 
 /***********************************************************/
 void           Prototype::HideAttribute (string attrib, bool observable){
@@ -92,7 +92,7 @@ void           Prototype::HideAttribute (string attrib, bool observable){
 		a->SetObservable(observable);
 	}
 
-};
+}
 
 /***********************************************************/
 bool Prototype::Observe (Attribute* attrib, string prot_name, string attrib_name, bool verbose){
@@ -124,7 +124,8 @@ bool Prototype::Observe (Attribute* attrib, string prot_name, string attrib_name
 
 	return true;
 
-};
+}
+
 /***********************************************************/
 bool Prototype::Prepare  (PrepareMode mode){
 
