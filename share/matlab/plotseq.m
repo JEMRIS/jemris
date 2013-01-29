@@ -63,15 +63,17 @@ vis_set(handles.addADCs      ,kspace_flag~=0);
 vis_set(handles.ContDraw     ,kspace_flag~=0 || handles.dm ~=0);
 if kspace_flag==0;cla(hax{8},'reset');set(hax{8},'visible','off');end
 
-f=fopen('seq.bin'); A=fread(f,Inf,'double'); fclose(f); if A(1)==-1;return;end
-%A(end)=[];
-n=size(A,1)/7;A=reshape(A,7,n)'; A=[0 -1 0 0 0 0 0;A];
-
-t=A(:,1);
-Iadc=find(A(:,2)>=0);
+t  =h5read('seq.h5','/seqdiag/T');
+RXP=h5read('seq.h5','/seqdiag/RXP');
+TXM=h5read('seq.h5','/seqdiag/TXM');
+TXP=h5read('seq.h5','/seqdiag/TXP');
+GX =h5read('seq.h5','/seqdiag/GX');
+GY =h5read('seq.h5','/seqdiag/GY');
+GZ =h5read('seq.h5','/seqdiag/GZ');
+Iadc=find(RXP>=0);
 Tadc=t(Iadc);
-Rec_Phs=A(Iadc,2)*180/pi;
-A=A(:,[3:7]); A(:,2)=A(:,2)*180/pi;
+Rec_Phs=RXP(Iadc)*180/pi;
+A=[TXM TXP GX GY GZ]; A(:,2)=A(:,2)*180/pi;
  
 if length(ax)==1;ax=[min(t) max(t)];end
 

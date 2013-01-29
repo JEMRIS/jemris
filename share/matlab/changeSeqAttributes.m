@@ -43,7 +43,7 @@ if Seq.current
    
    %special case of external pulse shapes
    if ~isempty(strfind(upper(Seq.Name),'EXTERNAL')) && strcmp(upper(AttrName),'FILENAME')
-       if exist(AttrVal,'file') == 2, return, end %file exists!
+       if exist(AttrVal,'file') == 2, disp('???'),return, end %file exists!
        try
         eval(['global ',AttrVal])
         eval(['val= ',AttrVal,';'])
@@ -81,7 +81,7 @@ if Seq.current
        end
        
        writeExtPulseBinFile(AttrVal,val)
-       Seq.Attributes(iFN).Value=[AttrVal,'.bin'];
+       Seq.Attributes(iFN).Value=[AttrVal,'.h5'];
    end
    
    return;
@@ -96,14 +96,13 @@ end
 
 %%%%%%%
 function writeExtPulseBinFile(FileName,values)
- FileName=[FileName,'.bin'];
- [N,M]=size(values);
- values=real(values)';
- f=fopen(FileName,'w','l');
- fwrite(f,N,'double');
- fwrite(f,values(:),'double');
- fclose(f);
+ FileName=[FileName,'.h5'];
+ if exist(FileName)==2, delete(FileName); end
+ h5create(FileName,'/extpulse',size(values));
+ h5write(FileName,'/extpulse', values);
 
+ 
+ 
 %%%%%%%
 function pos=getPosition(AttrName,Seq,handles)
  pos=0;

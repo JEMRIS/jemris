@@ -135,7 +135,7 @@ double BiotSavartLoop::GetSensitivity(double* position) {
     Bz = 0.5*Bz;
 
     // compute |B1|
-    double B1 = pow(pow(Bx,2.0)+pow(By,2.0),.25)+.1;
+    double B1 = sqrt(pow(Bx,2.0)+pow(By,2.0));
 
     // compute phase and store for later retrieval 
     m_biosavart_phase = atan2(By,Bx); 

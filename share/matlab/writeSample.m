@@ -73,20 +73,15 @@ A(:,:,:,5)=Sample.DB;
 
 %save 4D data array for JEMRIS in the order (type , X, Y, Z)
 A=permute(A,[4 1 2 3]); 
-%fwrite(f,A,'double');
 
-A_details.Name     = 'data';
-A_details.Location = '/sample';
+if exist('sample.h5')==2, delete('sample.h5'); end
+h5create('sample.h5','/sample/data',size(A));
+h5create('sample.h5','/sample/resolution',[1 3]);
+h5create('sample.h5','/sample/offset',[1 3]);
+h5write('sample.h5','/sample/data', A);
+h5write('sample.h5','/sample/resolution',[Sample.RES Sample.RES Sample.RES]);
+h5write('sample.h5','/sample/offset',[Sample.OFFSET Sample.OFFSET Sample.OFFSET]);
 
-res_details.Name   = 'resolution';
-res_details.Location = '/sample';
-
-offset_details.Name = 'offset';
-offset_details.Location = '/sample';
-
-!rm sample.h5
-hdf5write (Sample.FNAME, A_details, A, res_details, [Sample.RES Sample.RES Sample.RES], ...
-           offset_details, [Sample.OFFSET Sample.OFFSET Sample.OFFSET]);
 
 maxM0 = max(Sample.M0(:));
 

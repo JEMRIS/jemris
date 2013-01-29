@@ -28,6 +28,7 @@
 #include "ConcatSequence.h"
 #include "AtomicSequence.h"
 #include <stdio.h>
+#include "BinaryContext.h"
 
 /***********************************************************/
 bool    Sequence::Prepare(PrepareMode mode){
@@ -62,16 +63,56 @@ bool    Sequence::Prepare(PrepareMode mode){
 /***********************************************************/
 void Sequence::SeqDiag (string fname ) {
 
-    ofstream fout(fname.c_str() , ios::binary);
-	double time = 0.0;
-	WriteSeqFile(&fout,time);
-	fout.close();
+	//prepare H5 file structure
+	BinaryContext bc;
+	DataInfo      di;
+	int numaxes = 7;
+
+	bc.Initialize ("seq.h5", IO::OUT);
+	if (bc.Status() != IO::OK) return;
+
+	di.fname = "seq.h5";
+	di.ndim  = 1;
+	di.dims[0] = GetNumOfTPOIs()+1;
+	di.path  = "seqdiag";
+	
+	vector<double*> seqdata;
+	for (int i=0; i<numaxes; i++) {
+		seqdata.push_back(new double [GetNumOfTPOIs()+1]);
+		*(seqdata[i]) = (i==1?-1.0:0.0); //always start seq.-diag. with {0,-1,0,0,0,0,0} !
+		seqdata[i]++;
+	}
+	
+	//HDF5 dataset names
+	vector<string> seqaxis;
+	seqaxis.push_back("T");		//Time
+	seqaxis.push_back("RXP");	//receiver phase
+	seqaxis.push_back("TXM");	//transmitter magnitude
+	seqaxis.push_back("TXP");	//transmitter phase
+	seqaxis.push_back("GX");	//X gradient
+	seqaxis.push_back("GY");	//Y gradient
+	seqaxis.push_back("GZ");	//Z gradient
+
+	//recursive data collect
+	double time   = 0.0;
+	long   offset = 0;
+	CollectSeqData(seqdata,time,offset);
+
+
+	//write to HDF5 file
+	for (int i=0; i<numaxes; i++) {
+		di.dname = seqaxis[i];
+		bc.SetInfo(di);
+		seqdata[i]--;
+		bc.WriteData(seqdata[i]);
+		delete[] seqdata[i];
+	}
 
 }
 
 /***********************************************************/
-void  Sequence::WriteSeqFile (ofstream* pfout, double& time) {
-
+void  Sequence::CollectSeqData  (vector<double*> seqdata, double& time, long& offset) {
+	  
 	if (GetType() == MOD_CONCAT) {
 
 		vector<Module*> children = GetChildren();
@@ -81,42 +122,36 @@ void  Sequence::WriteSeqFile (ofstream* pfout, double& time) {
 
 			for (unsigned int j=0; j<children.size() ; ++j) {
 
-				((Sequence*) children[j])->WriteSeqFile(pfout,time);
-				if (children[j]->GetType() != MOD_CONCAT)
-					time += children[j]->GetDuration();
+				((Sequence*) children[j])->CollectSeqData(seqdata,time,offset);
+				if (children[j]->GetType() != MOD_CONCAT) {
+					time   += children[j]->GetDuration();
+					offset += children[j]->GetNumOfTPOIs();
+				}
 			}
 		}
 	}
 
 	if (GetType() == MOD_ATOM) {
-
-		//write value to the binary file at each TPOI
-		for (int i=0; i<=GetNumOfTPOIs(); ++i) {
+	  
+		//copy seqdata values at each TPOI
+		for (int i=0; i<GetNumOfTPOIs(); ++i) {
 
 			double dt,dp;
-			if (i==0)	{ dt = GetDuration()/1e9; dp=-1.0; }
-			else		{ dt = m_tpoi.GetTime(i-1); dp = m_tpoi.GetPhase(i-1); }
-			double t  = time + dt;
-
-			// two time-points at each TPOI, one slightly shifted, to
-			// ensure proper display of the pulse diagram in all cases
-			int km = ((i>0&&i<GetNumOfTPOIs())?2:1);
-			for (int k=0;k<km;k++) {
-
-				pfout->write((char *)(&(t)),sizeof(t));
-				pfout->write((char *)(&(dp)),sizeof(dp));
-
-				double val[5] = {0.0,0.0,0.0,0.0,0.0};
-
-				//here, nonlinear gradients are not taken into account for GetValue
-				bool rem  = ((AtomicSequence*) this)->HasNonLinGrad();
-				((AtomicSequence*) this)->SetNonLinGrad(false);
-				GetValue(val,dt+k*GetDuration()/1e9);
-				((AtomicSequence*) this)->SetNonLinGrad(rem);
-
-				for (unsigned int j=0;j<5;++j)
-					pfout->write((char *)(&(val[j])),sizeof(val[j]));
-			}
+			dt = m_tpoi.GetTime(i);
+			dp = m_tpoi.GetPhase(i);
+			  
+			double val[7] = {0.0,0.0,0.0,0.0,0.0};
+			val[0]=time+dt;
+			val[1]=dp;
+			//here, nonlinear gradients are not taken into account for GetValue
+			bool rem  = ((AtomicSequence*) this)->HasNonLinGrad();
+			((AtomicSequence*) this)->SetNonLinGrad(false);
+			//GetValue(val,dt+k*GetDuration()/1e9);
+			GetValue(&val[2],dt);
+			((AtomicSequence*) this)->SetNonLinGrad(rem);
+			
+			for (int j=0; j<seqdata.size(); ++j)
+				  *(seqdata[j]+offset+i) = val[j];
 
 		}
 

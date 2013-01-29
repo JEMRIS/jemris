@@ -147,7 +147,7 @@ T=sprintf('Coil: %s - Type: %s',seq.CoilName,seq.Name);
 if ~seq.HasMap,T=sprintf('%s   <--- !sensitvities not yet calculated!',T);end
 set(handles.uipanel1,'Title',T)
 
-save tmp handles
+%save tmp handles
 
 A=handles.Attributes{find(strcmpi(handles.Coils,seq.Name))};
 %HA=handles.HiddenAttributes{find(strcmp(handles.Modules,upper(seq.Name)))};

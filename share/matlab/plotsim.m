@@ -45,25 +45,22 @@ end
 
 %read signal
 if WHAT~=1
- t=[];M=[];I=[];
- for i=1:length(handles.rxca)
-   channel=handles.channel;
-   if channel>0
-       A = (hdf5read ('signals.h5', sprintf('/signal/channels/%02i',channel-1)))';
-       ti= hdf5read ('signals.h5', sprintf('/signal/times'));
-       [ti,J]=sort(ti);Mi(:,:,i)=A(J,:);
-       d=diff(diff(ti));d(d<1e-5)=0;Ii=[0;find(d)+1;length(ti)];
-       t=[t;ti];M=[M;Mi];I=[I;Ii];
-   else
+ channel=handles.channel;
+ %save tmp handles
+ if channel>0
+    A = (h5read ('signals.h5', sprintf('/signal/channels/%02i',channel-1)))';
+    t = h5read ('signals.h5', sprintf('/signal/times'));
+    [t,J]=sort(t);M=A(J,:);
+    d=diff(diff(t));d(d<1e-5)=0;I=[0;find(d)+1;length(t)];
+ else
      if WHAT~=5; display('ups.'), return;end;
      % plot SumofSquares; only possible with mag images.
      FS=0; 
      for k=1:abs(channel)
-       t=[];M=[];I=[];
-       f=fopen(sprintf('signal%02d.bin',k)); A=fread(f,Inf,'double','l');fclose(f);
-       n=size(A,1)/4; A=reshape(A,4,n)';ti=A(:,1);[ti,J]=sort(ti);Mi(:,:,i)=A(J,2:4);
-       d=diff(diff(ti));d(d<1e-5)=0;Ii=[0;find(d)+1;length(ti)];
-       t=[t;ti];M=[M;Mi];I=[I;Ii];
+       A = (h5read ('signals.h5', sprintf('/signal/channels/%02i',k-1)))';
+       t = h5read ('signals.h5', sprintf('/signal/times'));
+       [t,J]=sort(t); M=A(J,:);
+       d=diff(diff(t));d(d<1e-5)=0;I=[0;find(d)+1;length(t)];
 %copy + paste from single channel:       
       S=[];
       for ik=1:length(I)-1
@@ -87,9 +84,8 @@ if WHAT~=1
        axis image,set(gca,'xtick',[],'ytick',[])
        xlabel('Readout (Freq. Enc.)','fontsize',12,'fontweight','bold')
        ylabel('Phase Encode','fontsize',12,'fontweight','bold')
-       title('Sum of magnitude square image','fontsize',12,'fontweight','bold');
+       title('Sum of Squares image','fontsize',12,'fontweight','bold');
     return;
-   end
  end
 end
 
@@ -181,9 +177,9 @@ if WHAT==1
         offset(i)=A(1+(i-1)*3);
     end
 
- A      = hdf5read (handles.sample.file, '/sample/data');
- res    = hdf5read (handles.sample.file, '/sample/resolution');
- offset = hdf5read (handles.sample.file, '/sample/offset');
+ A      = h5read (handles.sample.file, '/sample/data');
+ res    = h5read (handles.sample.file, '/sample/resolution');
+ offset = h5read (handles.sample.file, '/sample/offset');
 
  N(1) = size(A,2);
  N(2) = size(A,3);

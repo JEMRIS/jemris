@@ -3,7 +3,7 @@
 * \page ug_JEMRIS_txrx Coil Array Layout GUI JEMRIS_txrx
 The GUI for coil array configuration allows to construct receiver and/or transmitter arrays with dedicated spatial
 sensitivity patterns. A coil array consists of several coils in a specified order, the channel number. The order is just given
-by the order of creation of the coils. In case of a receive coil array, one binary signal file per coil is generated in
+by the order of creation of the coils. In case of a receive coil array, one signal file per coil is generated in
 the simulation. In case of a transmit coil array, the RF pulses of the MR sequence have to specify which channel they use. If no
 channel is specified, the RF is transmitted via all available channels.
 
@@ -36,7 +36,7 @@ On this panel the name of the current XML coil array file is displayed in red. T
 
 \li <b>"write XML"</b> As with the sequence GUI, this button overwrites the current XML coil file according to the
 recent changes made for the indivudual coils. It then invokes the external jemris binary to (re-) calculate the sensitivity maps.
-The maps are stored in the current working directory (filnames "RXsensemap01.bin", "RXsensemap02.bin", ...).
+The maps are stored in the current working directory in the HDF5-file "sensmaps.h5".
 
 \li <b>"read XML"</b> Accordingly, this button undoes all recent changes on the coils and reads the current XML coil file.
 
@@ -143,10 +143,10 @@ expression syntax.
 
 \subsection ug_coil_gui_external External Coil
 
-\li <b>"Filename"</b> Specifies the binary file from which jemris reads the externally defined sensitivities. The binary file
-format is double pairs (magnitude and phase) and column major of the complete data cube without any header information.
-The size of the cube is taken from the above grid attributes. Note, that such external binary files are easily constructed by
-the GUI: generate a global matlab variable which is a complex data cube with size matching the specified grid variables.
-Then write the name of the variable to the attribute "Filename". The GUI will automatically construct the necessary binary file.
+\li <b>"Filename"</b> Specifies the HDF5-file from which jemris reads the externally defined sensitivities. The file
+has two datasets, "/maps/magnitude" and "/maps/phase", respecitvely, each of sqare (2D) or cubic (3D) size to specifiy the
+coil sensitivities.  Note, that such external HDF5-file is easily constructed by
+the GUI: generate a global matlab variable which is a complex data cube of coil sensitivities.
+Then write the name of the variable to the attribute "Filename". The GUI will automatically construct the necessary HDF5-file.
 
 */

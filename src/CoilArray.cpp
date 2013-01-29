@@ -236,7 +236,6 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 		return bc.Status();
 	
 	di.fname = "sensmaps.h5";
-    string mode = (m_mode==RX) ? "RX" : "TX";
 	
 	// Nx x Ny x Nz x Nc
     di.ndim = 4;
@@ -252,7 +251,7 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 
 	double* maps = (double*) malloc (m_coils.size()*size*sizeof(double));
 
-	di.path  = "/maps/" + mode;
+	di.path  = "/maps/";
 	di.dname = "magnitude";
 	bc.SetInfo(di);
 	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {
@@ -262,7 +261,7 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	}
 	bc.WriteData (maps);
 
-	di.path  = "/maps/" + mode;
+	di.path  = "/maps/";
 	di.dname = "phase";
 	bc.SetInfo(di);
 	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {
@@ -271,10 +270,10 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	}
 	bc.WriteData (maps);
 	
-	return ios;
-	
 	free (maps);
 
+	return ios;
+	
 }
 
 /**********************************************************/

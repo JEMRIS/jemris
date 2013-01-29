@@ -45,19 +45,14 @@ end
 
 %loop over coil(s)
 CENT=cell(NC,1); AZIM=cell(NC,1); POL =cell(NC,1); NAME=cell(NC,1);
+
 for i=COILS
     if ~handles.CoilArray.Children(i).HasMap,continue,end
     NA=length(handles.CoilArray.Children(i).Attributes);
-    scale = 1; N=0; DIM=0; AxLim=[0 0]; phas=0;
+    N=0; DIM=0; AxLim=[0 0];
     AZIM{i}=NaN;  POL{i}=NaN;  CENT{i}=[0 0 0];
     NAME{i}=handles.CoilArray.Children(i).CoilName;
     for j=1:NA
-        if strcmpi('PHASE',handles.CoilArray.Children(i).Attributes(j).Name)
-            phas = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
-        end
-        if strcmpi('SCALE',handles.CoilArray.Children(i).Attributes(j).Name)
-            scale = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
-        end
         if strcmpi('DIM',handles.CoilArray.Children(i).Attributes(j).Name)
             DIM   = str2double(handles.CoilArray.Children(i).Attributes(j).Value);
         end
@@ -82,22 +77,17 @@ for i=COILS
          end
         end
     end
-    
-    a = hdf5read ('sensmaps.h5', '/maps/RX/magnitude') .* exp (sqrt(-1) * hdf5read ('sensmaps.h5', '/maps/RX/phase'));
-    a = a / max (abs(a(:)));
-    
-end
+        
 
-if (length(COILS) == 1)
-    A = scale*a(:,:,:,i);
-    x1 = [AxLim(1):diff(AxLim)/(N-1):AxLim(2)];
+end
+a = h5read ('sensmaps.h5', '/maps/magnitude'); 
+p = h5read ('sensmaps.h5', '/maps/phase');
+A = a.*exp(sqrt(-1)*(p));
+if numel(COILS)==1
+    A=permute(A(:,:,:,COILS),[2 1 3]);
 else
-    A = sum(a,4);
+ A = permute(sum(A,4),[2 1 3]);
 end
-
-
-if ~exist('A','var'),set(gca,'visible','off');return;end
-%A=A/NC;%to scale or not to scale?
 
 %complex data selection
 C=get(handles.ComplexMenu,'String');
@@ -229,9 +219,9 @@ function addSample(Max,Min,az,handles)
 if get(handles.HideSampleMenu,'Value') == 2, return, end
 
 handles.sample.file = 'sample.h5';
- A      = hdf5read (handles.sample.file, '/sample/data');
- res    = hdf5read (handles.sample.file, '/sample/resolution');
- offset = hdf5read (handles.sample.file, '/sample/offset');
+ A      = h5read (handles.sample.file, '/sample/data');
+ res    = h5read (handles.sample.file, '/sample/resolution');
+ offset = h5read (handles.sample.file, '/sample/offset');
  N=zeros(1,3);
  
  N(1) = size(A,2);

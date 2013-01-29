@@ -74,15 +74,8 @@ IO::Status ExternalCoil::LoadMap () {
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	std::stringstream sstr;
-	sstr << "/maps/";
-	if (m_mode == RX)
-		sstr << "RX" ;
-	else
-		sstr << "TX" ;
-	sstr << "/magnitude";
 
-	di = bc.GetInfo (sstr.str());
+	di = bc.GetInfo ("/maps/magnitude");
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
@@ -97,18 +90,7 @@ IO::Status ExternalCoil::LoadMap () {
 
 	memcpy (&(m_sens_mag[0][0][0]), &tmpdat[pos], size * sizeof(double));
 
-	sstr.str("");
-
-	sstr << "/maps/";
-
-	if (m_mode == RX)
-		sstr << "RX" ;
-	else
-		sstr << "TX" ;
-
-	sstr << "/phase";
-
-	di = bc.GetInfo (sstr.str());
+	di = bc.GetInfo ("/maps/phase");
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 

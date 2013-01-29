@@ -84,7 +84,7 @@ public:
      * @param pfout File output stream
      * @param time  Time: More elaborate description, please.
      */
-    void WriteSeqFile          (ofstream* pfout, double& time);
+    void CollectSeqData          (vector <double*> seqdata, double& time, long& offset);
 
     /**
      * Get the number of ADCs for this sequence.

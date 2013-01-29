@@ -3,8 +3,11 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
- *                                  Forschungszentrum Jülich, Germany
+ *  JEMRIS Copyright (C) 
+ *                        2006-2013  Tony Stöcker
+ *                        2007-2013  Kaveh Vahedipour
+ *                        2009-2013  Daniel Pflugfelder
+ *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,13 +29,14 @@
 
 #include <cmath>
 #include "GradPulse.h"
+#include "ExternalPulseData.h"
 
 /**
  * @brief External gradient prototype.
  */
 
 class ExternalGradPulse : public GradPulse {
-
+  
  public:
 
     /**
@@ -43,7 +47,7 @@ class ExternalGradPulse : public GradPulse {
     /**
      * @brief Copy constructor.
      */
-    ExternalGradPulse               (const ExternalGradPulse&)  {  m_gain=1.0; };
+    ExternalGradPulse               (const ExternalGradPulse&);
 
     /**
      * @brief Default destructor.
@@ -65,12 +69,12 @@ class ExternalGradPulse : public GradPulse {
     /**
      * @see GradPulse::GetGradient
      */
-    virtual double   GetGradient  (double const time);
+    virtual double   GetGradient  (double const time) {return m_scale*m_pulse_data.GetData(time); };
 
     /**
      * @see Pulse::SetTPOIs
      */
-    virtual void     SetTPOIs      ();
+    virtual void     SetTPOIs() { m_pulse_data.SetTPOIs(); } ;
 
 
  protected:
@@ -82,12 +86,9 @@ class ExternalGradPulse : public GradPulse {
      */
     string           GetInfo      ();
 
-    vector<double> m_times;         /**< @brief My sample time points                          */
-    vector<double> m_magnitudes;    /**< @brief My corresponding amplitudes                    */
-    double  m_gain;                 /**< @brief Amplification gain                             */
-    long    m_samples;              /**< @brief Number of samples of this pulse                */
-    string  m_fname;                /**< @brief URI of the external gradient file              */
-	string  m_dname;                /**< @brief Data name                                      */
+    ExternalPulseData		   m_pulse_data; /**<contains the data*/
+    string m_fname;                /**< @brief Filename containing the RF amps and phases  */
+    double m_scale;                /**< @brief Scaling factor for the amps                 */
 
 };
 

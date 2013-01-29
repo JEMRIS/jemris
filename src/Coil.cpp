@@ -106,12 +106,11 @@ void Coil::GridMap () {
             for (int i=0; i<m_points; i++) {
 
                 position [XC] = i*m_extent/m_points-m_extent/2;
-                double mag   = GetSensitivity(position);
+                double mag   = m_scale*GetSensitivity(position);
                 m_sens_mag[i][j][k] = mag;
                 max = (max>mag?max:mag);
-                double pha   = GetPhase(position);
-                if (pha != 0.0) m_complex = true;
-                m_sens_pha[i][j][k] = pha;
+                m_sens_pha[i][j][k] = ( (m_conjugate?-1.0:1.0) * ( GetPhase(position) + m_phase) );
+                if (m_sens_pha[i][j][k] != 0.0) m_complex = true;
             }
         }
     }
@@ -148,12 +147,10 @@ double  Coil::GetPhase (double time) {
     DynamicVariables* dv = DynamicVariables::instance();
     dv->m_Motion->GetValue(time,position);
 
-    double sign = (m_conjugate?-1.0:1.0);
-	
     if (m_interpolate)
-		return (m_phase + sign*InterpolateSensitivity(position,false));
+		return ( InterpolateSensitivity(position,false));
 	else
-		return (m_phase + sign*GetPhase(position));
+		return ( GetPhase(position));
 
 }
 
@@ -168,10 +165,10 @@ double  Coil::GetSensitivity (double time) {
     dv->m_Motion->GetValue(time,position);
 
 	if (m_interpolate) {
-		return m_norm*m_scale*InterpolateSensitivity(position);
+		return m_norm*InterpolateSensitivity(position);
 	}
 	else {
-		return m_norm*m_scale*GetSensitivity(position);
+		return m_norm*GetSensitivity(position);
 	}
 }
 
@@ -234,7 +231,6 @@ bool Coil::Prepare  (PrepareMode mode) {
 	m_extent  = 0;
 	m_points  = 0;
 	m_complex = false;
-	m_conjugate = false;
 	m_conjugate = false;
 
 	ATTRIBUTE("XPos"   , m_position [XC]);
