@@ -73,7 +73,7 @@ end
 %modules, some day.
 handles.Coils={'BIOTSAVARTLOOP','ANALYTICCOIL','EXTERNALCOIL'};
 all={'Name','XPos','YPos','ZPos','Azimuth','Polar','Scale','Phase','Conj','Dim',...
-     'Extent','Points'};
+     'Extent','Points'};%,'Interpolate'};
 BSL=all;BSL(end+1)={'Radius'};BSL(end+1)={'Mask'}; AC=all;AC(end+1)={'Sensitivity'};EC=all;EC(end+1)={'Filename'};
 handles.Attributes={BSL,AC,EC};
 
@@ -644,7 +644,6 @@ for i=1:length(CA.Children)
             try
               eval(['global ',AttrVal])
               eval(['val= ',AttrVal,';'])
-              val(1);
             catch
                 disp(['No such global variable: ',AttrVal])
                 return
@@ -676,15 +675,23 @@ for i=1:length(CA.Children)
             end
                 
             %write data to file as (magnitude,phase) pairs
-            FileName=[AttrVal,'.bin'];
-            f=fopen(FileName,'w','l');
-            a=abs(val(:)); b=angle(val(:)); c=[a b]';
-            fwrite(f,c(:),'double');
-            fclose(f);
+            FileName=[AttrVal,'.h5'];
+            if exist(FileName)==2, delete(FileName); end
+            h5create(FileName,'/maps/magnitude',size(val));
+            h5write(FileName,'/maps/magnitude', abs(val));
+            h5create(FileName,'/maps/phase',size(val));
+            h5write(FileName,'/maps/phase', angle(val));
+
+            ok=0;
             for j=1:length(CA.Children(i).Attributes)
                 if strcmpi('filename',CA.Children(i).Attributes(j).Name)
                     CA.Children(i).Attributes(j).Value=FileName;
+                    ok=1;
                 end
+            end
+            if ~ok
+                CA.Children(i).Attributes(end+1).Name = 'filename';
+                CA.Children(i).Attributes(end+1).Value = FileName ;
             end
        end
     end

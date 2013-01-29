@@ -69,7 +69,7 @@ if s==0 % a TCSH
     handles.PJemrisCall = ['setenv LD_LIBRARY_PATH ""; @MPIRUN@  @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
 else    % a BASH 
     handles.JemrisCall  = ['LD_LIBRARY_PATH=""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
-    handles.PJemrisCall = ['LD_LIBRARY_PATH=""; @MPIRUN@ @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
+    handles.PJemrisCall = ['LD_LIBRARY_PATH=""; @MPIRUN@  @MPIRUN_PROC_OPT@ 5 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
 end
 %CLUSTER call works only, if the CWD belongs to cluster
 cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/srv/data/',cwd(n:end)];
@@ -136,7 +136,11 @@ guidata(hObject, handles);
 
 % --- writes the simulation xml file. This is *not* an object of the GUI!
 function handles=write_simu_xml(handles,redraw)
- %path defintions differ on cluster
+
+%write MotionTrajectory again in case Variable has changed:
+MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles);
+
+%path defintions differ on cluster
  if strcmp(get(handles.ParCompTag,'Checked')   ,'on')
      jp='/vol/share/jemris/matlab';
      [w,s]=system('whoami');
@@ -154,7 +158,14 @@ function handles=write_simu_xml(handles,redraw)
  SAMP.Name='sample'     ; SAMP.Data=''; SAMP.Children=[]; 
  SAMP.Attributes(1).Name='name'; SAMP.Attributes(1).Value=sample.name;
  SAMP.Attributes(2).Name='uri';  SAMP.Attributes(2).Value=fullfile(cwd,sample.file);
- %write binary sample file
+  if isfield(sample,'MotionFileName')
+    if strcmp(sample.MotionFileName,'')
+       % do nothing
+    else
+       SAMP.Attributes(end+1).Name='MotionTrajectory';SAMP.Attributes(end).Value=fullfile(cwd,sample.MotionFileName);
+    end
+ end
+%write binary sample file
  if isempty(handles.UserSample)
     T1=handles.sample.T1; T2=handles.sample.T2;  T2S=handles.sample.T2S;
     M0=handles.sample.M0; CS=handles.sample.CS;
@@ -162,7 +173,8 @@ function handles=write_simu_xml(handles,redraw)
     handles.maxM0=writeSample(sample.name,round(2*R/res),res,0,M0,T1,T2,T2S,CS,0,sample.file);
  else
     handles.maxM0=writeSample(handles.UserSample);
- end       
+ end
+ 
  %RX coilarray
  RXCA.Name='RXcoilarray'; RXCA.Data=''; RXCA.Children=[]; RXCA.Attributes.Name='uri';
  if isempty(handles.rxafile)
@@ -614,11 +626,19 @@ if (Nimg==1),bvis='off';handles.img_num=1;
 else;bvis='on';for i=1:Nimg;C{i}=['# ',num2str(i)];end;set(handles.ImageR,'Value',handles.img_num),set(handles.ImageR,'String',C);end
 set(handles.ImageR,'Visible',bvis);
 % check for multiple channels:
-chan=1;
-while (exist(['signal',num2str(chan,'%02i'),'.bin'],'file'))
-    C{chan}=['# ',num2str(chan,'%02i')];chan=chan+1;set(handles.ChannelSelection,'String',C);
-end
-if chan>2;C{chan}=['SumSq'];set(handles.ChannelSelection,'String',C);set(handles.ChannelSelection,'Visible','on');set(handles.ChanSelString,'Visible','on');end;
+info=h5info('signals.h5');
+chan=numel(info.Groups(1).Groups(1).Datasets);
+C={};
+for i=1:chan; C{end+1}=['# ',num2str(i,'%02i')]; end
+if chan>1;
+    if (get(hObject,'Value')==4), C{end+1}=['SumOfSqu'];end %SOS only for images
+    set(handles.ChannelSelection,'String',C);
+    set(handles.ChannelSelection,'Visible','on');
+    set(handles.ChanSelString,'Visible','on');
+else
+    set(handles.ChannelSelection,'Value',1);
+    set(handles.ChannelSelection,'Visible','off');
+end;
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -790,8 +810,19 @@ function ComputationTag_Callback(hObject, eventdata, handles)
 function loadSigTag_Callback(hObject, eventdata, handles)
  [FileName,PathName] = uigetfile('*.mat','Select a Signal mat-file');
  if FileName==0,return;end
- SIGNAL=load(FileName);
- f=fopen('signal.bin','wb'); fwrite(f,SIGNAL.All,'double','l'); fclose(f);
+ SIGNAL=load(FileName)
+ if exist('signals.h5')==2, delete('signals.h5'); end
+ h5create('signals.h5','/signal/times',size(SIGNAL.t));
+ h5write ('signals.h5','/signal/times',SIGNAL.t);
+ for i=1:size(SIGNAL.M,3)
+  A=SIGNAL.M(:,:,i)';
+  h5create('signals.h5',sprintf('/signal/channels/%02i',i-1),size(A));
+  h5write ('signals.h5',sprintf('/signal/channels/%02i',i-1),A);
+  if i>1
+     handles.channel=1;
+     set(handles.ChannelSelection,'Value',1);
+  end
+ end
  cla(handles.hax{2},'reset');
  set(handles.hax{2},'color',[1 1 1],'visible','off');
  set(handles.EPI_R,'Visible','off');
@@ -805,10 +836,16 @@ function loadSigTag_Callback(hObject, eventdata, handles)
 function saveSigTag_Callback(hObject, eventdata, handles)
  [FileName,PathName] = uiputfile('*.mat');
  if FileName==0,return;end
- f=fopen('signal01.bin'); All=fread(f,Inf,'double','l');fclose(f);
- n=size(All,1)/4; A =reshape(All,4,n)';t=A(:,1);[t,I]=sort(t);M=A(I,2:4);
+ info     = h5info('signals.h5');
+ channels = numel(info.Groups(1).Groups(1).Datasets);
+ t = h5read ('signals.h5', sprintf('/signal/times'));
+ [t,I]=sort(t);
+ for i=1:channels
+     A = ( h5read ('signals.h5', sprintf('/signal/channels/%02i',i-1)) )';
+     M(:,:,i) = A(I,:);
+ end
  d=diff(diff(t));d(d<1e-5)=0;I=[0;find(d)+1;length(t)];
- save(FileName,'t','M','I','All');
+ save(FileName,'t','M','I');
 % --------------------------------------------------------------------
 function saveMagEvolTag_Callback(hObject, eventdata, handles)
  [FileName,PathName] = uiputfile('*.mat');
@@ -824,17 +861,12 @@ function ChannelSelection_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 content=get(hObject,'String');
-chan=get(hObject,'Value');
-if numel(content)==chan
-    %SumofSquares: set to negative value
-    if get(handles.showRight,'Value')==4 % sum of squares only for magnitude image
+chan   =get(hObject,'Value');
+if numel(content)==chan && get(handles.showRight,'Value')==4 % SOS image
         handles.channel=-numel(content)+1;
-    else
-       handles.channel=1;
-       set(hObject,'Value',1);
-    end    
 else 
-    handles.channel=chan;end
+    handles.channel=chan;
+end
 
 guidata(hObject, handles);
 showRight_Callback(handles.showRight, eventdata, handles);
@@ -847,6 +879,49 @@ function ChannelSelection_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+function MotionTrajectoryVariable_Callback(hObject, eventdata, handles)
+failed=false;
+VarName=get(hObject,'string');
+MotionFileName='Motion.dat';
+if isempty(VarName)
+    failed=true;
+else
+    if evalin('base',['exist(''',VarName,''',''var'')'])
+        MotionVar=evalin('base',VarName);
+        if isnumeric(MotionVar) && ndims(MotionVar)==2 && size(MotionVar,2)==7
+            RotOrigin=[0 0 0];
+            save(MotionFileName,'RotOrigin','MotionVar','-ASCII');
+            handles.sample.MotionFileName=MotionFileName;
+        else
+           failed=true;
+           display([' ''' VarName ''' has wrong format. MotionTrajectory needs to be a nx7 variable whereas the 7 entries are:'])
+           display('time [ms], Dx/Dy/Dz ind [mm], rotation around x/y/z/ [degree]')
+        end
+    else
+       failed=true;
+       display([' ''' VarName ''' does not exist in workspace!'])
+    end
+end
+if failed
+    set(hObject,'string','');
+    handles.sample.MotionFileName='';
+end
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function MotionTrajectoryVariable_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to MotionTrajectoryVariable (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
