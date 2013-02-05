@@ -513,6 +513,8 @@ class Sample {
 	
 
  protected:
+	void 	MultiplySample(int multiple);  /** clones sample 'multiple'-times, e.g. for diffusion simulation */
+
 	Ensemble     m_ensemble;
 
 

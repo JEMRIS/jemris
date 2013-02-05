@@ -128,6 +128,7 @@ Sample::Sample (string fname, int multiple) {
 
 	Prepare (fname);
 	CropEnumerate();
+	MultiplySample(multiple);
 
 }
 
@@ -270,6 +271,36 @@ void Sample::CropEnumerate () {
 		}
 
 	free (tmp);
+}
+
+/**********************************************************/
+void Sample::MultiplySample (int multiple) {
+if (multiple>1){
+	int  nsize = m_ensemble.NSpins();
+ 	int nprops = m_ensemble.NProps();
+
+	double* tmp = (double*) malloc (nsize * nprops * sizeof(double));
+	memcpy (tmp, m_ensemble.Data(), nsize * nprops * sizeof(double));
+
+	m_ensemble.ClearData();
+	m_ensemble.Init(nsize*multiple);
+	
+	for (int i=0;i<multiple;i++){
+		memcpy (&m_ensemble[i*nprops*nsize], &tmp[0] , nprops *nsize* sizeof(double));
+	}
+
+	for (int i=0;i<nsize*multiple;i++){
+		m_ensemble[i*nprops + nprops - 1] = i;
+	}
+
+	m_spin_state.clear();
+	m_spin_state.resize(nsize*multiple,0);
+
+
+	free (tmp);
+}
+
+
 }
 
 /**********************************************************/

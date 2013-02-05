@@ -85,7 +85,7 @@ IO::Status ExternalCoil::LoadMap () {
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	int size = pow(m_points,m_dim);
+	int size =(int) (pow((double) m_points,(double) m_dim) + 1e-20); // no 'int pow(int,int)' available! Use cast and add delta to avoid roundoff error.
 	int pos  = m_channel*size;
 
 	memcpy (&(m_sens_mag[0][0][0]), &tmpdat[pos], size * sizeof(double));

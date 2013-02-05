@@ -103,12 +103,16 @@ void Simulator::SetSample         (string fsample) {
 		fsample = GetAttr(GetElem("sample"), "uri");
 	
 	std::string type = GetAttr (GetElem ("sample"), "type");
+	string mult = GetAttr(GetElem("sample"), "multiple");
+	int multiple=1;
+	if (!mult.empty()) multiple = atoi(mult.c_str());
+	
 		
 	if (type == "multipool")
 		m_sample = new MultiPoolSample (fsample);
-	else 
-		m_sample = new Sample (fsample);
-
+	else {
+		m_sample = new Sample (fsample,multiple);
+	}
 	m_world->TotalSpinNumber = m_sample->GetSize();
 	m_world->SetNoOfSpinProps(m_sample->GetNProps());
 	m_world->SetNoOfCompartments(m_sample->GetNoSpinCompartments());
