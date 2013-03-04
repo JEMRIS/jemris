@@ -194,10 +194,10 @@ double Coil::InterpolateSensitivity (double* position, bool magnitude){
 		i11 = m_sens_mag[px][py][pz]+(m_sens_mag[px][ny][pz]-m_sens_mag[px][py][pz])*normy;
 		i21 = m_sens_mag[nx][py][pz]+(m_sens_mag[nx][ny][pz]-m_sens_mag[nx][py][pz])*normy;
 	} else {
-		i11 = m_sens_pha[px][py][pz]+(m_sens_pha[px][ny][pz]-m_sens_pha[px][py][pz])*normy;
-		i21 = m_sens_pha[nx][py][pz]+(m_sens_pha[nx][ny][pz]-m_sens_pha[nx][py][pz])*normy;
+		i11 = m_sens_pha[px][py][pz]+Unwrap(m_sens_pha[px][ny][pz]-m_sens_pha[px][py][pz],magnitude)*normy;
+		i21 = m_sens_pha[nx][py][pz]+Unwrap(m_sens_pha[nx][ny][pz]-m_sens_pha[nx][py][pz],magnitude)*normy;
 	}
-	double iz1 = i11+(i21-i11)*normx;
+	double iz1 = i11+Unwrap(i21-i11,magnitude)*normx;
 
 	//check 2D
 	if (m_dim<3) return iz1;
@@ -206,19 +206,29 @@ double Coil::InterpolateSensitivity (double* position, bool magnitude){
 	int nz = (pz+1<m_points?pz+1:m_points-1);
 	double i12, i22;
 	if (magnitude) {
-		i12 = m_sens_mag[px][py][nz]+(m_sens_mag[px][ny][nz]-m_sens_mag[px][py][nz])*normy;
-		i22 = m_sens_mag[nx][py][nz]+(m_sens_mag[nx][ny][nz]-m_sens_mag[nx][py][nz])*normy;
+		i12 = m_sens_mag[px][py][nz]+Unwrap(m_sens_mag[px][ny][nz]-m_sens_mag[px][py][nz],magnitude)*normy;
+		i22 = m_sens_mag[nx][py][nz]+Unwrap(m_sens_mag[nx][ny][nz]-m_sens_mag[nx][py][nz],magnitude)*normy;
 	} else {
-		i12 = m_sens_pha[px][py][nz]+(m_sens_pha[px][ny][nz]-m_sens_pha[px][py][nz])*normy;
-		i22 = m_sens_pha[nx][py][nz]+(m_sens_pha[nx][ny][nz]-m_sens_pha[nx][py][nz])*normy;
+		i12 = m_sens_pha[px][py][nz]+Unwrap(m_sens_pha[px][ny][nz]-m_sens_pha[px][py][nz],magnitude)*normy;
+		i22 = m_sens_pha[nx][py][nz]+Unwrap(m_sens_pha[nx][ny][nz]-m_sens_pha[nx][py][nz],magnitude)*normy;
 	}
-	double iz2 = i12+(i22-i12)*normx;
+	double iz2 = i12+Unwrap(i22-i12,magnitude)*normx;
 
-	return (iz1+(iz2-iz1)*normz);
+	return (iz1+Unwrap(iz2-iz1,magnitude)*normz);
 
 }
 
 /**********************************************************/
+double Coil::Unwrap(double checkwrap, bool magnitude){
+	// only for phase interpolation:
+	if (magnitude) return checkwrap;
+	const double wrapfact = 1; // factor to determine when a phase wrap is likely to be detected.
+	if (checkwrap>PI*wrapfact) checkwrap-=2*PI; if (checkwrap<-PI*wrapfact) checkwrap+=2*PI;
+	return checkwrap;
+}
+
+/**********************************************************/
+
 bool Coil::Prepare  (PrepareMode mode) {
 
 	bool success = false;

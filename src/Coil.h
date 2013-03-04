@@ -186,6 +186,8 @@ class Coil : public Prototype {
     vaArray_3d(double) m_sens_mag;  /**< Array to store sensitivity magnitudes */
     vaArray_3d(double) m_sens_pha;  /**< Array to store sensitivity phases */
 
+    double Unwrap(double diff,bool magnitude); /**< helper function to check for phase wraps in interpolation of phase maps. */
+
 };
 
 #endif /*COIL_H_*/
