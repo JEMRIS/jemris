@@ -33,6 +33,7 @@
 #include "MicrostructureSingleFiber.h"
 #include "MicrostructureCrossingFiber.h"
 #include "MicrostructureKissingFiber.h"
+#include "MicrostructureListedObjects.h"
 #include "MicrostructureBoxes.h"
 #include "rng.h"
 #include "SequenceTree.h"
@@ -52,6 +53,8 @@ TrajectoryDiffusion::TrajectoryDiffusion() {
 	m_xio               = new XMLIO();
 	m_dom_doc			= NULL;
 
+	m_minpos.x=0;m_minpos.y=0;m_minpos.z=0;
+	m_maxpos.x=0;m_maxpos.y=0;m_maxpos.z=0;
 
 }
 
@@ -89,7 +92,7 @@ void TrajectoryDiffusion::LoadFile(string filename) {
     // Diffusion type:
 	string type = GetAttr(element, "DiffusionType");
 	if (type.empty()) {
-		cout << "'DiffusionType' not defined in XML file. Currently available: free, single_fiber, crossing_fiber, kissing_fiber, boxes. \nUsing default.  ";
+		cout << "'DiffusionType' not defined in XML file. Currently available: free, single_fiber, crossing_fiber, kissing_fiber, boxes, listed_objects. \nUsing default.  ";
 		type="free";
 	}
 	cout <<"'DiffusionType' = "<<type<<endl;
@@ -101,6 +104,29 @@ void TrajectoryDiffusion::LoadFile(string filename) {
     if (s_boxsize.empty()) {cout << "'Boxsize' not set in XML file. Using default. ";} else {boxsize = atof(s_boxsize.c_str());}
     if (boxsize <= 0) { cout <<"   Error reading 'Boxsize'. using default. ";boxsize=0.05;}
     cout << "'Boxsize' = 2 * "<<boxsize <<"mm."<<endl;
+	m_minpos.x=-boxsize;m_minpos.y=-boxsize;m_minpos.z=-boxsize;
+	m_maxpos.x=boxsize;m_maxpos.y=boxsize;m_maxpos.z=boxsize;
+
+	// Starting positions:
+	triple minpos,maxpos;
+	string s_startpos = GetAttr(element, "StartPositionBox");
+
+	if (s_startpos.empty()) {
+		cout <<"'StartPositionBox' not set in XML file. Use default, e.g. place Spins in whole microstructure box." <<endl;
+	} else {
+		bool failed=false;
+		stringstream ss_startpos(s_startpos); // Insert the string into a stream
+		if (!(ss_startpos >> minpos.x)) {failed=true;}
+		if (!(ss_startpos >> minpos.y)) {failed=true;}
+		if (!(ss_startpos >> minpos.z)) {failed=true;}
+		if (!(ss_startpos >> maxpos.x)) {failed=true;}
+		if (!(ss_startpos >> maxpos.y)) {failed=true;}
+		if (!(ss_startpos >> maxpos.z)) {failed=true;}
+		if ((minpos.x>=maxpos.x) || (minpos.y>=maxpos.y) ||(minpos.z>=maxpos.z)) {failed=true;}
+
+		if (failed) {cout << "Wrong values for 'StartPositionBox' in xml file. Need 6 numbers: "" min_x min_y min_z max_x max_y max_z "". Using default value (place spins in complete microstructure box.) "<<endl;}
+		else {m_minpos=minpos;m_maxpos=maxpos;cout <<"Use 'StartPositionBox' = ["<< m_minpos.x<<" "<< m_minpos.y<<" "<< m_minpos.z<<" "<< m_maxpos.x<<" "<< m_maxpos.y<<" "<< m_maxpos.z<<"]. "<<endl;}
+    }
 
     // Diffusion projection. Default: 3D diffusion, e.g. no projection:
     string projection = GetAttr(element, "Projection");
@@ -381,6 +407,73 @@ void TrajectoryDiffusion::LoadFile(string filename) {
 
     	} // end is fiber model
 
+    	if ((type.compare("listed_objects")==0)) {
+    		MicrostructureListedObjects* mstruct = new MicrostructureListedObjects();
+
+        	// set boxsize:
+        	mstruct->SetBoxSize(boxsize);
+
+    	    // magnetic field strength:
+    	    string magB = GetAttr(element,"B");
+    	    double dmagB;
+	    	stringstream sss(magB);
+    	    if (sss >> dmagB) {
+    	    } else {cout<<"Strength of magnetic field 'B' is not defined! Using default!"<<endl; dmagB=1;}
+    	    cout << "Magnetic field strength set to " << dmagB <<"T (value only used for calc. of field distortions in microstructure.)"<<endl;
+    	    mstruct->SetBmag(dmagB);
+
+    	    // now magnetic field direction
+    	    string B0 = GetAttr(element,"Bdir");
+   	    	triple B; B.x=1;B.y=0;B.z=0;
+    	    if (!(B0.empty())) {
+    	    	stringstream ss2(B0);
+     	    	if (!(ss2>>B.x)){cout <<"B_x is missing! exit!"<<endl;exit(-1);}
+    	    	if (!(ss2>>B.y)){cout <<"B_y is missing! exit!"<<endl;exit(-1);}
+    	    	if (!(ss2>>B.z)){cout <<"B_z is missing! exit!"<<endl;exit(-1);}
+    	    } else {
+    	    	cout <<"Magnetic field direction 'Bdir' not defined. using default!"<<endl;
+    	    }
+    	    mstruct->SetB(B);
+    	    cout << "Magnetic field direction: B = [ "<< B.x<<" "<<B.y<<" "<<B.z<<"]."<<endl;
+
+
+    		string FiberD = GetAttr(element,"FiberD");
+    		double Daxon=1.4e-6,Dmyelin=0.3e-6;
+    		if (!(FiberD.empty())) {
+				// read Diffusion constants
+				stringstream ss(FiberD);
+				double dummy;
+				if (!(ss >> dummy)) {cout <<"Invalid value: 'FiberD' = "<<FiberD<<".Exit!"<<endl; exit(-1);}
+				Daxon=fabs(dummy);
+    		} else {
+    			cout << "Diffusion constants 'FiberD' not set in XML file. Using default. ";
+    		}
+    		cout << "Diffusion constant(s) 'FiberD': Daxon = "<<Daxon<<"mm^2/ms"<<endl;
+    		mstruct->SetD(Daxon,0);mstruct->SetD(Dmyelin,1);
+
+    		string Neurons = GetAttr(element,"Cylinders");
+    		stringstream ss(Neurons);
+    		triple pos,dir;
+    		double radius,chi;
+    		int i=0;
+
+    	    while (ss >> pos.x) {
+        		i++;
+        		cout<< "Cylinder "<<i<<":\n"<<"Position=["<<pos.x;
+        		if (!(ss >> pos.y)) {cout << "y position of "<<i+1<<"th cylinder is missing. exit!" << endl; exit(-1);} else {cout <<", "<<pos.y;}
+        		if (!(ss >> pos.z)) {cout << "z position of "<<i+1<<"th cylinder is missing. exit!" << endl; exit(-1);} else {cout <<", "<<pos.z<<"]\n";}
+        		if (!(ss >> dir.x)) {cout << "dir_x of "<<i+1<<"th cylinder is missing. exit!" << endl; exit(-1);} else {cout <<"dir=[ "<<dir.x;}
+        		if (!(ss >> dir.y)) {cout << "dir_y of "<<i+1<<"th cylinder is missing. exit!" << endl; exit(-1);} else {cout <<", "<<dir.y;}
+        		if (!(ss >> dir.z)) {cout << "dir_z of "<<i+1<<"th cylinder is missing. exit!" << endl; exit(-1);} else {cout <<", "<<dir.z<<"]\n";}
+        		if (!(ss >> radius)) {cout << "Radius of "<<i+1<<"th cylinder is missing. exit!" << endl; exit(-1);} else {cout<<"Cyl_radius = "<<radius<<"mm.\n";}
+        		if (!(ss >> chi)) {cout << "Susceptibility of "<<i+1<<"th cylinder is missing. exit!" << endl; exit(-1);} else {cout<<"Chi = "<<chi<<"(SI units).\n";}
+        		mstruct->AddCylinder(pos,dir,radius,chi);
+    	    }
+    	    mstruct->CalcdeltaBSlice();
+
+    	    m_microstruct = mstruct;
+    	} // is listed_objects
+
     if (m_microstruct == NULL ) {cout << "No valid microstructure defined. exit!"<<endl; exit (-1); }
 
 
@@ -390,7 +483,7 @@ void TrajectoryDiffusion::LoadFile(string filename) {
     	double dummy=atof(ExtraD.c_str());
     	if (dummy <= 0 ) { cout <<ExtraD<<" not a valid value for 'ExtracellularD' in XML file. using default. ";} else {m_microstruct->SetExternalDiffusionConstant(dummy);}
     }
-    cout << "'ExtravascularD': diffusion constant D= "<<m_microstruct->GetD(-1,-1) <<" mm^2/s"<<endl;
+    cout << "'ExtravascularD': diffusion constant D= "<<m_microstruct->GetD(-1,-1) <<" mm^2/ms"<<endl;
 
 
 
@@ -399,6 +492,8 @@ void TrajectoryDiffusion::LoadFile(string filename) {
     m_rng=new RNG(m_seed*(pw->m_myRank+2));
 
     cout <<"------------------------ End Diffusion simulation variables ----------------------\n"<<endl;
+
+
 
 }
 /***********************************************************/
@@ -416,28 +511,30 @@ void TrajectoryDiffusion::UpdateTrajectory(bool init) {
 		m_time.clear();
 		m_pos.clear();
 		m_y.clear();
+		this->m_deltaB.clear();
+		this->m_deltaB_y.clear();
 		GenerateDiffusionTrajectory();
 	}
 
 }
+
 /***********************************************************/
 void TrajectoryDiffusion::GenerateDiffusionTrajectory() {
-
 	triple trialpos;
 
 	int ObjectIndex=-1,ShellIndex=-1;
 	int TrialObjID=-1, TrialShellID=-1;
 
 	do {
-		trialpos.x=m_rng->uniform(-m_microstruct->GetBoxSize(),m_microstruct->GetBoxSize());
-		trialpos.y=m_rng->uniform(-m_microstruct->GetBoxSize(),m_microstruct->GetBoxSize());
-		trialpos.z=m_rng->uniform(-m_microstruct->GetBoxSize(),m_microstruct->GetBoxSize());
+		trialpos.x=m_rng->uniform(m_minpos.x,m_maxpos.x);//-m_microstruct->GetBoxSize(),m_microstruct->GetBoxSize());
+		trialpos.y=m_rng->uniform(m_minpos.y,m_maxpos.y);//-m_microstruct->GetBoxSize(),m_microstruct->GetBoxSize());
+		trialpos.z=m_rng->uniform(m_minpos.z,m_maxpos.z);//-m_microstruct->GetBoxSize(),m_microstruct->GetBoxSize());
 		m_microstruct->IndexObject(trialpos,ObjectIndex,ShellIndex);
-	} while (!((m_mode==BOTH) | ((ObjectIndex==-1)& (m_mode==EXTERNAL) ) | ((ObjectIndex>-1)& (m_mode==INTERNAL) )  ));
+	} while (!((m_mode==BOTH) | ((ObjectIndex==-1)& (m_mode==EXTERNAL) ) | ((ObjectIndex>-1)& (m_mode==INTERNAL) )) );
 
 	m_time.push_back(0.0);
 	m_pos.push_back(trialpos);
-
+	m_deltaB.push_back(m_microstruct->GetDeltaBMicrostructure(trialpos));
 
 	SequenceTree* pSeqTree = SequenceTree::instance();
 	double seqDuration = pSeqTree->GetRootConcatSequence()->GetDuration();
@@ -465,6 +562,7 @@ void TrajectoryDiffusion::GenerateDiffusionTrajectory() {
 
 	double sigma;
 	sigma = sqrt(2*m_microstruct->GetD(ObjectIndex,ShellIndex)*m_timestep);
+
 	int i=1;
 	while (m_time.back()<=seqDuration) {
 		bool accept;
@@ -489,9 +587,12 @@ void TrajectoryDiffusion::GenerateDiffusionTrajectory() {
 		} while (!accept);
 		m_time.push_back(m_time.back()+m_timestep);
 		m_pos.push_back(trialpos);
+		m_deltaB.push_back(m_microstruct->GetDeltaBMicrostructure(trialpos));
 		i++;
 	}
+
 	CalcY();
+
 	static int counter=0;
 	for (unsigned int i=0; i<m_dump_index.size();i++) {
 		if (counter == m_dump_index[i]) {
@@ -510,6 +611,7 @@ void TrajectoryDiffusion::CalcY() {
 	// init store to length of pos:
 	store.resize(m_pos.size());
 	m_y.resize(m_pos.size());
+	m_deltaB_y.resize(m_pos.size());
 	store.back()= 0;
 	store[0] 	= 0;
 	m_y[0].x	= 0;
@@ -563,10 +665,29 @@ void TrajectoryDiffusion::CalcY() {
 	}
 
 
+	store.back()= 0;
+	store[0] 	= 0;
+	m_deltaB_y[0]	= 0;
+	m_deltaB_y.back()= 0;
+
+	for (int i = 1; i<=m_deltaB_y.size()-2;i++) {
+		sig = (m_time[i]-m_time[i-1])/(m_time[i+1]-m_time[i-1]);
+		p 	= sig*m_deltaB_y[i-1]+2.0;
+		m_deltaB_y[i] = (sig-1.0)/p;
+		store[i] = (m_deltaB[i+1] - m_deltaB[i])/(m_time[i+1]-m_time[i]) - (m_deltaB_y[i] - m_deltaB_y[i-1])/(m_time[i]-m_time[i-1]);
+		store[i] = (6.0*store[i]/(m_time[i+1]-m_time[i-1]) - sig*store[i-1])/p;
+	}
+
+	for (int k=m_deltaB_y.size()-2;k>=0;k--) {
+		m_deltaB_y[k] = m_deltaB_y[k]*m_deltaB_y[k+1]+store[k];
+	}
+
+
+
 }
 
 /***********************************************************/
-void TrajectoryDiffusion::GetValueDerived(double time, double *pos) {
+void TrajectoryDiffusion::GetValueDerived(double time, double *pos, double *value2) {
 
 	int ilo;
 	double a,b,step;
@@ -594,15 +715,19 @@ void TrajectoryDiffusion::GetValueDerived(double time, double *pos) {
 	pos[2] += a*m_pos[ilo].z + b*m_pos[ilo + 1].z + (ta*m_y[ilo].z + tb*m_y[ilo + 1].z)*step;
 
 
+	if (value2!=NULL){
+		*value2 += a*m_deltaB[ilo] + b*m_deltaB[ilo + 1] + (ta*m_deltaB_y[ilo] + tb*m_deltaB_y[ilo + 1])*step;
+	}
 
 }
+
 /***********************************************************/
 void TrajectoryDiffusion::DumpTrajectory(string filename) {
 	ofstream outFile;
     outFile.open(filename.c_str(), ofstream::out);
-    outFile << "% time [ms];  x[mm] y[mm] z[mm]"<<endl;
+    outFile << "% time [ms];  x[mm] y[mm] z[mm] DeltaB[rad/ms?]"<<endl;
     for (unsigned int i=0; i<m_time.size(); i++) {
-    	outFile << m_time[i] << " "<<m_pos[i].x<< " "<<m_pos[i].y << " "<<m_pos[i].z << endl;
+    	outFile << m_time[i] << " "<<m_pos[i].x<< " "<<m_pos[i].y << " "<<m_pos[i].z << " "<<this->m_deltaB[i]<< endl;
     }
 	outFile.close();
 	cout << "dump done."<<endl;
