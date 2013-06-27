@@ -59,15 +59,25 @@ handles.hax=hax;
 handles.epil=0;
 handles.epir=0;
 handles.CWD=pwd;
-handles.win = (strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
+handles.win=(strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
 if (handles.win)
-  if (strcmp(computer,'PCWIN64'))
-    handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\Research Centre Juelich\jemris', 'Path')];
-  else
-    handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Research Centre Juelich\jemris', 'Path')];
-  end
-  handles.JemrisShare=[''];
-  handles.JemrisCall=[fullfile(handles.JemrisPath,'jemris.exe"')];
+    handles.JemrisShare = '';
+    try 
+        if (strcmp(computer,'PCWIN64'))
+            handles.MPICHCall = char([winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\MPICH2', 'Path'), 'bin\mpiexec.exe']);
+        else
+            handles.MPICHCall = char([winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\MPICH2', 'Path'), 'bin\mpiexec.exe']);
+        end
+    catch 
+        handles.MPICHCall = '';
+    end
+    if (strcmp(computer,'PCWIN64'))
+        handles.JemrisPath=[winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\Research Centre Juelich\jemris', 'Path')];
+    else
+        handles.JemrisPath=[winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Research Centre Juelich\jemris', 'Path')];
+    end
+    handles.PJemrisCall   = ['start cmd /s /k "echo Do not close this window! Simulating ... && set PATH="" && "', handles.MPICHCall, '" -localonly 9 "', handles.JemrisPath, 'pjemris" simu.xml > .sim.out && exit"'];
+    handles.JemrisCall    = ['start cmd /s /k "echo Do not close this window! Simulating ... && "', handles.JemrisPath,'jemris.exe" simu.xml > .sim.out && exit"'];
 else
   handles.JemrisPath='@prefix@/bin';                                      
   handles.JemrisShare='@prefix@/share/jemris/matlab'; 
@@ -88,16 +98,22 @@ set(handles.LocCompTag,'Checked','on');
 set(handles.LocCompTagPar,'Checked','off');
 set(handles.ParCompTag,'Checked','off');
 
-%check if parallel jemris exists
-if exist([handles.JemrisPath,'/pjemris'])==0
-    set(handles.LocCompTagPar,'Enable','off');
-end
-%check if our cluster is reachable
-[s,w]=system('ping -c 1 mrcluster');
-if s~=0
+%check if we can simulate in parallel
+if (handles.win)
+    if exist([handles.MPICHCall])==0
+	      set(handles.LocCompTagPar,'Enable','off');
+    end
     set(handles.ParCompTag,'Enable','off');
+else
+    if exist([handles.JemrisPath,'/pjemris'])==0
+        set(handles.LocCompTagPar,'Enable','off');
+    end
+    %check if our cluster is reachable
+    [s,w]=system('ping -c 1 mrcluster');
+    if s~=0
+        set(handles.ParCompTag,'Enable','off');
+    end
 end
-
 %
 sample.file='sample.h5';
 sample.name='2D sphere';
@@ -128,8 +144,10 @@ set(handles.EPI_L,'Visible','off');
 set(handles.EPI_R,'Visible','off');
 set(handles.ImageL,'Visible','off');
 set(handles.ImageR,'Visible','off');
-set(handles.ChannelSelection,'Visible','off');
-set(handles.ChanSelString,'Visible','off');
+if (handles.win == false)
+  set(handles.ChannelSelection,'Visible','off');
+  set(handles.ChanSelString,'Visible','off');
+end
 set(handles.SusceptTag,'Value',0,'Visible','off');
 set(handles.gamBoTag,'Visible','off');    
 set(handles.gamBoText,'Visible','off');    
@@ -161,6 +179,7 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
      cwd=pwd; sd=handles.seqdir; td=handles.txadir; rd=handles.rxadir;
  end
  %
+ if (handles.win); sd=''; cwd=''; end
  sample=handles.sample; sim=handles.sim; rxca=handles.rxca; txca=handles.txca;
  %sample item
  SAMP.Name='sample'     ; SAMP.Data=''; SAMP.Children=[]; 
