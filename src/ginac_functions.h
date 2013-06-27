@@ -279,6 +279,7 @@ public:
 	}
 	void create_src_file(std::string& filename, std::ofstream& ofs)
 	{
+#ifndef __MINGW32__
 		if (filename.empty()) {
 			const char* filename_pattern = "./GiNaCXXXXXX";
 			char* new_filename = new char[strlen(filename_pattern)+1];
@@ -309,6 +310,7 @@ public:
 		ofs << "#include <stdlib.h> " << std::endl;
 		ofs << "#include <math.h> " << std::endl;
 		ofs << std::endl;
+#endif
 	}
 	void compile_src_file(const std::string filename, bool clean_up)
 	{
