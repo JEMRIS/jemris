@@ -70,7 +70,7 @@ public:
 	static void SetSaveFunction();
 
 #ifdef HAVE_MPI_THREADS
-	static vector<MPI::File> 	m_files;
+	static vector<MPI_File> 	m_files;
 #endif
 	static vector<bool>			m_first_write;
 

@@ -40,6 +40,18 @@ vector<MPI_File> 		Mpi2Evolution::m_files;
 vector<bool>			Mpi2Evolution::m_first_write;
 
 
+inline static char* 
+charstar (const std::string& in) {
+
+	size_t len = in.size(); 
+	char * buf = new char[len + 1];
+	std::copy(in.begin(), in.end(), buf);
+	buf[len] = 0;
+	return buf;
+
+}
+
+
 /*****************************************************************************/
 Mpi2Evolution::Mpi2Evolution() {
 }
@@ -69,6 +81,7 @@ void Mpi2Evolution::OpenFiles(int is_restart){
 	MPI_Bcast(&SpinNo,1,MPI_INT,0,MPI_COMM_WORLD);
 	MPI_Offset filesize;
 	filesize = (SpinNo * 7 +2)* sizeof(double);
+    MPI_Status status;
 
 	for (int i=0; i<M; i++) {
         stringstream sF;
@@ -86,13 +99,13 @@ void Mpi2Evolution::OpenFiles(int is_restart){
  		MPI_Barrier(MPI_COMM_WORLD);
         }
 	MPI_File mpifh;
-	MPI_File_open (MPI_COMM_WORLD, sF.str()).c_str(),MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh)
+	MPI_File_open (MPI_COMM_WORLD, charstar(sF.str()),MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &mpifh);
         m_files.push_back(mpifh);
 
-		m_files[i].Preallocate(filesize);
+		MPI_File_preallocate(m_files[i], filesize);
 		if (pW->m_myRank == 1) {
 			double dummy = (double) SpinNo;
-			m_files[i].Write_at(0,&dummy,1,MPI_DOUBLE);
+            MPI_File_write_at(m_files[i], 0, &dummy, 1, MPI_DOUBLE,&status);
 			m_first_write.push_back(true);
 		}
 	}
@@ -106,7 +119,7 @@ void Mpi2Evolution::OpenFiles(int is_restart){
 void Mpi2Evolution::CloseFiles(){
 #ifdef HAVE_MPI_THREADS
 	for (unsigned int i=0; i<m_files.size(); i++) {
-		m_files[i].Close();
+		MPI_File_close(&m_files[i]);
 	}
 #endif
 }
@@ -119,12 +132,14 @@ void Mpi2Evolution::saveEvolution(long index, bool close_files) {
 	        return;
 
 	    int n = index / pW->saveEvolStepSize - 1;
+        MPI_Status status;
 
 	    //write timepoint at first call
 	    if (pW->m_myRank==1 ) {
 	    	if (m_first_write[n]) {
 	    		m_first_write[n]=false;
-				m_files[n].Write_at(1*sizeof(double),&(pW->time),1,MPI_DOUBLE);
+                MPI_File_write_at(m_files[n], 1*sizeof(double),&(pW->time),1,MPI_DOUBLE ,&status);
+
 	    	}
 	    }
 
@@ -141,7 +156,8 @@ void Mpi2Evolution::saveEvolution(long index, bool close_files) {
 	    tmp[6]=pW->solution[ZC];
 
 	    MPI_Offset offset = (2+7*pW->Values[ID])*sizeof(double);
-	    m_files[n].Write_at(offset,tmp,7,MPI_DOUBLE);
+
+        MPI_File_write_at(m_files[n], offset,tmp,7,MPI_DOUBLE,&status);
 
 
 	    return;

@@ -54,6 +54,9 @@ AM_CONDITIONAL(BUILD_API,  test x$build_api  = xyes)
 AC_PROG_CXX
 AC_PROG_CC
 
+# OpenMP
+AC_OPENMP
+
 # Check for required headers.
 AC_CHECK_HEADERS([cstdlib],                                   [], [AC_MSG_ERROR([cannot find cstdlib, bailing out])])
 AC_CHECK_HEADERS([ctime],                                     [], [AC_MSG_ERROR([cannot find ctime, bailing out])])

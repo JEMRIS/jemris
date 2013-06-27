@@ -1,7 +1,7 @@
 # Generate local documentation?
 if BUILD_DOCS
 
-RESOURCES = nav.js 
+RESOURCES = nav.js jemris.css
 #screen.css sh_style.css sh_main.js sh_cpp.js sh_xml.js sh_sh.js nav.js
 PAGES = $(patsubst xml/%.xml,%.html,$(wildcard xml/*.xml))
 %.html: xml/%.xml $(STYLESHEET)

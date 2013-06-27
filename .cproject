@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 5.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage2">
+<?fileVersion 5.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage2">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="0.280292860">
-			<storageModule externalCElementFile="0.280292860_org.eclipse.cdt.core.settings" id="0.280292860" name="Default"/>
-			<storageModule externalCElementFile="0.280292860_cdtBuildSystem" version="4.0.0"/>
-			<storageModule externalCElementFile="0.280292860_scannerConfiguration"/>
-			<storageModule externalCElementFile="0.280292860_org.eclipse.cdt.core.externalSettings"/>
-			<storageModule externalCElementFile="0.280292860_org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+		<cconfiguration id="cdt.managedbuild.toolchain.gnu.macosx.base.816183085">
+			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.macosx.base.816183085_org.eclipse.cdt.core.settings" id="cdt.managedbuild.toolchain.gnu.macosx.base.816183085" name="Default"/>
+			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.macosx.base.816183085_cdtBuildSystem" version="4.0.0"/>
+			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.macosx.base.816183085_org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="JEMRIS_MTMerge.null.1190536941" name="JEMRIS_MTMerge"/>
+		<project id="jemris.null.507999456" name="jemris"/>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Default">
+			<resource resourceType="PROJECT" workspacePath="/jemris"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.816183085;cdt.managedbuild.toolchain.gnu.macosx.base.816183085.1095332108;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.545771383;cdt.managedbuild.tool.gnu.cpp.compiler.input.1740069944">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.816183085;cdt.managedbuild.toolchain.gnu.macosx.base.816183085.1095332108;cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1152867898;cdt.managedbuild.tool.gnu.c.compiler.input.671165557">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 	</storageModule>
 </cproject>

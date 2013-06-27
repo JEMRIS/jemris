@@ -6,24 +6,20 @@
 
 <h1 class="isFirstInSlot">Home</h1>
 
-<p>Welcome to the homepage of project <b>jemris</b>, a high performace computing open source simulator for MRI.</p>
+<h2>Summary</h2>	
+<p>JEMRIS, the &quot;J&uuml;lich Extensible MRI Simulator&quot;, provides an MRI sequence development and simulation environment for the MRI community. The development was driven by the desire to achieve generality of simulated 3D MRI experiments reflecting modern MRI systems hardware. The accompanying computational burden is overcome by means of parallel computing. Many aspects are covered which have not hitherto been simultaneously investigated in general MRI simulations such as parallel transmit and receive, important off-resonance effects, non-linear gradients, and arbitrary spatiotemporal parameter variations at different levels. The latter can be used to simulate various types of motion, for instance. The JEMRIS user interface is very simple to use but, nevertheless, it presents few limitations. MRI sequences with arbitrary waveforms and complex inter-dependent modules are modelled in a GUI-based environment requiring no further programming.</p>
 
-<p>MRI simulations are needed in many cases and deliver many advantages over real systems. Safety considerations for living tissue as well as for the MRI hardware suggest the use of simulations prior to the implementation of new processes on real MRI hardware. Likewise, the work involved in implementing new ideas on MRI scanners oftentimes requires thorough evaluation through simulations. Simulators can also serve as a basis for comparison in quality assurance for data acquisition as well as data processing.</p>
+<h2>Features</h2>	
 
-<p>Different approaches to development of an MRI simulations have been published previously. Yet, we argue that <b>jemris</b> differs substantially to those because it:</p>
+<p>JEMRIS supports the following features:</p>
+<ul>
+<li>Utilising an optimised library for numerical solutions of differential equations (<a href="https://computation.llnl.gov/casc/sundials/description/description.html" target="_ext">CVODE</a>) provides accurate 3D MRI simulation results in cases where no analytical solution is available, e.g. to simulate complex nonlinear RF waveforms for selective excitation or adiabatic full passage pulses.</li>
+<li>JEMRIS can deal with arbitrary RF and gradient waveforms, arbitrary multi-channel Tx-Rx coil geometries and configurations, as well as many important physical concepts, such as nonlinear gradients, chemical shift, reversible spin dephasing (T2*), susceptibility-induced off-resonance, temporal varying processes of the object (e.g. movement or flow), concomitant gradient fields, etc.</li>
+<li>Symbolic mathematical calculations are supported by means of the <a href="http://www.ginac.de" target="_ext">GiNaC</a> library. Thus, many extensions are readily available with no additional programming involved.</li>
+<li>The core simulation routines take advantage of massive parallel processing (using the MPI standard) and are available on different hardware architectures. JEMRIS simulations scale on single-core hardware, small HPC clusters and also on massively parallel supercomputers.</li>
+<li>A Matlab graphical user interface (GUI) is provided with which all simulation parameters are configured, including nearly arbitrary complex MRI sequences. The GUI stores these configurations in XML format which is parsed by the simulator using the Xerces library.</li>
+<li>JEMRIS is open source and the community is encouraged to make contributions to the project under www.jemris.org. It has been successfully tested on Linux, Windows and Mac OS X.</li>
 
-<ul style="list-style-type:square;">
-  <li>utilises a <b>highly optimised library for numerical solutions</b> of differential equations. <b>jemris</b> thus provides exact results where no analytical solution is available. For example, in case of simple slice selection where RF pulses and gradients are applied simultaneously. It is thus well suited and has been successfully applied for designing multi-channel 3D spatially selective excitations.</li>
-  <li>out of the box, it can deal with <b>arbitrary RF and gradient shapes, arbitrary multi-channel Tx-Rx coil geometries and configurations</b>, as well as many important physical concepts such as random and deterministic off-resonance effects, concomitant fields, nonlinear gradients, etc.</li>
-  <li>utilises a library for <b>symbolic mathematics</b>. Thus many extensions are readily available with no additional programming involved.</li>
-  <li>is easy to use. <b>GUIs</b> are provided with which all sequence, hardware and simulation parameters are configured, including nearly arbitrary complex MRI sequences.</li>
-  <li>is available on <b>many operating systems</b>, since it has been coded only in ANSI C++, and has been used for computations on Linux, Windows and Mac OS X.</li>
-  <li>utilises <b>massive parallel processing</b> and it is available on different hardware architectures. <b>jemris</b> can perform up to reasonable sample sizes and experiment setups on single core hardware. It has been extensively used for simulations on small-scale clusters but has also been deployed on massively parallel setups such as JUGENE, the world's fifth fastest civilian super computer with 292288 computer cores and more than 1 PFLOPS peak performance.</li>
-  <li>was developed with <b>extensibility</b> in mind. The incorporated physics model, sequence framework as well as the simulated samples are reconfigurable, replaceable and extensible. For instance a solver is currently implemented, which optionally plugs in replacing the standard Bloch equation solver.</li>
-</ul>
-
-<p><b>jemris</b> is <b>open source</b> and distributed for a range of operating systems under the GPLv3 license. A scientific publication describing the physical and computer scientific concepts is in press with <a href="http://dx.doi.org/10.1002/mrm.22406">MRM</a>.</p>
-	
     ]]>
   </article>
 </main> 
