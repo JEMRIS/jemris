@@ -370,7 +370,7 @@ void Model::UpdateProcessCounter(long lSpin) {
 		
 		if (((time(NULL)-lasttime)>WaitTime ) || (lSpin + 1 == m_world->TotalSpinNumber )) {
 			spinsDone = lSpin - lastspin;
-			MPI::COMM_WORLD.Send(&spinsDone,1,MPI_INT,0,SPINS_PROGRESS);
+			MPI_Send(&spinsDone,1,MPI_INT,0,SPINS_PROGRESS,MPI_COMM_WORLD);
 			
 			if (lSpin + 1 == m_world->TotalSpinNumber )
 				lastspin = -1;

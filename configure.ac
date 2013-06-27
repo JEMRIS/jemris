@@ -246,7 +246,7 @@ AC_TRY_COMPILE([#include <xercesc/dom/DOM.hpp>],
 AC_ARG_WITH(hdf5,[  --with-hdf5             which hdf5 library to use],[
 case $withval in
   yes)
-    HDF5=' -lhdf5_cpp -lhdf5'
+    HDF5=' -lhdf5_cpp -lhdf5 -ldl'
     ;;
   no)
     HDF5=''
@@ -259,7 +259,7 @@ esac
 
 AC_MSG_CHECKING([for H5File in -lhdf5_cpp -lhdf5])
 OLD_LIBS=$LIBS
-LIBS="${LIBS} -lhdf5_cpp -lhdf5"
+LIBS="${LIBS} -lhdf5_cpp -lhdf5 -ldl"
 AC_TRY_LINK([#include <H5Cpp.h>],
    [H5::H5File f ("t.h5", H5F_ACC_RDONLY);],
    [AC_MSG_RESULT([yes])]

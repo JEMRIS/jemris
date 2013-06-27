@@ -41,19 +41,21 @@ using namespace std;
 
 
 int main (int argc, char *argv[]) {
-
+  
 	//init MPI
 #ifdef HAVE_MPI_THREADS
-	MPI::Init_thread(MPI_THREAD_MULTIPLE);
+  int provided;
+  MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
 #else
-	MPI::Init(argc, argv);
+	MPI_Init(&argc, &argv);
 #endif
-	int my_rank = MPI::COMM_WORLD.Get_rank();
+	int my_rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 	World* pW = World::instance();
 	pW->m_myRank = my_rank;
-	pW->m_no_processes = MPI::COMM_WORLD.Get_size();
+	MPI_Comm_size(MPI_COMM_WORLD, &pW->m_no_processes);
 	int master=0, tag=42;
-	double t1 = MPI::Wtime();
+	double t1 = MPI_Wtime();
 
 	// read simulator settings. Slaves do not read the sample !!!
 	string input="simu.xml";
@@ -70,9 +72,9 @@ int main (int argc, char *argv[]) {
 
 	if ( !psim->GetStatus() ) {
 		delete psim;
-		MPI::COMM_WORLD.Barrier();
+		MPI_Barrier(MPI_COMM_WORLD);
 		cout << "Input '" << input << "' is not a valid Simulation xml-file." << endl;
-		MPI::Finalize();
+		MPI_Finalize();
 		return 0;
 	}
 
@@ -123,11 +125,11 @@ int main (int argc, char *argv[]) {
 	delete psim;
 
 	//finished
-	MPI::COMM_WORLD.Barrier();
-	double t2 = MPI::Wtime();
+	MPI_Barrier(MPI_COMM_WORLD);
+	double t2 = MPI_Wtime();
 	if ( my_rank == master)
 		printf ("\n\nActual simulation took %.2f seconds.\n", t2-t1);
-	MPI::Finalize();
+	MPI_Finalize();
 
 	return 0;
 }

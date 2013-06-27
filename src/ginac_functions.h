@@ -29,7 +29,9 @@
 
 #include <ginac/ginac.h>
 #include <vector>
+#ifndef __MINGW32__
 #include <dlfcn.h>
+#endif
 #include <fstream>
 #include <ios>
 #include <sstream>
@@ -37,8 +39,13 @@
 #include <string>
 #include "config.h"
 
-#ifdef HAVE_MKSTEMPS
-extern "C" int mkstemps (char *path, int len);
+#if defined(_MSC_VER)
+#define MKTEMP(path,n) _mktemp_s(path, n)
+#elif defined(__MINGW32__)
+#include <io.h>
+#define MKTEMP(path,n) _mktemp(path)
+#else
+#define MKTEMP(path,n) mkstemps (char *path, int len);
 #endif
 
 using namespace std;
@@ -259,7 +266,9 @@ public:
 	}
 	void clean_up(const std::vector<filedesc>::const_iterator it)
 	{
+#ifndef __MINGW32__
 		dlclose(it->module);
+#endif
 		if (it->clean_up) {
 			remove(it->name.c_str());
 		}
@@ -270,17 +279,17 @@ public:
 			const char* filename_pattern = "./GiNaCXXXXXX";
 			char* new_filename = new char[strlen(filename_pattern)+1];
 			strcpy(new_filename, filename_pattern);
-			#ifndef HAVE_MKSTEMPS
-			if (!mkstemp(new_filename)) {
-				delete[] new_filename;
-				throw std::runtime_error("mktemp failed");
-			}
-			#else
-			if (!mkstemps(new_filename, 0)) {
+			//#ifndef HAVE_MKSTEMPS
+			//if (!mkstemp(new_filename)) {
+			//	delete[] new_filename;
+			//	throw std::runtime_error("mktemp failed");
+			//}
+			//#else
+			if (!MKTEMP(new_filename, 0)) {
 				delete[] new_filename;
 				throw std::runtime_error("mktemps failed");
 			}
-			#endif
+			//#endif
 			filename = std::string(new_filename);
 			ofs.open(new_filename, std::ios::out);
 			delete[] new_filename;
@@ -310,14 +319,18 @@ public:
 	void* link_so_file(const std::string filename, bool clean_up)
 	{
 		void* module = NULL;
+#ifndef __MINGW32__
 		module = dlopen(filename.c_str(), RTLD_NOW);
+#endif
 		if (module == NULL)	{
 			throw std::runtime_error("excompiler::link_so_file: could not open compiled module!");
 		}
 
 		add_opened_module(module, filename, clean_up);
 
+#ifndef __MINGW32__
 		return dlsym(module, "compiled_ex");
+#endif
 	}
 	void unlink(const std::string filename)
 	{

@@ -35,7 +35,7 @@
 
 // init variables:
 #ifdef HAVE_MPI_THREADS
-vector<MPI::File> 		Mpi2Evolution::m_files;
+vector<MPI_File> 		Mpi2Evolution::m_files;
 #endif
 vector<bool>			Mpi2Evolution::m_first_write;
 
@@ -64,10 +64,10 @@ void Mpi2Evolution::OpenFiles(int is_restart){
 	string fname;
 	int SpinNo = pW->TotalSpinNumber;
 
-	MPI::COMM_WORLD.Bcast(&is_restart,1,MPI_INT,0);
+	MPI_Bcast(&is_restart,1,MPI_INT,0,MPI_COMM_WORLD);
 
-	MPI::COMM_WORLD.Bcast(&SpinNo,1,MPI_INT,0);
-	MPI::Offset filesize;
+	MPI_Bcast(&SpinNo,1,MPI_INT,0,MPI_COMM_WORLD);
+	MPI_Offset filesize;
 	filesize = (SpinNo * 7 +2)* sizeof(double);
 
 	for (int i=0; i<M; i++) {
@@ -83,9 +83,11 @@ void Mpi2Evolution::OpenFiles(int is_restart){
  			myfile.open ((sF.str()).c_str(),ios::out | ios::binary| ios::trunc);
  			myfile.close();
  		}
- 		MPI::COMM_WORLD.Barrier();
+ 		MPI_Barrier(MPI_COMM_WORLD);
         }
-        m_files.push_back(MPI::File::Open(MPI::COMM_WORLD,(sF.str()).c_str(),MPI::MODE_WRONLY | MPI::MODE_CREATE, MPI::INFO_NULL  ));
+	MPI_File mpifh;
+	MPI_File_open (MPI_COMM_WORLD, sF.str()).c_str(),MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh)
+        m_files.push_back(mpifh);
 
 		m_files[i].Preallocate(filesize);
 		if (pW->m_myRank == 1) {
@@ -138,7 +140,7 @@ void Mpi2Evolution::saveEvolution(long index, bool close_files) {
 	    tmp[5]=My;
 	    tmp[6]=pW->solution[ZC];
 
-	    MPI::Offset offset = (2+7*pW->Values[ID])*sizeof(double);
+	    MPI_Offset offset = (2+7*pW->Values[ID])*sizeof(double);
 	    m_files[n].Write_at(offset,tmp,7,MPI_DOUBLE);
 
 
