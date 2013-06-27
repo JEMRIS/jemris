@@ -59,22 +59,30 @@ handles.hax=hax;
 handles.epil=0;
 handles.epir=0;
 handles.CWD=pwd;
-handles.JemrisPath='@prefix@/bin';                                      
-handles.JemrisShare='@prefix@/share/jemris/matlab'; 
-
-%define how to call jemris / pjemris
-[s,w]=system('setenv');
-if s==0 % a TCSH
+handles.win = (strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
+if (handles.win)
+  if (strcmp(computer,'PCWIN64'))
+    handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\Research Centre Juelich\jemris', 'Path')];
+  else
+    handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Research Centre Juelich\jemris', 'Path')];
+  end
+  handles.JemrisShare=[''];
+  handles.JemrisCall=[fullfile(handles.JemrisPath,'jemris.exe"')];
+else
+  handles.JemrisPath='@prefix@/bin';                                      
+  handles.JemrisShare='@prefix@/share/jemris/matlab'; 
+  [s,w]=system('setenv');
+  if s==0 % a TCSH
     handles.JemrisCall  = ['setenv LD_LIBRARY_PATH ""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
     handles.PJemrisCall = ['setenv LD_LIBRARY_PATH ""; @MPIRUN@  @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
-else    % a BASH 
+  else    % a BASH 
     handles.JemrisCall  = ['LD_LIBRARY_PATH=""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
     handles.PJemrisCall = ['LD_LIBRARY_PATH=""; @MPIRUN@  @MPIRUN_PROC_OPT@ 5 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
+  end
+  %CLUSTER call works only, if the CWD belongs to cluster
+  cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/srv/data/',cwd(n:end)];
+  handles.ClusterCall=sprintf('ssh mrcluster "cd %s; qsub /vol/share/jemris/matlab/pbs_script.sh"',cwd);
 end
-%CLUSTER call works only, if the CWD belongs to cluster
-cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/srv/data/',cwd(n:end)];
-handles.ClusterCall=sprintf('ssh mrcluster "cd %s; qsub /vol/share/jemris/matlab/pbs_script.sh"',cwd);
-
 %default is sequential computing
 set(handles.LocCompTag,'Checked','on');
 set(handles.LocCompTagPar,'Checked','off');
