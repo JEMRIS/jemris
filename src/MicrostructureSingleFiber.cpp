@@ -252,7 +252,7 @@ void MicrostructureSingleFiber::SetRadiusDistribution(double alpha,double beta, 
 	double step=(r_max-r_min)/500;
 	double r=r_min,w;
 
-	double dummy = pow(beta,alpha)*gamma(alpha);
+	double dummy = pow(beta,alpha)*tgamma(alpha);
 	while (r<=r_max) {
 		w=pow(r,alpha-1)*exp(-r/beta)/dummy;
 		m_radius_axis.push_back(r);
