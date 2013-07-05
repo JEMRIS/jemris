@@ -4,8 +4,8 @@ function [M,t]=readEvol(fsample,fevols,do_plot)
 %
 
 %
-%  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
-%                                  Forschungszentrum Jülich, Germany
+%  JEMRIS Copyright (C) 2007-2010  Tony St??cker, Kaveh Vahedipour
+%                                  Forschungszentrum J??lich, Germany
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -25,15 +25,30 @@ if nargin==1, fevols='evol'; end
 if nargin<3 , do_plot=1    ; end
 
 %get dimensions
-f=fopen(fsample); A=fread(f,Inf,'double'); fclose(f);
-N=zeros(1,3); res=N; offset=N;
-for i=1:3
-    N(i)=A(1+(i-1)*3);
-    res(i)=A(2+(i-1)*3);
-    offset(i)=A(1+(i-1)*3);
+
+if strcmp(fsample(end-2:end),'bin')
+    % old data format:
+    f=fopen(fsample); A=fread(f,Inf,'double'); fclose(f);
+    N=zeros(1,3); res=N; offset=N;
+    for i=1:3
+        N(i)=A(1+(i-1)*3);
+        res(i)=A(2+(i-1)*3);
+        offset(i)=A(1+(i-1)*3);
+    end
+
+    A=A(10:end); A=reshape(A,[5 N]); A=permute(A,[2 3 4 1]); %permutes to (X,Y,Z,type)
+
+else
+    %h5 format:
+    info=h5info(fsample);
+    S=info.Groups.Datasets(1).Dataspace.Size;
+    N(1:2)=S(2:3); 
+    if (numel(S)==4) N(3)=S(4); else N(3)=1;end
+    A=h5read(fsample,'/sample/data');
+    A=permute(A,[2 3 4 1]);
+    
 end
 
-A=A(10:end); A=reshape(A,[5 N]); A=permute(A,[2 3 4 1]); %permutes to (X,Y,Z,type)
 I=find(A(:,:,:,1));
 Np=length(I);
 
