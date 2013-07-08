@@ -25,8 +25,8 @@ function maxM0 = writeSample(varargin)
 %
 
 %
-%  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
-%                                  Forschungszentrum Jülich, Germany
+%  JEMRIS Copyright (C) 2007-2010  Tony St??cker, Kaveh Vahedipour
+%                                  Forschungszentrum J??lich, Germany
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -60,6 +60,8 @@ if ~isfield(Sample,'T2S'),Sample.T2S=Sample.T2; end
 if ~isfield(Sample,'DB'), Sample.DB =zeros(size(Sample.M0)); end
 if ~isfield(Sample,'NN'), Sample.NN =zeros(size(Sample.M0)); end
 
+if numel(Sample.RES)==1 Sample.RES=[1 1 1]*Sample.RES; end;
+if numel(Sample.OFFSET)==1 Sample.OFFSET=[1 1 1]*Sample.OFFSET; end;
 
 %write binary file
 A(:,:,:,1)=Sample.M0;
@@ -79,8 +81,8 @@ h5create('sample.h5','/sample/data',size(A));
 h5create('sample.h5','/sample/resolution',[1 3]);
 h5create('sample.h5','/sample/offset',[1 3]);
 h5write('sample.h5','/sample/data', A);
-h5write('sample.h5','/sample/resolution',[Sample.RES Sample.RES Sample.RES]);
-h5write('sample.h5','/sample/offset',[Sample.OFFSET Sample.OFFSET Sample.OFFSET]);
+h5write('sample.h5','/sample/resolution',Sample.RES);
+h5write('sample.h5','/sample/offset',Sample.OFFSET);
 
 
 maxM0 = max(Sample.M0(:));
