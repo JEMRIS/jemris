@@ -61,6 +61,8 @@ World* World::instance() {
 
     }
 
+    XMLPlatformUtils::Initialize ();
+    
     return m_instance;
 
 }
@@ -105,12 +107,10 @@ int World::GetNoOfCompartments () {
 
 void World::SetNoOfCompartments (int n) {
 
-	// We will potentially get as many solutions for m[x-z] as compartments.
 	m_noofspincompartments = n;
-	if (!solution) {
-		solution = new double [m_noofspincompartments * 3];
-	}
 
+    if (solution.empty())
+        solution.resize(m_noofspincompartments * 3);
 
 }
    

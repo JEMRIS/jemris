@@ -30,7 +30,6 @@
 #include <string>
 #include <xercesc/util/XMLString.hpp>
 
-using namespace std;
 XERCES_CPP_NAMESPACE_USE
 
 //! Simple class for transcoding sax errors to the machines locale
@@ -42,52 +41,59 @@ class StrX {
     /**
      * @brief Contructor.
      */
-    StrX(const XMLCh* const toTranscode);
+    StrX (const XMLCh* const);
 
     /**
      * @brief Construct with char array.
      */
-    StrX(const char* toTranscode);
+    StrX (const char* const);
 
     /**
      * @brief Construct with string.
      */
-    StrX(const string toTranscode);
+    StrX (const std::string&);
+
+    /**
+     * @brief Construct with string.
+     */
+    StrX (const StrX&);
 
     /**
      * @brief Destructor
      */
-    ~StrX();
+    ~StrX ();
+
+    /**
+     * @brief Construct with string.
+     */
+    StrX& operator= (const StrX&);
 
     /**
      * @brief Transcode to local form char array
      *
      * @return Transcoded char array.
      */
-    const char* localForm() const;
+    const char* localForm () const;
 
     /**
      * @brief Transcode to string.
      *
      * @return Transcoded string.
      */
-    const string std_str() const;
+    const std::string std_str () const;
 
     /**
      * @brief Transcode to XMLCh*.
      *
      * @return Transcoded XMLCh*.
      */
-    const XMLCh* XMLchar() ;
+    const XMLCh* XMLchar () ;
 
 private :
-    char*   fLocalForm;
-    string  mString;
-    bool    brelease;
-    bool    brelease2;
-    XMLCh*  tmp;
-
-
+    
+    XMLCh*  _xmlch;
+    std::string  _string;
+    
 };
 
 #endif /*STRX_H_*/

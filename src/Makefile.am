@@ -16,7 +16,7 @@ jemris_CXXFLAGS = $(AM_CXXFLAGS)
 sanityck_SOURCES = $(SOURCES) sanityck.cpp
 pjemris_SOURCES   = $(SOURCES) Mpi2Evolution.cpp Mpi2Evolution.h mpi_Model.h pjemris.cpp
 
-EXTRA_DIST = testsequences.sh testsignals.sh testcoils.sh
+EXTRA_DIST = $(TESTS)
 
 do_subst = sed $(do_dlopen) \
 	-e 's,[@]MPIRUN[@],$(MPIRUN),g' \

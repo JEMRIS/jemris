@@ -29,50 +29,52 @@
 
 
 /***********************************************************/
-StrX::StrX(const XMLCh* const toTranscode):brelease2(false),tmp(NULL) {
-	// Call the private transcoding method
-	fLocalForm = XMLString::transcode(toTranscode);
-	if (fLocalForm != NULL)
-		mString = string(fLocalForm) ;
-	brelease = true;
+StrX::StrX (const XMLCh* const toTranscode) {
+    _xmlch = XMLString::replicate (toTranscode);
+    _string = XMLString::transcode (toTranscode); 
 }
 
 /***********************************************************/
-StrX::StrX(const char* toTranscode ):brelease2(false),tmp(NULL) {
-	if (toTranscode != NULL)
-		mString = string(toTranscode) ;
-	else
-		mString ="";
-
-    brelease = false;
+StrX::StrX (const char* const toTranscode ) : 
+    _string (toTranscode) {
+    _xmlch = XMLString::transcode (toTranscode);
 }
 
 /***********************************************************/
-StrX::StrX(const string toTranscode ):brelease2(false),tmp(NULL) {
-    mString = toTranscode;
-    brelease = false;
+StrX::StrX (const std::string& toTranscode ) :
+    _string (toTranscode) {
+    _xmlch = XMLString::transcode (toTranscode.c_str());
 }
+
+StrX::StrX (const StrX& strx) {
+    *this = strx;
+}
+
+StrX& StrX::operator= (const StrX& strx) {
+    _string = strx._string;
+    _xmlch = XMLString::replicate (strx._xmlch);
+    return *this;
+}
+
+
 /***********************************************************/
 StrX::~StrX() {
-    if (brelease) XMLString::release(&fLocalForm);
-    if (brelease2) XMLString::release(&tmp);
+    if (_xmlch)
+        XMLString::release (&_xmlch);
 }
 
 /***********************************************************/
 const char* StrX::localForm() const {
-    return fLocalForm;
+    return _string.c_str();
 }
 
 /***********************************************************/
-const string StrX::std_str() const {
-    return mString;
+const std::string StrX::std_str() const {
+    return _string;
 }
 
 /***********************************************************/
 const XMLCh* StrX::XMLchar()  {
-	if (tmp!=NULL) XMLString::release(&tmp);
-	tmp = XMLString::transcode(mString.c_str());
-    brelease2 = true;
-	return tmp;
+	return _xmlch;
 }
 

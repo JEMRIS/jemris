@@ -134,7 +134,7 @@ class World {
     double            phase;                /**< @brief Receiver phase taken from the TPOIs*/
     double            PhaseLock;            /**< @brief Locked Phase (the phase set by the last RF pulse)*/
     double            deltaB;               /**< @brief Any off-resonance terms*/
-    double*           solution;          /**< @brief Solution [M_r, phi, M_z] at the current time point*/
+    std::vector<double> solution;          /**< @brief Solution [M_r, phi, M_z] at the current time point*/
 
     double            RandNoise;            /**< @brief percentage of random noise added to the signal */
     double            GMAXoverB0;           /**< @brief Constant for the concomittant field term */

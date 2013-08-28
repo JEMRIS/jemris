@@ -40,7 +40,7 @@
 	if (m_datatype == typeid(    long*).name() ) delete ((    long*) m_backup);
 	if (m_datatype == typeid(unsigned*).name() ) delete ((unsigned*) m_backup);
 	if (m_datatype == typeid(    bool*).name() ) delete ((    bool*) m_backup);
-	if (m_datatype == typeid(  string*).name() ) delete ((  string*) m_backup);
+	if (m_datatype == typeid(  std::string*).name() ) delete ((  std::string*) m_backup);
 }
 
 /***********************************************************/
@@ -73,13 +73,13 @@ void Attribute::UpdatePrototype (Prototype* prot){
 }
 
 /***********************************************************/
-bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, bool verbose){
+bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attribs, bool verbose){
 
 	//set my own symbol
 	m_symbol_name = m_prototype->GetName()+"x"+m_name;
 	
-	//attribute represents a string
-	//if (GetTypeID()==typeid(string*).name()) { WriteMember(expr);  return true; }
+	//attribute represents a std::string
+	//if (GetTypeID()==typeid(std::string*).name()) { WriteMember(expr);  return true; }
 
 	//attribute represents a PulseAxis
 	if (GetTypeID()==typeid(PulseAxis*).name()) {
@@ -92,7 +92,7 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 
 	//GiNaC expressions
 	Prototype::ReplaceString(expr,"step","csgn");
-	if (expr.find("I", 0)!=string::npos) m_complex = true;
+	if (expr.find("I", 0)!=std::string::npos) m_complex = true;
 
 	m_subjects.clear();
 	m_symlist.remove_all();
@@ -101,7 +101,7 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 	for (unsigned int i=0; i<obs_attribs.size() ; i++) {
 		//convert string "a1","a2", ... to the matching symbol name
 		Attribute* subject_attrib = obs_attribs.at(i);
-		string  SymbolName = subject_attrib->GetPrototype()->GetName() + "x" + subject_attrib->GetName();
+		std::string  SymbolName = subject_attrib->GetPrototype()->GetName() + "x" + subject_attrib->GetName();
         stringstream key; key << "a" << i+1;
         if (!Prototype::ReplaceString(expr,key.str(),SymbolName)) continue;
         //still here? the attribute was in the expression, so it is an observed subject
@@ -113,7 +113,7 @@ bool Attribute::SetMember (string expr, const vector<Attribute*>& obs_attribs, b
 	m_formula = expr;
 
 	//stop for strings
-	if (GetTypeID()==typeid(string*).name()) {
+	if (GetTypeID()==typeid(std::string*).name()) {
 	  EvalExpression ();
 	  return true;	  
 	}
@@ -150,8 +150,8 @@ void Attribute::EvalExpression () {
 	if (m_formula.empty()) return;
 	
 	//strings: simply replace attribute symbol by its value
-	if (GetTypeID()==typeid(string*).name()) {
-		string expr = m_formula;
+	if (GetTypeID()==typeid(std::string*).name()) {
+		std::string expr = m_formula;
 		for (unsigned int i=0; i<m_subjects.size() ; i++) {
 			Attribute* a = m_subjects.at(i);
 			stringstream key;
@@ -160,7 +160,7 @@ void Attribute::EvalExpression () {
 			if (a->GetTypeID()==typeid(    long*).name()) key << a->GetMember    <long>() ; 
 			if (a->GetTypeID()==typeid(unsigned*).name()) key << a->GetMember<unsigned>() ; 
 			if (a->GetTypeID()==typeid(    bool*).name()) key << a->GetMember    <bool>() ; 
-			string  SymbolName = a->GetPrototype()->GetName() + "x" + a->GetName();
+			std::string  SymbolName = a->GetPrototype()->GetName() + "x" + a->GetName();
 			Prototype::ReplaceString(expr,SymbolName,key.str());
 		}
 		WriteMember(expr);
@@ -209,7 +209,7 @@ void Attribute::EvalExpression () {
 }
 
 /***********************************************************/
-double Attribute::EvalCompiledExpression (double const val, string const attrib ) {
+double Attribute::EvalCompiledExpression (double const val, std::string const attrib ) {
 
 //cout << GetPrototype()->GetName() << " ??  at pointer num " << m_cur_fp << " -> compiled = " << m_compiled.at(m_cur_fp) << endl;
  	if (!m_compiled.at(m_cur_fp)) {
@@ -241,9 +241,9 @@ double Attribute::EvalCompiledExpression (double const val, string const attrib 
 			}
 			//more work to do, since GiNaC::realsymbol does not behave as expected (and it is therefore not used at all)
 			else {
-				stringstream se; se << e; string formula = se.str();
-				string sym  = GetPrototype()->GetAttribute(attrib)->GetSymbol();
-				string asym = "abs(VarForEvalCompiledExpression)";
+				stringstream se; se << e; std::string formula = se.str();
+				std::string sym  = GetPrototype()->GetAttribute(attrib)->GetSymbol();
+				std::string asym = "abs(VarForEvalCompiledExpression)";
 				Prototype::ReplaceString(formula,sym,asym);
 				GiNaC::lst symlist;
 				symlist.append( get_symbol("VarForEvalCompiledExpression") );

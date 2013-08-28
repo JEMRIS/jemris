@@ -41,7 +41,7 @@ build_api=yes
 DOXYGEN=
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN"; then
-  AC_MSG_WARN([xsltproc (from the libxslt source package) not found, not building documentation])
+  AC_MSG_WARN([doxygen not found, not building documentation])
   build_api=no
 fi
 
@@ -55,7 +55,7 @@ AC_PROG_CXX
 AC_PROG_CC
 
 # OpenMP
-AC_OPENMP
+#AC_OPENMP
 
 # Check for required headers.
 AC_CHECK_HEADERS([cstdlib],                                   [], [AC_MSG_ERROR([cannot find cstdlib, bailing out])])
@@ -140,14 +140,14 @@ AC_TRY_LINK([#include <xercesc/util/PlatformUtils.hpp>],
 
 if test -z $xerceslib_found; then
   if test -z xerces_lib_base; then
-    LIBS="${LIBS} -lxerces-3.0 "
+    LIBS="${LIBS} -lxerces-c "
   else
-    LIBS="-L${xerces_lib_base}/lib -lxerces-3.0 ${LIBS}"
+    LIBS="-L${xerces_lib_base}/lib -lxerces-c ${LIBS}"
   fi
 
   AC_TRY_LINK([#include <xercesc/util/PlatformUtils.hpp>],
      [XERCES_CPP_NAMESPACE_USE XMLPlatformUtils::Initialize(); return 0; ],
-     [AC_MSG_RESULT([xerces-3.0])]
+     [AC_MSG_RESULT([xerces-c])]
      xerceslib_found=yes,
      [AC_MSG_RESULT([unable to determine])]
      [AC_MSG_ERROR([cannot link to Xerces library])])
