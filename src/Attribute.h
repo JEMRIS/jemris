@@ -375,7 +375,7 @@ class Attribute {
      */
     template <typename T> T GetMember (){
     	T d = *((T*) m_address);
-    	if (isnan(d)) return 0;
+    	if (std::isnan(d)) return 0;
     	return d;
     }
 
