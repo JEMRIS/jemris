@@ -117,7 +117,7 @@ void Simulator::SetSample         (string fsample) {
 	m_world->SetNoOfSpinProps(m_sample->GetNProps());
 	m_world->SetNoOfCompartments(m_sample->GetNoSpinCompartments());
 	m_world->InitHelper (m_sample->GetHelperSize());
-	m_sample->CopyHelper(m_world->helper);
+	m_sample->CopyHelper(m_world->Helper());
 	m_sample->ReorderSample();
 
 	string sentinterval = GetAttr(GetElem("sample"),"SentInterval");

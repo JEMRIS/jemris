@@ -27,7 +27,6 @@
 #include "World.h"
 #include "Model.h"
 
-
 World* World::m_instance = 0;
 
 /***********************************************************/
@@ -95,8 +94,8 @@ void World::SetNoOfSpinProps (int n) {
 }
 
 void World::InitHelper (long size)  {
-	if (size > 0)
-		helper = (double*) malloc (size * sizeof(double));
+  if (size > 0)
+    helper.resize(size);
 
 }
 
@@ -119,9 +118,6 @@ void World::SetNoOfCompartments (int n) {
 World::~World () { 
 	
 	m_instance=0; 
-	
-	if (helper)
-		free (helper);
 	
 	if (Values)
 		delete Values; 

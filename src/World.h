@@ -34,7 +34,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include <fstream>
-
+#include <vector>
 
 using namespace std;
 
@@ -83,7 +83,7 @@ class World {
 	 * @brief  Reference to helper array
 	 */
 	double*    Helper () {
-		return helper;
+		return &helper[0];
 	};
 
 
@@ -157,7 +157,8 @@ class World {
 	int               m_noofspinprops;      /**< @brief # of spin properties */
 	int               m_noofspincompartments; /** Number of spin compartments (i.e. MT pools etc.)*/
 
-	double*           helper;             /** @brief Any additional data necessary for solving the model. (i.e. Global MT exchange matrix) */
+	std::vector<double> helper;
+	//double*           helper;             /** @brief Any additional data necessary for solving the model. (i.e. Global MT exchange matrix) */
 	
  private:
 
