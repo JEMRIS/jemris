@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -159,7 +159,8 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	MPI_Scatter  (sendcount, 1, MPI_INT, &recvbuf, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 	// broadcast number of individual spin prioperties:
-	MPI_Bcast    (pSam->GetSampleDims(),1,MPI_LONG,0, MPI_COMM_WORLD);
+	long sd = pSam->GetNProps();
+	MPI_Bcast    (&sd,1,MPI_LONG,0, MPI_COMM_WORLD);
 
 	long hsize = pSam->GetHelperSize();
 
@@ -266,9 +267,10 @@ Sample* mpi_receive_sample(int sender, int tag){
 
 	NPoints= (long) nospins;
 	//get number of physical properties per spin
-	MPI_Bcast    (pSam->GetSampleDims(),1,MPI_LONG,0, MPI_COMM_WORLD);
+	long sd;
+	MPI_Bcast    (&sd,1,MPI_LONG,0, MPI_COMM_WORLD);
 	
-	pSam->CreateSpins(NPoints);
+	pSam->CreateSpins(sd, NPoints);
 
 	long hsize = 0;
 	MPI_Bcast (&hsize, 1, MPI_LONG,0, MPI_COMM_WORLD);

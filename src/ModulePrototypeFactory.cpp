@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -68,7 +68,7 @@ ModulePrototypeFactory::ModulePrototypeFactory () {
 	m_Clonables.insert( pair<string,Module*>( "CONSTANTGRADPULSE",   new ConstantGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "ANALYTICGRADPULSE",   new AnalyticGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "ANALYTICRFPULSE",     new AnalyticRFPulse     () ));
-	m_Clonables.insert( pair<string,Module*>( "SPIRALGRADPULSE",     new SpiralGradPulse            () ));
+	m_Clonables.insert( pair<string,Module*>( "SPIRALGRADPULSE",     new SpiralGradPulse     () ));
 	m_Clonables.insert( pair<string,Module*>( "EXTERNALGRADPULSE",   new ExternalGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "CONCATSEQUENCE",      new ConcatSequence      () ));
 	m_Clonables.insert( pair<string,Module*>( "ATOMICSEQUENCE",      new AtomicSequence      () ));

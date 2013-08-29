@@ -121,7 +121,7 @@ class TPOI {
      * @param tpoi Time points of interest to be added
      * @return Sum
      */
-    TPOI operator + (const TPOI& tpoi);
+    TPOI& operator + (const TPOI& tpoi);
 
     /**
      * Append new single time point.

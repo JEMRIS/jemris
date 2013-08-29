@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -32,7 +32,7 @@
 #include "XMLIO.h"
 
 /***********************************************************/
-Module::Module() {
+Module::Module() : m_parameters (0) {
 
 	m_node          = NULL ;
 	m_seq_tree      = NULL ;

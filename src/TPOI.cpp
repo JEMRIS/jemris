@@ -37,7 +37,7 @@ void TPOI::operator += (const TPOI& tpoi) {
 
 
 /***********************************************************/
-TPOI TPOI::operator + (const TPOI& tpoi) {
+TPOI& TPOI::operator + (const TPOI& tpoi) {
     *this += tpoi; 
     return *this;
 }

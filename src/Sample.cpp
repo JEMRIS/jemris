@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -34,7 +34,7 @@
 #include <math.h>
 
 /**********************************************************/
-void Sample::Prepare (std::string fname) {
+void Sample::Prepare (const std::string& fname) {
 
     m_r2prime              = 0.0;
     m_pos_rand_perc        = 1.0;
@@ -76,10 +76,17 @@ void Sample::ClearSpins() {
 
 
 /**********************************************************/
-void Sample::CreateSpins(long l) {
+void Sample::CreateSpins(const long l) {
 	
 	m_ensemble.Init (l);
 	
+}
+
+/**********************************************************/
+void Sample::CreateSpins(const long np, const long l) {
+
+	m_ensemble.Init (np, l);
+
 }
 
 /**********************************************************/
@@ -105,7 +112,7 @@ Sample::~Sample() {
 
 
 /**********************************************************/
-void Sample::CreateHelper (long l) {
+void Sample::CreateHelper (const long l) {
 
 	if (l > 0) {
 		m_helper_size = l;
@@ -116,7 +123,7 @@ void Sample::CreateHelper (long l) {
 
 
 /**********************************************************/
-Sample::Sample (long size) {
+Sample::Sample (const long size) {
 
 	Prepare();
 
@@ -124,7 +131,7 @@ Sample::Sample (long size) {
 
 
 /**********************************************************/
-Sample::Sample (string fname, int multiple) {
+Sample::Sample (const string& fname, const int multiple) {
 
 	Prepare (fname);
 	CropEnumerate();
@@ -133,7 +140,7 @@ Sample::Sample (string fname, int multiple) {
 }
 
 /**********************************************************/
-IO::Status Sample::Populate (string fname) {
+IO::Status Sample::Populate (const string& fname) {
 
 	// Binary interface
 	BinaryContext bc;
@@ -304,7 +311,7 @@ if (multiple>1){
 }
 
 /**********************************************************/
-long    Sample::GetSize   ()       {
+long  Sample::GetSize   ()     const  {
 	return m_ensemble.NSpins();
 }
 

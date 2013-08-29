@@ -74,7 +74,7 @@ double     AtomicSequence::GetDuration  () {
 }
 
 /***********************************************************/
-void      AtomicSequence::GetValue (double * dAllVal, double const time) {
+inline void      AtomicSequence::GetValue (double * dAllVal, double const time) {
 
     if (time < 0.0 || time > GetDuration()) { return ; }
 
@@ -119,7 +119,7 @@ void      AtomicSequence::GetValue (double * dAllVal, double const time) {
 }
 
 /***********************************************************/
-void AtomicSequence::Rotation (double * Grot) {
+inline void AtomicSequence::Rotation (double * Grot) {
 
     if ( m_alpha == 0.0 ) return;
 
@@ -127,15 +127,33 @@ void AtomicSequence::Rotation (double * Grot) {
     double Gy = Grot[1];
     double Gz = Grot[2];
 
-    double alpha = m_alpha * PI/180.0;
-    double theta = m_theta * PI/180.0;
-    double phi   = m_phi   * PI/180.0;
+    double pi_180 = PI/180.0;
+    double alpha = m_alpha * pi_180;
+    double theta = m_theta * pi_180;
+    double phi   = m_phi   * pi_180;
 
-    Grot[0] = ((cos(phi)*(pow(cos(theta),2.0)*cos(alpha)+pow(sin(theta),2.0))-sin(phi)*cos(theta)*sin(alpha))*cos(phi)+(cos(phi)*cos(theta)*sin(alpha)+sin(phi)*cos(alpha))*sin(phi))*Gx+(-(cos(phi)*(pow(cos(theta),2.0)*cos(alpha)+pow(sin(theta),2.0))-sin(phi)*cos(theta)*sin(alpha))*sin(phi)+(cos(phi)*cos(theta)*sin(alpha)+sin(phi)*cos(alpha))*cos(phi))*Gy+(cos(phi)*(-cos(theta)*cos(alpha)*sin(theta)+sin(theta)*cos(theta))+sin(phi)*sin(theta)*sin(alpha))*Gz;
+    double cos_theta = cos(theta);
+    double sin_theta = sin(theta);
+    double cos_2_theta = cos_theta * cos_theta;
+    double sin_2_theta = sin_theta * sin_theta;
+    double cos_alpha = cos(alpha);
+    double sin_alpha = sin(alpha);
+    double cos_phi = cos(phi);
+    double sin_phi = sin(phi);
+    
+    Grot[0] =
+        ((cos_phi*(cos_2_theta*cos_alpha+sin_2_theta)-sin_phi*cos_theta*sin_alpha)*cos_phi+(cos_phi*cos_theta*sin_alpha+sin_phi*cos_alpha)*sin_phi)*Gx+
+        (-(cos_phi*(cos_2_theta*cos_alpha+sin_2_theta)-sin_phi*cos_theta*sin_alpha)*sin_phi+(cos_phi*cos_theta*sin_alpha+sin_phi*cos_alpha)*cos_phi)*Gy+
+        (cos_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)+sin_phi*sin_theta*sin_alpha)*Gz;
 
-    Grot[1] = ((-sin(phi)*(pow(cos(theta),2.0)*cos(alpha)+pow(sin(theta),2.0))-cos(phi)*cos(theta)*sin(alpha))*cos(phi)+(-sin(phi)*cos(theta)*sin(alpha)+cos(phi)*cos(alpha))*sin(phi))*Gx+(-(-sin(phi)*(pow(cos(theta),2.0)*cos(alpha)+pow(sin(theta),2.0))-cos(phi)*cos(theta)*sin(alpha))*sin(phi)+(-sin(phi)*cos(theta)*sin(alpha)+cos(phi)*cos(alpha))*cos(phi))*Gy+(-sin(phi)*(-cos(theta)*cos(alpha)*sin(theta)+sin(theta)*cos(theta))+cos(phi)*sin(theta)*sin(alpha))*Gz;
+    Grot[1] =
+        ((-sin_phi*(cos_2_theta*cos_alpha+sin_2_theta)-cos_phi*cos_theta*sin_alpha)*cos_phi+(-sin_phi*cos_theta*sin_alpha+cos_phi*cos_alpha)*sin_phi)*Gx+
+        (-(-sin_phi*(cos_2_theta*cos_alpha+sin_2_theta)-cos_phi*cos_theta*sin_alpha)*sin_phi+(-sin_phi*cos_theta*sin_alpha+cos_phi*cos_alpha)*cos_phi)*Gy+
+        (-sin_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)+cos_phi*sin_theta*sin_alpha)*Gz;
 
-    Grot[2] = (cos(phi)*(-cos(theta)*cos(alpha)*sin(theta)+sin(theta)*cos(theta))-sin(phi)*sin(theta)*sin(alpha))*Gx+(-sin(phi)*(-cos(theta)*cos(alpha)*sin(theta)+sin(theta)*cos(theta))-cos(phi)*sin(theta)*sin(alpha))*Gy+(pow(sin(theta),2.0)*cos(alpha)+pow(cos(theta),2.0))*Gz;
+    Grot[2] = (cos_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)-sin_phi*sin_theta*sin_alpha)*Gx+
+        (-sin_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)-cos_phi*sin_theta*sin_alpha)*Gy+
+        (sin_2_theta*cos_alpha+cos_2_theta)*Gz;
 
     return;
 

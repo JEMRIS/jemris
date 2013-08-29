@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -56,34 +56,24 @@ static int ens_alloc = 0;
 /**
  * @brief Spin ensemble
  */
+//template <class T = double>
 struct Ensemble {
 
-	unsigned m_ndim ;     /**< # of dimensions                                                      */
-	long     m_dims[256]; /**< Specific dimensions (arbitrary maximum to way too high limit of 256) */
-    double*  m_data;      /**< Actual serialized data (Data is stored column-major)                 */
+	std::vector<long> m_dims; /**< Specific dimensions (arbitrary maximum to way too high limit of 256) */
+    std::vector<double> m_data;      /**< Actual serialized data (Data is stored column-major)                 */
 	long     m_nspins;    /**< Live spins (i.e. Spins with M0 > 0)                                  */
 
 	/**
 	 * @brief      Construct
 	 */
-	Ensemble () {
-
-		m_nspins = 0;
-		m_ndim   = 0;
-
-		for (unsigned i = 0; i < 256; i++)
-			m_dims[i] = 0;
-
-	}
+	Ensemble () : m_nspins(0) {}
 
 
 	/**
 	 * @brief      Destruct
 	 */
 	~Ensemble () {
-
 		Clear();
-
 	}
 
 
@@ -92,12 +82,9 @@ struct Ensemble {
 	 * 
 	 * @return      Number of elements in data store
 	 */
-	inline long 
-	Size () {
-
-		return NSpins() * NProps();
-
-	};
+	inline long Size () const {
+		return m_data.size();
+	}
 
 
 	/**
@@ -105,12 +92,9 @@ struct Ensemble {
 	 *
 	 * @return      Number of spins in data store
 	 */
-	inline long 
-	NSpins () {
-
+	inline long NSpins () const {
 		return m_nspins;
-
-	};
+	}
 
 
 	/**
@@ -118,12 +102,9 @@ struct Ensemble {
 	 *
 	 * @return      Number of physical and spatial properties of every spin
 	 */
-	inline long
-	NProps () const {
-
+	inline long	NProps () const {
 		return m_dims[0];
-
-	};
+	}
 	
 
 	/**
@@ -131,46 +112,28 @@ struct Ensemble {
 	 *
 	 * @return       Reference to number of physical and spatial properties of every spin. 
 	 */
-	inline long&
-	NProps () {
-
+	inline long& NProps () {
 		return m_dims[0];
-
-	};
+	}
 	
 
 	/**
 	 * @brief       Clear data store and dimensions.
 	 */
-	inline void 
-	Clear () {
-
-		// Reset dimensions
+	inline void Clear () {
 		m_nspins = 0;
-		for (unsigned i = 1; i < 256; i++)
-			m_dims[i] = 0;
-
-		// Free RAM
-		if (ens_alloc) {
-			free (m_data);
-			ens_alloc--;
-		}
-		
+		m_dims.clear();
+		m_data.clear();
 	};
 	
 
 	/**
 	 * @brief       Clear data store and dimensions.
 	 */
-	inline void 
-	ClearData () {
-
-		// Free RAM
-		if (ens_alloc) {
-			free (m_data);
-			ens_alloc--;
-		}
-		
+	inline void ClearData () {
+		m_nspins = 0;
+		m_dims.clear();
+		m_data.clear();
 	};
 	
 
@@ -181,14 +144,10 @@ struct Ensemble {
 	 * @param  dims Actual dimensions
 	 * @param  live Live (non-zero) spins
 	 */ 
-	inline void 
-	Init (int ndim, long* dims, long live) {
+	inline void Init (const long ndim, const long* dims, const long live) {
 
-		// Set dimensionality
-		m_ndim     = ndim; 
-
-		// Copy actual dimensions
-		memcpy (m_dims, dims, ndim*sizeof(long));
+		m_dims.resize(ndim);
+		std::copy (dims, dims+ndim, m_dims.begin());
 
 		// Add spatial dimensions 
 		m_dims[0] += 4;
@@ -196,35 +155,26 @@ struct Ensemble {
 		// Set number of live spins (Generally less spins may have M0 > 0)
 		m_nspins   = live;
 
-		// Allocate RAM and zero fields
 		Allocate();
 		Zero();
 
-	};
+	}
 
 	
 	/**
 	 * @brief      Allocate RAM
 	 */ 
-	inline void
-	Allocate () {
-
-		m_data     = (double*) malloc (NSpins() * NProps() * sizeof(double));
-		ens_alloc++;
-
-	};
+	inline void	Allocate () {
+		m_data.resize(NSpins() * NProps());
+	}
 
 
 	/**
 	 * @brief     Zero data 
 	 */
-	inline void 
-	Zero () {
-
-		for (int i = 0; i < Size(); i++)
-			m_data [i] = 0.0;
-
-	};
+	inline void Zero () {
+		m_data.assign(m_data.size(), 0.);
+	}
 
 
 	/**
@@ -232,28 +182,32 @@ struct Ensemble {
 	 *
 	 * @param  live Live (non-zero) spins
 	 */ 
-	inline void 
-	Init (long live) {
-
+	inline void	Init (const long live) {
 		m_nspins   = live;
 		Allocate();
 		Zero();
+	}
 
-
-	};
-
+	/**
+	 * @brief  Initialize data store number of non-zero spins only (MPI slaves)
+	 *
+	 * @param  live Live (non-zero) spins
+	 */
+	inline void	Init (const long nprops, const long live) {
+		m_dims.push_back(nprops);
+		m_nspins   = live;
+		Allocate();
+		Zero();
+	}
 
 	/**
 	 * @brief       Dimensions
 	 *
 	 * @return      Dimensions of the ensemble
 	 */
-	inline long*
-	Dims () {
-
-		return m_dims;
-
-	};
+	inline const long* Dims () const {
+		return m_dims.data();
+	}
 
 
 	/**
@@ -261,27 +215,31 @@ struct Ensemble {
 	 * @param  pos  Desired position 
 	 * @return      Reference to pos-th value in the store
 	 */
-	inline double
-	&operator[]     (long pos) {
-		
+	inline double& operator[] (const long pos) {
 		assert(pos >= 0);
-		assert(pos <  Size());
-		
+		assert(pos <  m_data.size());
 		return m_data[pos];
-		
-	};
+	}
+
+	/**
+	 * @brief       Access to position in store
+	 * @param  pos  Desired position
+	 * @return      Reference to pos-th value in the store
+	 */
+	inline double operator[] (long pos) const {
+		assert(pos >= 0);
+		assert(pos <  m_data.size());
+		return m_data[pos];
+	}
 
 	/**
 	 * @brief       Access to data
 	 *
 	 * @return      Reference to data
 	 */
-	inline double*
-	Data            () {
-		
-		return m_data;
-		
-	};
+	inline double* Data () {
+		return m_data.data();
+	}
 
 };
 
@@ -313,7 +271,7 @@ class Sample {
      *
      * @param file Sample binary file
      */
-    Sample                              (string file,int multiple=1);
+    Sample                              (const string& file, const int multiple = 1);
 
     /**
      * Constructor
@@ -322,7 +280,7 @@ class Sample {
      *
      * @param size Size of the sample
      */
-    Sample                              (long size);
+    Sample                              (const long size);
 
     /**
      * Destructor
@@ -333,7 +291,7 @@ class Sample {
      * init variables which are same for all constructors
      *
      */
-    virtual void Prepare (std::string fname = "");
+    virtual void Prepare (const std::string& fname = "");
 
     /**
      * @brief delete the spin structure
@@ -345,28 +303,35 @@ class Sample {
      *
      * @param size Size of the spin structure to create
      */
-    void CreateSpins (long size);
+    void CreateSpins (const long size);
+
+    /**
+     * @brief create the spin structure
+     *
+     * @param size Size of the spin structure to create
+     */
+    void CreateSpins (const long nprops, const long size);
 
     /**
      * Get size of the sample
      *
      * @return Size of the sample
      */
-    long    GetSize                     ();
+    long    GetSize                     () const;
 
     /**
      * Get number of spin properties including spatial
      *
      * @return Numnber of spin properties
      */
-    inline long    GetNProps            () {return m_ensemble.NProps();};
+    inline long  GetNProps () {return m_ensemble.NProps();};
 
     /**
      * Get number of spin properties including spatial
      *
      * @return Numnber of spin properties
      */
-    inline long*   GetSampleDims        () {return m_ensemble.Dims();};
+    inline const long* GetSampleDims () const {return m_ensemble.Dims();};
 
     /**
      * Get a subset of this sample
@@ -374,7 +339,7 @@ class Sample {
      * @param n    N-th subset
      * @param size Size of the subset
      */
-    Sample* GetSubSample                (int n, long size);
+    Sample* GetSubSample                (const int n, const long size);
 
     /**
      * @brief Get values for spin l and deliver them in val.
@@ -382,7 +347,7 @@ class Sample {
      * @param l   Spin number
      * @param val Output container
      */
-    void GetValues                   (long l, double* val) ;
+    void GetValues                   (const long l, double* val) ;
 
     /**
      * @brief Get grid resolution
@@ -429,7 +394,7 @@ class Sample {
      *
      * @param file Sample binary file
      */
-	virtual IO::Status Populate (string file);
+	virtual IO::Status Populate (const string& file);
 
     /**
      * returns pointer to sample data (needed for MPI send/receive)
@@ -505,7 +470,7 @@ class Sample {
 	
 	void    SetNoSpinCompartments (int n);
 	
-	void    CreateHelper (long l);
+	void    CreateHelper (const long l);
 	
 	void    CopyHelper (double* out);
 
