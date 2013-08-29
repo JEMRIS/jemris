@@ -28,7 +28,7 @@ void SampleReorderShuffle::Execute(Spin* data) {
         // Pick a random element to move to the end
         long k =  floor(rng.rand_halfclosed01()*n) ;  // 0 <= k <= n - 1.
         // Simple swap of variables
-        Ensemble tmp = data->data[k];
+        Ensemble<double> tmp = data->data[k];
         data->data[k] = data->data[n - 1];
         data->data[n - 1] = tmp;
     }

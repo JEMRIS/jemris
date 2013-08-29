@@ -56,11 +56,11 @@ static int ens_alloc = 0;
 /**
  * @brief Spin ensemble
  */
-//template <class T = double>
+template <class T = double>
 struct Ensemble {
 
 	std::vector<long> m_dims; /**< Specific dimensions (arbitrary maximum to way too high limit of 256) */
-    std::vector<double> m_data;      /**< Actual serialized data (Data is stored column-major)                 */
+    std::vector<T> m_data;      /**< Actual serialized data (Data is stored column-major)                 */
 	long     m_nspins;    /**< Live spins (i.e. Spins with M0 > 0)                                  */
 
 	/**
@@ -215,7 +215,7 @@ struct Ensemble {
 	 * @param  pos  Desired position 
 	 * @return      Reference to pos-th value in the store
 	 */
-	inline double& operator[] (const long pos) {
+	inline T& operator[] (const long pos) {
 		assert(pos >= 0);
 		assert(pos <  m_data.size());
 		return m_data[pos];
@@ -226,7 +226,7 @@ struct Ensemble {
 	 * @param  pos  Desired position
 	 * @return      Reference to pos-th value in the store
 	 */
-	inline double operator[] (long pos) const {
+	inline T operator[] (long pos) const {
 		assert(pos >= 0);
 		assert(pos <  m_data.size());
 		return m_data[pos];
@@ -237,7 +237,7 @@ struct Ensemble {
 	 *
 	 * @return      Reference to data
 	 */
-	inline double* Data () {
+	inline T* Data () {
 		return m_data.data();
 	}
 
@@ -249,7 +249,7 @@ struct Ensemble {
  */
 struct Spin {
     long    size; 		/**< Data size    */
-    Ensemble *data;	/**< array of spins */
+    Ensemble<double> *data;	/**< array of spins */
 };
 
 
@@ -480,7 +480,7 @@ class Sample {
  protected:
 	void 	MultiplySample(int multiple);  /** clones sample 'multiple'-times, e.g. for diffusion simulation */
 
-	Ensemble     m_ensemble;
+	Ensemble<double>     m_ensemble;
 
 
     long         m_index [3];  /** < Sample dimensions      */
