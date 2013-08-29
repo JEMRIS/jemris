@@ -76,14 +76,14 @@ void Sample::ClearSpins() {
 
 
 /**********************************************************/
-void Sample::CreateSpins(const long l) {
+void Sample::CreateSpins(const size_t l) {
 	
 	m_ensemble.Init (l);
 	
 }
 
 /**********************************************************/
-void Sample::CreateSpins(const long np, const long l) {
+void Sample::CreateSpins(const size_t np, const size_t l) {
 
 	m_ensemble.Init (np, l);
 
@@ -112,7 +112,7 @@ Sample::~Sample() {
 
 
 /**********************************************************/
-void Sample::CreateHelper (const long l) {
+void Sample::CreateHelper (const size_t l) {
 
 	if (l > 0) {
 		m_helper_size = l;
@@ -123,7 +123,7 @@ void Sample::CreateHelper (const long l) {
 
 
 /**********************************************************/
-Sample::Sample (const long size) {
+Sample::Sample (const size_t size) {
 
 	Prepare();
 
@@ -159,7 +159,7 @@ IO::Status Sample::Populate (const string& fname) {
 
 	double* tmpdat = (double*) malloc (di.GetSize() * sizeof(double));
 	int    tmpndim = di.ndim;
-	long   tmpdims [4];
+	size_t   tmpdims [4];
 	int    size    = 1;
 
 	for (int i = 0; i<tmpndim; i++) {
@@ -311,12 +311,12 @@ if (multiple>1){
 }
 
 /**********************************************************/
-long  Sample::GetSize   ()     const  {
+size_t  Sample::GetSize   ()     const  {
 	return m_ensemble.NSpins();
 }
 
 /**********************************************************/
-void Sample::GetValues (long l, double* val) {
+void Sample::GetValues (const size_t l, double* val) {
 
 	//copy the properties of the l-th spin to m_val
 
@@ -330,7 +330,7 @@ void Sample::GetValues (long l, double* val) {
 }
 
 /**********************************************************/
-double  Sample::GetDeltaB (long pos) {
+double  Sample::GetDeltaB (size_t pos) {
 
 	//get off-resonance : convert m_val from [Hz] to [kHz] and add the Lorentzian random offset
 	double r2prime = (
@@ -592,7 +592,7 @@ double* Sample::GetHelper () {
 }
 
 /*********************************************************/
-long Sample::GetHelperSize () {	
+size_t Sample::GetHelperSize () {
 	return m_helper_size;
 }
 
