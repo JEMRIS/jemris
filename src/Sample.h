@@ -247,6 +247,7 @@ struct Ensemble {
 /**
  * @brief a container of spins
  */
+//template <class T = double>
 struct Spin {
     size_t    size; 		/**< Data size    */
     Ensemble<double> *data;	/**< array of spins */
@@ -324,7 +325,7 @@ class Sample {
      *
      * @return Numnber of spin properties
      */
-    inline size_t  GetNProps () {return m_ensemble.NProps();};
+    inline size_t  GetNProps () const {return m_ensemble.NProps();};
 
     /**
      * Get number of spin properties including spatial
@@ -354,7 +355,7 @@ class Sample {
      *
      * @return Grid resolution
      */
-    double* GetResolution()  { return m_res; };
+    double* GetResolution()   { return m_res; };
 
     /**
      * @brief Initialize the randome number generator
@@ -386,7 +387,7 @@ class Sample {
      * @param pos    Position of the spin. If negative, last acquired spin by GetValues is used.
      * @return       The off-resonance in unit [Khz]
      */
-    double  GetDeltaB                   (size_t pos = -1);
+    double  GetDeltaB             (size_t pos = -1);
 
     /**
      *

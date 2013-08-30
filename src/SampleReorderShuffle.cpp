@@ -17,14 +17,13 @@ SampleReorderShuffle::~SampleReorderShuffle() {
 
 
 void SampleReorderShuffle::Execute(Spin* data) {
-	// fisher-yates shuffle algorithm as seen on wikipedia:
 
+	// fisher-yates shuffle algorithm as seen on wikipedia:
 	// seed always with same number. must be consistent for restart!
 	RNG rng(42);
 
     // n is the number of items left to shuffle
-    for (long n = data->size; n > 1; n--)
-    {
+    for (long n = data->size; n > 1; n--) {
         // Pick a random element to move to the end
         long k =  floor(rng.rand_halfclosed01()*n) ;  // 0 <= k <= n - 1.
         // Simple swap of variables

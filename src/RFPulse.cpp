@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -40,7 +40,7 @@ RFPulse::RFPulse  () {
 }
 
 /*****************************************************************/
-bool RFPulse::Prepare  (PrepareMode mode) {
+bool RFPulse::Prepare  (const PrepareMode mode) {
 
 	//every RFPulse might have FlipAngle, InitialPhase, Bandwidth, and Frequncy offset
 	ATTRIBUTE("FlipAngle"    , m_flip_angle   );

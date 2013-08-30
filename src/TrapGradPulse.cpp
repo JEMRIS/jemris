@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -42,7 +42,10 @@ TrapGradPulse::TrapGradPulse        (const TrapGradPulse& hrfp) {
 	m_slope_dn	    = 0.0;
 }
 
-TrapGradPulse::TrapGradPulse        ()                          {}
+TrapGradPulse::TrapGradPulse       () :
+		m_has_flat_top_area(0) , m_slope_up(0), m_ramp_dn_time(0), m_slope_dn(0), m_has_duration(0),
+		m_asym_sr(0), m_time_to_ramp_dn (0), m_ramp_up_time(0), m_flat_top_time(0), m_amplitude(0) ,
+		m_has_flat_top_time(0), m_flat_top_area(0) {}
 
 TrapGradPulse::~TrapGradPulse       ()                          {}
 
@@ -50,7 +53,7 @@ TrapGradPulse* TrapGradPulse::Clone () const  { return (new TrapGradPulse(*this)
 
 
 /***********************************************************/
-bool TrapGradPulse::Prepare  (PrepareMode mode) {
+bool TrapGradPulse::Prepare  (const PrepareMode mode) {
 
 	ATTRIBUTE("FlatTopArea"         , m_flat_top_area   );
 	ATTRIBUTE("FlatTopTime"         , m_flat_top_time   );

@@ -7,7 +7,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -45,7 +45,7 @@ public:
     /**
      * @brief Default constructor
      */
-	TriangleGradPulse() {};
+	TriangleGradPulse() : m_amplitude(0.), m_triangle_type(TRIANGLE_UP) {};
 
     /**
      * @brief Default copy constructor.
@@ -65,7 +65,7 @@ public:
     /**
      * See Module::Prepare
      */
-    virtual bool        Prepare  (PrepareMode mode);
+    virtual bool        Prepare  (const PrepareMode mode);
 
     /**
      * See GradPulse::GetValue

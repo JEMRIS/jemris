@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -52,7 +52,13 @@ class RFPulse : public Pulse, public TxRxPhase {
     /**
      * @brief Default copy constructor.
      */
-    RFPulse (const RFPulse&) {};
+    RFPulse (const RFPulse& rfp) {
+    	m_flip_angle = rfp.m_flip_angle;
+    	m_bw = rfp.m_bw;
+    	m_channel = rfp.m_channel;
+    	m_coil_array = rfp.m_coil_array;
+    	m_GetPhaseFunPtrs = rfp.m_GetPhaseFunPtrs;
+    }
 
     /**
      *  @brief see Module::GetValue()
@@ -62,7 +68,7 @@ class RFPulse : public Pulse, public TxRxPhase {
     /**
      * @brief see Module::Prepare()
      */
-    virtual bool Prepare  (PrepareMode mode);
+    virtual bool Prepare  (const PrepareMode mode);
 
     /**
      * @brief Get the B1 integral of this pulse
@@ -77,21 +83,21 @@ class RFPulse : public Pulse, public TxRxPhase {
      *
      * @return Flip angle.
      */
-    inline double  GetFlipAngle  () {return m_flip_angle;};
+    inline double  GetFlipAngle  () const {return m_flip_angle;};
 
     /**
      * @brief       Set the flip angle of this RF pulse.
      *
      * @param fa Flip angle.
      */
-    inline void    SetFlipAngle  (double fa) {m_flip_angle = fa; };
+    inline void    SetFlipAngle  (const double fa) {m_flip_angle = fa; };
 
     /**
      * @brief  Get the CoilArray channel of this pulse.
      *
      * @return Flip angle.
      */
-    inline int  GetChannel  () {return m_channel;};
+    inline int  GetChannel  () const {return m_channel;};
 
     /**
      * @brief       Set the CoilArray channel of this RF pulse.

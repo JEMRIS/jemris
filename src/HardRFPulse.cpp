@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -27,7 +27,7 @@
 #include "HardRFPulse.h"
 
 /***********************************************************/
-bool HardRFPulse::Prepare  (PrepareMode mode) {
+bool HardRFPulse::Prepare  (const PrepareMode mode) {
 
 	if (mode != PREP_UPDATE) m_bw  = 1e16;
 

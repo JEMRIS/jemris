@@ -60,7 +60,7 @@ void            Module::Initialize (DOMNode* node) {
 }
 
 /***********************************************************/
-bool Module::Prepare  (PrepareMode mode){
+bool Module::Prepare  (const PrepareMode mode){
 
 	ATTRIBUTE("Duration", m_duration);
 	//ATTRIBUTE("Observe" , NULL);		//special case of observing attributes

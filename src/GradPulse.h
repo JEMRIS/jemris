@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -64,7 +64,7 @@ class GradPulse : public Pulse {
     virtual double GetGradient (double const time){return 0.0; };
 
     // @brief see Module::Prepare
-    virtual bool Prepare  (PrepareMode mode);
+    virtual bool Prepare  (const PrepareMode mode);
 
     /**
      * @brief Preparation of Nonlinear Gradient fields
