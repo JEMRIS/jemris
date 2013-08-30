@@ -1,7 +1,7 @@
 #include "MultiPoolSample.h"
 #include "BinaryContext.h"
 
-MultiPoolSample::MultiPoolSample (std::string fname) {
+MultiPoolSample::MultiPoolSample (const std::string& fname) {
 
 	Prepare(fname);
 	CropEnumerate();
@@ -9,14 +9,14 @@ MultiPoolSample::MultiPoolSample (std::string fname) {
 } 
 
 
-MultiPoolSample::MultiPoolSample (long size) {
+MultiPoolSample::MultiPoolSample (const long size): m_noofpools (1) {
 
 	Prepare();
 
 } 
 
 
-IO::Status MultiPoolSample::Populate (string fname) {
+IO::Status MultiPoolSample::Populate (const std::string& fname) {
 
 	// Doing 
 	Sample::Populate (fname);
@@ -49,13 +49,16 @@ IO::Status MultiPoolSample::Populate (string fname) {
 
 
 
-void MultiPoolSample::Prepare (std::string fname) {
+void MultiPoolSample::Prepare (const std::string& fname) {
 
 	Sample::Prepare(fname);
 
 }
 
-/**********************************************************/
+
+
+
+
 void MultiPoolSample::CropEnumerate () {
 	
 	int  nsize = 0;

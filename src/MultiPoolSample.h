@@ -7,24 +7,24 @@ class MultiPoolSample : public Sample {
 
 public:
 
-	MultiPoolSample() {};
+	MultiPoolSample() : m_noofpools(1) {};
 	~MultiPoolSample() {};
 
 
-	MultiPoolSample (string fname);
-	MultiPoolSample (long   l);
+	MultiPoolSample (const string& fname);
+	MultiPoolSample (const long   l);
 
     /**
      * init variables which are same for all constructors
      *
      */
-    virtual void Prepare (std::string fname = "");
+    virtual void Prepare (const std::string& fname = "");
 
 	
 	int  GetNoOfPools ();
 	void GetExchangeMatrix (long l, double** em);
 
-	virtual IO::Status Populate (std::string fname);
+	virtual IO::Status Populate (const std::string& fname);
 
 	virtual void CropEnumerate ();
 	

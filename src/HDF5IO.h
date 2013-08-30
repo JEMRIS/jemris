@@ -3,8 +3,8 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2010  Tony Stšcker, Kaveh Vahedipour
- *                                  Forschungszentrum JŸlich, Germany
+ *  JEMRIS Copyright (C) 2007-2010  Tony Stoecker, Kaveh Vahedipour
+ *                                  Forschungszentrum Juelich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -59,13 +59,13 @@ public:
 	 * @param  dc Data container
 	 */
 	virtual inline const IO::Status
-	WriteData       (double* dc);
+	WriteData       (const double* dc);
 
 	/**
 	 * @brief     Get information on the data in binary file
 	 */
 	virtual inline const DataInfo
-	GetInfo         (std::string dname = "");
+	GetInfo         (const std::string dname);
 
 
 private:

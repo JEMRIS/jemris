@@ -5,7 +5,7 @@
 using namespace H5;
 
 const IO::Status
-HDF5IO::WriteData (double* data) {
+HDF5IO::WriteData (const double* data) {
 	
 	try {
 		
@@ -91,15 +91,15 @@ HDF5IO::WriteData (double* data) {
 		group.close();
 		file.close();		
 
-	} catch(FileIException      e) { 
+	} catch (const FileIException&      e) {
 		return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
-	} catch (GroupIException    e) {
+	} catch (GroupIException&    e) {
 		return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
-	} catch(DataSetIException   e) { 
+	} catch (const DataSetIException&   e) {
 		return ReportException (e, IO::HDF5_DATASET_I_EXCEPTION);
-	} catch(DataSpaceIException e) {
+	} catch (const DataSpaceIException& e) {
 		return ReportException (e, IO::HDF5_DATASPACE_I_EXCEPTION);
-	} catch(DataTypeIException  e) {
+	} catch (const DataTypeIException&  e) {
 		return ReportException (e, IO::HDF5_DATATYPE_I_EXCEPTION);
 	}
 
@@ -154,13 +154,13 @@ HDF5IO::ReadData (double* data, bool read) {
 		dataset.close();
 		file.close();
 
-	} catch(FileIException      e) { 
+	} catch (const FileIException&      e) {
 		return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
-	} catch(DataSetIException   e) { 
+	} catch (const DataSetIException&   e) {
 		return ReportException (e, IO::HDF5_DATASET_I_EXCEPTION);
-	} catch(DataSpaceIException e) {
+	} catch (const DataSpaceIException& e) {
 		return ReportException (e, IO::HDF5_DATASPACE_I_EXCEPTION);
-	} catch(DataTypeIException  e) {
+	} catch (const DataTypeIException&  e) {
 		return ReportException (e, IO::HDF5_DATATYPE_I_EXCEPTION);
 	}
 
@@ -180,9 +180,9 @@ HDF5IO::ReadData (double* data) {
 
 
 const DataInfo
-HDF5IO::GetInfo (std::string dname) {
+HDF5IO::GetInfo (const std::string dname) {
 
-	m_info.dname = dname;
+	m_info.dname = std::string(dname);
 	ReadData (NULL, false);
 	return m_info;
 	
