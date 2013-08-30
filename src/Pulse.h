@@ -65,7 +65,7 @@ class Pulse :public Module {
     /**
      * See Module::GetValue
      */
-    virtual void GetValue  (double * dAllVal, double const time) {};
+    virtual void GetValue  (double * dAllVal, double const time) const {};
 
     /**
      *  @brief  see Module::Prepare()

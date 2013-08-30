@@ -63,7 +63,7 @@ class RFPulse : public Pulse, public TxRxPhase {
     /**
      *  @brief see Module::GetValue()
      */
-    virtual void GetValue (double * dAllVal, double const time) ;
+    virtual void GetValue (double * dAllVal, double const time)  ;
 
     /**
      * @brief see Module::Prepare()
@@ -118,7 +118,7 @@ class RFPulse : public Pulse, public TxRxPhase {
      * @param time Time-point at which the magnitude is requested.
      * @return Magnitude.
      */
-    virtual double    GetMagnitude  (double time ) { return 0.0 ; } ;
+    virtual double    GetMagnitude  (const double time )  { return 0.0 ; } ;
 
     /**
      * @brief  Get the band width of this pulse.

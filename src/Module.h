@@ -143,21 +143,21 @@ class Module : public Prototype {
      *
      * @return Vector of child modules.
      */
-    vector<Module*> GetChildren ();
+    vector<Module*> GetChildren () const;
 
     /**
      * @brief Get Child
      *
      * @param position The position in the list of children.
      */
-    Module*         GetChild    (unsigned int position);
+    Module*         GetChild    (unsigned int position) const;
 
     /**
      * @brief Get number of Children
      *
      * @return Number of child modules.
      */
-    int GetNumberOfChildren ();
+    int GetNumberOfChildren () const;
 
     /**
      * @brief Insert Child
@@ -165,7 +165,7 @@ class Module : public Prototype {
      * @param name The name of the module from the ModulePrototypeFactory
      * @return Success
      */
-    bool InsertChild (string name);
+    bool InsertChild (const string& name);
 
 	virtual Module* GetPrototypeByAttributeValue (string name, string attrib);
 
@@ -198,7 +198,7 @@ class Module : public Prototype {
      * @param ichild More elaborate description
      * @param level  More elaborate description
      */
-      void  DumpTree (string file="", Module* mod=NULL,int ichild=0, int level=0);
+      void  DumpTree (const string& file="", Module* mod=NULL, int ichild = 0, int level = 0) ;
 
     /**
      * @brief Rewrite XML-tree where all expressions are evaluated (for IDEA)
@@ -206,7 +206,7 @@ class Module : public Prototype {
      * @param xml_file name of XML file
      * @return success or failure
      */
-      bool WriteStaticXML(string xml_file);
+      bool WriteStaticXML(const string& xml_file);
 
     /**
      * @brief Create a DOM tree where all expressions are evaluated (for IDEA)

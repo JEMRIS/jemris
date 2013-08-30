@@ -75,7 +75,7 @@ void    RFPulse::insertGetPhaseFunction(double (*FGetPhase)(Module*, double)) {
 }
 
 /*****************************************************************/
-void RFPulse::GetValue (double * dAllVal, double const time) {
+void RFPulse::GetValue (double * dAllVal, double const time)  {
 
     if (time < 0.0 || time > GetDuration())
         return;
