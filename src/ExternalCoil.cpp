@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -37,21 +37,21 @@ ExternalCoil* ExternalCoil::Clone() const {
 }
 
 /***********************************************************/
-double ExternalCoil::GetSensitivity(double* position) {
+double ExternalCoil::GetSensitivity(const double* position) {
 
-    return InterpolateSensitivity(position);
-
-}
-
-/***********************************************************/
-double ExternalCoil::GetPhase(double* position) {
-
-    return InterpolateSensitivity(position,false);
+    return InterpolateSensitivity (position);
 
 }
 
 /***********************************************************/
-bool ExternalCoil::Prepare (PrepareMode mode) {
+double ExternalCoil::GetPhase(const double* position) {
+
+    return InterpolateSensitivity (position,false);
+
+}
+
+/***********************************************************/
+bool ExternalCoil::Prepare (const PrepareMode mode) {
 
     ATTRIBUTE("Filename" , m_fname);
     ATTRIBUTE("Channel"  , m_channel);

@@ -34,7 +34,7 @@
 #include "AnalyticCoil.h"
 
 
-bool AnalyticCoil::Prepare (PrepareMode mode) {
+bool AnalyticCoil::Prepare (const PrepareMode mode) {
 
     bool success = true;
 
@@ -85,7 +85,7 @@ bool AnalyticCoil::Prepare (PrepareMode mode) {
 }
 
 /*******************************************************************/
-double AnalyticCoil::GetSensitivity(double* position) {
+double AnalyticCoil::GetSensitivity(const double* position) {
 
 	if ( !m_analytic )	return 0.0;
 

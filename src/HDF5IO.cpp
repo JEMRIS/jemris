@@ -4,6 +4,8 @@
 
 using namespace H5;
 
+//#define VERBOSE
+
 const IO::Status
 HDF5IO::WriteData (const double* data) {
 	
@@ -180,7 +182,7 @@ HDF5IO::ReadData (double* data) {
 
 
 const DataInfo
-HDF5IO::GetInfo (const std::string dname) {
+HDF5IO::GetInfo (const std::string& dname) {
 
 	m_info.dname = std::string(dname);
 	ReadData (NULL, false);
@@ -191,7 +193,7 @@ HDF5IO::GetInfo (const std::string dname) {
 
 
 const IO::Status
-HDF5IO::ReportException (const H5::Exception e, const IO::Status ios) {
+HDF5IO::ReportException (const H5::Exception& e, const IO::Status ios) {
 	
 	e.printError();
 	m_status = ios;

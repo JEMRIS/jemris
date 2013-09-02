@@ -65,7 +65,7 @@ public:
 	 * @brief     Get information on the data in binary file
 	 */
 	virtual inline const DataInfo
-	GetInfo         (const std::string dname);
+	GetInfo         (const std::string& dname);
 
 
 private:
@@ -87,7 +87,7 @@ private:
 	 * 	@param ios   Status
 	 */
 	const IO::Status
-	ReportException (const H5::Exception e, const IO::Status ios);
+	ReportException (const H5::Exception& e, const IO::Status ios);
 
 
 };

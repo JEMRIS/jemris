@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -40,7 +40,7 @@ class BiotSavartLoop : public Coil {
 	/**
 	 * @brief Default constructor
 	 */
-	BiotSavartLoop  () {};
+	BiotSavartLoop  () : m_mask(0), m_biosavart_phase(0.), m_radius(0.) {};
 
 	/**
 	 * @brief Default destructor
@@ -53,7 +53,7 @@ class BiotSavartLoop : public Coil {
 	 * @param  position Position.
 	 * @return          Sensitivity at requested position.
 	 */
-	virtual double GetSensitivity (double* position);
+	virtual double GetSensitivity (const double* position);
 
 	/**
 	 * @brief  Request sensitivity at given position
@@ -61,7 +61,7 @@ class BiotSavartLoop : public Coil {
 	 * @param  position Position.
 	 * @return          Sensitivity at requested position.
 	 */
-	inline double GetPhase (double* position) {return this->m_biosavart_phase;};
+	inline double GetPhase (const double* position) {return this->m_biosavart_phase;};
 
 	/**
 	 * @brief Clone.

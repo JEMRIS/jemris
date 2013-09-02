@@ -70,7 +70,16 @@ struct DataInfo {
 		return ndim;
 	}
 
+	std::ostream& Print (std::ostream& os) {
+		os << fname << "/" << path << "/" << dname << std::endl;
+		return os;
+	}
+
 };
+
+inline std::ostream& operator<< (std::ostream& os, DataInfo& di) {
+	return di.Print(os);
+}
 
 
 /**
@@ -151,11 +160,9 @@ public:
 	 * @param dname  Dataset name
 	 */
 	virtual inline const 
-	DataInfo         GetInfo          (std::string dname = "") {
-		
+	DataInfo         GetInfo          (const std::string& dname = "") {
 		m_info.dname = dname; 
 		return m_info;
-
 	};
 	
 

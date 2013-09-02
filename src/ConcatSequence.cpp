@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -34,7 +34,7 @@ ConcatSequence::ConcatSequence  (const ConcatSequence& cs ) {
 }
 
 /***********************************************************/
-bool    ConcatSequence::Prepare(PrepareMode mode){
+bool    ConcatSequence::Prepare(const PrepareMode mode){
 
 	m_type = MOD_CONCAT;
 

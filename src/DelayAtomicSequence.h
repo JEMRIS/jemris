@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -50,7 +50,9 @@ class DelayAtomicSequence : public AtomicSequence {
     /**
      * @brief Default constructor
      */
-    DelayAtomicSequence() {};
+    DelayAtomicSequence() :
+    	m_mod_start(0), m_mod_stop(0), m_adc(0), m_delay_time(0),
+    	m_phase_lock(0), m_dt(DELAY_B2E), m_await_time(0) {};
 
     /**
      * @brief Copy constructor
@@ -73,7 +75,7 @@ class DelayAtomicSequence : public AtomicSequence {
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
 	 * @return     Success.
      */
-    virtual bool                 Prepare           (PrepareMode mode);
+    virtual bool                 Prepare           (const PrepareMode mode);
 
     /**
      * See Module::GetValue()
@@ -102,7 +104,7 @@ class DelayAtomicSequence : public AtomicSequence {
 	 * @param  mode Prepare mode.
      * @return      Success
      */
-    double  GetDelay(PrepareMode mode);
+    double  GetDelay(const PrepareMode mode);
 
  private:
 

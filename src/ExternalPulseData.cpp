@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -29,7 +29,7 @@
 #include "BinaryContext.h"
 
 /***********************************************************/
-ExternalPulseData::ExternalPulseData ()  {
+ExternalPulseData::ExternalPulseData () : m_phase(0.), m_pulse(0) {
   
     m_fname = "";
   
@@ -91,7 +91,7 @@ double    ExternalPulseData::GetPhase  (Module* mod, double time ) {
 
 
 /***********************************************************/
-bool  ExternalPulseData::ReadPulseShape (string fname, bool verbose) {
+bool  ExternalPulseData::ReadPulseShape (const string& fname, bool verbose) {
 
 	//read data if filename changed
 	if (m_fname == fname) return true;
@@ -108,6 +108,7 @@ bool  ExternalPulseData::ReadPulseShape (string fname, bool verbose) {
 	}
 	
 	di = bc.GetInfo (std::string("/extpulse"));
+	std::cout << di << std::endl;
 
 	int columns = ( (m_pulse->GetAxis() == AXIS_RF) ? 3 : 2 );
 	int samples = di.GetSize();
@@ -129,9 +130,8 @@ bool  ExternalPulseData::ReadPulseShape (string fname, bool verbose) {
 
 		m_magnitudes.push_back(data[iNumberOfTimePoints+i]);
 
-		if ( columns==3 ) {
-		    m_phases.push_back( data[2*iNumberOfTimePoints+i] );
-		}
+		if ( columns==3 ) // Complex pulse
+		    m_phases.push_back(data[2*iNumberOfTimePoints+i]);
 
 	}
 

@@ -3,8 +3,8 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
- *                                  Forschungszentrum Jülich, Germany
+ *  JEMRIS Copyright (C) 2007-2010  Tony Stoecker, Kaveh Vahedipour
+ *                                  Forschungszentrum Juelich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ public:
 	 * @return       Status
 	 */
 	inline const     IO::Status 
-	Initialize       (std::string fname, IO::Mode mode) {
+	Initialize       (const std::string& fname, IO::Mode mode) {
 		
 		return m_strategy->Initialize(fname, mode);
 		

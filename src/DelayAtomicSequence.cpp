@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -45,7 +45,7 @@ DelayAtomicSequence::DelayAtomicSequence  (const DelayAtomicSequence& as) {
 }
 
 /***********************************************************/
-bool DelayAtomicSequence::Prepare (PrepareMode mode) {
+bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
 
     bool b=true;
 
@@ -109,7 +109,7 @@ bool DelayAtomicSequence::Prepare (PrepareMode mode) {
 }
 
 /***********************************************************/
-double DelayAtomicSequence::GetDelay(PrepareMode mode) {
+double DelayAtomicSequence::GetDelay(const PrepareMode mode) {
 
 	double dDelayTime = m_await_time;
 
@@ -192,7 +192,7 @@ string          DelayAtomicSequence::GetInfo () {
 	case DELAY_C2C : ret=" DelayType = C2C "; break;
 	case DELAY_B2C : ret=" DelayType = B2C "; break;
 	case DELAY_C2E : ret=" DelayType = C2E "; break;
-	default: ret=" unkown DelayType ";
+	default: ret=" unknown DelayType "; break;
 	}
 
 	if (!m_start.empty()) ret = ret+" , StartSeq = "+m_start;

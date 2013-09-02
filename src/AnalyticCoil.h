@@ -66,9 +66,9 @@ class AnalyticCoil : public Coil {
          * @param  position Position.
          * @return          Sensitivity at requested position.
          */
-        virtual double GetSensitivity (double* position);
+        virtual double GetSensitivity (const double* position);
 
-        virtual double GetPhase (double* position){ return m_analytic_phase;};
+        virtual double GetPhase (const double* position){ return m_analytic_phase;};
 
         /**
          * @brief Clone.
@@ -83,7 +83,7 @@ class AnalyticCoil : public Coil {
      * @param  mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return      Success
      */
-    virtual bool Prepare (PrepareMode mode);
+    virtual bool Prepare (const PrepareMode mode);
 
 
  private:

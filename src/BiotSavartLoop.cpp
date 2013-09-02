@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -49,7 +49,7 @@ bool BiotSavartLoop::Prepare (PrepareMode mode) {
 
 }
 
-double BiotSavartLoop::GetSensitivity(double* position) {
+double BiotSavartLoop::GetSensitivity(const double* position) {
 
     double a     = m_radius;
     double px = position[XC]-m_position[XC];
