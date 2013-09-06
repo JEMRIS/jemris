@@ -33,7 +33,8 @@ public:
 	/**
 	 * @brief Contructor
 	 */
-	SimpleIO     () {
+	SimpleIO     (const std::string& fname, const IO::Mode mode) :
+		BinaryIO::BinaryIO (fname, mode) {
 		m_type = IO::SIMPLE;
 	}
 	
@@ -43,19 +44,16 @@ public:
 	~SimpleIO     ()                     {}
 	
 	template<class T> IO::Status
-	ReadData (std::vector<T>& dv, const std::string& dname, const std::string& dpath)
-		{return IO::OK; };
+	ReadData (Data<T>& data) {return IO::OK; };
 
 	/**
 	 * @brief     Write data from container to file
 	 *
 	 * @param  dc Data container
 	 */
-	virtual IO::Status
-	WriteData     (const double* dc)           { return IO::OK; }
+	template<class T> IO::Status
+	WriteData (const Data<T>& data) { return IO::OK; }
 
-	virtual DataInfo
-	GetInfo (const std::string&, const std::string&) { return m_info; }
 
 };
 

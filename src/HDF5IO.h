@@ -30,6 +30,7 @@
 
 #include <H5Cpp.h>
 #include <algorithm>
+#include <string.h>
 
 /**
  * @brief HDF5 IO interface
@@ -41,35 +42,27 @@ public:
 	/**
 	 * @brief Contructor
 	 */
-	HDF5IO     () {
-		m_type = IO::HDF5;
+	HDF5IO     (const std::string& fname, const IO::Mode mode) {
+		m_fname  = fname;
+		m_mode   = mode;
+		m_type   = IO::HDF5;
+		m_status = this->FileAccess();
 	}
 	
 	/**
 	 * @brief Destructor
 	 */
-	virtual ~HDF5IO     ()           {}
+	virtual ~HDF5IO     ()           {
+		m_file.close();
+	}
 
 	/**
 	 * @brief     Write data from container to file
 	 *
 	 * @param  dc Data container
 	 */
-	virtual IO::Status
-	WriteData       (const double* dc);
-
-	/**
-	 * @brief     Get information on the data in binary file
-	 */
-	virtual DataInfo
-	GetInfo         (const std::string& dname, const std::string& dpath = "");
-
-
 	template<class T> IO::Status
-	ReadData (std::vector<T>& dv, const std::string& dname, const std::string& dpath) {
-
-		m_info.dname = dname;
-		m_info.dpath = dpath;
+	WriteData (const Data<T>& data) {
 
 		try {
 
@@ -77,39 +70,137 @@ public:
 			H5::Exception::dontPrint();
 #endif
 
-//#ifdef VERBOSE
-			std::cout << "Opening " << m_info << " for reading"    << std::endl;
-//#endif
+			std::vector<hsize_t> dims(data.NDim());
 
-			H5::H5File      file (m_info.fname, H5F_ACC_RDONLY);
-			H5::DataSet     dataset = file.openDataSet(m_info.URI());
+			for (int i = 0; i < data.NDim(); i++)
+				dims[i] = data.dims[i];
+
+			//std::reverse (dims.begin(), dims.end());
+
+			//H5::H5File        file;
+
+			try {
+				m_file = H5::H5File  (m_fname, H5F_ACC_RDWR);
+#ifdef VERBOSE
+				printf ("File %s opened for RW\n", m_fname.c_str());
+#endif
+			} catch (H5::Exception e) {
+				m_file = H5::H5File  (m_fname, H5F_ACC_TRUNC);
+#ifdef VERBOSE
+				printf ("File %s created for RW\n", m_fname.c_str());
+#endif
+			}
+
+			H5::Group group;
+
+			try {
+
+				group = m_file.openGroup(data.dpath);
+#ifdef VERBOSE
+				printf ("Group %s opened for writing\n", data.dpath.c_str()) ;
+#endif
+
+			} catch (H5::Exception e) {
+
+				int    depth   = 0;
+				char*   path = new char[data.dpath.length()];
+				strcpy (path, data.dpath.c_str());
+				char*  subpath = strtok (path, "/");
+				H5::Group* tmp;
+
+				while (subpath != NULL) {
+
+					try {
+						group = depth ? tmp->openGroup(subpath)   : m_file.openGroup(subpath);
+					} catch (H5::Exception e) {
+						group = depth ? tmp->createGroup(subpath) : m_file.createGroup(subpath);
+					}
+
+					subpath = strtok (NULL, "/");
+					tmp = &group;
+					depth++;
+
+				}
+
+				group = (*tmp);
+
+				delete[] path;
+
+			}
+
+			H5::DataSpace     space (data.NDim(), dims.data());
+			H5::FloatType     type  (H5::PredType::NATIVE_DOUBLE);
+			H5::DataSet       set = group.createDataSet(data.dname, type, space);
+
+			// Write data
+			set.write  (data.data.data(), type);
+
+			// Clean up.
+			set.close  ();
+			space.close();
+			group.close();
+			//file.close();
+
+		} catch (const H5::FileIException&      e) {
+			return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
+		} catch (H5::GroupIException&    e) {
+			return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
+		} catch (const H5::DataSetIException&   e) {
+			return ReportException (e, IO::HDF5_DATASET_I_EXCEPTION);
+		} catch (const H5::DataSpaceIException& e) {
+			return ReportException (e, IO::HDF5_DATASPACE_I_EXCEPTION);
+		} catch (const H5::DataTypeIException&  e) {
+			return ReportException (e, IO::HDF5_DATATYPE_I_EXCEPTION);
+		}
+
+		return IO::OK;
+
+	}
+
+
+
+	template<class T> IO::Status
+	ReadData (Data<T>& data) {
+
+		try {
+
+#ifndef VERBOSE
+			H5::Exception::dontPrint();
+#endif
+
+#ifdef VERBOSE
+			std::cout << "Opening " << data << " for reading"    << std::endl;
+#endif
+
+			//H5::H5File      file (m_fname, H5F_ACC_RDONLY);
+			H5::DataSet     dataset = m_file.openDataSet(data.URI());
 			H5::DataType    type    = dataset.getFloatType();
 			H5::DataSpace   space   = dataset.getSpace();
 			std::vector<hsize_t> dims ((size_t)space.getSimpleExtentNdims());
-			m_info.dims.resize(space.getSimpleExtentDims(&dims[0], NULL));
+			data.dims.resize(space.getSimpleExtentDims(&dims[0], NULL));
 
-			for (int i = 0; i < m_info.dims.size(); i++)
-				m_info.dims[i] = dims[i];
+			for (int i = 0; i < data.dims.size(); i++)
+				data.dims[i] = dims[i];
 
-			std::reverse (m_info.dims.begin(), m_info.dims.end());
+			std::reverse (data.dims.begin(), data.dims.end());
+			data.Allocate();
 
-//#ifdef VERBOSE
-				std::cout << "        rank: " << m_info.NDim() << ", dimensions: ";
-				for (int i = 0; i < m_info.NDim(); i++) {
-					std::cout << (unsigned long)(m_info.dims[i]);
-					if (i == m_info.NDim() - 1)
-						std::cout << " = " << m_info.GetSize() << std::endl;
+#ifdef VERBOSE
+				std::cout << "        rank: " << data.NDim() << ", dimensions: ";
+				for (int i = 0; i < data.NDim(); i++) {
+					std::cout << (unsigned long)(data.dims[i]);
+					if (i == data.NDim() - 1)
+						std::cout << " = " << data.GetSize() << std::endl;
 					else
 						std::cout << " x ";
 				}
-//#endif
+#endif
 
-			dv.resize(m_info.GetSize());
-			dataset.read (&dv[0], type);
+			data.data.resize(data.GetSize());
+			dataset.read (data.data.data(), type);
 
 			space.close();
 			dataset.close();
-			file.close();
 
 		} catch (const H5::FileIException&      e) {
 			return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
@@ -125,11 +216,35 @@ public:
 
 	}
 
+	inline virtual
+	IO::Status       FileAccess    () {
 
-	virtual IO::Status
-	Initialize    (const std::string& fname, const IO::Mode mode) {
-		return BinaryIO::Initialize(fname, mode);
+		//m_status = BinaryIO::FileAccess();
+
+		//if (m_status != IO::OK)
+			//return m_status;
+
+		if (m_mode == IO::IN)
+			m_file = H5::H5File (m_fname, H5F_ACC_RDONLY);
+		else
+			try {
+				m_file = H5::H5File  (m_fname, H5F_ACC_RDWR);
+	#ifdef VERBOSE
+				printf ("File %s opened for RW\n", m_fname.c_str());
+	#endif
+			} catch (const H5::Exception& e) {
+				m_file = H5::H5File  (m_fname, H5F_ACC_TRUNC);
+	#ifdef VERBOSE
+				printf ("File %s created for RW\n", m_fname.c_str());
+	#endif
+
+		}
+
+
+		return m_status;
+
 	}
+
 
 private:
 	/**
@@ -140,6 +255,8 @@ private:
 	 */
 	const IO::Status
 	ReportException (const H5::Exception& e, const IO::Status ios);
+
+	H5::H5File m_file;
 
 
 };

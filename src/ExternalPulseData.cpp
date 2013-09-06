@@ -97,10 +97,10 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 	//read data if filename changed
 	if (m_fname == fname) return true;
 
-	BinaryContext bc;
-	DataInfo      di;
+	BinaryContext bc (fname, IO::IN);
+	Data<double> data;
+	data.dpath = dpath;
 
-	bc.Initialize (fname, IO::IN);
 	if (bc.Status() != IO::OK) {
 		cout	<< "Error in Module " << m_pulse->GetName()
 				<< " ::Prepare can not read HDF5 file " << fname << endl;
@@ -109,17 +109,24 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 	
 	int columns = (m_pulse->GetAxis() == AXIS_RF) ? 3 : 2;
 	
-	if (bc.ReadData (m_magnitudes, "mag", dpath) != IO::OK)
+	data.dname = "mag";
+	if (bc.ReadData (data) != IO::OK)
 		return false;
+	m_magnitudes = data.data;
 
-	if (bc.ReadData (m_times, "t", dpath) != IO::OK)
+	data.dname = "times";
+	if (bc.ReadData (data) != IO::OK)
 		return false;
+	m_times = data.data;
 
 	m_pulse->m_tpoi.Reset();
 	for (size_t i = 0; i < m_times.size(); ++i)
 		m_pulse->m_tpoi + (m_times[i], -1.0);
 
-	if (bc.ReadData (m_phases, "pha", dpath) != IO::OK)
+	data.dname = "pha";
+	if (bc.ReadData (data) != IO::OK)
+		return false;
+	m_phases = data.data;
 
 	m_pulse->SetDuration(m_times.back());
 	m_pulse->m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0);

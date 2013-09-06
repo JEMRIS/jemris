@@ -48,16 +48,22 @@ template<class T> inline static T sum (const std::vector<T>& v) {
  * @brief  Simple information structure.
  *         Might show to be too unflexible and be eventually replaced by a dom node?
  */
-struct DataInfo {
+template<class T>
+struct Data {
 
-	std::string  fname; /**< File name */
 	std::string  dname; /**< Data name (i.e. sample, sensitivities, signals and sequence timing)*/
 	std::string  dpath;  /**< Path (i.e. Group name in HDF5) not used for SimpleIO */
 
 	std::vector<size_t> dims;  /**< dimensions */
+	std::vector<T> data;
+
 	int          size;  /**< size of each cell (i.e. 8 for doubles etc) */
 
 	IO::Mode     mode;  /**< 0: Read, 1: Write */
+
+	void Allocate () {
+		data.resize(GetSize());
+	}
 
 	size_t GetSize () {
 		return prod(dims);
@@ -67,7 +73,7 @@ struct DataInfo {
 		return dims.data();
 	}
 
-	int NDim() {
+	size_t NDim() const {
 		return dims.size();
 	}
 
@@ -79,12 +85,8 @@ struct DataInfo {
 		return dname;
 	}
 
-	std::string FileName () const {
-		return fname;
-	}
-
 	std::ostream& Print (std::ostream& os) {
-		os << fname << " " << this->URI().c_str();
+		os << this->URI().c_str();
 		return os;
 	}
 
@@ -98,9 +100,14 @@ struct DataInfo {
 		return uri;
 	}
 
+	T& operator[] (const size_t p) {return data[p];}
+	T  operator[] (const size_t p) const {return data[p];}
+
 };
 
-inline std::ostream& operator<< (std::ostream& os, DataInfo& di) {
+
+template <class T>
+inline std::ostream& operator<< (std::ostream& os, Data<T>& di) {
 	return di.Print(os);
 }
 
@@ -113,13 +120,15 @@ class BinaryIO {
 public:
 	
 
+	BinaryIO () : m_status(IO::OK), m_type(IO::NONE), m_fname (""), m_mode (IO::IN) {}
+
 	/**
 	 * @brief Contructor
 	 */
-	BinaryIO     ()  : m_status(IO::OK), m_type(IO::NONE) {
+	BinaryIO     (const std::string& fname, const IO::Mode mode) :
+		m_status(IO::OK), m_type(IO::NONE), m_fname (fname), m_mode (mode) {
 
-		m_info.fname = "";
-		m_info.size  = sizeof(double);
+		FileAccess ();
 
 	}
 	
@@ -137,7 +146,7 @@ public:
 	 */
 	inline const std::string 
 	GetFileName   ()                       {
-		return m_info.fname; 
+		return m_fname;
 	}
 	
 
@@ -145,16 +154,6 @@ public:
 		return m_type;
 	}
 
-	/**
-	 * @brief        Set file name
-	 *
-	 * @param  fname File name
-	 */
-	inline const     
-	void             SetFileName      (const std::string fname) {
-		m_info.fname = fname;
-	}
-	
 
 	/**
 	 * @brief        Read data from file to container
@@ -162,7 +161,7 @@ public:
 	 * @param  dc    Data container
 	 */
 	template<class T>
-	IO::Status       ReadData (std::vector<T>& dv, const std::string& dname, const std::string& dpath) {
+	IO::Status       ReadData (Data<T>& data) {
 		std::cout << "Oh Oh: You are wrong here!" << std::endl;
 	}
 	
@@ -171,60 +170,32 @@ public:
 	 *
 	 * @param  dc    Data container
 	 */
-
-	virtual IO::Status       WriteData        (const double* dc)           = 0;
+	template<class T>
+	IO::Status WriteData (const Data<T>& dc);
 	
-
-	/**
-	 * @brief        Get information on the dataset in binary file
-	 *
-	 * @param dname  Dataset name
-	 */
-	virtual	DataInfo         GetInfo          (const std::string&, const std::string&) = 0;
-	
-
-	/**
-	 * @brief        Get information on the data in binary file
-	 */
-	void             SetInfo          (DataInfo info)          {
-		m_info = info;
-	}
-
 
 	/**
 	 * @brief        File access?
 	 */
-	inline
+	inline virtual
 	IO::Status       FileAccess    () {
 
-		if (m_info.fname.length() > 0) {
+		if (m_fname.length() > 0) {
 			
-			if (m_info.mode == IO::IN) {
-				std::ifstream in (m_info.fname.c_str(), std::ios::binary);
+			if (m_data.mode == IO::IN) {
+				std::ifstream in (m_fname.c_str(), std::ios::binary);
 				m_status = (in) ? IO::OK : IO::FILE_NOT_FOUND;
 			} else {
-				std::ofstream out (m_info.fname.c_str() , std::ios::binary);
+				std::ofstream out (m_fname.c_str() , std::ios::binary);
 				m_status = (out) ? IO::OK : IO::INSUFFICIENT_PRIVILEGES;
 			}
 			
 		} else
 			m_status = IO::EMPTY_FILE_NAME;
 
+		std::cout << m_status << std::endl;
+
 		return m_status;
-
-	}
-
-
-	/**
-	 * @brief     Initialize file access. Look for existence if reading. Check permissions.
-	 */
-	virtual inline
-	IO::Status    Initialize    (const std::string& fname, const IO::Mode mode) {
- 
-		m_info.fname = fname;
-		m_info.mode  = mode;
-		
-		return FileAccess ();
 
 	}
 
@@ -234,9 +205,7 @@ public:
 	 */
 	inline const  
 	IO::Status    Status        () {
-
 		return m_status;
-
 	}
 	
 
@@ -244,8 +213,10 @@ public:
 
 
 protected: 
-	
-	DataInfo       m_info;
+
+	std::string    m_fname;
+	Data<double>   m_data;
+	IO::Mode       m_mode;
 	IO::Status     m_status;
 	IO::Strategy   m_type;
 	

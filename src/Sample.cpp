@@ -149,47 +149,59 @@ IO::Status Sample::Populate (const string& fname) {
 	m_index.resize(3);
 
 	// Binary interface
-	BinaryContext bc;
-	std::vector<double> tmpdat;
-	bool          grid = false;
-
-	bc.Initialize (fname, IO::IN);
+	BinaryContext bc (fname, IO::IN);
 	if (bc.Status() != IO::OK)
 		return bc.Status();
+
+	Data<double> data;
+	data.dpath = "/sample";
+
+	std::vector<size_t> dims;
+	std::vector<double> tmpdat;
+	bool          grid = false;
 
 	// ----------------------------------------------------
 	// Physical parameters of spins
 
 	// Retrieve data from file
-	bc.ReadData(tmpdat, "data", "/sample");
+	data.dname = "data";
+	bc.ReadData(data);
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	DataInfo di = bc.GetInfo();
-	size_t tmpndim = di.NDim();
+	size_t tmpndim = data.NDim();
 
-	size_t size   = tmpdat.size();
-	size_t nprops = di.dims[0];
+	dims          = data.dims;
+	tmpdat        = data.data;
+
+	size_t size   = data.GetSize();
+	size_t nprops = data.dims[0];
 	size = size / nprops;
 
 	for (int i = tmpndim; i < 4; i++)
-		di.dims.push_back(1);
+		dims.push_back(1);
 
-	memcpy (&m_index[0], &di.dims[1], 3*sizeof(size_t));
+	memcpy (&m_index[0], &dims[1], 3*sizeof(size_t));
 
 	// ----------------------------------------------------
 
-	bc.ReadData (m_res, "resolution", "/sample");
+	data.dname = "resolution";
+	bc.ReadData (data);
 	grid = (bc.Status() == IO::OK);
-	bc.ReadData (m_offset, "offset", "/sample");
+	m_res = data.data;
+
+
+	data.dname = "offset";
+	bc.ReadData (data);
+	m_offset = data.data;
 
 	// ----------------------------------------------------
 
 	if (grid) {
 
-		m_ensemble.Init (di.dims, size);
+		m_ensemble.Init (dims, size);
 		
-		int  nprop = di.dims[0] + 4;
+		int  nprop = dims[0] + 4;
 		size_t n     = 0;
 		
 		for (size_t nz = 0; nz < m_index[ZC]; nz++)
@@ -197,14 +209,14 @@ IO::Status Sample::Populate (const string& fname) {
 				for (size_t nx = 0; nx < m_index[XC]; nx++, n++) {
 					
 					size_t epos = n * nprop;
-					size_t spos = n * di.dims[0];
+					size_t spos = n * dims[0];
 					std::vector<double>::const_iterator sposi = tmpdat.begin() + spos;
 					std::vector<double>::iterator eposi = m_ensemble.At(M0 + epos);
 
 					if (tmpdat[spos] > 0) {
 						
 						// Copy values over
-						std::copy (sposi, sposi + di.dims[0], eposi);
+						std::copy (sposi, sposi + dims[0], eposi);
 
 						// Interpolate spatial position
 						m_ensemble[XC+epos] = (nx-0.5*(m_index[XC]-1))*m_res[XC]+m_offset[XC];
@@ -217,8 +229,8 @@ IO::Status Sample::Populate (const string& fname) {
 		
 	} else {
 
-		di.dims[0] -= 4;
-		m_ensemble.Init (di.dims, size);
+		dims[0] -= 4;
+		m_ensemble.Init (dims, size);
 		
 		memcpy (&m_ensemble[0], &tmpdat[0], m_ensemble.Size()*sizeof(double));
 

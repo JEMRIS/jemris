@@ -156,10 +156,8 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 		}*/
 
 
-	BinaryContext bc;
-	DataInfo      di;
-
-	bc.Initialize ("signals.h5", IO::OUT);
+	BinaryContext bc ("signals.h5", IO::OUT);
+	Data<double> di;
 
 	for (int c = 0; c < GetSize(); c++) {
 		
@@ -192,27 +190,28 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 			}
 			
 		}
-		
-		di.fname   = "signals.h5";
-		
+
 		stringstream sstr;
 		sstr << setw(2) << setfill('0') << c;
 
 		di.dims.resize(2);
 		di.dims[0] = repository->Samples();
 		di.dims[1] = repository->NProps();
-		di.dpath    = "/signal/channels/";
+		di.Allocate();
+		di.dpath   = "/signal/channels/";
 		di.dname   = sstr.str();
-		bc.SetInfo (di);
-		bc.WriteData (repository->Data());
+		memcpy (di.data.data(), repository->Data(), di.GetSize() * sizeof(double));
+
+		bc.WriteData (di);
 		
 		if (di.dname == "00") {
 			di.dims.resize(1);
 			di.dims[0] = repository->Samples();
+			di.Allocate();
 			di.dpath    = "/signal/";
 			di.dname   = "times";
-			bc.SetInfo (di);
-			bc.WriteData (repository->Times());
+			memcpy (di.data.data(), repository->Times(), di.GetSize() * sizeof(double));
+			bc.WriteData (di);
 		}
 
 
@@ -226,16 +225,13 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 /**********************************************************/
 IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	
-	BinaryContext bc;
-	DataInfo      di;
+	BinaryContext bc (std::string("sensmaps.h5"), IO::OUT);
+	Data<double>      di;
 	IO::Status    ios = IO::OK;
 	
-	bc.Initialize (std::string("sensmaps.h5"), IO::OUT);
 	
 	if (bc.Status() != IO::OK)
 		return bc.Status();
-	
-	di.fname = "sensmaps.h5";
 	
 	// Nx x Ny x Nz x Nc
     di.dims.resize(4);
@@ -244,34 +240,27 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	di.dims[2] = m_coils[0]->GetPoints();
 	di.dims[1] = (m_coils[0]->GetNDim() == 3) ? m_coils[0]->GetPoints() : 1;
 	di.dims[0] = m_coils.size();
+	di.Allocate();
 
-	long size = 1;
-	for (int i = 1; i < 4; i++)
-		size *= di.dims[i];
-
-	double* maps = (double*) malloc (m_coils.size()*size*sizeof(double));
+	long size = di.GetSize();
 
 	di.dpath  = "/maps/";
 	di.dname = "magnitude";
-	bc.SetInfo(di);
 	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {
 		m_coils[i]->GridMap();
-		memcpy (&maps[n], m_coils[i]->MagnitudeMap(), sizeof(double)*size);
+		memcpy (di.data.data(), m_coils[i]->MagnitudeMap(), sizeof(double)*size);
 		n += size; 
 	}
-	bc.WriteData (maps);
+	bc.WriteData (di);
 
 	di.dpath  = "/maps/";
 	di.dname = "phase";
-	bc.SetInfo(di);
 	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {
-		memcpy (&maps[n],     m_coils[i]->PhaseMap(), sizeof(double)*size);
+		memcpy (di.data.data(), m_coils[i]->PhaseMap(), sizeof(double)*size);
 		n += size; 
 	}
-	bc.WriteData (maps);
+	bc.WriteData (di);
 	
-	free (maps);
-
 	return ios;
 	
 }

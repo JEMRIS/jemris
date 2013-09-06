@@ -66,16 +66,15 @@ bool ExternalCoil::Prepare (const PrepareMode mode) {
 /**********************************************************/
 IO::Status ExternalCoil::LoadMap () {
 
-	BinaryContext bc;
-	DataInfo      di;
-	IO::Status   ios = IO::OK;
-	std::vector<double> tmpdat;
-
-	bc.Initialize (m_fname, IO::IN);
+	BinaryContext bc (m_fname, IO::IN);
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	if (bc.ReadData<double>(tmpdat, "maps", "magnitude") != IO::OK)
+	Data<double> tmpdat;
+	tmpdat.dpath = "/magnitude";
+	tmpdat.dname  = "maps";
+
+	if (bc.ReadData(tmpdat) != IO::OK)
 		return bc.Status();
 
 	// no 'int pow(int,int)' available! Use cast and add delta to avoid roundoff error.
@@ -84,12 +83,13 @@ IO::Status ExternalCoil::LoadMap () {
 
 	memcpy (&(m_sens_mag[0][0][0]), &tmpdat[pos], size * sizeof(double));
 
-	if (bc.ReadData<double>(tmpdat, "maps", "phase") != IO::OK)
+	tmpdat.dpath = "/magnitude";
+	if (bc.ReadData(tmpdat) != IO::OK)
 		return bc.Status();
 
 	memcpy (&(m_sens_pha[0][0][0]), &tmpdat[pos], size * sizeof(double));
 
-	return ios;
+	return IO::OK;
 
 }
 

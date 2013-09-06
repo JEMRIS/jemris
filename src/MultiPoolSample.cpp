@@ -21,20 +21,23 @@ IO::Status MultiPoolSample::Populate (const std::string& fname) {
 	// Doing 
 	Sample::Populate (fname);
 
-	BinaryContext bc;
-	DataInfo      di;
-	IO::Status    ios;
-
-	bc.Initialize (fname, IO::IN);
+	BinaryContext bc (fname, IO::IN);
 	if (bc.Status() != IO::OK)
 		return bc.Status();
+
+	Data<double>      di;
+	IO::Status    ios;
 
 	if (di.NDim() != 2)
 		return IO::UNMATCHED_DIMENSIONS;
 
-	bc.ReadData (m_helper, "sample", "helper");
+	di.dname = "sample";
+	di.dpath = "helper";
+	bc.ReadData (di);
 	if (bc.Status() != IO::OK)
 		return bc.Status();
+
+	m_helper = di.data;
 
 	return IO::OK;
 

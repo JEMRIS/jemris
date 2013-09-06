@@ -43,25 +43,8 @@ public:
 	/**
 	 * @brief        Construct populating strategies
 	 */
-	BinaryContext    ();
-
-
-	/**
-	 * @brief        Default desctructor
-	 */
-	~BinaryContext   ();
-	
-
-	/**
-	 * @brief        Initialise and check access status
-	 *
-	 * @param  fname File name
-	 * @param  mode  Access mode (i.e. read/write?)
-	 * @return       Status
-	 */
-	IO::Status
-	Initialize       (const std::string& fname, IO::Mode mode);
-	
+	BinaryContext    (const std::string& fname, IO::Mode mode);
+	virtual ~BinaryContext    ();
 
 	/**
 	 * @brief        Write data from container to file 
@@ -69,44 +52,22 @@ public:
 	 * @param  out   Output container
 	 * @return       Status
 	 */
-	IO::Status
-	WriteData        (double* out);
-
-
-	/**
-	 * @brief        Set DataInfo structure
-	 *
-	 * @param  info  Incoming DataInfo
-	 */
-	void
-	SetInfo          (const DataInfo& info);
-
-
-	/**
-	 * @brief        Get information of dataset
-	 *
-	 * @param  dname Dataset
-	 *
-	 * @return       Dataset information
-	 */
-	DataInfo
-	GetInfo          (const std::string& dname = "", const std::string& = "");
-
-	template<class T>
-	IO::Status ReadData (std::vector<T>& dv, const std::string& dname, const std::string& dpath = "") {
+	template<class T> IO::Status
+	WriteData        (const Data<T>& data) {
 		if (m_strategy->IOStrategy() == IO::HDF5)
-			return ((HDF5IO*)m_strategy)->ReadData(dv, dname, dpath);
+			return ((HDF5IO*)m_strategy)->WriteData(data);
 		else if (m_strategy->IOStrategy() == IO::SIMPLE)
-			return ((SimpleIO*)m_strategy)->ReadData(dv, dname, dpath);
+			return ((SimpleIO*)m_strategy)->WriteData(data);
 	}
 
-	template<class T>
-	std::vector<T> ReadData (const std::string& dname, const std::string& dpath = "") {
-		std::vector<T> dv;
-		m_strategy->ReadData(dv, dname, dpath);
-		return dv;
-	}
 
+	template<class T> IO::Status
+	ReadData (Data<T>& data) {
+		if (m_strategy->IOStrategy() == IO::HDF5)
+			return ((HDF5IO*)m_strategy)->ReadData(data);
+		else if (m_strategy->IOStrategy() == IO::SIMPLE)
+			return ((SimpleIO*)m_strategy)->ReadData(data);
+	}
 
 	/**
 	 * @brief        Get last status

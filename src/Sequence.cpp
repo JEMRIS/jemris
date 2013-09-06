@@ -64,17 +64,16 @@ bool    Sequence::Prepare(PrepareMode mode){
 void Sequence::SeqDiag (string fname ) {
 
 	//prepare H5 file structure
-	BinaryContext bc;
-	DataInfo      di;
-	int numaxes = 7;
-
-	bc.Initialize ("seq.h5", IO::OUT);
+	BinaryContext bc ("seq.h5", IO::OUT);
 	if (bc.Status() != IO::OK) return;
 
-	di.fname = "seq.h5";
+	Data<double>      di;
+	int numaxes = 7;
+
 	di.dims.resize(1);
 	di.dims[0] = GetNumOfTPOIs()+1;
 	di.dpath  = "seqdiag";
+	di.Allocate();
 	
 	vector<double*> seqdata;
 	for (int i=0; i<numaxes; i++) {
@@ -102,9 +101,9 @@ void Sequence::SeqDiag (string fname ) {
 	//write to HDF5 file
 	for (int i=0; i<numaxes; i++) {
 		di.dname = seqaxis[i];
-		bc.SetInfo(di);
 		seqdata[i]--;
-		bc.WriteData(seqdata[i]);
+		memcpy (di.data.data(), seqdata[i], di.GetSize() * sizeof(double));
+		bc.WriteData(di);
 		delete[] seqdata[i];
 	}
 
