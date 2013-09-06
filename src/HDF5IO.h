@@ -125,7 +125,6 @@ public:
 			set.close  ();
 			space.close();
 			group.close();
-			//file.close();
 
 		} catch (const H5::FileIException&      e) {
 			return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
