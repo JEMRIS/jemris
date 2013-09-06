@@ -150,7 +150,8 @@ public:
 	}
 	
 
-	IO::Strategy IOStrategy () const {
+	IO::Strategy
+	IOStrategy () const {
 		return m_type;
 	}
 
@@ -160,8 +161,8 @@ public:
 	 *
 	 * @param  dc    Data container
 	 */
-	template<class T>
-	IO::Status       ReadData (Data<T>& data) {
+	template<class T> IO::Status
+	ReadData (Data<T>& data) {
 		std::cout << "Oh Oh: You are wrong here!" << std::endl;
 	}
 	
@@ -170,15 +171,15 @@ public:
 	 *
 	 * @param  dc    Data container
 	 */
-	template<class T>
-	IO::Status WriteData (const Data<T>& dc);
+	template<class T> IO::Status
+	WriteData (const Data<T>& dc);
 	
 
 	/**
 	 * @brief        File access?
 	 */
-	inline virtual
-	IO::Status       FileAccess    () {
+	virtual IO::Status
+	FileAccess    () {
 
 		if (m_fname.length() > 0) {
 			
@@ -193,8 +194,6 @@ public:
 		} else
 			m_status = IO::EMPTY_FILE_NAME;
 
-		std::cout << m_status << std::endl;
-
 		return m_status;
 
 	}
@@ -203,8 +202,8 @@ public:
 	/**
 	 * @brief     Get last status
 	 */
-	inline const  
-	IO::Status    Status        () {
+	inline const  IO::Status
+	Status        () {
 		return m_status;
 	}
 	

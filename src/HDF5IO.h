@@ -77,20 +77,6 @@ public:
 
 			//std::reverse (dims.begin(), dims.end());
 
-			//H5::H5File        file;
-
-			try {
-				m_file = H5::H5File  (m_fname, H5F_ACC_RDWR);
-#ifdef VERBOSE
-				printf ("File %s opened for RW\n", m_fname.c_str());
-#endif
-			} catch (H5::Exception e) {
-				m_file = H5::H5File  (m_fname, H5F_ACC_TRUNC);
-#ifdef VERBOSE
-				printf ("File %s created for RW\n", m_fname.c_str());
-#endif
-			}
-
 			H5::Group group;
 
 			try {
@@ -167,12 +153,6 @@ public:
 #ifndef VERBOSE
 			H5::Exception::dontPrint();
 #endif
-
-#ifdef VERBOSE
-			std::cout << "Opening " << data << " for reading"    << std::endl;
-#endif
-
-			//H5::H5File      file (m_fname, H5F_ACC_RDONLY);
 			H5::DataSet     dataset = m_file.openDataSet(data.URI());
 			H5::DataType    type    = dataset.getFloatType();
 			H5::DataSpace   space   = dataset.getSpace();
@@ -216,30 +196,30 @@ public:
 
 	}
 
-	inline virtual
-	IO::Status       FileAccess    () {
+	virtual IO::Status
+	FileAccess    () {
 
-		//m_status = BinaryIO::FileAccess();
+		if (m_status != IO::OK)
+			return m_status;
 
-		//if (m_status != IO::OK)
-			//return m_status;
-
-		if (m_mode == IO::IN)
+		if (m_mode == IO::IN) {
 			m_file = H5::H5File (m_fname, H5F_ACC_RDONLY);
-		else
+#ifdef VERBOSE
+			printf ("\nFile %s opened for RO\n", m_fname.c_str());
+#endif
+		} else {
 			try {
-				m_file = H5::H5File  (m_fname, H5F_ACC_RDWR);
-	#ifdef VERBOSE
-				printf ("File %s opened for RW\n", m_fname.c_str());
-	#endif
-			} catch (const H5::Exception& e) {
 				m_file = H5::H5File  (m_fname, H5F_ACC_TRUNC);
-	#ifdef VERBOSE
-				printf ("File %s created for RW\n", m_fname.c_str());
-	#endif
-
+#ifdef VERBOSE
+				printf ("\nFile %s opened for RW\n", m_fname.c_str());
+#endif
+			} catch (const H5::Exception& e) {
+				m_file = H5::H5File  (m_fname, H5F_ACC_RDWR);
+#ifdef VERBOSE
+				printf ("\nFile %s created for RW\n", m_fname.c_str());
+#endif
+			}
 		}
-
 
 		return m_status;
 
