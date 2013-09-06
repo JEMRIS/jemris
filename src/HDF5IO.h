@@ -26,7 +26,10 @@
 
 #include "BinaryIO.h"
 
+//#define VERBOSE
+
 #include <H5Cpp.h>
+#include <algorithm>
 
 /**
  * @brief HDF5 IO interface
@@ -38,48 +41,97 @@ public:
 	/**
 	 * @brief Contructor
 	 */
-	HDF5IO     ()                      {};
+	HDF5IO     () {
+		m_type = IO::HDF5;
+	}
 	
 	/**
 	 * @brief Destructor
 	 */
-	virtual ~HDF5IO     ()                     {};
-	
-	/**
-	 * @brief     Read data from file to container
-	 *
-	 * @param  dc Data container
-	 */
-	virtual inline const IO::Status
-	ReadData        (double* dc);
-	
+	virtual ~HDF5IO     ()           {}
+
 	/**
 	 * @brief     Write data from container to file
 	 *
 	 * @param  dc Data container
 	 */
-	virtual inline const IO::Status
+	virtual IO::Status
 	WriteData       (const double* dc);
 
 	/**
 	 * @brief     Get information on the data in binary file
 	 */
-	virtual inline const DataInfo
-	GetInfo         (const std::string& dname);
+	virtual DataInfo
+	GetInfo         (const std::string& dname, const std::string& dpath = "");
 
+
+	template<class T> IO::Status
+	ReadData (std::vector<T>& dv, const std::string& dname, const std::string& dpath) {
+
+		m_info.dname = dname;
+		m_info.dpath = dpath;
+
+		try {
+
+#ifndef VERBOSE
+			H5::Exception::dontPrint();
+#endif
+
+//#ifdef VERBOSE
+			std::cout << "Opening " << m_info << " for reading"    << std::endl;
+//#endif
+
+			H5::H5File      file (m_info.fname, H5F_ACC_RDONLY);
+			H5::DataSet     dataset = file.openDataSet(m_info.URI());
+			H5::DataType    type    = dataset.getFloatType();
+			H5::DataSpace   space   = dataset.getSpace();
+			std::vector<hsize_t> dims ((size_t)space.getSimpleExtentNdims());
+			m_info.dims.resize(space.getSimpleExtentDims(&dims[0], NULL));
+
+			for (int i = 0; i < m_info.dims.size(); i++)
+				m_info.dims[i] = dims[i];
+
+			std::reverse (m_info.dims.begin(), m_info.dims.end());
+
+//#ifdef VERBOSE
+				std::cout << "        rank: " << m_info.NDim() << ", dimensions: ";
+				for (int i = 0; i < m_info.NDim(); i++) {
+					std::cout << (unsigned long)(m_info.dims[i]);
+					if (i == m_info.NDim() - 1)
+						std::cout << " = " << m_info.GetSize() << std::endl;
+					else
+						std::cout << " x ";
+				}
+//#endif
+
+			dv.resize(m_info.GetSize());
+			dataset.read (&dv[0], type);
+
+			space.close();
+			dataset.close();
+			file.close();
+
+		} catch (const H5::FileIException&      e) {
+			return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
+		} catch (const H5::DataSetIException&   e) {
+			return ReportException (e, IO::HDF5_DATASET_I_EXCEPTION);
+		} catch (const H5::DataSpaceIException& e) {
+			return ReportException (e, IO::HDF5_DATASPACE_I_EXCEPTION);
+		} catch (const H5::DataTypeIException&  e) {
+			return ReportException (e, IO::HDF5_DATATYPE_I_EXCEPTION);
+		}
+
+		return IO::OK;
+
+	}
+
+
+	virtual IO::Status
+	Initialize    (const std::string& fname, const IO::Mode mode) {
+		return BinaryIO::Initialize(fname, mode);
+	}
 
 private:
-
-	/**
-	 * @brief       Read data from file to container
-	 *
-	 * @param  dc   Data container
-	 * @param  read Actually Read (true) or just test existence (false)?
-	 */
-	virtual const IO::Status
-	ReadData        (double* dc, bool read);
-	
-
 	/**
 	 * 	@brief Handle HDF5 exceptions
 	 *

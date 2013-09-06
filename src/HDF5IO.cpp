@@ -1,12 +1,13 @@
 #include "HDF5IO.h"
 
 #include <typeinfo>
+#include <string.h>
 
 using namespace H5;
 
 //#define VERBOSE
 
-const IO::Status
+IO::Status
 HDF5IO::WriteData (const double* data) {
 	
 	try {
@@ -15,9 +16,9 @@ HDF5IO::WriteData (const double* data) {
 		Exception::dontPrint();
 #endif
 		
-		hsize_t* dims = new hsize_t [m_info.ndim];
+		hsize_t* dims = new hsize_t [m_info.NDim()];
 		
-		for (int i = 0; i < m_info.ndim; i++)
+		for (int i = 0; i < m_info.NDim(); i++)
 			dims[i] = m_info.dims[i];
 		
 		H5File        file; 
@@ -38,35 +39,28 @@ HDF5IO::WriteData (const double* data) {
 
 		try {
 
-			group = file.openGroup(m_info.path);
+			group = file.openGroup(m_info.dpath);
 #ifdef VERBOSE
-			printf ("Group %s opened for writing\n", m_info.path.c_str()) ;
+			printf ("Group %s opened for writing\n", m_info.dpath.c_str()) ;
 #endif
 
 		} catch (Exception e) {
 
 			int    depth   = 0;
-			char*   path = new char[m_info.path.length()];
-			strcpy (path, m_info.path.c_str());
+			char*   path = new char[m_info.dpath.length()];
+			strcpy (path, m_info.dpath.c_str());
 			char*  subpath = strtok (path, "/");
 			Group* tmp;
 
 			while (subpath != NULL) {
 				
 				try {
-					if (depth)
-						group = (*tmp).openGroup(subpath);
-					else
-						group = file.openGroup(subpath);
+					group = depth ? tmp->openGroup(subpath)   : file.openGroup(subpath);
 				} catch (Exception e) {
-					if (depth)
-						group = (*tmp).createGroup(subpath);
-					else
-						group = file.createGroup(subpath);
+					group = depth ? tmp->createGroup(subpath) : file.createGroup(subpath);
 				}
 
 				subpath = strtok (NULL, "/");
-
 				tmp = &group;
 				depth++;
 
@@ -78,7 +72,7 @@ HDF5IO::WriteData (const double* data) {
 
 		}
 
-		DataSpace     space (m_info.ndim, dims);
+		DataSpace     space (m_info.NDim(), dims);
 		FloatType     type  (PredType::NATIVE_DOUBLE);
 		DataSet       set = group.createDataSet(m_info.dname, type, space);
 		
@@ -109,83 +103,9 @@ HDF5IO::WriteData (const double* data) {
 
 }
 
-const IO::Status
-HDF5IO::ReadData (double* data, bool read) {
+DataInfo
+HDF5IO::GetInfo (const std::string& dname, const std::string& dpath) {
 
-	try {
-
-#ifndef VERBOSE
-		Exception::dontPrint();
-#endif
-		
-#ifdef VERBOSE
-			printf ("Opening %s opened for RO access\n", m_info.fname.c_str());
-#endif
-
-		H5File      file(m_info.fname, H5F_ACC_RDONLY);
-
-		DataSet     dataset = file.openDataSet(m_info.dname);
-		DataType    type    = dataset.getFloatType();
-		DataSpace   space   = dataset.getSpace();
-
-		hsize_t*    dims    = new hsize_t[space.getSimpleExtentNdims()];
-		m_info.ndim         = space.getSimpleExtentDims(dims, NULL);
-
-		for (int i = 0; i < m_info.ndim; i++)
-			m_info.dims[i] = dims[i];
-		
-#ifdef VERBOSE
-		if (!read) {
-			std::cout << "rank: " << m_info.ndim << ", dimensions: ";
-			for (int i = 0; i < m_info.ndim; i++) {
-				std::cout << (unsigned long)(m_info.dims[i]);
-				if (i == m_info.ndim - 1)
-					std::cout << std::endl;
-				else
-					std::cout << " x ";
-			}
-		}
-#endif
-
-		if (read)
-			dataset.read (data, type);
-
-		delete[] dims;
-
-		space.close();
-		dataset.close();
-		file.close();
-
-	} catch (const FileIException&      e) {
-		return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
-	} catch (const DataSetIException&   e) {
-		return ReportException (e, IO::HDF5_DATASET_I_EXCEPTION);
-	} catch (const DataSpaceIException& e) {
-		return ReportException (e, IO::HDF5_DATASPACE_I_EXCEPTION);
-	} catch (const DataTypeIException&  e) {
-		return ReportException (e, IO::HDF5_DATATYPE_I_EXCEPTION);
-	}
-
-	return IO::OK;
-
-}
-
-
-
-const IO::Status
-HDF5IO::ReadData (double* data) {
-
-	return ReadData (data, true);
-
-}
-
-
-
-const DataInfo
-HDF5IO::GetInfo (const std::string& dname) {
-
-	m_info.dname = std::string(dname);
-	ReadData (NULL, false);
 	return m_info;
 	
 }

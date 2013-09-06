@@ -33,8 +33,19 @@
 
 #include <math.h>
 
+
+template <class T>
+std::ostream& operator<< (std::ostream& os, const std::vector<T>& data) {
+	for (size_t i = 0; i < data.size(); ++i)
+		std::cout << data[i] << " " ;
+	return os;
+}
+
 /**********************************************************/
 void Sample::Prepare (const std::string& fname) {
+
+	m_offset.resize(3);
+	m_res.resize(3);
 
     m_r2prime              = 0.0;
     m_pos_rand_perc        = 1.0;
@@ -56,8 +67,6 @@ void Sample::Prepare (const std::string& fname) {
 
 	// Standard sample has only one compartment
 	m_no_spin_compartments = 1;
-
-	m_helper_size          = 0;
 
     InitRandGenerator();
 
@@ -105,19 +114,14 @@ Sample::~Sample() {
 	if (m_reorder_strategy != NULL)
 		delete m_reorder_strategy;
 
-	if (m_helper_size)
-		free (m_helper);
-
 }
 
 
 /**********************************************************/
 void Sample::CreateHelper (const size_t l) {
 
-	if (l > 0) {
-		m_helper_size = l;
-		m_helper = (double*) malloc (l * sizeof(double));
-	}
+	if (l > 0)
+		m_helper.resize(l);
 
 }
 
@@ -142,9 +146,11 @@ Sample::Sample (const string& fname, const int multiple) {
 /**********************************************************/
 IO::Status Sample::Populate (const string& fname) {
 
+	m_index.resize(3);
+
 	// Binary interface
 	BinaryContext bc;
-	DataInfo      di;
+	std::vector<double> tmpdat;
 	bool          grid = false;
 
 	bc.Initialize (fname, IO::IN);
@@ -153,95 +159,71 @@ IO::Status Sample::Populate (const string& fname) {
 
 	// ----------------------------------------------------
 	// Physical parameters of spins
-	di = bc.GetInfo (std::string("/sample/data"));
+
+	// Retrieve data from file
+	bc.ReadData(tmpdat, "data", "/sample");
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	double* tmpdat = (double*) malloc (di.GetSize() * sizeof(double));
-	int    tmpndim = di.ndim;
-	size_t   tmpdims [4];
-	int    size    = 1;
+	DataInfo di = bc.GetInfo();
+	size_t tmpndim = di.NDim();
 
-	for (int i = 0; i<tmpndim; i++) {
-		tmpdims[tmpndim-1-i] = di.dims[i];
-		size *= di.dims[i];
-	}
-
-	int    nprops  = tmpdims[0];
+	size_t size   = tmpdat.size();
+	size_t nprops = di.dims[0];
 	size = size / nprops;
 
 	for (int i = tmpndim; i < 4; i++)
-		tmpdims[i] = 1;
+		di.dims.push_back(1);
 
-	memcpy (m_index, &tmpdims[1], 3*sizeof(long));
-
-	// Retrieve data from file
-	bc.ReadData(tmpdat);
-	if (bc.Status() != IO::OK)
-		return bc.Status();
-	// ----------------------------------------------------
+	memcpy (&m_index[0], &di.dims[1], 3*sizeof(size_t));
 
 	// ----------------------------------------------------
-	di = bc.GetInfo (std::string("/sample/resolution"));
-	if (bc.Status() == IO::OK) {
-		grid = true;
-		bc.ReadData (m_res);
-		if (bc.Status() != IO::OK)
-			return bc.Status();
-	} else 
-		grid = false; 
-	// ----------------------------------------------------
 
-	// ----------------------------------------------------
-	di = bc.GetInfo (std::string("/sample/offset"));
-	if (bc.Status() == IO::OK) {
-		bc.ReadData (m_offset);
-		if (bc.Status() != IO::OK)
-			return bc.Status();
-	} 
+	bc.ReadData (m_res, "resolution", "/sample");
+	grid = (bc.Status() == IO::OK);
+	bc.ReadData (m_offset, "offset", "/sample");
+
 	// ----------------------------------------------------
 
 	if (grid) {
 
-		m_ensemble.Init (tmpndim, tmpdims, size);
+		m_ensemble.Init (di.dims, size);
 		
-		int  nprop = tmpdims[0] + 4;
-		long n     = 0;
+		int  nprop = di.dims[0] + 4;
+		size_t n     = 0;
 		
-		for (long nz = 0; nz < m_index[ZC]; nz++)
-			for (long ny = 0; ny < m_index[YC]; ny++)
-				for (long nx = 0; nx < m_index[XC]; nx++, n++) {
+		for (size_t nz = 0; nz < m_index[ZC]; nz++)
+			for (size_t ny = 0; ny < m_index[YC]; ny++)
+				for (size_t nx = 0; nx < m_index[XC]; nx++, n++) {
 					
-					long epos = n * nprop;
-					long spos = n * tmpdims[0];
-					
+					size_t epos = n * nprop;
+					size_t spos = n * di.dims[0];
+					std::vector<double>::const_iterator sposi = tmpdat.begin() + spos;
+					std::vector<double>::iterator eposi = m_ensemble.At(M0 + epos);
+
 					if (tmpdat[spos] > 0) {
 						
 						// Copy values over
-						memcpy (&m_ensemble[M0 + epos], &tmpdat[spos], sizeof(double)*tmpdims[0]);
+						std::copy (sposi, sposi + di.dims[0], eposi);
 
 						// Interpolate spatial position
 						m_ensemble[XC+epos] = (nx-0.5*(m_index[XC]-1))*m_res[XC]+m_offset[XC];
 						m_ensemble[YC+epos] = (ny-0.5*(m_index[YC]-1))*m_res[YC]+m_offset[YC];
 						m_ensemble[ZC+epos] = (nz-0.5*(m_index[ZC]-1))*m_res[ZC]+m_offset[ZC];
 						
-						// Assign counter id (dpflug: Could be randomized here)
-
 					}
 
 				}
 		
 	} else {
 
-		tmpdims[0] -= 4;
-		m_ensemble.Init (tmpndim, tmpdims, size);
+		di.dims[0] -= 4;
+		m_ensemble.Init (di.dims, size);
 		
-		memcpy (&m_ensemble[0], tmpdat, m_ensemble.Size()*sizeof(double));
+		memcpy (&m_ensemble[0], &tmpdat[0], m_ensemble.Size()*sizeof(double));
 
 
 	}
-
-	free (tmpdat);
 
 	return bc.Status();
 	
@@ -583,17 +565,17 @@ int Sample::SpinsLeft() {
 
 /*********************************************************/
 void Sample::GetHelper (double* target) {	
-	memcpy (target, m_helper, m_helper_size * sizeof (double)); 
+	memcpy (target, &m_helper[0], m_helper.size() * sizeof (double));
 }
 
 /*********************************************************/
 double* Sample::GetHelper () {	
-	return m_helper;
+	return &m_helper[0];
 }
 
 /*********************************************************/
 size_t Sample::GetHelperSize () {
-	return m_helper_size;
+	return m_helper.size();
 }
 
 /*********************************************************/
@@ -610,6 +592,6 @@ void Sample::SetNoSpinCompartments (int n) {
 void Sample::CopyHelper (double* out) {
 	
 	if (GetHelperSize())
-		memcpy (out, m_helper, GetHelperSize() * sizeof(double));
+		memcpy (out, &m_helper[0], GetHelperSize() * sizeof(double));
 	
 }

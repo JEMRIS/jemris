@@ -33,28 +33,29 @@ public:
 	/**
 	 * @brief Contructor
 	 */
-	SimpleIO     ()                      {};
+	SimpleIO     () {
+		m_type = IO::SIMPLE;
+	}
 	
 	/**
 	 * @brief Destructor
 	 */
-	~SimpleIO     ()                     {};
+	~SimpleIO     ()                     {}
 	
-	/**
-	 * @brief     Read data from file to container
-	 *
-	 * @param  dc Data container
-	 */
-	virtual const IO::Status
-	ReadData      (double* dc)           { return IO::OK; };
-	
+	template<class T> IO::Status
+	ReadData (std::vector<T>& dv, const std::string& dname, const std::string& dpath)
+		{return IO::OK; };
+
 	/**
 	 * @brief     Write data from container to file
 	 *
 	 * @param  dc Data container
 	 */
-	virtual const IO::Status
-	WriteData     (const double* dc)           {return IO::OK; };
+	virtual IO::Status
+	WriteData     (const double* dc)           { return IO::OK; }
+
+	virtual DataInfo
+	GetInfo (const std::string&, const std::string&) { return m_info; }
 
 };
 

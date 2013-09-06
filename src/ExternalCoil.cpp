@@ -69,33 +69,22 @@ IO::Status ExternalCoil::LoadMap () {
 	BinaryContext bc;
 	DataInfo      di;
 	IO::Status   ios = IO::OK;
+	std::vector<double> tmpdat;
 
 	bc.Initialize (m_fname, IO::IN);
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-
-	di = bc.GetInfo ("/maps/magnitude");
-	if (bc.Status() != IO::OK)
+	if (bc.ReadData<double>(tmpdat, "maps", "magnitude") != IO::OK)
 		return bc.Status();
 
-	double* tmpdat = (double*) malloc (di.GetSize() * sizeof(double));
-
-	bc.ReadData(tmpdat);
-	if (bc.Status() != IO::OK)
-		return bc.Status();
-
-	int size =(int) (pow((double) m_points,(double) m_dim) + 1e-20); // no 'int pow(int,int)' available! Use cast and add delta to avoid roundoff error.
+	// no 'int pow(int,int)' available! Use cast and add delta to avoid roundoff error.
+	int size = (int) (pow((double) m_points,(double) m_dim) + 1e-20);
 	int pos  = m_channel*size;
 
 	memcpy (&(m_sens_mag[0][0][0]), &tmpdat[pos], size * sizeof(double));
 
-	di = bc.GetInfo ("/maps/phase");
-	if (bc.Status() != IO::OK)
-		return bc.Status();
-
-	bc.ReadData(tmpdat);
-	if (bc.Status() != IO::OK)
+	if (bc.ReadData<double>(tmpdat, "maps", "phase") != IO::OK)
 		return bc.Status();
 
 	memcpy (&(m_sens_pha[0][0][0]), &tmpdat[pos], size * sizeof(double));

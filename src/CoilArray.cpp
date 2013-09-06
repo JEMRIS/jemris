@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -198,18 +198,18 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 		stringstream sstr;
 		sstr << setw(2) << setfill('0') << c;
 
-		di.ndim    = 2;
+		di.dims.resize(2);
 		di.dims[0] = repository->Samples();
 		di.dims[1] = repository->NProps();
-		di.path    = "/signal/channels/";
+		di.dpath    = "/signal/channels/";
 		di.dname   = sstr.str();
 		bc.SetInfo (di);
 		bc.WriteData (repository->Data());
 		
 		if (di.dname == "00") {
-			di.ndim    = 1;
+			di.dims.resize(1);
 			di.dims[0] = repository->Samples();
-			di.path    = "/signal/";
+			di.dpath    = "/signal/";
 			di.dname   = "times";
 			bc.SetInfo (di);
 			bc.WriteData (repository->Times());
@@ -238,7 +238,7 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	di.fname = "sensmaps.h5";
 	
 	// Nx x Ny x Nz x Nc
-    di.ndim = 4;
+    di.dims.resize(4);
 
 	di.dims[3] = m_coils[0]->GetPoints();
 	di.dims[2] = m_coils[0]->GetPoints();
@@ -251,7 +251,7 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 
 	double* maps = (double*) malloc (m_coils.size()*size*sizeof(double));
 
-	di.path  = "/maps/";
+	di.dpath  = "/maps/";
 	di.dname = "magnitude";
 	bc.SetInfo(di);
 	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {
@@ -261,7 +261,7 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	}
 	bc.WriteData (maps);
 
-	di.path  = "/maps/";
+	di.dpath  = "/maps/";
 	di.dname = "phase";
 	bc.SetInfo(di);
 	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {

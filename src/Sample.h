@@ -162,6 +162,28 @@ struct Ensemble {
 
 	
 	/**
+	 * @brief  Initialize data store with dimensions and number of non-zero spins
+	 *
+	 * @param  ndim Number of dimensions
+	 * @param  dims Actual dimensions
+	 * @param  live Live (non-zero) spins
+	 */
+	inline void Init (const std::vector<size_t>& dims, const size_t live) {
+
+		m_dims = dims;
+		// Add spatial dimensions
+		m_dims[0] += 4;
+
+		// Set number of live spins (Generally less spins may have M0 > 0)
+		m_nspins   = live;
+
+		Allocate();
+		Zero();
+
+	}
+
+
+	/**
 	 * @brief      Allocate RAM
 	 */ 
 	inline void	Allocate () {
@@ -241,6 +263,14 @@ struct Ensemble {
 		return m_data.data();
 	}
 
+
+	typename std::vector<T>::iterator At (const size_t n) {
+		return m_data.begin() + n;
+	}
+
+	typename std::vector<T>::const_iterator At (const size_t n) const {
+		return m_data.begin() + n;
+	}
 };
 
 
@@ -355,7 +385,7 @@ class Sample {
      *
      * @return Grid resolution
      */
-    double* GetResolution()   { return m_res; };
+    double* GetResolution()   { return &m_res[0]; };
 
     /**
      * @brief Initialize the randome number generator
@@ -484,13 +514,13 @@ class Sample {
 	Ensemble<double>     m_ensemble;
 
 
-    size_t         m_index [3];  /** < Sample dimensions      */
-    double       m_res   [3];  /** < Sample resolution [mm] */
-    double       m_offset[3];  /** < Sample offeset to {0,0,0} origin */
+    vector<size_t> m_index;  /** < Sample dimensions      */
+    vector<double> m_res;  /** < Sample resolution [mm] */
+    vector<double> m_offset;  /** < Sample offeset to {0,0,0} origin */
 
-    RNG          m_rng;          /** < random number generator*/
-    double       m_r2prime;      /** < R2-Prime == shaping parameter of the Lorentzian distribution */
-    double       m_pos_rand_perc;/** < Percantage (of cartesian resolution) randomness in spin position .*/
+    RNG            m_rng;          /** < random number generator*/
+    double         m_r2prime;      /** < R2-Prime == shaping parameter of the Lorentzian distribution */
+    double         m_pos_rand_perc;/** < Percantage (of cartesian resolution) randomness in spin position .*/
 
     SampleReorderStrategyInterface *m_reorder_strategy;
 
@@ -510,8 +540,7 @@ class Sample {
     double			m_total_cpu_time;
     double			m_no_spins_done;
 
-	double*         m_helper;
-	int             m_helper_size;
+	vector<double>  m_helper;
 	int             m_no_spin_compartments;
 
 };

@@ -1,4 +1,4 @@
-/** @file ExternalPulseData.cpp
+	/** @file ExternalPulseData.cpp
  *  @brief Implementation of JEMRIS ExternalPulseData
  */
 
@@ -41,7 +41,7 @@ double            ExternalPulseData::GetData (double const time)  {
    unsigned i = ((unsigned) (time * m_times.size() / m_pulse->GetDuration()));
    if (i<m_magnitudes.size())
     return ( *((double*) m_pulse->GetAttribute("Scale")->GetAddress() ) * m_magnitudes.at(i) );
-/*   
+/*
    if (time < 0.0 || time > m_pulse->GetDuration() ) return 0.0;
    int i=0;
    double diff = abs(time - m_times.at(0));
@@ -62,7 +62,7 @@ double            ExternalPulseData::GetData (double const time)  {
 	     << m_magnitudes.at(i)+(m_magnitudes.at(j)-m_magnitudes.at(i))*(t-i) << endl;
 	return  m_magnitudes.at(i)+(m_magnitudes.at(j)-m_magnitudes.at(i))*(t-i);
     }
-*/    
+*/
     return 0.0;
 }
 
@@ -72,7 +72,7 @@ void  ExternalPulseData::SetTPOIs () {
     m_pulse->Pulse::SetTPOIs();
 
     for (unsigned int i=0; i<m_times.size(); ++i)
-	m_pulse->m_tpoi + TPOI::set(m_times.at(i), -1.0);
+    	m_pulse->m_tpoi + TPOI::set(m_times.at(i), -1.0);
 
 };
 
@@ -91,7 +91,8 @@ double    ExternalPulseData::GetPhase  (Module* mod, double time ) {
 
 
 /***********************************************************/
-bool  ExternalPulseData::ReadPulseShape (const string& fname, bool verbose) {
+bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpath,
+		const string& dname, bool verbose) {
 
 	//read data if filename changed
 	if (m_fname == fname) return true;
@@ -101,45 +102,31 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, bool verbose) {
 
 	bc.Initialize (fname, IO::IN);
 	if (bc.Status() != IO::OK) {
-	      if (verbose)
 		cout	<< "Error in Module " << m_pulse->GetName()
-			<< " ::Prepare can not read HDF5 file " << fname << endl;
-	      return false;
+				<< " ::Prepare can not read HDF5 file " << fname << endl;
+		return false;
 	}
 	
-	di = bc.GetInfo (std::string("/extpulse"));
-	std::cout << di << std::endl;
-
-	int columns = ( (m_pulse->GetAxis() == AXIS_RF) ? 3 : 2 );
-	int samples = di.GetSize();
-	double* data = new double[samples];
+	int columns = (m_pulse->GetAxis() == AXIS_RF) ? 3 : 2;
 	
-	bc.ReadData(data);
-	
-	int iNumberOfTimePoints = samples / columns;
+	if (bc.ReadData (m_magnitudes, "mag", dpath) != IO::OK)
+		return false;
 
-	m_times.clear();
-	m_magnitudes.clear();
-	if (m_pulse->GetAxis() == AXIS_RF) m_phases.clear();
+	if (bc.ReadData (m_times, "t", dpath) != IO::OK)
+		return false;
+
 	m_pulse->m_tpoi.Reset();
+	for (size_t i = 0; i < m_times.size(); ++i)
+		m_pulse->m_tpoi + (m_times[i], -1.0);
 
-	for (int i=0; i<iNumberOfTimePoints; ++i) {
+	if (bc.ReadData (m_phases, "pha", dpath) != IO::OK)
 
-		m_times.push_back(data[i]);
-		m_pulse->m_tpoi + TPOI::set(data[i],-1.0);
-
-		m_magnitudes.push_back(data[iNumberOfTimePoints+i]);
-
-		if ( columns==3 ) // Complex pulse
-		    m_phases.push_back(data[2*iNumberOfTimePoints+i]);
-
-	}
-
-	m_pulse->SetDuration(data[iNumberOfTimePoints-1]);
+	m_pulse->SetDuration(m_times.back());
 	m_pulse->m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0);
 	m_fname = fname;
 		
 	return true;
+
 };
 
 

@@ -31,6 +31,10 @@
 #include "HDF5IO.h"
 
 #include <vector>
+#include <typeinfo>
+
+//const std::type_info& hdf5_t = typeid(&HDF5IO);
+//const std::type_info& simple_t = typeid(&SimpleIO);
 
 class BinaryContext {
 	
@@ -39,22 +43,13 @@ public:
 	/**
 	 * @brief        Construct populating strategies
 	 */
-	BinaryContext    () {
-
-		m_strategies.push_back ((BinaryIO*) new SimpleIO ());
-		m_strategies.push_back ((BinaryIO*) new HDF5IO   ());
-
-		m_strategy = m_strategies.at(1);
-
-		m_status = IO::OK;
-		
-	};
+	BinaryContext    ();
 
 
 	/**
 	 * @brief        Default desctructor
 	 */
-	~BinaryContext   () {};
+	~BinaryContext   ();
 	
 
 	/**
@@ -64,26 +59,8 @@ public:
 	 * @param  mode  Access mode (i.e. read/write?)
 	 * @return       Status
 	 */
-	inline const     IO::Status 
-	Initialize       (const std::string& fname, IO::Mode mode) {
-		
-		return m_strategy->Initialize(fname, mode);
-		
-	};
-	
-
-	/**
-	 * @brief        Read data from file to appropriately sized container
-	 *
-	 * @param  in    Input container
-	 * @return       Status
-	 */
-	inline const     IO::Status
-    ReadData         (double* in)  {
-		
-		return m_strategy->ReadData(in); 
-		
-	};
+	IO::Status
+	Initialize       (const std::string& fname, IO::Mode mode);
 	
 
 	/**
@@ -92,12 +69,8 @@ public:
 	 * @param  out   Output container
 	 * @return       Status
 	 */
-	inline const     IO::Status
-	WriteData        (double* out)  {
-		
-		return m_strategy->WriteData(out); 
-		
-	};
+	IO::Status
+	WriteData        (double* out);
 
 
 	/**
@@ -105,12 +78,8 @@ public:
 	 *
 	 * @param  info  Incoming DataInfo
 	 */
-	inline const     void
-	SetInfo          (DataInfo info)  {
-		
-		m_strategy->SetInfo(info); 
-		
-	};
+	void
+	SetInfo          (const DataInfo& info);
 
 
 	/**
@@ -120,12 +89,23 @@ public:
 	 *
 	 * @return       Dataset information
 	 */
-	inline const     DataInfo
-	GetInfo          (std::string dname = "")  {
-		
-		return m_strategy->GetInfo(dname); 
-		
-	};
+	DataInfo
+	GetInfo          (const std::string& dname = "", const std::string& = "");
+
+	template<class T>
+	IO::Status ReadData (std::vector<T>& dv, const std::string& dname, const std::string& dpath = "") {
+		if (m_strategy->IOStrategy() == IO::HDF5)
+			return ((HDF5IO*)m_strategy)->ReadData(dv, dname, dpath);
+		else if (m_strategy->IOStrategy() == IO::SIMPLE)
+			return ((SimpleIO*)m_strategy)->ReadData(dv, dname, dpath);
+	}
+
+	template<class T>
+	std::vector<T> ReadData (const std::string& dname, const std::string& dpath = "") {
+		std::vector<T> dv;
+		m_strategy->ReadData(dv, dname, dpath);
+		return dv;
+	}
 
 
 	/**
@@ -133,12 +113,8 @@ public:
 	 *
 	 * @return       Status
 	 */
-	inline const     IO::Status
-	Status           ()              {
-		
-		return m_strategy->Status();
-		
-	}
+	IO::Status
+	Status           () const;
 	
 
 

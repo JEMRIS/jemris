@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -72,9 +72,9 @@ void Sequence::SeqDiag (string fname ) {
 	if (bc.Status() != IO::OK) return;
 
 	di.fname = "seq.h5";
-	di.ndim  = 1;
+	di.dims.resize(1);
 	di.dims[0] = GetNumOfTPOIs()+1;
-	di.path  = "seqdiag";
+	di.dpath  = "seqdiag";
 	
 	vector<double*> seqdata;
 	for (int i=0; i<numaxes; i++) {

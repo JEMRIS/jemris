@@ -29,19 +29,12 @@ IO::Status MultiPoolSample::Populate (const std::string& fname) {
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	di = bc.GetInfo (std::string("/sample/helper"));
-	if (bc.Status() != IO::OK)
-		return bc.Status();
-
 	if (di.NDim() != 2)
 		return IO::UNMATCHED_DIMENSIONS;
 
-	m_no_spin_compartments = di.Dims()[0];
-
-	// Helper in world is used for storing the global exchange rates
-	CreateHelper(m_no_spin_compartments*m_no_spin_compartments);
-
-	bc.ReadData (m_helper);
+	bc.ReadData (m_helper, "sample", "helper");
+	if (bc.Status() != IO::OK)
+		return bc.Status();
 
 	return IO::OK;
 

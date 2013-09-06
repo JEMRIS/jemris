@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -127,6 +127,7 @@ namespace IO {
 	 * Binary io strategies
 	 */
 	enum Strategy {
+		NONE = -1,
 		SIMPLE,        /**< limited standard serialised data storage */
 		HDF5,          /**< Hirarchical data format 5                */
 		CDF,           /**< Common data format                       */
