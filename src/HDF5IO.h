@@ -46,7 +46,7 @@ public:
 		m_fname  = fname;
 		m_mode   = mode;
 		m_type   = IO::HDF5;
-		m_status = this->FileAccess();
+		this->FileAccess();
 	}
 	
 	/**
