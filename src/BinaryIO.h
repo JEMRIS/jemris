@@ -36,14 +36,6 @@
 const static std::string SLASH ("/");
 const static std::string DSLASH ("//");
 
-template<class T> inline static T _prod (const T a, const T b) {return (a*b);}
-template<class T> inline static T prod (const std::vector<T>& v) {
-	return std::accumulate(v.begin(), v.end(), (T)1, _prod<T>);
-}
-template<class T> inline static T sum (const std::vector<T>& v) {
-	return std::accumulate(v.begin(), v.end(), (T)0);
-}
-
 /**
  * @brief  Simple information structure.
  *         Might show to be too unflexible and be eventually replaced by a dom node?
