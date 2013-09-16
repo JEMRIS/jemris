@@ -1,7 +1,3 @@
-/** @file BinaryIO.h
- *  @brief Implementation of JEMRIS Sample
- */
-
 /*
  *  JEMRIS Copyright (C) 2007-2010  Tony Stoecker, Kaveh Vahedipour
  *                                  Forschungszentrum Juelich, Germany
@@ -25,83 +21,11 @@
 #define BINARY_IO_H_
 
 #include "Declarations.h"
+#include "NDData.h"
 
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
-#include <numeric>
-#include <string>
-#include <vector>
-
-const static std::string SLASH ("/");
-const static std::string DSLASH ("//");
-
-/**
- * @brief  Simple information structure.
- *         Might show to be too unflexible and be eventually replaced by a dom node?
- */
-template<class T>
-struct Data {
-
-	std::string  dname; /**< Data name (i.e. sample, sensitivities, signals and sequence timing)*/
-	std::string  dpath;  /**< Path (i.e. Group name in HDF5) not used for SimpleIO */
-
-	std::vector<size_t> dims;  /**< dimensions */
-	std::vector<T> data;
-
-	int          size;  /**< size of each cell (i.e. 8 for doubles etc) */
-
-	IO::Mode     mode;  /**< 0: Read, 1: Write */
-
-	void Allocate () {
-		data.resize(GetSize());
-	}
-
-	size_t GetSize () {
-		return prod(dims);
-	}
-
-	size_t* Dims() {
-		return dims.data();
-	}
-
-	size_t NDim() const {
-		return dims.size();
-	}
-
-	std::string DataPath () const {
-		return dpath;
-	}
-
-	std::string DataName () const {
-		return dname;
-	}
-
-	std::ostream& Print (std::ostream& os) {
-		os << this->URI().c_str();
-		return os;
-	}
-
-	std::string URI () {
-		std::string uri (dpath + "/" + dname);
-		size_t pos = uri.find(DSLASH);
-		while (pos != std::string::npos) {
-			uri.replace (pos, 2, SLASH);
-			pos = uri.find(DSLASH);
-		}
-		return uri;
-	}
-
-	T& operator[] (const size_t p) {return data[p];}
-	T  operator[] (const size_t p) const {return data[p];}
-
-};
-
-
-template <class T>
-inline std::ostream& operator<< (std::ostream& os, Data<T>& di) {
-	return di.Print(os);
-}
 
 
 /**
@@ -112,6 +36,7 @@ class BinaryIO {
 public:
 	
 
+    
 	BinaryIO () : m_status(IO::OK), m_type(IO::NONE), m_fname (""), m_mode (IO::IN) {}
 
 	/**
@@ -119,16 +44,15 @@ public:
 	 */
 	BinaryIO     (const std::string& fname, const IO::Mode mode) :
 		m_status(IO::OK), m_type(IO::NONE), m_fname (fname), m_mode (mode) {
-
 		FileAccess ();
-
 	}
 	
 
 	/**
 	 * @brief Destructor
 	 */
-	virtual ~BinaryIO     ()                        {};
+	virtual
+    ~BinaryIO () {};
 	 
 
 	/**
@@ -154,7 +78,7 @@ public:
 	 * @param  dc    Data container
 	 */
 	template<class T> IO::Status
-	ReadData (Data<T>& data) {
+	ReadData (NDData<T>& data) {
 		std::cout << "Oh Oh: You are wrong here!" << std::endl;
 	}
 	
@@ -164,7 +88,9 @@ public:
 	 * @param  dc    Data container
 	 */
 	template<class T> IO::Status
-	WriteData (const Data<T>& dc);
+	WriteData (const NDData<T>& dc) {
+		std::cout << "Oh Oh: You are wrong here!" << std::endl;
+	}
 	
 
 	/**
@@ -194,8 +120,8 @@ public:
 	/**
 	 * @brief     Get last status
 	 */
-	inline const  IO::Status
-	Status        () {
+	inline const IO::Status
+	Status () {
 		return m_status;
 	}
 	
@@ -206,7 +132,7 @@ public:
 protected: 
 
 	std::string    m_fname;
-	Data<double>   m_data;
+	NDData<double> m_data;
 	IO::Mode       m_mode;
 	IO::Status     m_status;
 	IO::Strategy   m_type;
