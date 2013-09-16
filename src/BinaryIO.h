@@ -27,6 +27,16 @@
 #include <fstream>
 #include <iostream>
 
+inline static std::string
+URI (const std::string& URL, const std::string& URN) {
+	std::string uri (URL + "/" + URN);
+	size_t pos = uri.find(DSLASH);
+	while (pos != std::string::npos) {
+		uri.replace (pos, 2, SLASH);
+		pos = uri.find(DSLASH);
+	}
+	return uri;
+}
 
 /**
  * @brief Base class for binary IO strategies
@@ -78,7 +88,7 @@ public:
 	 * @param  dc    Data container
 	 */
 	template<class T> IO::Status
-	ReadData (NDData<T>& data) {
+	ReadData (NDData<T>& data, const std::string& urn, const std::string& url = "") {
 		std::cout << "Oh Oh: You are wrong here!" << std::endl;
 	}
 	
@@ -88,7 +98,7 @@ public:
 	 * @param  dc    Data container
 	 */
 	template<class T> IO::Status
-	WriteData (const NDData<T>& dc) {
+	WriteData (const NDData<T>& dc, const std::string& urn, const std::string& url = "") {
 		std::cout << "Oh Oh: You are wrong here!" << std::endl;
 	}
 	
@@ -101,7 +111,7 @@ public:
 
 		if (m_fname.length() > 0) {
 			
-			if (m_data.mode == IO::IN) {
+			if (m_mode == IO::IN) {
 				std::ifstream in (m_fname.c_str(), std::ios::binary);
 				m_status = (in) ? IO::OK : IO::FILE_NOT_FOUND;
 			} else {

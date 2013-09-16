@@ -153,8 +153,7 @@ IO::Status Sample::Populate (const string& fname) {
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	Data<double> data;
-	data.dpath = "/sample";
+	NDData<double> data;
 
 	std::vector<size_t> dims;
 	std::vector<double> tmpdat;
@@ -164,18 +163,17 @@ IO::Status Sample::Populate (const string& fname) {
 	// Physical parameters of spins
 
 	// Retrieve data from file
-	data.dname = "data";
-	bc.ReadData(data);
+	bc.ReadData(data, "data", "/sample");
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
 	size_t tmpndim = data.NDim();
 
-	dims          = data.dims;
-	tmpdat        = data.data;
+	dims          = data.DimVec();
+	tmpdat        = data.DVec();
 
-	size_t size   = data.GetSize();
-	size_t nprops = data.dims[0];
+	size_t size   = data.Size();
+	size_t nprops = data.Dims(0);
 	size = size / nprops;
 
 	for (int i = tmpndim; i < 4; i++)
@@ -185,15 +183,13 @@ IO::Status Sample::Populate (const string& fname) {
 
 	// ----------------------------------------------------
 
-	data.dname = "resolution";
-	bc.ReadData (data);
+	bc.ReadData (data, "resolution", "/sample");
 	grid = (bc.Status() == IO::OK);
-	m_res = data.data;
+	m_res = data.DVec();
 
 
-	data.dname = "offset";
-	bc.ReadData (data);
-	m_offset = data.data;
+	bc.ReadData (data, "offset", "/sample");
+	m_offset = data.DVec();
 
 	// ----------------------------------------------------
 

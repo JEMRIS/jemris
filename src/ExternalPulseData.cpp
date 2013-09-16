@@ -98,8 +98,7 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 	if (m_fname == fname) return true;
 
 	BinaryContext bc (fname, IO::IN);
-	Data<double> data;
-	data.dpath = dpath;
+	NDData<double> data;
 
 	if (bc.Status() != IO::OK) {
 		cout	<< "Error in Module " << m_pulse->GetName()
@@ -109,24 +108,21 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 	
 	int columns = (m_pulse->GetAxis() == AXIS_RF) ? 3 : 2;
 	
-	data.dname = "mag";
-	if (bc.ReadData (data) != IO::OK)
+	if (bc.ReadData (data, "mag", dpath) != IO::OK)
 		return false;
-	m_magnitudes = data.data;
+	m_magnitudes = data.DVec();
 
-	data.dname = "times";
-	if (bc.ReadData (data) != IO::OK)
+	if (bc.ReadData (data, "times", dpath) != IO::OK)
 		return false;
-	m_times = data.data;
+	m_times = data.DVec();
 
 	m_pulse->m_tpoi.Reset();
 	for (size_t i = 0; i < m_times.size(); ++i)
 		m_pulse->m_tpoi + (m_times[i], -1.0);
 
-	data.dname = "pha";
-	if (bc.ReadData (data) != IO::OK)
+	if (bc.ReadData (data, "pha", dpath) != IO::OK)
 		return false;
-	m_phases = data.data;
+	m_phases = data.DVec();
 
 	m_pulse->SetDuration(m_times.back());
 	m_pulse->m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0);

@@ -67,14 +67,9 @@ void Sequence::SeqDiag (string fname ) {
 	BinaryContext bc ("seq.h5", IO::OUT);
 	if (bc.Status() != IO::OK) return;
 
-	Data<double>      di;
+	NDData<double>      di (GetNumOfTPOIs()+1);
 	int numaxes = 7;
 
-	di.dims.resize(1);
-	di.dims[0] = GetNumOfTPOIs()+1;
-	di.dpath  = "seqdiag";
-	di.Allocate();
-	
 	vector<double*> seqdata;
 	for (int i=0; i<numaxes; i++) {
 		seqdata.push_back(new double [GetNumOfTPOIs()+1]);
@@ -100,10 +95,10 @@ void Sequence::SeqDiag (string fname ) {
 
 	//write to HDF5 file
 	for (int i=0; i<numaxes; i++) {
-		di.dname = seqaxis[i];
+		std::string URN (seqaxis[i]);
 		seqdata[i]--;
-		memcpy (di.data.data(), seqdata[i], di.GetSize() * sizeof(double));
-		bc.WriteData(di);
+		memcpy (&di[0], seqdata[i], di.Size() * sizeof(double));
+		bc.WriteData(di, URN, "/seqdiag");
 		delete[] seqdata[i];
 	}
 

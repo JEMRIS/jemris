@@ -44,7 +44,7 @@ public:
 	~SimpleIO     ()                     {}
 	
 	template<class T> IO::Status
-	ReadData (Data<T>& data) {return IO::OK; };
+	ReadData (NDData<T>& data) {return IO::OK; };
 
 	/**
 	 * @brief     Write data from container to file
@@ -52,7 +52,7 @@ public:
 	 * @param  dc Data container
 	 */
 	template<class T> IO::Status
-	WriteData (const Data<T>& data) { return IO::OK; }
+	WriteData (const NDData<T>& data) { return IO::OK; }
 
 
 };

@@ -6,12 +6,33 @@
 #include <string>
 #include <vector>
 
-template<class T> inline static T _prod (const T a, const T b) {return (a*b);}
-template<class T> inline static T prod (const std::vector<T>& v) {
+template<class T>
+struct T_minmax {
+	T min; T max;
+};
+template<class T> inline std::ostream&
+operator<< (std::ostream& os, const T_minmax<T>& mm) {
+	return os << "[" << mm.min << ", " << mm.max << "]";
+}
+
+template<class T> inline static T
+_prod (const T a, const T b) {return (a*b);}
+template<class T> inline static T
+prod (const std::vector<T>& v) {
 	return std::accumulate(v.begin(), v.end(), (T)1, _prod<T>);
 }
-template<class T> inline static T sum (const std::vector<T>& v) {
+template<class T> inline static T
+sum (const std::vector<T>& v) {
 	return std::accumulate(v.begin(), v.end(), (T)0);
+}
+template<class T> inline const T_minmax<T>
+minmax (const std::vector<T>& v) {
+	T_minmax<T> ret;
+	for (size_t i = 0; i < v.size(); ++i){
+		ret.min = std::min(ret.min,v[i]);
+		ret.max = std::max(ret.max,v[i]);
+	}
+	return ret;
 }
 
 const static std::string SLASH ("/");
@@ -23,50 +44,126 @@ const static std::string DSLASH ("//");
 template<class T>
 class NDData {
 
-	std::string         URN; /**< Data name (i.e. sample, sensitivities, signals .... )*/
-	std::string         URL; /**< Path      (i.e. Group name in HDF5) not used for SimpleIO */
 
-	std::vector<size_t> dims;  /**< dimensions */
-	std::vector<T>      data;
-    
+protected:
+
+	std::vector<size_t> _dims;  /**< dimensions */
+	std::vector<T>      _data;
+
     void Allocate () {
-		data.resize(GetSize());
+		_data.resize(CalcSize());
+	}
+
+    size_t CalcSize() {
+    	return prod(_dims);
+    }
+
+
+public:
+
+    NDData () {};
+
+    NDData (const size_t n) {
+    	_dims.resize(1,n);
+    	Allocate();
+    }
+
+    NDData (const size_t n0, const size_t n1) {
+    	_dims.resize(2);
+    	_dims[0] = n0;
+    	_dims[1] = n1;
+    	Allocate();
+    }
+
+    NDData (const size_t n0, const size_t n1, const size_t n2) {
+    	_dims.resize(3);
+    	_dims[0] = n0;
+    	_dims[1] = n1;
+    	_dims[2] = n2;
+    	Allocate();
+    }
+
+    NDData (const size_t n0, const size_t n1, const size_t n2, const size_t n3) {
+    	_dims.resize(3);
+    	_dims[0] = n0;
+    	_dims[1] = n1;
+    	_dims[2] = n2;
+    	_dims[3] = n3;
+    	Allocate();
+    }
+
+    NDData (const size_t n0, const size_t n1, const size_t n2, const size_t n3, const size_t n4) {
+    	_dims.resize(4);
+    	_dims[0] = n0;
+    	_dims[1] = n1;
+    	_dims[2] = n2;
+    	_dims[3] = n3;
+    	_dims[4] = n4;
+    	Allocate();
+    }
+
+	NDData (const std::vector<size_t>& dims) {
+		_dims = dims;
+		Allocate();
+	}
+
+	NDData (const NDData& data) {
+		*this = data;
+	}
+
+	NDData& operator= (const NDData& data) {
+		_dims = data._dims;
+		_data = data._data;
+		return *this;
+	}
+
+	inline size_t Dims (const size_t n = 0) const {
+		return _dims[n];
 	}
     
-	size_t GetSize () {
-		return prod(dims);
+	inline std::vector<size_t> DimVec () const {
+		return _dims;
+	}
+
+	inline size_t Size () const {
+		return _data.size();
 	}
     
-	size_t* Dims() {
-		return dims.data();
+	inline size_t NDim() const {
+		return _dims.size();
 	}
     
-	size_t NDim() const {
-		return dims.size();
-	}
-    
-	std::ostream& Print (std::ostream& os) {
-		os << this->URI().c_str();
+	std::ostream& Print (std::ostream& os) const {
+		os << "dims(";
+		for (size_t i = 0; i < _dims.size(); ++i)
+			os << _dims[i] << " ";
+		os << ") range[" << minmax(_data) << "]";
 		return os;
 	}
+
+	inline bool Empty () const {
+		return _data.empty();
+	}
     
-	std::string URI () {
-		std::string uri (URL + "/" + URN);
-		size_t pos = uri.find(DSLASH);
-		while (pos != std::string::npos) {
-			uri.replace (pos, 2, SLASH);
-			pos = uri.find(DSLASH);
-		}
-		return uri;
+	inline T& operator[] (const size_t p) {
+        return _data[p];
+    }
+    
+	inline T  operator[] (const size_t p) const {
+        return _data[p];
+    }
+
+	inline const T*  CPtr (const size_t n = 0) const {
+		return &_data[n];
 	}
 
-	T& operator[] (const size_t p) {
-        return data[p];
-    }
-    
-	T  operator[] (const size_t p) const {
-        return data[p];
-    }
+	inline T*  Ptr (const size_t n = 0) {
+		return &_data[n];
+	}
+
+	inline std::vector<T> DVec () const {
+		return _data;
+	}
 
 };
 

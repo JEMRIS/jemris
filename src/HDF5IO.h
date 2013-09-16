@@ -62,7 +62,7 @@ public:
 	 * @param  dc Data container
 	 */
 	template<class T> IO::Status
-	WriteData (const Data<T>& data) {
+	WriteData (const NDData<T>& data, const std::string& urn, const std::string& url = "") {
 
 		try {
 
@@ -73,7 +73,7 @@ public:
 			std::vector<hsize_t> dims(data.NDim());
 
 			for (int i = 0; i < data.NDim(); i++)
-				dims[i] = data.dims[i];
+				dims[i] = data.Dims(i);
 
 			//std::reverse (dims.begin(), dims.end());
 
@@ -81,16 +81,16 @@ public:
 
 			try {
 
-				group = m_file.openGroup(data.dpath);
+				group = m_file.openGroup(url);
 #ifdef VERBOSE
-				printf ("Group %s opened for writing\n", data.dpath.c_str()) ;
+				printf ("Group %s opened for writing\n", url.c_str()) ;
 #endif
 
 			} catch (H5::Exception e) {
 
 				int    depth   = 0;
-				char*   path = new char[data.dpath.length()];
-				strcpy (path, data.dpath.c_str());
+				char*   path = new char[url.length()];
+				strcpy (path, url.c_str());
 				char*  subpath = strtok (path, "/");
 				H5::Group* tmp;
 
@@ -116,10 +116,10 @@ public:
 
 			H5::DataSpace     space (data.NDim(), dims.data());
 			H5::FloatType     type  (H5::PredType::NATIVE_DOUBLE);
-			H5::DataSet       set = group.createDataSet(data.dname, type, space);
+			H5::DataSet       set = group.createDataSet(urn, type, space);
 
 			// Write data
-			set.write  (data.data.data(), type);
+			set.write  (data.CPtr(), type);
 
 			// Clean up.
 			set.close  ();
@@ -145,38 +145,30 @@ public:
 
 
 	template<class T> IO::Status
-	ReadData (Data<T>& data) {
+	ReadData (NDData<T>& data, const std::string& urn, const std::string& url = "") {
 
 		try {
 
 #ifndef VERBOSE
 			H5::Exception::dontPrint();
 #endif
-			H5::DataSet     dataset = m_file.openDataSet(data.URI());
+			H5::DataSet     dataset = m_file.openDataSet(URI(url,urn));
 			H5::DataType    type    = dataset.getFloatType();
 			H5::DataSpace   space   = dataset.getSpace();
 			std::vector<hsize_t> dims ((size_t)space.getSimpleExtentNdims());
-			data.dims.resize(space.getSimpleExtentDims(&dims[0], NULL));
+			std::vector<size_t> dimst (space.getSimpleExtentDims(&dims[0], NULL));
 
-			for (int i = 0; i < data.dims.size(); i++)
-				data.dims[i] = dims[i];
+			for (int i = 0; i < dimst.size(); i++)
+				dimst[i] = dims[i];
 
-			std::reverse (data.dims.begin(), data.dims.end());
-			data.Allocate();
+			std::reverse (dimst.begin(), dimst.end());
+			data = NDData<T> (dimst);
 
 #ifdef VERBOSE
-				std::cout << "        rank: " << data.NDim() << ", dimensions: ";
-				for (int i = 0; i < data.NDim(); i++) {
-					std::cout << (unsigned long)(data.dims[i]);
-					if (i == data.NDim() - 1)
-						std::cout << " = " << data.GetSize() << std::endl;
-					else
-						std::cout << " x ";
-				}
+			std::cout << data << std::endl;
 #endif
 
-			data.data.resize(data.GetSize());
-			dataset.read (data.data.data(), type);
+			dataset.read (data.Ptr(), type);
 
 			space.close();
 			dataset.close();

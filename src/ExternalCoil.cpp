@@ -70,11 +70,9 @@ IO::Status ExternalCoil::LoadMap () {
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	Data<double> tmpdat;
-	tmpdat.dpath = "/magnitude";
-	tmpdat.dname  = "maps";
+	NDData<double> tmpdat;
 
-	if (bc.ReadData(tmpdat) != IO::OK)
+	if (bc.ReadData(tmpdat, "magnitude", "/maps") != IO::OK)
 		return bc.Status();
 
 	// no 'int pow(int,int)' available! Use cast and add delta to avoid roundoff error.
@@ -83,8 +81,7 @@ IO::Status ExternalCoil::LoadMap () {
 
 	memcpy (&(m_sens_mag[0][0][0]), &tmpdat[pos], size * sizeof(double));
 
-	tmpdat.dpath = "/magnitude";
-	if (bc.ReadData(tmpdat) != IO::OK)
+	if (bc.ReadData(tmpdat, "phase", "/maps") != IO::OK)
 		return bc.Status();
 
 	memcpy (&(m_sens_pha[0][0][0]), &tmpdat[pos], size * sizeof(double));

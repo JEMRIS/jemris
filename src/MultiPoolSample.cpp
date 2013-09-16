@@ -25,19 +25,17 @@ IO::Status MultiPoolSample::Populate (const std::string& fname) {
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	Data<double>      di;
+	NDData<double>      di;
 	IO::Status    ios;
 
 	if (di.NDim() != 2)
 		return IO::UNMATCHED_DIMENSIONS;
 
-	di.dname = "sample";
-	di.dpath = "helper";
-	bc.ReadData (di);
+	bc.ReadData (di, "sample", "helper");
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	m_helper = di.data;
+	m_helper = di.DVec();
 
 	return IO::OK;
 
