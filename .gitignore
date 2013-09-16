@@ -1,0 +1,25 @@
+# explicit
+/.project
+/.cproject
+/config.log
+/config.status
+/libtool
+/.autotools
+/.csettings
+/.settings
+/src/jemris
+/src/pjemris
+/src/sanityck
+/src/config.h
+
+# implicit
+.deps/
+.libs/
+.dirstamp
+.DS_Store
+*~
+.*~
+Makefile
+*.o
+*.lo
+*.la
