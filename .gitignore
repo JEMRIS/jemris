@@ -11,6 +11,14 @@
 /src/pjemris
 /src/sanityck
 /src/config.h
+/share/matlab/JEMRIS_seq.m
+/share/matlab/JEMRIS_sim.m
+/share/matlab/JEMRIS_txrx.m
+/share/matlab/pbs_script.sh
+/signals.h5
+/src/stamp-h1
+/doc/site/nav.js
+/doc/userguide/doxy-jemris.conf
 
 # implicit
 .deps/
@@ -23,3 +31,4 @@ Makefile
 *.o
 *.lo
 *.la
+.jemris_progress.out
