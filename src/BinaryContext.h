@@ -53,20 +53,20 @@ public:
 	 * @return       Status
 	 */
 	template<class T> IO::Status
-	WriteData (const NDData<T>& data, const std::string& urn, const std::string& url = "") {
+	Write (const NDData<T>& data, const std::string& urn, const std::string& url = "") {
 		if (m_strategy->IOStrategy() == IO::HDF5)
-			return ((HDF5IO*)m_strategy)->WriteData(data, urn, url);
+			return ((HDF5IO*)m_strategy)->Write(data, urn, url);
 		else if (m_strategy->IOStrategy() == IO::SIMPLE)
-			return ((SimpleIO*)m_strategy)->WriteData(data);
+			return ((SimpleIO*)m_strategy)->Write(data, urn, url);
 	}
 
 
 	template<class T> IO::Status
-	ReadData (NDData<T>& data, const std::string& urn, const std::string& url = "") {
+	Read (NDData<T>& data, const std::string& urn, const std::string& url = "") {
 		if (m_strategy->IOStrategy() == IO::HDF5)
-			return ((HDF5IO*)m_strategy)->ReadData(data, urn, url);
+			return ((HDF5IO*)m_strategy)->Read(data, urn, url);
 		else if (m_strategy->IOStrategy() == IO::SIMPLE)
-			return ((SimpleIO*)m_strategy)->ReadData(data);
+			return ((SimpleIO*)m_strategy)->Read(data, urn, url);
 	}
 
 	/**

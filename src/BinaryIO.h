@@ -88,7 +88,7 @@ public:
 	 * @param  dc    Data container
 	 */
 	template<class T> IO::Status
-	ReadData (NDData<T>& data, const std::string& urn, const std::string& url = "") {
+	Read (NDData<T>& data, const std::string& urn, const std::string& url = "") {
 		std::cout << "Oh Oh: You are wrong here!" << std::endl;
 	}
 	
@@ -98,7 +98,7 @@ public:
 	 * @param  dc    Data container
 	 */
 	template<class T> IO::Status
-	WriteData (const NDData<T>& dc, const std::string& urn, const std::string& url = "") {
+	Write (const NDData<T>& dc, const std::string& urn, const std::string& url = "") {
 		std::cout << "Oh Oh: You are wrong here!" << std::endl;
 	}
 	

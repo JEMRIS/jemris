@@ -44,7 +44,7 @@ public:
 	~SimpleIO     ()                     {}
 	
 	template<class T> IO::Status
-	ReadData (NDData<T>& data, const std::string& urn,
+	Read (NDData<T>& data, const std::string& urn,
 			const std::string& url = "") {return IO::OK; };
 
 	/**
@@ -53,7 +53,7 @@ public:
 	 * @param  dc Data container
 	 */
 	template<class T> IO::Status
-	WriteData (const NDData<T>& data, const std::string& urn,
+	Write (const NDData<T>& data, const std::string& urn,
 			const std::string& url = "") { return IO::OK; }
 
 

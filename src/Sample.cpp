@@ -163,7 +163,7 @@ IO::Status Sample::Populate (const string& fname) {
 	// Physical parameters of spins
 
 	// Retrieve data from file
-	bc.ReadData(data, "data", "/sample");
+	bc.Read(data, "data", "/sample");
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
@@ -183,12 +183,12 @@ IO::Status Sample::Populate (const string& fname) {
 
 	// ----------------------------------------------------
 
-	bc.ReadData (data, "resolution", "/sample");
+	bc.Read (data, "resolution", "/sample");
 	grid = (bc.Status() == IO::OK);
 	m_res = data.DVec();
 
 
-	bc.ReadData (data, "offset", "/sample");
+	bc.Read (data, "offset", "/sample");
 	m_offset = data.DVec();
 
 	// ----------------------------------------------------

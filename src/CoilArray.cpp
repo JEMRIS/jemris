@@ -198,12 +198,12 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 		di = NDData<double> (repository->Samples(), repository->NProps());
 		memcpy (&di[0], repository->Data(), di.Size() * sizeof(double));
 		URN = sstr.str();
-		bc.WriteData (di, URN, "/signal/channels/");
+		bc.Write(di, URN, "/signal/channels/");
 		
 		if (URN == "00") {
 			di = NDData<double> (repository->Samples());
 			memcpy (&di[0], repository->Times(), di.Size() * sizeof(double));
-			bc.WriteData (di, "times", "/signal");
+			bc.Write(di, "times", "/signal");
 		}
 
 
@@ -235,13 +235,13 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 		memcpy (&di[0], m_coils[i]->MagnitudeMap(), sizeof(double)*size);
 		n += size; 
 	}
-	bc.WriteData (di, "magnitude", "/maps");
+	bc.Write (di, "magnitude", "/maps");
 
 	for (unsigned i = 0, n = 0; i < m_coils.size(); ++i) {
 		memcpy (&di[0], m_coils[i]->PhaseMap(), sizeof(double)*size);
 		n += size; 
 	}
-	bc.WriteData (di, "phase", "/maps");
+	bc.Write (di, "phase", "/maps");
 	
 	return ios;
 	
