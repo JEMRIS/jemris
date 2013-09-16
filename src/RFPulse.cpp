@@ -28,14 +28,11 @@
 #include "Coil.h"
 
 /*****************************************************************/
-RFPulse::RFPulse  () {
+RFPulse::RFPulse  () : m_refocussing(0), m_coil_array(0),
+	m_channel(0), m_flip_angle(0.), m_bw(0.) {
 
-    m_axis          = AXIS_RF;
-    m_coil_array    = NULL;
-    m_channel       =0;
-    m_flip_angle    =0.0;
-    m_bw            =0.0;
-    m_initial_phase =0.0;
+	m_axis = AXIS_RF;
+	m_initial_phase = 0.;
 
 }
 

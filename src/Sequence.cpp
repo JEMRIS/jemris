@@ -98,7 +98,7 @@ void Sequence::SeqDiag (string fname ) {
 		std::string URN (seqaxis[i]);
 		seqdata[i]--;
 		memcpy (&di[0], seqdata[i], di.Size() * sizeof(double));
-		bc.WriteData(di, URN, "/seqdiag");
+		bc.Write(di, URN, "/seqdiag");
 		delete[] seqdata[i];
 	}
 

@@ -31,7 +31,7 @@ IO::Status MultiPoolSample::Populate (const std::string& fname) {
 	if (di.NDim() != 2)
 		return IO::UNMATCHED_DIMENSIONS;
 
-	bc.ReadData (di, "sample", "helper");
+	bc.Read(di, "sample", "helper");
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 

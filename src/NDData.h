@@ -8,7 +8,8 @@
 
 template<class T>
 struct T_minmax {
-	T min; T max;
+	T min;
+	T max;
 };
 template<class T> inline std::ostream&
 operator<< (std::ostream& os, const T_minmax<T>& mm) {

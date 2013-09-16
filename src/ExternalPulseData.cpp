@@ -108,11 +108,11 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 	
 	int columns = (m_pulse->GetAxis() == AXIS_RF) ? 3 : 2;
 	
-	if (bc.ReadData (data, "mag", dpath) != IO::OK)
+	if (bc.Read(data, "mag", dpath) != IO::OK)
 		return false;
 	m_magnitudes = data.DVec();
 
-	if (bc.ReadData (data, "times", dpath) != IO::OK)
+	if (bc.Read(data, "times", dpath) != IO::OK)
 		return false;
 	m_times = data.DVec();
 
@@ -120,7 +120,7 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 	for (size_t i = 0; i < m_times.size(); ++i)
 		m_pulse->m_tpoi + (m_times[i], -1.0);
 
-	if (bc.ReadData (data, "pha", dpath) != IO::OK)
+	if (bc.Read(data, "pha", dpath) != IO::OK)
 		return false;
 	m_phases = data.DVec();
 
