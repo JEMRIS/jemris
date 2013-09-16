@@ -32,3 +32,4 @@ Makefile
 *.lo
 *.la
 .jemris_progress.out
+seq.h5
