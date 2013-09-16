@@ -110,11 +110,11 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 	
 	if (bc.Read(data, "mag", dpath) != IO::OK)
 		return false;
-	m_magnitudes = data.DVec();
+	m_magnitudes = data.Data();
 
 	if (bc.Read(data, "times", dpath) != IO::OK)
 		return false;
-	m_times = data.DVec();
+	m_times = data.Data();
 
 	m_pulse->m_tpoi.Reset();
 	for (size_t i = 0; i < m_times.size(); ++i)
@@ -122,7 +122,7 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 
 	if (bc.Read(data, "pha", dpath) != IO::OK)
 		return false;
-	m_phases = data.DVec();
+	m_phases = data.Data();
 
 	m_pulse->SetDuration(m_times.back());
 	m_pulse->m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0);

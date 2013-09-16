@@ -170,7 +170,7 @@ IO::Status Sample::Populate (const string& fname) {
 	size_t tmpndim = data.NDim();
 
 	dims          = data.DimVec();
-	tmpdat        = data.DVec();
+	tmpdat        = data.Data();
 
 	size_t size   = data.Size();
 	size_t nprops = data.Dims(0);
@@ -185,11 +185,11 @@ IO::Status Sample::Populate (const string& fname) {
 
 	bc.Read (data, "resolution", "/sample");
 	grid = (bc.Status() == IO::OK);
-	m_res = data.DVec();
+	m_res = data.Data();
 
 
 	bc.Read (data, "offset", "/sample");
-	m_offset = data.DVec();
+	m_offset = data.Data();
 
 	// ----------------------------------------------------
 

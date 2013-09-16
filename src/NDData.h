@@ -49,31 +49,22 @@ class NDData {
 protected:
 
 	std::vector<size_t> _dims;  /**< dimensions */
-	std::vector<T>      _data;
-
-    void Allocate () {
-		_data.resize(CalcSize());
-	}
-
-    size_t CalcSize() {
-    	return prod(_dims);
-    }
-
+	std::vector<T>      _data;  /**< actual data */
 
 public:
 
     NDData () {};
 
-    NDData (const size_t n) {
-    	_dims.resize(1,n);
-    	Allocate();
+    NDData (const size_t n0) {
+    	_dims.resize(1,n0);
+    	_data.resize(prod(_dims));
     }
 
     NDData (const size_t n0, const size_t n1) {
     	_dims.resize(2);
     	_dims[0] = n0;
     	_dims[1] = n1;
-    	Allocate();
+    	_data.resize(prod(_dims));
     }
 
     NDData (const size_t n0, const size_t n1, const size_t n2) {
@@ -81,7 +72,7 @@ public:
     	_dims[0] = n0;
     	_dims[1] = n1;
     	_dims[2] = n2;
-    	Allocate();
+    	_data.resize(prod(_dims));
     }
 
     NDData (const size_t n0, const size_t n1, const size_t n2, const size_t n3) {
@@ -90,7 +81,7 @@ public:
     	_dims[1] = n1;
     	_dims[2] = n2;
     	_dims[3] = n3;
-    	Allocate();
+    	_data.resize(prod(_dims));
     }
 
     NDData (const size_t n0, const size_t n1, const size_t n2, const size_t n3, const size_t n4) {
@@ -100,12 +91,12 @@ public:
     	_dims[2] = n2;
     	_dims[3] = n3;
     	_dims[4] = n4;
-    	Allocate();
+    	_data.resize(prod(_dims));
     }
 
 	NDData (const std::vector<size_t>& dims) {
 		_dims = dims;
-		Allocate();
+    	_data.resize(prod(_dims));
 	}
 
 	NDData (const NDData& data) {
@@ -138,7 +129,7 @@ public:
 		os << "dims(";
 		for (size_t i = 0; i < _dims.size(); ++i)
 			os << _dims[i] << " ";
-		os << ") range[" << minmax(_data) << "]";
+		os << ") range(" << minmax(_data) << ")";
 		return os;
 	}
 
@@ -162,7 +153,7 @@ public:
 		return &_data[n];
 	}
 
-	inline std::vector<T> DVec () const {
+	inline std::vector<T> Data () const {
 		return _data;
 	}
 

@@ -35,7 +35,7 @@ IO::Status MultiPoolSample::Populate (const std::string& fname) {
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	m_helper = di.DVec();
+	m_helper = di.Data();
 
 	return IO::OK;
 

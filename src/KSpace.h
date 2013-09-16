@@ -1,33 +1,49 @@
 #ifndef __K_SPACE_H__
 #define __K_SPACE_H__
 
-template <class T>
-struct KS {
+#include <cstddef>
+#include <vector>
 
-    std::vector<T> _data;
-    std::vector<size_t> _dims;
 
-    KS (const size_t n) {
-        Allocate (n,n);
-    }
-
-    Allocate (const std::vector<size_t> dims) {
-        _dims = dims;
-        _data.resize(prod(dims));
-    }
-    
-};
-
-template <class T>
+/**
+ * @brief K-space
+ */
+template <class T, unsigned D = 3>
 class KSpace {
 
+	typedef T KPoint[D];
+
 public:
-    KSpace () {};
-    KSpace (const KSpace& ks) {};
+
+	/**
+	 * @brief Default constructor
+	 */
+	KSpace ()  {}
+
+	/**
+	 * @brief Copy constructor
+	 */
+	KSpace (const KSpace& ks) {
+    	*this = ks;
+    }
+
+	/**
+	 * @brief Assignement operator
+	 */
+    KSpace& operator= (const KSpace& k) {
+    	_k = k;
+    	return *this;
+    }
+
+    /**
+     * @brief Default destructor
+     */
     ~KSpace () {};
-    
+
+
 private:
-    std::vector<T> m_ks;
+
+    std::vector<KPoint> _k;
 
 };
 
