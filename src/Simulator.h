@@ -34,8 +34,6 @@
 #include "CoilArray.h"
 #include "Bloch_CV_Model.h"
 
-
-
 /**
  * @brief The simulator
  */

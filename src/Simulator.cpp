@@ -45,7 +45,7 @@ Simulator::Simulator() :
 }
 
 /**********************************************************/
-Simulator::Simulator (const string& fname, const string& fsample, const string& frxarray,
+Simulator::Simulator ( const string& fname, const string& fsample, const string& frxarray,
 		const string& ftxarray, const string& fsequence, const string& fmodel) :
 	m_rx_coil_array (0), m_evol(0),	m_world (World::instance()), m_model(0), m_tx_coil_array(0),
 	m_sample(0), m_sequence(0) {

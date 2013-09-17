@@ -262,7 +262,7 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	ExternalPulseData.cpp ExternalPulseData.h ExternalRFPulse.cpp \
 	ExternalRFPulse.h GaussianRFPulse.cpp GaussianRFPulse.h \
 	GradPulse.cpp GradPulse.h HardRFPulse.cpp HardRFPulse.h \
-	HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h \
+	HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h KSpace.h \
 	Microstructure.cpp Microstructure.h MicrostructureBoxes.cpp \
 	MicrostructureBoxes.h MicrostructureCrossingFiber.cpp \
 	MicrostructureCrossingFiber.h MicrostructureKissingFiber.cpp \
