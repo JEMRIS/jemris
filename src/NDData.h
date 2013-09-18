@@ -1,10 +1,13 @@
 #ifndef __ND_DATA_H__
 #define __ND_DATA_H__
 
+#include <H5public.h>
+
 #include <iostream>
 #include <numeric>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 template<class T>
 struct T_minmax {
@@ -84,15 +87,11 @@ public:
     	_data.resize(prod(_dims));
     }
 
-    NDData (const size_t n0, const size_t n1, const size_t n2, const size_t n3, const size_t n4) {
-    	_dims.resize(4);
-    	_dims[0] = n0;
-    	_dims[1] = n1;
-    	_dims[2] = n2;
-    	_dims[3] = n3;
-    	_dims[4] = n4;
+	NDData (const std::vector<hsize_t>& dims) {
+		_dims.resize(dims.size());
+		std::reverse_copy (dims.begin(), dims.end(), _dims.begin());
     	_data.resize(prod(_dims));
-    }
+	}
 
 	NDData (const std::vector<size_t>& dims) {
 		_dims = dims;

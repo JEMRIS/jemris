@@ -166,8 +166,9 @@ namespace IO {
 	 * Binary io modes
 	 */
 	enum Mode {
-		IN, /**< Read access */
-		OUT /**< R/W  access */
+		IN, /**< Read only */
+		OUT, /**< Write (overwrite) */
+		APPEND /**< Write (append) */
 	};
 	
 }

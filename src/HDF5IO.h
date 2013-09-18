@@ -75,8 +75,6 @@ public:
 			for (int i = 0; i < data.NDim(); i++)
 				dims[i] = data.Dims(i);
 
-			//std::reverse (dims.begin(), dims.end());
-
 			H5::Group group;
 
 			try {
@@ -87,43 +85,19 @@ public:
 #endif
 
 			} catch (H5::Exception e) {
-
-				int    depth   = 0;
-				char*   path = new char[url.length()];
-				strcpy (path, url.c_str());
-				char*  subpath = strtok (path, "/");
-				H5::Group* tmp;
-
-				while (subpath != NULL) {
-
-					try {
-						group = depth ? tmp->openGroup(subpath)   : m_file.openGroup(subpath);
-					} catch (H5::Exception e) {
-						group = depth ? tmp->createGroup(subpath) : m_file.createGroup(subpath);
-					}
-
-					subpath = strtok (NULL, "/");
-					tmp = &group;
-					depth++;
-
-				}
-
-				group = (*tmp);
-
-				delete[] path;
-
+				group = CreateGroup (url);
 			}
 
-			H5::DataSpace     space (data.NDim(), dims.data());
-			H5::FloatType     type  (H5::PredType::NATIVE_DOUBLE);
-			H5::DataSet       set = group.createDataSet(urn, type, space);
+			H5::DataSpace dspace (data.NDim(), dims.data());
+			H5::FloatType dtype  (H5::PredType::NATIVE_DOUBLE);
+			H5::DataSet   dset = group.createDataSet(urn, dtype, dspace);
 
 			// Write data
-			set.write  (data.CPtr(), type);
+			dset.write  (data.CPtr(), dtype);
 
 			// Clean up.
-			set.close  ();
-			space.close();
+			dset.close();
+			dspace.close();
 			group.close();
 
 		} catch (const H5::FileIException&      e) {
@@ -152,26 +126,21 @@ public:
 #ifndef VERBOSE
 			H5::Exception::dontPrint();
 #endif
-			H5::DataSet     dataset = m_file.openDataSet(URI(url,urn));
-			H5::DataType    type    = dataset.getFloatType();
-			H5::DataSpace   space   = dataset.getSpace();
-			std::vector<hsize_t> dims ((size_t)space.getSimpleExtentNdims());
-			std::vector<size_t> dimst (space.getSimpleExtentDims(&dims[0], NULL));
+			H5::DataSet   dset   = m_file.openDataSet(URI(url,urn));
+			H5::DataType  dtype  = dset.getFloatType();
+			H5::DataSpace dspace = dset.getSpace();
+			std::vector<hsize_t> dims (dspace.getSimpleExtentNdims());
+			size_t        ndim   = dspace.getSimpleExtentDims(&dims[0], NULL);
+			data                 = NDData<T> (dims);
 
-			for (int i = 0; i < dimst.size(); i++)
-				dimst[i] = dims[i];
-
-			std::reverse (dimst.begin(), dimst.end());
-			data = NDData<T> (dimst);
+			dset.read (data.Ptr(), dtype);
 
 #ifdef VERBOSE
 			std::cout << data << std::endl;
 #endif
 
-			dataset.read (data.Ptr(), type);
-
-			space.close();
-			dataset.close();
+			dspace.close();
+			dset.close();
 
 		} catch (const H5::FileIException&      e) {
 			return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
@@ -198,7 +167,8 @@ public:
 #ifdef VERBOSE
 			printf ("\nFile %s opened for RO\n", m_fname.c_str());
 #endif
-		} else {
+		} else if (m_mode == IO::OUT) {
+
 			try {
 				m_file = H5::H5File  (m_fname, H5F_ACC_TRUNC);
 #ifdef VERBOSE
@@ -210,6 +180,14 @@ public:
 				printf ("\nFile %s created for RW\n", m_fname.c_str());
 #endif
 			}
+		} else if (m_mode == IO::APPEND) {
+			try  {
+				m_file = H5::H5File  (m_fname, H5F_ACC_RDWR);
+#ifdef VERBOSE
+				printf ("\nFile %s created for RW\n", m_fname.c_str());
+#endif
+
+			} catch (const H5::Exception& e) {}
 		}
 
 		return m_status;
@@ -218,6 +196,10 @@ public:
 
 
 private:
+
+	H5::Group CreateGroup (const std::string& url);
+
+
 	/**
 	 * 	@brief Handle HDF5 exceptions
 	 *

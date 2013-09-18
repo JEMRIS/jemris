@@ -99,7 +99,7 @@ public:
     	NDData<T> data (D,_k.size());
     	for (size_t i = 0; i < _k.size(); ++i)
     		std::copy (_k[i].CPtr(), _k[i].CPtr()+end, &data[i*D]);
-    	BinaryContext bc (fname, IO::OUT);
+    	BinaryContext bc (fname, IO::APPEND);
     	bc.Write(data, urn, url);
     }
 

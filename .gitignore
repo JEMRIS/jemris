@@ -19,6 +19,7 @@
 /src/stamp-h1
 /doc/site/nav.js
 /doc/userguide/doxy-jemris.conf
+/autom4te.cache
 
 # implicit
 .deps/
@@ -33,3 +34,4 @@ Makefile
 *.la
 .jemris_progress.out
 seq.h5
+signals.h5

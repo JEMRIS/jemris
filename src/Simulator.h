@@ -33,6 +33,7 @@
 #include "Sample.h"
 #include "CoilArray.h"
 #include "Bloch_CV_Model.h"
+#include "KSpace.h"
 
 /**
  * @brief The simulator
@@ -221,6 +222,7 @@ class Simulator {
 	CoilArray*               m_tx_coil_array;     /**< @brief Transmit coil array         */
 	CoilArray*               m_rx_coil_array;     /**< @brief Receive coil array          */
 	DOMTreeErrorReporter*    m_domtree_error_rep; /**< @brief DOM tree error reporter     */
+	KSpace<double,4>*        m_kspace;            /**< @brief K-Space                     */
 
 };
 

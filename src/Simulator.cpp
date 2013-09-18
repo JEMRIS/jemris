@@ -276,13 +276,18 @@ void Simulator::Simulate          (bool bDumpSignal) {
 
 	m_rx_coil_array->InitializeSignals (m_sequence->GetNumOfADCs());
 
-	if (bDumpSignal) 
+	if (bDumpSignal) {
+		m_kspace = new KSpace<double,4>();
+		KSpace<double,4>::KPoint p;
+		m_kspace->PushBack(p);
 		CheckRestart();
+	}
 
 	m_model->Solve();
 
 	if (bDumpSignal) {
 		m_rx_coil_array->DumpSignals();
+		m_kspace->Write("signals.h5", "kspace", "/");
 		DeleteTmpFiles();
 	}
 

@@ -244,8 +244,8 @@ void Sample::CropEnumerate () {
 	long osize = m_ensemble.NSpins();
  	int nprops = m_ensemble.NProps();
 
-	double* tmp = (double*) malloc (osize * nprops * sizeof(double));
-	memcpy (tmp, m_ensemble.Data(), osize * nprops * sizeof(double));
+	std::vector<double> tmp (osize * nprops);
+	memcpy (&tmp[0], m_ensemble.Data(), osize * nprops * sizeof(double));
 
 	for (int i = 0; i < osize; i++)
 		if (m_ensemble[i * nprops + M0] > 0)
@@ -267,7 +267,6 @@ void Sample::CropEnumerate () {
 
 		}
 
-	free (tmp);
 }
 
 /**********************************************************/
