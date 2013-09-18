@@ -71,19 +71,15 @@ public:
 #endif
 
 			std::vector<hsize_t> dims(data.NDim());
-
-			for (int i = 0; i < data.NDim(); i++)
-				dims[i] = data.Dims(i);
+			std::copy (data.DimVec().begin(), data.DimVec().end(), dims.begin());
 
 			H5::Group group;
 
 			try {
-
 				group = m_file.openGroup(url);
 #ifdef VERBOSE
 				printf ("Group %s opened for writing\n", url.c_str()) ;
 #endif
-
 			} catch (H5::Exception e) {
 				group = CreateGroup (url);
 			}
@@ -92,10 +88,7 @@ public:
 			H5::FloatType dtype  (H5::PredType::NATIVE_DOUBLE);
 			H5::DataSet   dset = group.createDataSet(urn, dtype, dspace);
 
-			// Write data
-			dset.write  (data.CPtr(), dtype);
-
-			// Clean up.
+			dset.write(data.CPtr(), dtype);
 			dset.close();
 			dspace.close();
 			group.close();
@@ -133,12 +126,7 @@ public:
 			size_t        ndim   = dspace.getSimpleExtentDims(&dims[0], NULL);
 			data                 = NDData<T> (dims);
 
-			dset.read (data.Ptr(), dtype);
-
-#ifdef VERBOSE
-			std::cout << data << std::endl;
-#endif
-
+			dset.read(data.Ptr(), dtype);
 			dspace.close();
 			dset.close();
 
