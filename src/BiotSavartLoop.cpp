@@ -33,7 +33,7 @@
     #include <boost/math/special_functions/ellint_1.hpp>
 #endif
 
-bool BiotSavartLoop::Prepare (PrepareMode mode) {
+bool BiotSavartLoop::Prepare (const PrepareMode mode) {
 
     bool success = true;
 

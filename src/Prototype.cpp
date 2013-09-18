@@ -127,7 +127,7 @@ bool Prototype::Observe (Attribute* attrib, const string& prot_name, const strin
 }
 
 /***********************************************************/
-bool Prototype::Prepare  (PrepareMode mode){
+bool Prototype::Prepare  (const PrepareMode mode){
 
 	//nothing to be done for updating modules
 	if (mode==PREP_UPDATE) return(true);

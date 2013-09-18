@@ -71,7 +71,7 @@ unsigned int CoilArray::Populate () {
 }
 
 /***********************************************************/
-bool CoilArray::Prepare (PrepareMode mode) {
+bool CoilArray::Prepare (const PrepareMode mode) {
 
 	for (unsigned int i=0; i<m_coils.size(); i++)
 		m_coils.at(i)->Prepare(mode);

@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -34,7 +34,7 @@ AnalyticRFPulse::AnalyticRFPulse  (const AnalyticRFPulse& hrfp) {
 }
 
 /***********************************************************/
-bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
+bool AnalyticRFPulse::Prepare  (const PrepareMode mode) {
 
 
     //set attributes "Shape", "Diff", "Constants" and initialize GiNaC evaluation

@@ -64,7 +64,7 @@ class AtomicSequence : public Sequence {
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      */
-    virtual bool    Prepare        (PrepareMode mode);
+    virtual bool    Prepare        (const PrepareMode mode);
 
     /**
      * @brief Get the pulse given by number.

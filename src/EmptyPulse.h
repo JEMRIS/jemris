@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -63,7 +63,7 @@ class EmptyPulse : public Pulse {
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return     Success.
      */
-    virtual bool Prepare (PrepareMode mode);
+    virtual bool Prepare (const PrepareMode mode);
 
     /**
      * @brief Allows non-equdistant setting of ADCs via Shape attribute (GiNaC formula)

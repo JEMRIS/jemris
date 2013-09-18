@@ -31,7 +31,7 @@
 #include "BinaryContext.h"
 
 /***********************************************************/
-bool    Sequence::Prepare(PrepareMode mode){
+bool    Sequence::Prepare(const PrepareMode mode){
 
 	ATTRIBUTE("Aux1"     , m_aux1 );
 	ATTRIBUTE("Aux2"     , m_aux2 );
@@ -70,6 +70,8 @@ void Sequence::SeqDiag (string fname ) {
 	NDData<double>      di (GetNumOfTPOIs()+1);
 	int numaxes = 7;
 
+	std::cout << GetNumOfTPOIs() << std::endl;
+
 	vector<double*> seqdata;
 	for (int i=0; i<numaxes; i++) {
 		seqdata.push_back(new double [GetNumOfTPOIs()+1]);
@@ -105,8 +107,8 @@ void Sequence::SeqDiag (string fname ) {
 }
 
 /***********************************************************/
-void  Sequence::CollectSeqData  (vector<double*> seqdata, double& time, long& offset) {
-	  
+void  Sequence::CollectSeqData  (vector<double*> seqdata, double& t, long& offset) {
+
 	if (GetType() == MOD_CONCAT) {
 
 		vector<Module*> children = GetChildren();
@@ -116,9 +118,9 @@ void  Sequence::CollectSeqData  (vector<double*> seqdata, double& time, long& of
 
 			for (unsigned int j=0; j<children.size() ; ++j) {
 
-				((Sequence*) children[j])->CollectSeqData(seqdata,time,offset);
+				((Sequence*) children[j])->CollectSeqData(seqdata, t, offset);
 				if (children[j]->GetType() != MOD_CONCAT) {
-					time   += children[j]->GetDuration();
+					t   += children[j]->GetDuration();
 					offset += children[j]->GetNumOfTPOIs();
 				}
 			}
@@ -135,7 +137,7 @@ void  Sequence::CollectSeqData  (vector<double*> seqdata, double& time, long& of
 			dp = m_tpoi.GetPhase(i);
 			  
 			double val[7] = {0.0,0.0,0.0,0.0,0.0};
-			val[0]=time+dt;
+			val[0]=t+dt;
 			val[1]=dp;
 			//here, nonlinear gradients are not taken into account for GetValue
 			bool rem  = ((AtomicSequence*) this)->HasNonLinGrad();

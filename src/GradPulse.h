@@ -71,7 +71,7 @@ class GradPulse : public Pulse {
      *
      * @param mode for preparation
      */
-    virtual bool PrepareNLGfield  (PrepareMode mode);
+    virtual bool PrepareNLGfield  (const PrepareMode mode);
 
     /**
      * @brief get the area of this gradient pulse by numerical integration.

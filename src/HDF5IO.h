@@ -71,7 +71,8 @@ public:
 #endif
 
 			std::vector<hsize_t> dims(data.NDim());
-			std::copy (data.DimVec().begin(), data.DimVec().end(), dims.begin());
+			for (int i = 0; i < data.NDim(); i++)
+				dims[i] = data.Dims(i);
 
 			H5::Group group;
 

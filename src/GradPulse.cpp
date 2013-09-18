@@ -99,7 +99,7 @@ bool GradPulse::PrepareNLGfield  (const PrepareMode mode) {
 }
 
 /***********************************************************/
-bool GradPulse::Prepare  (PrepareMode mode) {
+bool GradPulse::Prepare  (const PrepareMode mode) {
 
 	bool btag = (m_axis == AXIS_GX || m_axis == AXIS_GY ||  m_axis == AXIS_GZ) ;
         if (!btag && mode == PREP_VERBOSE)

@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -185,7 +185,7 @@ class Prototype {
      *
      * @return The module type: one of MOD_PULSE, MOD_ATOM, MOD_CONCAT
      */
-    inline Type GetType () const {return m_type;};
+     Type GetType () const {return m_type;};
 
 
     /**

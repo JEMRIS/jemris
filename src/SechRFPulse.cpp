@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -32,7 +32,7 @@ SechRFPulse::SechRFPulse  (const SechRFPulse&) {
 }
 
 /***********************************************************/
-bool SechRFPulse::Prepare  (PrepareMode mode) {
+bool SechRFPulse::Prepare  (const PrepareMode mode) {
 
     m_max_amplitude = 1.0;
     m_sech_phase    = 0.0;
