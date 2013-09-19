@@ -50,33 +50,30 @@ bool    AtomicSequence::Prepare(const PrepareMode mode) {
 	bool tag = Sequence::Prepare(mode); //Prepare all pulses
 	CollectTPOIs();  //of the pulses
 
+	CalcDuration();
 	return tag;
 
 }
 
-/***********************************************************/
-double     AtomicSequence::GetDuration  () {
+double AtomicSequence::CalcDuration () {
 
-	double dDuration = 0.0;
 	vector<Module*> children = GetChildren();
+	m_duration = 0.;
 
 	for (unsigned int j=0; j<children.size() ; ++j)
-		dDuration = fmax( dDuration, children[j]->GetDuration()+((Pulse*) children[j])->GetInitialDelay() );
+		m_duration = fmax( m_duration, children[j]->GetDuration()+((Pulse*) children[j])->GetInitialDelay() );
 
-	m_duration = dDuration;
 	DEBUG_PRINT("  AtomicSequence::GetDuration() of " << GetName() <<
 		    " calculates duration = " << dDuration << endl;)
 
 	Notify(m_duration);
-
-	return( dDuration );
 
 }
 
 /***********************************************************/
 inline void      AtomicSequence::GetValue (double * dAllVal, double const time) {
 
-    if (time < 0.0 || time > GetDuration()) { return ; }
+    if (time < 0.0 || time > m_duration) { return ; }
 
     if (m_non_lin_grad) World::instance()->NonLinGradField = 0.0;
     vector<Module*> children = GetChildren();

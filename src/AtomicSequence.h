@@ -113,9 +113,9 @@ class AtomicSequence : public Sequence {
     inline void          SetNonLinGrad (bool val) {m_non_lin_grad=val;};
 
     /**
-     * @brief See Module::GetDuration
+     * @brief Calculate my duration
      */
-    double          GetDuration       ();
+    double          CalcDuration ();
 
     /**
      * @brief Collect the TPOIs of child pulses

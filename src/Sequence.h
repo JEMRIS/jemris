@@ -57,13 +57,6 @@ public:
     virtual void    GetValue   (double * dAllVal, double const time) {};
 
     /**
-     * Get the duration of this module.
-     *
-     * @return Duration in ms
-     */
-    virtual double GetDuration () = 0;
-
-    /**
      * Prepare the sequence.
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.

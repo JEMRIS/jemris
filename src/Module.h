@@ -129,7 +129,7 @@ class Module : public Prototype {
      *
      * @return Duration in ms
      */
-    virtual double GetDuration () {return m_duration; };
+     double GetDuration () const { return m_duration; };
 
     /**
      * @brief Get the Number of TPOIs of this module.

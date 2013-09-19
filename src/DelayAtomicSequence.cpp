@@ -106,6 +106,8 @@ bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
     if (!b && mode == PREP_VERBOSE)
 		cout << "Preparation of DelayAtomicSequence '" << GetName() << "' not succesful. Delay = " << delay << " ms" << endl;
 
+    CalcDuration();
+
     return b;
 
 }
@@ -149,7 +151,6 @@ double DelayAtomicSequence::GetDelay(const PrepareMode mode) {
 							 ( i==iS1pos && (m_dt==DELAY_C2E || m_dt==DELAY_C2C) )   ) ? 0.5:1.0;
 			if (i!=iMYpos)
 				dDelayTime -= dfact * pMod->GetChild(i)->GetDuration();
-
 
 		}
 	}

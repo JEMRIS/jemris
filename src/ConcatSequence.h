@@ -76,13 +76,7 @@ class ConcatSequence : public Sequence {
      */
     virtual void            GetValue       (double * dAllVal, double const time, double * pos[3]) {};
 
-
-    /**
-     * See Module::GetDuration
-     */
-    virtual double          GetDuration   ()  ;
-
-    /**
+   /**
      * @brief Default destructor.
      */
     virtual int     GetNumOfTPOIs ();
@@ -141,6 +135,10 @@ class ConcatSequence : public Sequence {
     //virtual bool StaticDOM(DOMDocument* doc, DOMNode* node);
 
  protected:
+
+
+    double CalcDuration ();
+
     /**
      * Get informations on this ConcatSequence
      *
