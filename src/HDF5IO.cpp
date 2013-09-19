@@ -12,14 +12,15 @@ HDF5IO::ReportException (const H5::Exception& e, const IO::Status ios) {
 H5::Group
 HDF5IO::CreateGroup (const std::string& url) {
 
-	int    depth   = 0;
-	char*   path   = new char[url.length()];
-	std::copy (url.begin(), url.end(), path);
-	char*  subpath = strtok (path, "/");
+	size_t depth = 0,
+	       snip  = url.find_first_of(SLASH, 0) ? 0 : 1,
+	       snap  = url.find_first_of(SLASH, snip);
+
+	std::string subpath = url.substr(snip,snap);
 
 	H5::Group* tmp, group;
 
-	while (subpath != NULL) {
+	while (!subpath.empty()) {
 
 		try {
 			group = depth ? tmp->openGroup(subpath)   : m_file.openGroup(subpath);
@@ -27,13 +28,15 @@ HDF5IO::CreateGroup (const std::string& url) {
 			group = depth ? tmp->createGroup(subpath) : m_file.createGroup(subpath);
 		}
 
-		subpath = strtok (NULL, "/");
+		snip = ++snap;
+		snap = url.find_first_of(SLASH,snip);
+		subpath = url.substr(snip,snap);
+
 		tmp = &group;
 		depth++;
 
 	}
 
-	delete[] path;
 	return *tmp;
 
 }

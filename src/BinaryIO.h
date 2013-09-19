@@ -29,7 +29,7 @@
 
 inline static std::string
 URI (const std::string& URL, const std::string& URN) {
-	std::string uri (URL + "/" + URN);
+	std::string uri ("/" + URL + "/" + URN);
 	size_t pos = uri.find(DSLASH);
 	while (pos != std::string::npos) {
 		uri.replace (pos, 2, SLASH);

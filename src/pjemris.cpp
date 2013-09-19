@@ -80,7 +80,10 @@ int main (int argc, char *argv[]) {
 
 	//MASTER: writes seq-file, Dump seq-report, and sends the sample
 	if ( my_rank == master) {
-		cout << "\nPARALLEL JEMRIS " << VERSION << " r"<< SVN_REVISION <<"\n\n";
+		cout << "\nPARALLEL JEMRIS " << VERSION;
+#ifdef GIT_COMMIT
+		cout << " (" << GIT_COMMIT << " - " << GIT_COMMIT_DATE << ")\n" << endl;
+#endif
 		cout << "Model    : " << psim->GetAttr(psim->GetElem("model"),  "name")<< "\t  , solver = "
 		     << psim->GetAttr(psim->GetElem("model"), "type")  << endl;
 		cout << "Sample   : " << psim->GetAttr(psim->GetElem("sample"), "name")<< "\t  , spins  = " << World::instance()->TotalSpinNumber  << endl;

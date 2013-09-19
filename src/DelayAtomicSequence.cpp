@@ -48,6 +48,7 @@ DelayAtomicSequence::DelayAtomicSequence  (const DelayAtomicSequence& as) {
 bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
 
     bool b=true;
+    double delay = 0.;
 
     ATTRIBUTE("Delay"    , m_await_time);
     ATTRIBUTE("ADCs"     , m_adc       );
@@ -79,9 +80,10 @@ bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
 		if (m_delay_type == "C2C") m_dt = DELAY_C2C;
     }
 
-    b            = ( SearchStartStopSeq() && b);
-    double delay = GetDelay(mode);
-    b            = (delay >= 0.0 && b);
+    b     = ( SearchStartStopSeq() && b);
+    delay = GetDelay(mode);
+    //std::cout << b << "+" << delay << "-" << std::endl;
+    b     = (delay >= 0.0 && b);
 
     if (GetNumberOfChildren()>0) {
 		((Pulse*) GetChild(0))->SetNADC(m_adc);  //pass my ADCs to the EmptyPulse
@@ -144,9 +146,10 @@ double DelayAtomicSequence::GetDelay(const PrepareMode mode) {
 		dDelayTime = m_await_time;
 		for (int i=iS1pos;i<=iS2pos;++i) {
 			double dfact = ( ( i==iS2pos && (m_dt==DELAY_B2C || m_dt==DELAY_C2C) ) ||
-							 ( i==iS1pos && (m_dt==DELAY_C2E || m_dt==DELAY_C2C) )   )?0.5:1.0;
+							 ( i==iS1pos && (m_dt==DELAY_C2E || m_dt==DELAY_C2C) )   ) ? 0.5:1.0;
 			if (i!=iMYpos)
 				dDelayTime -= dfact * pMod->GetChild(i)->GetDuration();
+
 
 		}
 	}
@@ -172,11 +175,21 @@ bool DelayAtomicSequence::SearchStartStopSeq () {
     Module* pMod = GetParent();
     if (pMod == NULL) return false;
 
-    int i1=0, i2=pMod->GetNumberOfChildren();
+    int i1 = INT_MAX, i2 = -INT_MAX;
+
     for (int i=0;i<pMod->GetNumberOfChildren();++i) {
-        if( m_start == pMod->GetChild(i)->GetName() ) { m_mod_start = pMod->GetChild(i); i1=i; }
-        if( m_stop  == pMod->GetChild(i)->GetName() ) { m_mod_stop  = pMod->GetChild(i); i2=i; }
+        if(!m_start.compare(pMod->GetChild(i)->GetName())) {
+        	m_mod_start = pMod->GetChild(i);
+        	i1=i;
+        }
+
+        if(!m_stop.compare(pMod->GetChild(i)->GetName())) {
+        	m_mod_stop  = pMod->GetChild(i);
+        	i2=i;
+        }
     }
+
+
 
     return (i1<i2);
 

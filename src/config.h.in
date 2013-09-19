@@ -3,6 +3,12 @@
 /* CVODE Version >= 2.6? */
 #undef CVODE26
 
+/* git HEAD commit hash */
+#undef GIT_COMMIT
+
+/* git HEAD commit date */
+#undef GIT_COMMIT_DATE
+
 /* Define to 1 if you have the <algorithm> header file. */
 #undef HAVE_ALGORITHM
 
@@ -179,9 +185,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
-
-/* SVN Revision */
-#undef SVN_REVISION
 
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME

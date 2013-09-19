@@ -70,8 +70,6 @@ void Sequence::SeqDiag (string fname ) {
 	NDData<double>      di (GetNumOfTPOIs()+1);
 	int numaxes = 7;
 
-	std::cout << GetNumOfTPOIs() << std::endl;
-
 	vector<double*> seqdata;
 	for (int i=0; i<numaxes; i++) {
 		seqdata.push_back(new double [GetNumOfTPOIs()+1]);

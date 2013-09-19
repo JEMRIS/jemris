@@ -35,10 +35,6 @@
 #include "ConcatSequence.h"
 #include "config.h"
 
-#ifndef SVN_REVISION
-	#define SVN_REVISION "unkown"
-#endif
-
 using namespace std;
 
 /**
@@ -68,9 +64,14 @@ void do_simu (Simulator* sim) {
 	cout << endl;
 }
 
+
 int main (int argc, char *argv[]) {
 	//print usage
-	cout << "\nJEMRIS " << VERSION << " r"<< SVN_REVISION <<"\n\n";
+	cout << "\nJEMRIS " << VERSION ;
+#ifdef GIT_COMMIT
+		cout << " (" << GIT_COMMIT << " - " << GIT_COMMIT_DATE << ")" << endl;
+#endif
+
 
 	if (argc==1) {
 		usage();

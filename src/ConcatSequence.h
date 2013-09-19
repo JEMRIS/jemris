@@ -80,7 +80,7 @@ class ConcatSequence : public Sequence {
     /**
      * See Module::GetDuration
      */
-    double          GetDuration    ();
+    virtual double          GetDuration   ()  ;
 
     /**
      * @brief Default destructor.

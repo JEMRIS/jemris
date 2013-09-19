@@ -3,8 +3,14 @@ AC_INIT(JEMRIS, [2.6], k.vahedipour@fz-juelich.de)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
-define([svnversion], esyscmd([sh -c "svnversion|tr -d '\n'"]))dnl
-AC_DEFINE(SVN_REVISION, "svnversion", [SVN Revision])
+
+AC_DEFINE([GIT_COMMIT], "esyscmd(git show | head -n 1 | sed 's/commit //' |  grep -o -e '.\{8\}'\
+ | head -n 1 |tr -d '\n')", [git HEAD commit hash])
+AC_DEFINE([GIT_COMMIT_DATE], "esyscmd(git log -1 | head -n 3 | grep 'Date:' | sed s/'Date:   '//\
+ | tr -d '\n')", [git HEAD commit date])
+
+# copyright notice
+AC_COPYRIGHT([2007-2013 Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder])
 
 # C++ project
 AC_LANG(C++)

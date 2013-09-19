@@ -81,7 +81,7 @@ public:
 #ifdef VERBOSE
 				printf ("Group %s opened for writing\n", url.c_str()) ;
 #endif
-			} catch (H5::Exception e) {
+			} catch (const H5::Exception& e) {
 				group = CreateGroup (url);
 			}
 
@@ -96,7 +96,7 @@ public:
 
 		} catch (const H5::FileIException&      e) {
 			return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
-		} catch (H5::GroupIException&    e) {
+		} catch (const H5::GroupIException&     e) {
 			return ReportException (e, IO::HDF5_FILE_I_EXCEPTION);
 		} catch (const H5::DataSetIException&   e) {
 			return ReportException (e, IO::HDF5_DATASET_I_EXCEPTION);

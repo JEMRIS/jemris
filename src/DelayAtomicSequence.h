@@ -115,7 +115,7 @@ class DelayAtomicSequence : public AtomicSequence {
     double    m_await_time;    /**< @brief Rest time. Real length of Delay in ms. Is calculated during runtime. */
     double    m_delay_time;    /**< @brief Declared length of Delay.                                            */
 
-    double	  m_durations[20]; /**< @brief Durations of other modules which has to be observed                  */
+    double	  m_durations[20]; /**< @brief Durations of other modules which have to be observed                  */
 
     Module*   m_mod_start;     /**< @brief Module after which the delay shall starts.                           */
     Module*   m_mod_stop;      /**< @brief Module from after which the delay shall starts.                      */

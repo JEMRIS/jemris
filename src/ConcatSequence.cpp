@@ -60,7 +60,7 @@ void    ConcatSequence::SetRepetitions (unsigned int val){
 }
 
 /***********************************************************/
-double     ConcatSequence::GetDuration  (){
+ double     ConcatSequence::GetDuration  ()  {
 
 	double duration = 0.0;
 	vector<Module*> children = GetChildren();
