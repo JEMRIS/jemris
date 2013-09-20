@@ -1,4 +1,4 @@
-/** @file DelayAtomicSequence.cpp
+	/** @file DelayAtomicSequence.cpp
  *  @brief Implementation of JEMRIS DelayAtomicSequence
  */
 
@@ -176,7 +176,7 @@ bool DelayAtomicSequence::SearchStartStopSeq () {
     Module* pMod = GetParent();
     if (pMod == NULL) return false;
 
-    int i1 = INT_MAX, i2 = -INT_MAX;
+    int i1 = 0, i2 = pMod->GetNumberOfChildren();
 
     for (int i=0;i<pMod->GetNumberOfChildren();++i) {
         if(!m_start.compare(pMod->GetChild(i)->GetName())) {
