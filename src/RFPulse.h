@@ -58,7 +58,7 @@ class RFPulse : public Pulse, public TxRxPhase {
     	m_channel = rfp.m_channel;
     	m_coil_array = rfp.m_coil_array;
     	m_GetPhaseFunPtrs = rfp.m_GetPhaseFunPtrs;
-    	m_refocussing = rfp.m_refocussing;
+    	m_refocusing = rfp.m_refocusing;
     }
 
     /**
@@ -167,7 +167,7 @@ class RFPulse : public Pulse, public TxRxPhase {
     double    m_flip_angle;   /**< @brief Flipangle of this pulse        */
     double    m_bw;           /**< @brief Bandwidth of this pulse        */
     int       m_channel;      /**< @brief Transmit channel of this pulse */
-    bool      m_refocussing;  /**< @brief Refocussing pulse? */
+    bool      m_refocusing;  /**< @brief Refocussing pulse? */
 
     // Provides sensitivies in GetValue
     CoilArray* m_coil_array;  /**< @brief Transmit array in simulation   */

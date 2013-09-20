@@ -28,7 +28,7 @@
 #include "Coil.h"
 
 /*****************************************************************/
-RFPulse::RFPulse  () : m_refocussing(0), m_coil_array(0),
+RFPulse::RFPulse  () : m_refocusing(0), m_coil_array(0),
 	m_channel(0), m_flip_angle(0.), m_bw(0.) {
 
 	m_axis = AXIS_RF;
@@ -45,6 +45,7 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
 	ATTRIBUTE("Bandwidth"    , m_bw           );
 	ATTRIBUTE("Frequency"    , m_frequency    );
 	ATTRIBUTE("Channel"      , m_channel      );
+	ATTRIBUTE("Refocusing"   , m_refocusing);
 
     if (mode != PREP_UPDATE)
         insertGetPhaseFunction( &TxRxPhase::getLinearPhase );
@@ -130,7 +131,8 @@ double RFPulse::GetIntegralNumeric (int steps) {
 string          RFPulse::GetInfo () {
 
 	stringstream s;
-	s << Pulse::GetInfo() << " , (Flipangle,Phase,Bandwidth,Channel) = (" << m_flip_angle << "," << GetInitialPhase() << "," << m_bw << "," << m_channel << ") ";
+	s << Pulse::GetInfo() << " , (Flipangle,Phase,Bandwidth,Channel) = ("
+			<< m_flip_angle << "," << GetInitialPhase() << "," << m_bw << "," << m_channel << ") ";
 	return s.str();
 
 }

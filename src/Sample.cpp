@@ -169,11 +169,11 @@ IO::Status Sample::Populate (const string& fname) {
 
 	size_t tmpndim = data.NDim();
 
-	dims          = data.DimVec();
+	dims          = data.Dims();
 	tmpdat        = data.Data();
 
 	size_t size   = data.Size();
-	size_t nprops = data.Dims(0);
+	size_t nprops = data.Dim(0);
 	size = size / nprops;
 
 	for (int i = tmpndim; i < 4; i++)

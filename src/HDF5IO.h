@@ -72,7 +72,7 @@ public:
 
 			std::vector<hsize_t> dims(data.NDim());
 			for (int i = 0; i < data.NDim(); i++)
-				dims[i] = data.Dims(i);
+				dims[i] = data.Dim(i);
 
 			H5::Group group;
 

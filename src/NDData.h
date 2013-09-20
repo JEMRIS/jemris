@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <assert.h>
 
 template<class T>
 struct T_minmax {
@@ -56,13 +57,27 @@ protected:
 
 public:
 
+	/**
+	 * @brief Default constructor
+	 */
     NDData () {};
 
+    /**
+     * @brief 1D-data (convenience constructor)
+     *
+     * @param n0 Vector length
+     */
     NDData (const size_t n0) {
     	_dims.resize(1,n0);
     	_data.resize(prod(_dims));
     }
 
+    /**
+     * @brief 2D-data (convenience constructor)
+     *
+     * @param n0 First side
+     * @param n1 Second side
+     */
     NDData (const size_t n0, const size_t n1) {
     	_dims.resize(2);
     	_dims[0] = n0;
@@ -70,6 +85,13 @@ public:
     	_data.resize(prod(_dims));
     }
 
+    /**
+     * @brief 3D-data (convenience constructor)
+     *
+     * @param n0 First side
+     * @param n1 Second side
+     * @param n2 Third side
+     */
     NDData (const size_t n0, const size_t n1, const size_t n2) {
     	_dims.resize(3);
     	_dims[0] = n0;
@@ -78,6 +100,13 @@ public:
     	_data.resize(prod(_dims));
     }
 
+    /**
+     * @brief 4D-data (convenience constructor)
+	 *
+     * @param n0 First side
+     * @param n1 Second side
+     * @param n2 Third side
+     */
     NDData (const size_t n0, const size_t n1, const size_t n2, const size_t n3) {
     	_dims.resize(3);
     	_dims[0] = n0;
@@ -87,32 +116,55 @@ public:
     	_data.resize(prod(_dims));
     }
 
+    /**
+     * @brief ND-Data
+     *
+     * @param dims  Side lengths (HDF5 hsize_t)
+     */
 	NDData (const std::vector<hsize_t>& dims) {
 		_dims.resize(dims.size());
 		std::reverse_copy (dims.begin(), dims.end(), _dims.begin());
     	_data.resize(prod(_dims));
 	}
 
+    /**
+     * @brief ND-Data
+     *
+     * @param dims  Side lengths
+     */
 	NDData (const std::vector<size_t>& dims) {
 		_dims = dims;
     	_data.resize(prod(_dims));
 	}
 
+	/**
+	 * @brief Copy constructor
+	 *
+	 * @param data To copy
+	 */
 	NDData (const NDData& data) {
 		*this = data;
 	}
 
+	/**
+	 * @brief Assignement
+	 *
+	 * @param data To copy
+	 */
 	NDData& operator= (const NDData& data) {
 		_dims = data._dims;
 		_data = data._data;
 		return *this;
 	}
 
-	inline size_t Dims (const size_t n = 0) const {
+	/**
+	 *
+	 */
+	inline size_t Dim (const size_t n = 0) const {
 		return _dims[n];
 	}
     
-	inline std::vector<size_t> DimVec () const {
+	inline std::vector<size_t> Dims () const {
 		return _dims;
 	}
 
@@ -157,6 +209,33 @@ public:
 	}
 
 };
+
+
+template <class T>
+inline static NDData<T> cumtrapz (const NDData<T>& data,
+		const std::vector<T>& times = std::vector<T>()) {
+
+	bool have_t = !(times.empty());
+
+	NDData<T> ret (data.Dims());
+	size_t ncol = ret.Size()/ret.Dim(0);
+	size_t csz  = ret.Dim(0);
+
+	for (size_t i = 0; i < ncol; ++i) {
+		size_t os = i*csz;
+		ret[os] = 0.;
+		if (have_t)
+			for (size_t j = 1; j < csz; ++j)
+				ret[os+j] = ret[os+j-1] + data[os+j] * (times[os+j] - times[os+j-1]);
+		else
+			for (size_t j = 1; j < csz; ++j)
+				ret[os+j] = ret[os+j-1] + .5 * (data[os+j] + data[os+j-1]);
+
+	}
+
+	return ret;
+
+}
 
 
 template <class T> inline std::ostream&
