@@ -218,32 +218,25 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	
 	BinaryContext bc (std::string("sensmaps.h5"), IO::OUT);
-	NDData<double>      di (
-			m_coils.size(),
-		   (m_coils[0]->GetNDim() == 3) ? m_coils[0]->GetPoints() : 1,
-		    m_coils[0]->GetPoints(), m_coils[0]->GetPoints());
-	IO::Status    ios = IO::OK;
-	
+	size_t sl = m_coils[0]->GetPoints();
+	NDData<double> mag (m_coils.size(), sl, sl, (m_coils[0]->GetNDim() == 3) ? sl : 1),
+			pha (m_coils.size(), sl, sl, (m_coils[0]->GetNDim() == 3) ? sl : 1);
 	
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	long size = di.Size();
+	long size = mag.Size()/m_coils.size();
 
-	for (unsigned i = 0, n = 0; i < m_coils.size(); ++i) {
+	for (unsigned i = 0; i < m_coils.size(); ++i) {
 		m_coils[i]->GridMap();
-		memcpy (&di[0], m_coils[i]->MagnitudeMap(), sizeof(double)*size);
-		n += size; 
+		memcpy (&mag[i*size], m_coils[i]->MagnitudeMap(), sizeof(double)*size);
+		memcpy (&pha[i*size], m_coils[i]->PhaseMap(), sizeof(double)*size);
 	}
-	bc.Write (di, "magnitude", "/maps");
 
-	for (unsigned i = 0, n = 0; i < m_coils.size(); ++i) {
-		memcpy (&di[0], m_coils[i]->PhaseMap(), sizeof(double)*size);
-		n += size; 
-	}
-	bc.Write (di, "phase", "/maps");
+	bc.Write (mag, "magnitude", "/maps");
+	bc.Write (pha, "phase", "/maps");
 	
-	return ios;
+	return IO::OK;
 	
 }
 

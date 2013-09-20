@@ -45,7 +45,7 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
 	ATTRIBUTE("Bandwidth"    , m_bw           );
 	ATTRIBUTE("Frequency"    , m_frequency    );
 	ATTRIBUTE("Channel"      , m_channel      );
-	ATTRIBUTE("Refocusing"   , m_refocusing);
+	ATTRIBUTE("Refocusing"   , m_refocusing   );
 
     if (mode != PREP_UPDATE)
         insertGetPhaseFunction( &TxRxPhase::getLinearPhase );
