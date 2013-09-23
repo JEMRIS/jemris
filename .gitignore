@@ -35,3 +35,4 @@ Makefile
 .jemris_progress.out
 seq.h5
 signals.h5
+sensmaps.h5
