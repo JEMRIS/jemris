@@ -83,12 +83,16 @@ end
 a = h5read ('sensmaps.h5', '/maps/magnitude'); 
 p = h5read ('sensmaps.h5', '/maps/phase');
 A = a.*exp(sqrt(-1)*(p));
-if numel(COILS)==1
-    A=permute(A(:,:,:,COILS),[2 1 3]);
-else
- A = permute(sum(A,4),[2 1 3]);
-end
 
+if numel(COILS)==1
+    if (ndims(A)==3)
+        A = A(:,:,COILS);
+    else
+        A = A(:,:,:,COILS);
+    end
+else
+    A = sum(A,ndims(A));
+end
 %complex data selection
 C=get(handles.ComplexMenu,'String');
 T=C{get(handles.ComplexMenu,'Value')};
