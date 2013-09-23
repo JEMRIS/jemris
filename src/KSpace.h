@@ -29,7 +29,7 @@ public:
 
 		inline KPoint&
 		operator= (const KPoint& kp) {
-			std::copy (kp.CPtr(), kp.CPtr()+D-1, this->Ptr());
+			std::copy (kp.begin(), kp.end(), this->Ptr());
 			return *this;
 		}
 
@@ -39,7 +39,7 @@ public:
 		}
 
 		inline const T*
-		CPtr (const size_t n = 0) const {
+		Ptr (const size_t n = 0) const {
 			return &_data[n];
 		}
 
@@ -53,6 +53,10 @@ public:
 			return _data[n];
 		}
 
+		inline T* begin () { return &_data[0]; }
+		inline const T* begin () const { return &_data[0]; }
+		inline T* end () { return &_data[D-1]; }
+		inline const T* end () const { return &_data[D-1]; }
 
 	};
 
@@ -98,7 +102,7 @@ public:
 
     	NDData<T> data (D,_k.size());
     	for (size_t i = 0; i < _k.size(); ++i)
-    		std::copy (_k[i].CPtr(), _k[i].CPtr()+end, &data[i*D]);
+    		std::copy (_k[i].begin(), _k[i].end(), &data[i*D]);
     	BinaryContext bc (fname, IO::APPEND);
     	bc.Write(data, urn, url);
     }
@@ -107,7 +111,6 @@ public:
 private:
 
     std::vector<KPoint> _k;
-    const static size_t end = D-1;
 
 };
 

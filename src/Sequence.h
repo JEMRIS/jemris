@@ -29,6 +29,8 @@
 
 #include "Module.h"
 #include "Parameters.h"
+#include "NDData.h"
+
 
 //! Super class for all sequence (non-pulse) modules
 
@@ -69,7 +71,7 @@ public:
      *
      * @param fname File name
      */
-    void  SeqDiag  (string fname = "seq.bin");
+    void  SeqDiag  (const string& fname = "seq.h5");
 
     /**
      * Write sequence file
@@ -77,7 +79,7 @@ public:
      * @param pfout File output stream
      * @param time  Time: More elaborate description, please.
      */
-    void CollectSeqData          (vector <double*> seqdata, double& time, long& offset);
+    void CollectSeqData          (NDData<double>& seqdata, double time, long offset);
 
     /**
      * Get the number of ADCs for this sequence.

@@ -160,21 +160,13 @@ public:
 	/**
 	 *
 	 */
-	inline size_t Dim (const size_t n = 0) const {
-		return _dims[n];
-	}
+	inline size_t Dim (const size_t n = 0) const { return _dims[n];	}
     
-	inline std::vector<size_t> Dims () const {
-		return _dims;
-	}
+	inline std::vector<size_t> Dims () const { return _dims; }
 
-	inline size_t Size () const {
-		return _data.size();
-	}
+	inline size_t Size () const { return _data.size(); }
     
-	inline size_t NDim() const {
-		return _dims.size();
-	}
+	inline size_t NDim() const { return _dims.size(); }
     
 	std::ostream& Print (std::ostream& os) const {
 		os << "dims(";
@@ -184,35 +176,41 @@ public:
 		return os;
 	}
 
-	inline bool Empty () const {
-		return _data.empty();
-	}
+	inline bool Empty () const { return _data.empty(); }
     
-	inline T& operator[] (const size_t p) {
-        return _data[p];
-    }
+	inline T& operator[] (const size_t p)       { return _data[p]; }
     
-	inline T  operator[] (const size_t p) const {
-        return _data[p];
-    }
+	inline T  operator[] (const size_t p) const { return _data[p]; }
 
-	inline const T*  CPtr (const size_t n = 0) const {
-		return &_data[n];
+	inline T& operator() (const size_t p)       { return _data[p]; }
+
+	inline T  operator() (const size_t p) const { return _data[p]; }
+
+	inline T& operator() (const size_t n0, const size_t n1)
+	                                            { return _data[n1*Dim(0)+n0]; }
+
+	inline T  operator() (const size_t n0, const size_t n1) const
+	                                            { return _data[n1*Dim(0)+n0]; }
+
+	inline T& operator() (const size_t n0, const size_t n1, const size_t n2) {
+		return _data[n2*Dim(0)*Dim(1)+n1*Dim(0)+n0];
 	}
 
-	inline T*  Ptr (const size_t n = 0) {
-		return &_data[n];
+	inline T  operator() (const size_t n0, const size_t n1, const size_t n2) const {
+		return _data[n2*Dim(0)*Dim(1)+n1*Dim(0)+n0];
 	}
 
-	inline std::vector<T> Data () const {
-		return _data;
-	}
+	inline const T* Ptr (const size_t n = 0) const { return &_data[n]; }
+
+	inline T* Ptr (const size_t n = 0) { return &_data[n]; }
+
+	inline std::vector<T> Data () const { return _data;	}
 
 };
 
 
-template <class T>
-inline static NDData<T> cumtrapz (const NDData<T>& data,
+template <class T> inline static NDData<T>
+cumtrapz (const NDData<T>& data,
 		const std::vector<T>& times = std::vector<T>()) {
 
 	bool have_t = !(times.empty());
@@ -235,6 +233,22 @@ inline static NDData<T> cumtrapz (const NDData<T>& data,
 
 	return ret;
 
+}
+
+
+template <class T> inline static bool
+ismatrix (const NDData<T>& data) {
+	return data.Dims().size() == 2;
+}
+
+template <class T> inline static NDData<T>
+transpose (const NDData<T>& data) {
+	assert (ismatrix(data));
+	NDData<T> ret (data.Dim(1),data.Dim(0));
+	for (size_t j = 0; j < data.Dim(1); ++j)
+		for (size_t i = 0; i < data.Dim(0); i++)
+			ret(j,i) = data(i,j);
+	return ret;
 }
 
 

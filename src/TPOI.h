@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -50,25 +50,12 @@ class TPOI {
         double dphase;   /**< particular corresponding reciever phase.*/
 
         /**
-         * Set one particular ADC time point
+         * @brief Constructor
          *
          * @param time    The time from start of the pulse 0.
          * @param phase   Phase lock, if this TPOI is an ADC.
          */
-        set(double time, double phase) {
-            dtime  = time;
-            dphase = phase;
-        }
-
-        /**
-         * Set one particular non-ADC time point
-         *
-         * @param time    The time from start of the pulse 0.
-         */
-        set(double time) {
-        	dtime  = time;
-        	dphase = -1.0;
-        }
+        set (const double time, const double phase = -1.) :	dtime(time), dphase (phase) {}
 
     };
 

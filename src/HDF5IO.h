@@ -74,6 +74,8 @@ public:
 			for (int i = 0; i < data.NDim(); i++)
 				dims[i] = data.Dim(i);
 
+			//std::reverse(dims.begin(),dims.end());
+
 			H5::Group group;
 
 			try {
@@ -89,7 +91,7 @@ public:
 			H5::FloatType dtype  (H5::PredType::NATIVE_DOUBLE);
 			H5::DataSet   dset = group.createDataSet(urn, dtype, dspace);
 
-			dset.write(data.CPtr(), dtype);
+			dset.write(data.Ptr(), dtype);
 			dset.close();
 			dspace.close();
 			group.close();

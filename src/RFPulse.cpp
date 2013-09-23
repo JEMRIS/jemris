@@ -58,6 +58,9 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
     	HideAttribute("PhaseLock",false);
     }
 
+    if (m_refocusing)
+    	m_tpoi + TPOI::set(.5*GetDuration(),-2.);
+
 	return b;
 
 }

@@ -61,7 +61,7 @@ bool    Sequence::Prepare(const PrepareMode mode){
 }
 
 /***********************************************************/
-void Sequence::SeqDiag (string fname ) {
+void Sequence::SeqDiag (const string& fname ) {
 
 	//prepare H5 file structure
 	BinaryContext bc ("seq.h5", IO::OUT);
@@ -71,12 +71,7 @@ void Sequence::SeqDiag (string fname ) {
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	int numaxes = 7;
 
-	vector<double*> seqdata;
-	for (int i=0; i<numaxes; i++) {
-		seqdata.push_back(new double [GetNumOfTPOIs()+1]);
-		*(seqdata[i]) = (i==1?-1.0:0.0); //always start seq.-diag. with {0,-1,0,0,0,0,0} !
-		seqdata[i]++;
-	}
+	NDData<double> seqdata(numaxes,GetNumOfTPOIs()+1);
 	
 	//HDF5 dataset names
 	vector<string> seqaxis;
@@ -89,18 +84,19 @@ void Sequence::SeqDiag (string fname ) {
 	seqaxis.push_back("GZ");	//Z gradient
 
 	//recursive data collect
-	double time   = 0.0;
-	long   offset = 0;
+	double time   =  0.;
+	long   offset =  0l;
+	seqdata (1,0) = -1.;
 	CollectSeqData (seqdata, time, offset);
 
+	seqdata = transpose(seqdata);
 
-	memcpy (&t[0], seqdata[0], di.Size() * sizeof(double));
+	memcpy (&t[0], &seqdata[0], di.Size() * sizeof(double));
 
 	//write to HDF5 file
-	for (int i=0; i<numaxes; i++) {
+	for (size_t i=0; i<numaxes; i++) {
 		std::string URN (seqaxis[i]);
-		seqdata[i]--;
-		memcpy (&di[0], seqdata[i], di.Size() * sizeof(double));
+		memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
 		bc.Write(di, URN, "/seqdiag");
 		if (i == 4)
 			bc.Write (cumtrapz(di,t), "KX", "/seqdiag");
@@ -108,14 +104,12 @@ void Sequence::SeqDiag (string fname ) {
 			bc.Write (cumtrapz(di,t), "KY", "/seqdiag");
 		if (i == 6)
 			bc.Write (cumtrapz(di,t), "KZ", "/seqdiag");
-		delete[] seqdata[i];
 	}
-
 
 }
 
 /***********************************************************/
-void  Sequence::CollectSeqData  (vector<double*> seqdata, double& t, long& offset) {
+void  Sequence::CollectSeqData  (NDData<double>& seqdata, double t, long offset) {
 
 	if (GetType() == MOD_CONCAT) {
 
@@ -137,27 +131,16 @@ void  Sequence::CollectSeqData  (vector<double*> seqdata, double& t, long& offse
 
 	if (GetType() == MOD_ATOM) {
 	  
-		//copy seqdata values at each TPOI
-		for (int i=0; i<GetNumOfTPOIs(); ++i) {
+		bool rem  = ((AtomicSequence*) this)->HasNonLinGrad();
+		((AtomicSequence*) this)->SetNonLinGrad(false);
 
-			double dt,dp;
-			dt = m_tpoi.GetTime(i);
-			dp = m_tpoi.GetPhase(i);
-			  
-			double val[7] = {0.0,0.0,0.0,0.0,0.0};
-			val[0]=t+dt;
-			val[1]=dp;
-			//here, nonlinear gradients are not taken into account for GetValue
-			bool rem  = ((AtomicSequence*) this)->HasNonLinGrad();
-			((AtomicSequence*) this)->SetNonLinGrad(false);
-			//GetValue(val,dt+k*GetDuration()/1e9);
-			GetValue(&val[2],dt);
-			((AtomicSequence*) this)->SetNonLinGrad(rem);
-			
-			for (int j=0; j<seqdata.size(); ++j)
-				  *(seqdata[j]+offset+i) = val[j];
-
+		for (int i=0; i < GetNumOfTPOIs(); ++i) {
+			seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
+			seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
+			GetValue(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
 		}
+
+		((AtomicSequence*) this)->SetNonLinGrad(rem);
 
 	}
 

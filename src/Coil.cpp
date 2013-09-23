@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -42,7 +42,7 @@ void Coil::Initialize (DOMNode* node) {
 	
 	m_sens_mag = NULL;
 	m_sens_pha = NULL;
-	m_node    = node;
+	m_node     = node;
 	
 	string s = StrX(((DOMElement*) node)->getAttribute (StrX("Name").XMLchar() )).std_str() ;
 	
