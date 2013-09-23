@@ -112,9 +112,9 @@ if moment_flag
         end
         if kspace_flag==2;
             if DO_2D
-                plot(A(Iadc,3),A(Iadc,4),'.g')
+                plot(A(Iadc,6),A(Iadc,7),'.g')
             else
-                plot3(A(Iadc,3),A(Iadc,4),A(Iadc,5),'.g')
+                plot3(A(Iadc,6),A(Iadc,7),A(Iadc,8),'.g')
             end
         end 
         set(gca,'color',[0 0 0]);

@@ -224,7 +224,7 @@ cumtrapz (const NDData<T>& data,
 		ret[os] = 0.;
 		if (have_t)
 			for (size_t j = 1; j < csz; ++j)
-				ret[os+j] = ret[os+j-1] + data[os+j] * (times[os+j] - times[os+j-1]);
+				ret[os+j] = ret[os+j-1] + .5 * (data[os+j] + data[os+j-1]) * (times[os+j] - times[os+j-1]);
 		else
 			for (size_t j = 1; j < csz; ++j)
 				ret[os+j] = ret[os+j-1] + .5 * (data[os+j] + data[os+j-1]);
