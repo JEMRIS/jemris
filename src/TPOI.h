@@ -29,7 +29,11 @@
 
 #include <cstdlib>
 #include <vector>
+#include <ostream>
 #include <iostream>
+#include <bitset>
+#include <cmath>
+
 using namespace std;
 
 #include "Declarations.h"
@@ -38,16 +42,23 @@ using namespace std;
 
 //! Time points of interest of all modules
 
+inline static bool bit_set (const size_t eim, const size_t eb) {
+    return (eim & (size_t)pow(2.f,(float)eb));
+}
+
+
 class TPOI {
 
  public:
 
     //! The set of data of each time point of interest
-
     struct set {
+
+    	enum PType { JAP_T, ADC_T, EXCITE_T, REFOCUS_T};
 
         double dtime;    /**< particular time point of this set.*/
         double dphase;   /**< particular corresponding reciever phase.*/
+        size_t bmask; /**< Qualifier bit mask */
 
         /**
          * @brief Constructor
@@ -55,7 +66,8 @@ class TPOI {
          * @param time    The time from start of the pulse 0.
          * @param phase   Phase lock, if this TPOI is an ADC.
          */
-        set (const double time, const double phase = -1.) :	dtime(time), dphase (phase) {}
+        inline set (const double time, const double phase = -1.,
+        		const size_t mask = 0) : dtime(time), dphase (phase), bmask(mask) {}
 
     };
 
@@ -66,10 +78,8 @@ class TPOI {
      * initial size of 1000.
      */
     TPOI() {
-
         // Reset my data repository
         Reset();
-
     };
 
 
@@ -80,6 +90,7 @@ class TPOI {
         // Set position back to first slot and values to zero
         m_time.clear();
         m_phase.clear();
+        m_mask.clear();
     }
 
     /**
@@ -87,8 +98,7 @@ class TPOI {
      *
      * Free memory of the data;
      */
-    ~TPOI() {
-    };
+    ~TPOI() {}
 
 
     /**
@@ -126,13 +136,19 @@ class TPOI {
      int GetSize () const ;
 
 
+     void Print (std::ostream& os) const {
+    	 for (size_t i = 0; i < m_time.size(); ++i)
+    		 os << m_time[i] << "\t" << m_phase[i] << "\t" << m_mask[i] << std::endl;
+    	 os << std::endl;
+     }
+
     /**
      * Get the time of a pos-th point
      *
      * @param  pos The particular position in the list
      * @return The pos-th time
      */
-     double GetTime  (int pos) {return m_time[pos];    };
+     inline double GetTime  (const size_t pos) const {return m_time[pos]; }
 
      /**
       * Get the phase of a pos-th point
@@ -140,7 +156,13 @@ class TPOI {
       * @param  pos The particular position in the list
       * @return The pos-th phase
       */
-     double GetPhase (int pos) {return m_phase[pos];   };
+     inline double GetPhase (const size_t pos) const {return m_phase[pos]; }
+
+     bool IsADC (const size_t pos) {return bit_set (m_mask[pos], set::ADC_T); }
+     bool IsExcitation (const size_t pos) {return bit_set (m_mask[pos], set::EXCITE_T); }
+     bool IsRefocussing (const size_t pos) {return bit_set (m_mask[pos], set::REFOCUS_T); }
+
+     inline size_t GetMask (const size_t pos) const {return m_mask[pos];}
 
     /**
      * Sort my own data
@@ -156,8 +178,15 @@ class TPOI {
 
     vector<double> m_time;    /**< vector of time points.*/
     vector<double> m_phase;   /**< vector of corresponding receiver phase.*/
-
+    vector<size_t> m_mask;    /**< vector of bitmasks */
 
 };
+
+
+
+inline std::ostream& operator<< (std::ostream& os, const TPOI& tpoi) {
+	tpoi.Print(os);
+	return os;
+}
 
 #endif

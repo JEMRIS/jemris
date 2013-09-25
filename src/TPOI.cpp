@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -31,7 +31,7 @@
 void TPOI::operator += (const TPOI& tpoi) {
 
     for (int i = 0; i < tpoi.GetSize(); i++) 
-        *(this) + TPOI::set (tpoi.m_time[i], tpoi.m_phase[i]);
+        *(this) + TPOI::set (tpoi.m_time[i], tpoi.m_phase[i], tpoi.m_mask[i]);
 
 }
 
@@ -48,6 +48,7 @@ void TPOI::operator + (const TPOI::set& data) {
 
     m_time.push_back(  data.dtime );
     m_phase.push_back( data.dphase );
+    m_mask.push_back (data.bmask);
   
 }
 
@@ -63,17 +64,21 @@ void TPOI::Sort ()        {
 
     int i, j;
     double       keyT, keyP;
+    unsigned keyM;
     
     // An insert Sort algorithm implementation
     for (j = 1; j < GetSize(); j++) {
         keyT = m_time[j];
         keyP = m_phase[j];
+        keyM = m_mask[j];
         for(i = j - 1; (i >= 0) && (m_time[i] > keyT); i--) {
             m_time[i+1]    = m_time[i];
             m_phase[i+1]   = m_phase[i];
+            m_mask[i+1] = m_mask[i];
         }
         m_time[i+1] = keyT;
         m_phase[i+1] = keyP;
+        m_mask[i+1] = keyM;
     }
 
 }
@@ -82,28 +87,32 @@ void TPOI::Sort ()        {
 /***********************************************************/
 void TPOI::Purge ()        { 
 
- // will only purge, if more than one data points 
- if (GetSize() > 1) {
+	// will only purge, if more than one data points
+	if (GetSize() > 1) {
 
-   int i=0, j=0;
-   for (i = 0; i < GetSize(); ++i) {
+		int i=0, j=0;
+		for (i = 0; i < GetSize(); ++i) {
 
-        if ( i+1 < GetSize() )
-        if ( fabs(m_time[i+1]-m_time[i])< TIME_ERR_TOL )   //(i+1,i) same => keep maximum phase
-        {
-            if ( m_phase[i]> m_phase[i+1] )	m_phase[i+1] = m_phase[i] ;
-	    else				m_phase[i] = m_phase[i+1] ;
-        }
+			if ( i+1 < GetSize() )
+				if ( fabs(m_time[i+1]-m_time[i])< TIME_ERR_TOL ) {   //(i+1,i) same => keep maximum phase
+				if (m_phase[i] > m_phase[i+1])
+					m_phase[i+1] = m_phase[i];
+				else
+					m_phase[i] = m_phase[i+1];
+				m_mask[i] = m_mask[i]|m_mask[i+1];
+			}
 
-        if ( fabs(m_time[i]-m_time[j])> TIME_ERR_TOL) //(j,i) different => replace j+1 with i 
-	{
-            m_phase[++j]  = m_phase[i];
-            m_time[j]     = m_time[i];
+			if ( fabs(m_time[i]-m_time[j])> TIME_ERR_TOL) {//(j,i) different => replace j+1 with i
+				m_phase[++j] = m_phase[i];
+				m_time[j]    = m_time[i];
+				m_mask[j]    = m_mask[i];
+			}
+
+		}
+		m_time.erase( m_time.begin()+j+1, m_time.end() );
+		m_phase.erase( m_phase.begin()+j+1, m_phase.end() );
+		m_mask.erase( m_mask.begin()+j+1, m_mask.end() );
+
 	}
-   }
-   m_time.erase( m_time.begin()+j+1, m_time.end() );
-   m_phase.erase( m_phase.begin()+j+1, m_phase.end() );
-
- }
 }
 

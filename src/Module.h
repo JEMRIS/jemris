@@ -188,7 +188,7 @@ class Module : public Prototype {
      *
      * @return      Pointer to the private member TPOI.
      */
-     TPOI* GetTPOIs ()      { return &m_tpoi; }
+     virtual TPOI* GetTPOIs () { return &m_tpoi; }
 
     /**
      * @brief Dump the sequence tree.

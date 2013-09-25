@@ -211,25 +211,20 @@ public:
 
 template <class T> inline static NDData<T>
 cumtrapz (const NDData<T>& data,
-		const std::vector<T>& times = std::vector<T>()) {
+		std::vector<T>& times = std::vector<T>()) {
 
-	bool have_t = !(times.empty());
+	if (!(times.empty()))
+		assert (times.size() == data.Dim(0));
+	else
+		times = std::vector<T> (data.Dim(0),1.);
 
 	NDData<T> ret (data.Dims());
 	size_t ncol = ret.Size()/ret.Dim(0);
 	size_t csz  = ret.Dim(0);
 
-	for (size_t i = 0; i < ncol; ++i) {
-		size_t os = i*csz;
-		ret[os] = 0.;
-		if (have_t)
-			for (size_t j = 1; j < csz; ++j)
-				ret[os+j] = ret[os+j-1] + .5 * (data[os+j] + data[os+j-1]) * (times[os+j] - times[os+j-1]);
-		else
-			for (size_t j = 1; j < csz; ++j)
-				ret[os+j] = ret[os+j-1] + .5 * (data[os+j] + data[os+j-1]);
-
-	}
+	for (size_t i = 0, os = i*csz; i < ncol; ++i)
+		for (size_t j = 1; j < csz; ++j) // 1st is always 0
+			ret[os+j] = ret[os+j-1] + .5 * (data[os+j] + data[os+j-1]) * (times[os+j] - times[os+j-1]);
 
 	return ret;
 

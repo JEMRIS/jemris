@@ -55,7 +55,6 @@ class HardRFPulse : public RFPulse {
      *  @see Prototype::Clone
      */
     inline HardRFPulse* Clone() const { return (new HardRFPulse(*this)); }
-;
 
      /**
      * @brief Prepare.
@@ -71,7 +70,7 @@ class HardRFPulse : public RFPulse {
      * @param time The flip angle as double.
      * @return     Magnitude.
      */
-    inline virtual double  GetMagnitude (double time ) { return GetFlipAngle() * PI /(180.0*GetDuration() ); };
+    inline virtual double  GetMagnitude (double time ) { return GetFlipAngle() * PI /(180.0*GetDuration() ); }
 
 };
 

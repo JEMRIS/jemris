@@ -30,6 +30,14 @@
 #include <stdio.h>
 #include "BinaryContext.h"
 
+template<class T> inline static void
+ExcitationAndRefocusing (const NDData<T>& data) {
+
+	for (size_t i = 0; i < data.Dim(0); ++i)
+		0;
+
+}
+
 /***********************************************************/
 bool    Sequence::Prepare(const PrepareMode mode){
 
@@ -71,9 +79,10 @@ void Sequence::SeqDiag (const string& fname ) {
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	int numaxes = 7;
 
-	NDData<double> seqdata(numaxes,GetNumOfTPOIs()+1);
+	// Start with 0 and track excitations and refocusing
+	NDData<double> seqdata(numaxes+1,GetNumOfTPOIs()+1);
 	
-	//HDF5 dataset names
+	// HDF5 dataset names
 	vector<string> seqaxis;
 	seqaxis.push_back("T");		//Time
 	seqaxis.push_back("RXP");	//receiver phase
@@ -82,16 +91,22 @@ void Sequence::SeqDiag (const string& fname ) {
 	seqaxis.push_back("GX");	//X gradient
 	seqaxis.push_back("GY");	//Y gradient
 	seqaxis.push_back("GZ");	//Z gradient
+	seqaxis.push_back("KX");	//X gradient
+	seqaxis.push_back("KY");	//Y gradient
+	seqaxis.push_back("KZ");	//Z gradient
 
-	//recursive data collect
+	// recursive data collect
 	double time   =  0.;
 	long   offset =  0l;
 	seqdata (1,0) = -1.;
 	CollectSeqData (seqdata, time, offset);
 
+	// Faster
 	seqdata = transpose(seqdata);
+	std::copy (&seqdata[0], &seqdata[0]+di.Size(), t.begin());
 
-	memcpy (&t[0], &seqdata[0], di.Size() * sizeof(double));
+	ExcitationAndRefocusing (seqdata);
+	bc.Write (seqdata, "A", "/seqdiag");
 
 	//write to HDF5 file
 	for (size_t i=0; i<numaxes; i++) {
@@ -138,6 +153,9 @@ void  Sequence::CollectSeqData  (NDData<double>& seqdata, double t, long offset)
 			seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
 			seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
 			GetValue(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
+			seqdata(7,offset+i+1) = m_tpoi.GetMask(i);
+			if (m_tpoi.IsExcitation(i))
+				std::cout << "Yippie Yah Yeah, Schweinebacke!" << std::endl;
 		}
 
 		((AtomicSequence*) this)->SetNonLinGrad(rem);

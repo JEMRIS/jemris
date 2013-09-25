@@ -155,6 +155,9 @@ class RFPulse : public Pulse, public TxRxPhase {
      */
     CoilArray*     GetCoilArray () {return m_coil_array;};
 
+    virtual void SetTPOIs ();
+
+
  protected:
 
     /**

@@ -118,7 +118,8 @@ inline void      AtomicSequence::GetValue (double * dAllVal, double const time) 
 /***********************************************************/
 inline void AtomicSequence::Rotation (double * Grot) {
 
-    if ( m_alpha == 0.0 ) return;
+    if (m_alpha == 0.0)
+    	return;
 
     double Gx = Grot[0];
     double Gy = Grot[1];
@@ -129,28 +130,32 @@ inline void AtomicSequence::Rotation (double * Grot) {
     double theta = m_theta * pi_180;
     double phi   = m_phi   * pi_180;
 
-    double cos_theta = cos(theta);
-    double sin_theta = sin(theta);
+    double cos_theta   = cos(theta);
+    double sin_theta   = sin(theta);
     double cos_2_theta = cos_theta * cos_theta;
     double sin_2_theta = sin_theta * sin_theta;
-    double cos_alpha = cos(alpha);
-    double sin_alpha = sin(alpha);
-    double cos_phi = cos(phi);
-    double sin_phi = sin(phi);
+    double cos_alpha   = cos(alpha);
+    double sin_alpha   = sin(alpha);
+    double cos_phi     = cos(phi);
+    double sin_phi     = sin(phi);
     
     Grot[0] =
-        ((cos_phi*(cos_2_theta*cos_alpha+sin_2_theta)-sin_phi*cos_theta*sin_alpha)*cos_phi+(cos_phi*cos_theta*sin_alpha+sin_phi*cos_alpha)*sin_phi)*Gx+
-        (-(cos_phi*(cos_2_theta*cos_alpha+sin_2_theta)-sin_phi*cos_theta*sin_alpha)*sin_phi+(cos_phi*cos_theta*sin_alpha+sin_phi*cos_alpha)*cos_phi)*Gy+
-        (cos_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)+sin_phi*sin_theta*sin_alpha)*Gz;
+        ((cos_phi*(cos_2_theta*cos_alpha+sin_2_theta)-sin_phi*cos_theta*sin_alpha)*
+        	cos_phi+(cos_phi*cos_theta*sin_alpha+sin_phi*cos_alpha)*sin_phi)*Gx+
+        	(-(cos_phi*(cos_2_theta*cos_alpha+sin_2_theta)-sin_phi*cos_theta*sin_alpha)*
+        	sin_phi+(cos_phi*cos_theta*sin_alpha+sin_phi*cos_alpha)*cos_phi)*Gy+
+        	(cos_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)+sin_phi*sin_theta*sin_alpha)*Gz;
 
     Grot[1] =
-        ((-sin_phi*(cos_2_theta*cos_alpha+sin_2_theta)-cos_phi*cos_theta*sin_alpha)*cos_phi+(-sin_phi*cos_theta*sin_alpha+cos_phi*cos_alpha)*sin_phi)*Gx+
-        (-(-sin_phi*(cos_2_theta*cos_alpha+sin_2_theta)-cos_phi*cos_theta*sin_alpha)*sin_phi+(-sin_phi*cos_theta*sin_alpha+cos_phi*cos_alpha)*cos_phi)*Gy+
-        (-sin_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)+cos_phi*sin_theta*sin_alpha)*Gz;
+        ((-sin_phi*(cos_2_theta*cos_alpha+sin_2_theta)-cos_phi*cos_theta*sin_alpha)*
+        	cos_phi+(-sin_phi*cos_theta*sin_alpha+cos_phi*cos_alpha)*sin_phi)*Gx+
+        	(-(-sin_phi*(cos_2_theta*cos_alpha+sin_2_theta)-cos_phi*cos_theta*sin_alpha)*
+        	sin_phi+(-sin_phi*cos_theta*sin_alpha+cos_phi*cos_alpha)*cos_phi)*Gy+
+        	(-sin_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)+cos_phi*sin_theta*sin_alpha)*Gz;
 
     Grot[2] = (cos_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)-sin_phi*sin_theta*sin_alpha)*Gx+
-        (-sin_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)-cos_phi*sin_theta*sin_alpha)*Gy+
-        (sin_2_theta*cos_alpha+cos_2_theta)*Gz;
+    		(-sin_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)-cos_phi*sin_theta*sin_alpha)*Gy+
+    		(sin_2_theta*cos_alpha+cos_2_theta)*Gz;
 
     return;
 
@@ -159,26 +164,34 @@ inline void AtomicSequence::Rotation (double * Grot) {
 void AtomicSequence::CollectTPOIs() {
 
 	vector<Module*> children = GetChildren();
+	Pulse* p;
+	double d;
 
 	m_tpoi.Reset();
 
-	for (unsigned int j = 0; j < children.size(); ++j) {
+	for (size_t j = 0; j < children.size(); ++j) {
 
-		Pulse* p = ((Pulse*)children[j]);
+		p = ((Pulse*)children[j]);
+		d = p->GetInitialDelay();
 		p->SetTPOIs();
-		for (int i=0; i<p->GetNumOfTPOIs(); ++i)  {
 
-			double d = p->GetInitialDelay();
-			m_tpoi	+ TPOI::set(d+p->GetTPOIs()->GetTime(i), p->GetTPOIs()->GetPhase(i));
-			//one TPOI prior to the pulse in case of intial delay
-			//phase == -2.0 -> ReInit CVode
-			if (d>TIME_ERR_TOL) m_tpoi + TPOI::set(d-TIME_ERR_TOL/2, -2.0);
+		for (size_t i = 0; i < p->GetNumOfTPOIs(); ++i)  {
+
+			m_tpoi	+ TPOI::set(d + p->GetTPOIs()->GetTime(i),
+					p->GetTPOIs()->GetPhase(i), p->GetTPOIs()->GetMask(i));
+
+			//one TPOI prior to the pulse in case of intial delay phase == -2.0 -> ReInit CVode
+			if (d>TIME_ERR_TOL)
+				m_tpoi + TPOI::set(d-TIME_ERR_TOL/2, -2.0, 0);
+
 		}
 
 	}
 
 	m_tpoi.Sort();
 	m_tpoi.Purge();
+
+	std::cout << m_tpoi << std::endl;
 
 }
 /***********************************************************/

@@ -29,13 +29,15 @@
 /***********************************************************/
 bool HardRFPulse::Prepare  (const PrepareMode mode) {
 
-	if (mode != PREP_UPDATE) m_bw  = 1e16;
+	if (mode != PREP_UPDATE)
+		m_bw  = 1e16;
 
 	// Prepare up the chain
 	bool b = RFPulse::Prepare(mode);
 
 	// Remove Bandwidth from XML attributes
-	if (mode != PREP_UPDATE) HideAttribute ("Bandwidth",false);
+	if (mode != PREP_UPDATE)
+		HideAttribute ("Bandwidth",false);
 
 	return b;
 
