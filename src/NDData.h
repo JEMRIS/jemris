@@ -1,7 +1,10 @@
 #ifndef __ND_DATA_H__
 #define __ND_DATA_H__
 
+#include "TPOI.h"
+
 #include <H5public.h>
+
 
 #include <iostream>
 #include <numeric>
@@ -211,20 +214,33 @@ public:
 
 template <class T> inline static NDData<T>
 cumtrapz (const NDData<T>& data,
-		std::vector<T>& times = std::vector<T>()) {
+		std::vector<T>& times = std::vector<T>(),
+		std::vector<size_t> meta = std::vector<size_t>()) {
 
 	if (!(times.empty()))
 		assert (times.size() == data.Dim(0));
 	else
 		times = std::vector<T> (data.Dim(0),1.);
 
+	if (!(meta.empty()))
+		assert (meta.size() == data.Dim(0));
+	else
+		meta = std::vector<size_t> (data.Dim(0),0);
+
 	NDData<T> ret (data.Dims());
 	size_t ncol = ret.Size()/ret.Dim(0);
 	size_t csz  = ret.Dim(0);
 
 	for (size_t i = 0, os = i*csz; i < ncol; ++i)
-		for (size_t j = 1; j < csz; ++j) // 1st is always 0
-			ret[os+j] = ret[os+j-1] + .5 * (data[os+j] + data[os+j-1]) * (times[os+j] - times[os+j-1]);
+		for (size_t j = 1; j < csz; ++j) {
+			if (check_bit(meta[j], BIT(REFOCUS_T)))
+				ret[os+j] = - ret[os+j-1];
+			else if (check_bit(meta[j], BIT(EXCITE_T)))
+				ret[os+j] =   0.;
+			else
+				ret[os+j] =   ret[os+j-1];
+			ret[os+j] += .5 * (data[os+j] + data[os+j-1]) * (times[os+j] - times[os+j-1]);
+		}
 
 	return ret;
 

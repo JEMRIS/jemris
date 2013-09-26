@@ -175,6 +175,7 @@ void AtomicSequence::CollectTPOIs() {
 		d = p->GetInitialDelay();
 		p->SetTPOIs();
 
+
 		for (size_t i = 0; i < p->GetNumOfTPOIs(); ++i)  {
 
 			m_tpoi	+ TPOI::set(d + p->GetTPOIs()->GetTime(i),
@@ -191,8 +192,6 @@ void AtomicSequence::CollectTPOIs() {
 	m_tpoi.Sort();
 	m_tpoi.Purge();
 
-	std::cout << m_tpoi << std::endl;
-
 }
 /***********************************************************/
 string          AtomicSequence::GetInfo() {
@@ -204,3 +203,32 @@ string          AtomicSequence::GetInfo() {
 	return s.str();
 
 }
+
+
+void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t offset) {
+
+	bool rem  = this->HasNonLinGrad();
+	this->SetNonLinGrad(false);
+
+	for (int i=0; i < GetNumOfTPOIs(); ++i) {
+		seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
+		seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
+		GetValue(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
+		seqdata(7,offset+i+1) = m_tpoi.GetMask(i);
+	}
+
+	this->SetNonLinGrad(rem);
+
+}
+
+
+long  AtomicSequence::GetNumOfADCs () {
+
+	int iADC = GetNumOfTPOIs();
+	for (int i=0; i<GetNumOfTPOIs(); ++i)
+		if (m_tpoi.GetPhase(i) < 0.0)
+			iADC--;
+	return iADC;
+
+}
+

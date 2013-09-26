@@ -74,7 +74,7 @@ void    RFPulse::insertGetPhaseFunction(double (*FGetPhase)(Module*, double)) {
 
 void RFPulse::SetTPOIs() {
 	Pulse::SetTPOIs();
-    m_tpoi + TPOI::set(.5 * GetDuration(), -1., (m_refocusing) ? TPOI::set::REFOCUS_T : TPOI::set::EXCITE_T);
+    m_tpoi + TPOI::set(.5 * GetDuration(), -1., (m_refocusing) ? 8 : 4);
 }
 
 /*****************************************************************/

@@ -122,3 +122,24 @@ string          ConcatSequence::GetInfo() {
 	s << " Repetitions = " << m_repetitions;
 	return s.str();
 }
+
+/*
+void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t offset) {
+
+	vector<Module*> children = GetChildren();
+	ConcatSequence* pSeq     = ((ConcatSequence*) this);
+
+	for (RepIter r=pSeq->begin(); r<pSeq->end(); ++r) {
+
+		for (unsigned int j=0; j<children.size() ; ++j) {
+
+			((Sequence*) children[j])->CollectSeqData(seqdata, t, offset);
+			if (children[j]->GetType() != MOD_CONCAT) {
+				t   += children[j]->GetDuration();
+				offset += children[j]->GetNumOfTPOIs();
+			}
+		}
+	}
+
+}*/
+

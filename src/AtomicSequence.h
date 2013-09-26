@@ -129,6 +129,10 @@ class AtomicSequence : public Sequence {
     void           CollectTPOIs       ();
 
 
+    virtual void CollectSeqData (NDData<double>& seqdata, double t, size_t offset);
+    virtual long  GetNumOfADCs ();
+
+
  protected:
     /**
      * Get informations on this AtomicSequence

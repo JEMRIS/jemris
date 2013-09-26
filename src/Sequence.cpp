@@ -77,6 +77,7 @@ void Sequence::SeqDiag (const string& fname ) {
 
 	NDData<double>      di (GetNumOfTPOIs() + 1);
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
 	int numaxes = 7;
 
 	// Start with 0 and track excitations and refocusing
@@ -104,6 +105,8 @@ void Sequence::SeqDiag (const string& fname ) {
 	// Faster
 	seqdata = transpose(seqdata);
 	std::copy (&seqdata[0], &seqdata[0]+di.Size(), t.begin());
+	for (size_t i = 1; i < meta.size(); ++i)
+		meta[i] = seqdata(i,7);
 
 	ExcitationAndRefocusing (seqdata);
 	bc.Write (seqdata, "A", "/seqdiag");
@@ -114,87 +117,44 @@ void Sequence::SeqDiag (const string& fname ) {
 		memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
 		bc.Write(di, URN, "/seqdiag");
 		if (i == 4)
-			bc.Write (cumtrapz(di,t), "KX", "/seqdiag");
+			bc.Write (cumtrapz(di,t,meta), "KX", "/seqdiag");
 		if (i == 5)
-			bc.Write (cumtrapz(di,t), "KY", "/seqdiag");
+			bc.Write (cumtrapz(di,t,meta), "KY", "/seqdiag");
 		if (i == 6)
-			bc.Write (cumtrapz(di,t), "KZ", "/seqdiag");
+			bc.Write (cumtrapz(di,t,meta), "KZ", "/seqdiag");
 	}
 
 }
 
 /***********************************************************/
-void  Sequence::CollectSeqData  (NDData<double>& seqdata, double t, long offset) {
+void  Sequence::CollectSeqData  (NDData<double>& seqdata, double t, size_t offset) {
 
-	if (GetType() == MOD_CONCAT) {
+	vector<Module*> children = GetChildren();
+	ConcatSequence* pSeq     = ((ConcatSequence*) this);
 
-		vector<Module*> children = GetChildren();
-		ConcatSequence* pSeq     = ((ConcatSequence*) this);
-
-		for (RepIter r=pSeq->begin(); r<pSeq->end(); ++r) {
-
-			for (unsigned int j=0; j<children.size() ; ++j) {
-
-				((Sequence*) children[j])->CollectSeqData(seqdata, t, offset);
-				if (children[j]->GetType() != MOD_CONCAT) {
-					t   += children[j]->GetDuration();
-					offset += children[j]->GetNumOfTPOIs();
-				}
-			}
-		}
-	}
-
-	if (GetType() == MOD_ATOM) {
-	  
-		bool rem  = ((AtomicSequence*) this)->HasNonLinGrad();
-		((AtomicSequence*) this)->SetNonLinGrad(false);
-
-		for (int i=0; i < GetNumOfTPOIs(); ++i) {
-			seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
-			seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
-			GetValue(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
-			seqdata(7,offset+i+1) = m_tpoi.GetMask(i);
-			if (m_tpoi.IsExcitation(i))
-				std::cout << "Yippie Yah Yeah, Schweinebacke!" << std::endl;
+	for (RepIter r=pSeq->begin(); r<pSeq->end(); ++r)
+		for (unsigned int j=0; j<children.size() ; ++j) {
+			((Sequence*) children[j])->CollectSeqData(seqdata, t, offset);
+			//if (children[j]->GetType() != MOD_CONCAT) {
+				t   += children[j]->GetDuration();
+				offset += children[j]->GetNumOfTPOIs();
+			//}
 		}
 
-		((AtomicSequence*) this)->SetNonLinGrad(rem);
-
-	}
 
 }
 
 /***********************************************************/
 long  Sequence::GetNumOfADCs () {
 
-	if (GetType() == MOD_CONCAT) {
+	long lADC = 0;
+	vector<Module*> children = GetChildren();
+	ConcatSequence* pSeq     = ((ConcatSequence*) this);
 
-		long lADC = 0;
-		vector<Module*> children = GetChildren();
-		ConcatSequence* pSeq     = ((ConcatSequence*) this);
+	for (RepIter r=pSeq->begin(); r<pSeq->end(); ++r)
+		for (size_t j=0; j<children.size() ; ++j)
+			lADC += ((Sequence*) children[j])->GetNumOfADCs();
 
-		for (RepIter r=pSeq->begin(); r<pSeq->end(); ++r) {
-
-			for (unsigned int j=0; j<children.size() ; ++j)
-					lADC += ((Sequence*) children[j])->GetNumOfADCs();
-
-		}
-
-		return lADC;
-
-	}
-
-	if (GetType() == MOD_ATOM) {
-
-		int iADC = GetNumOfTPOIs();
-
-		for (int i=0; i<GetNumOfTPOIs(); ++i)
-			if (m_tpoi.GetPhase(i) < 0.0)  iADC--;
-
-		return iADC;
-
-	}
-
-	return -1;
+	return lADC;
 
 }

@@ -79,14 +79,14 @@ public:
      * @param pfout File output stream
      * @param time  Time: More elaborate description, please.
      */
-    void CollectSeqData          (NDData<double>& seqdata, double time, long offset);
+    virtual void CollectSeqData          (NDData<double>& seqdata, double time, size_t offset);
 
     /**
      * Get the number of ADCs for this sequence.
      *
      * @return The nmuber of ADCs.
      */
-    long GetNumOfADCs ();
+    virtual long GetNumOfADCs ();
 
 
  protected:

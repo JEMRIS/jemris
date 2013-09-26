@@ -42,9 +42,19 @@ using namespace std;
 
 //! Time points of interest of all modules
 
-inline static bool bit_set (const size_t eim, const size_t eb) {
-    return (eim & (size_t)pow(2.f,(float)eb));
-}
+template<class T> inline T
+BIT (const T& x) { return T(1) << x; }
+
+static const size_t JTPOI_T (0);
+static const size_t ADC_T (1);
+static const size_t EXCITE_T (2);
+static const size_t REFOCUS_T (3);
+
+template<class T, class S> inline bool
+check_bit (const T& x, const S& y) { return 0 != (x & y); }
+
+template<class T, class S> inline void
+set_bit (T& x, const S& y) { x |= 1 << y; }
 
 
 class TPOI {
@@ -54,7 +64,6 @@ class TPOI {
     //! The set of data of each time point of interest
     struct set {
 
-    	enum PType { JAP_T, ADC_T, EXCITE_T, REFOCUS_T};
 
         double dtime;    /**< particular time point of this set.*/
         double dphase;   /**< particular corresponding reciever phase.*/
@@ -158,9 +167,9 @@ class TPOI {
       */
      inline double GetPhase (const size_t pos) const {return m_phase[pos]; }
 
-     bool IsADC (const size_t pos) {return bit_set (m_mask[pos], set::ADC_T); }
-     bool IsExcitation (const size_t pos) {return bit_set (m_mask[pos], set::EXCITE_T); }
-     bool IsRefocussing (const size_t pos) {return bit_set (m_mask[pos], set::REFOCUS_T); }
+     bool IsADC (const size_t pos) {return check_bit (m_mask[pos], 0); }
+     bool IsExcitation (const size_t pos) {return check_bit (m_mask[pos], 1); }
+     bool IsRefocussing (const size_t pos) {return check_bit (m_mask[pos], 2); }
 
      inline size_t GetMask (const size_t pos) const {return m_mask[pos];}
 
