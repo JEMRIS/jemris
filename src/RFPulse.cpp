@@ -29,7 +29,7 @@
 
 /*****************************************************************/
 RFPulse::RFPulse  () : m_refocusing(0), m_coil_array(0),
-	m_channel(0), m_flip_angle(0.), m_bw(0.) {
+	m_channel(0), m_flip_angle(0.), m_bw(0.), m_symmetry(.5) {
 
 	m_axis = AXIS_RF;
 	m_initial_phase = 0.;
@@ -46,6 +46,7 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
 	ATTRIBUTE("Frequency"    , m_frequency    );
 	ATTRIBUTE("Channel"      , m_channel      );
 	ATTRIBUTE("Refocusing"   , m_refocusing   );
+	ATTRIBUTE("Symmetry"     , m_symmetry     );
 
     if (mode != PREP_UPDATE)
         insertGetPhaseFunction( &TxRxPhase::getLinearPhase );
@@ -56,6 +57,12 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
     if (mode != PREP_UPDATE) {
         HideAttribute("Axis",false);
     	HideAttribute("PhaseLock",false);
+    }
+
+    if (b && (m_symmetry <= 0. || m_symmetry > 1.)) {
+    	cout << "Preparation of DelayAtomicSequence '" << GetName() << "' not succesful. Symmtry = "
+    			<< m_symmetry << ". Must be (0.,1.]." << endl;
+    	b = false;
     }
 
 	return b;
@@ -74,7 +81,7 @@ void    RFPulse::insertGetPhaseFunction(double (*FGetPhase)(Module*, double)) {
 
 void RFPulse::SetTPOIs() {
 	Pulse::SetTPOIs();
-    m_tpoi + TPOI::set(.5 * GetDuration(), -1., (m_refocusing) ? 8 : 4);
+    m_tpoi + TPOI::set(m_symmetry * GetDuration(), -1., (m_refocusing) ? 8 : 4);
 }
 
 /*****************************************************************/
@@ -136,8 +143,8 @@ double RFPulse::GetIntegralNumeric (int steps) {
 string          RFPulse::GetInfo () {
 
 	stringstream s;
-	s << Pulse::GetInfo() << " , (Flipangle,Phase,Bandwidth,Channel) = ("
-			<< m_flip_angle << "," << GetInitialPhase() << "," << m_bw << "," << m_channel << ") ";
+	s << Pulse::GetInfo() << " , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = ("
+			<< m_flip_angle << "," << GetInitialPhase() << "," << m_bw << "," << m_channel << "," << m_symmetry << ") ";
 	return s.str();
 
 }
