@@ -233,9 +233,9 @@ cumtrapz (const NDData<T>& data,
 
 	for (size_t i = 0, os = i*csz; i < ncol; ++i)
 		for (size_t j = 1; j < csz; ++j) {
-			if (check_bit(meta[j], BIT(REFOCUS_T)))
+			if (check_bit(meta[j], REFOCUS_T))
 				ret[os+j] = - ret[os+j-1];
-			else if (check_bit(meta[j], BIT(EXCITE_T)))
+			else if (check_bit(meta[j], EXCITE_T))
 				ret[os+j] =   0.;
 			else
 				ret[os+j] =   ret[os+j-1];

@@ -70,7 +70,7 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
 }
 
 /*****************************************************************/
-void    RFPulse::insertGetPhaseFunction(double (*FGetPhase)(Module*, double)) {
+void RFPulse::insertGetPhaseFunction (double (*FGetPhase)(Module*, double)) {
 
     if (find( m_GetPhaseFunPtrs.begin(), m_GetPhaseFunPtrs.end(), FGetPhase) == m_GetPhaseFunPtrs.end())
 	    m_GetPhaseFunPtrs.push_back(FGetPhase);
@@ -81,7 +81,7 @@ void    RFPulse::insertGetPhaseFunction(double (*FGetPhase)(Module*, double)) {
 
 void RFPulse::SetTPOIs() {
 	Pulse::SetTPOIs();
-    m_tpoi + TPOI::set(m_symmetry * GetDuration(), -1., (m_refocusing) ? 8 : 4);
+    m_tpoi + TPOI::set (m_symmetry * GetDuration(), -1., (m_refocusing) ? 8 : 4);
 }
 
 /*****************************************************************/
@@ -101,8 +101,7 @@ void RFPulse::GetValue (double * dAllVal, double const time)  {
 		if (coil != NULL) {
 			magn  = coil->GetSensitivity(World::instance()->total_time + time);
 			phase = coil->GetPhase(World::instance()->total_time + time);
-		}
-		else
+		} else
 			cout << GetName() << " warning: my channel" << m_channel << "is not in the TxCoilArray\n";
 
 	}
