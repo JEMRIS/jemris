@@ -51,10 +51,10 @@ static const size_t EXCITE_T (2);
 static const size_t REFOCUS_T (3);
 
 template<class T, class S> inline bool
-check_bit (const T& x, const S& y) { return 0 != (x & y); }
+check_bit (const T& x, const S& y) { return 0 != (x & BIT(y)); }
 
 template<class T, class S> inline void
-set_bit (T& x, const S& y) { x |= 1 << y; }
+set_bit (T& x, const S& y) { x |= T(1) << y; }
 
 
 class TPOI {
