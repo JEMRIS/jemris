@@ -106,7 +106,7 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
     btag = (GradPulse::Prepare(mode) && btag);
 
 	if (mode == PREP_VERBOSE) {
-		
+
 		double gamma          = 42576000.0;
 
 		double samp_int       = 1.0 / m_bw;
@@ -120,7 +120,7 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 			cout << "\n warning in Prepare(1) of KVSPIRAL " << GetName() << endl;
 			cout << "Nyquist limit (" << max_grad_samp << ") exceeded." << endl;
 		}
-		
+
 		double time_of_switch = 0.0;
 		
 		m_samples             = GetDuration() / m_grad_samp_int;
@@ -134,8 +134,6 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 		double g    [3];
 		double gabs           = 0.0;
 
-		m_amps.resize(m_samples+1);
-		
 		k[XC]                 = 0.0;
 		k[YC]                 = 0.0;
 		k[ZC]                 = 0.0;
@@ -145,9 +143,10 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 		g[XC]                 = 0.0;
 		g[YC]                 = 0.0;
 		g[ZC]                 = 0.0;
-		
+
+		m_amps.resize(m_samples+1);
 		m_amps[0]             = 0.0;
-		
+
 		for (long i = 0; i <= m_samples; i++) {
 			
 			time = (double) i * m_grad_samp_int / 1000;
@@ -200,7 +199,7 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 			free (tmp);
 
 		}
-		
+
 	}
 	
     if (!btag && mode == PREP_VERBOSE)
