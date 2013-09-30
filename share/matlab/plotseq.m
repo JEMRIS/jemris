@@ -85,7 +85,8 @@ DO_2D = isempty(find(A(:,5),1));
 [~,i2]=min(abs(t-ax(2)));
 
 if moment_flag
-    A(:,[3 4 5])=cumtrapz(t,A(:,[3 4 5]));
+    %A(:,[3 4 5])=cumtrapz(t,A(:,[3 4 5]));
+    A(:,[3 4 5])=A(:,[6 7 8]);
     %set moment to zero after every RF pulse
     J=find(diff(A(:,1)));J=J(2:2:end);
     if handles.cd==1; J=2; end
