@@ -33,8 +33,7 @@
 #include "Sample.h"
 #include "CoilArray.h"
 #include "Bloch_CV_Model.h"
-
-
+#include "KSpace.h"
 
 /**
  * @brief The simulator
@@ -56,12 +55,12 @@ class Simulator {
 	 * @param fmodel    Model name
 	 */
 	Simulator        (
-			std::string fname,
-			std::string fsample   = "",
-			std::string frxarray  = "",
-			std::string ftxarray  = "",
-			std::string fsequence = "",
-			std::string fmodel    = "");
+			const std::string& fname,
+			const std::string& fsample   = "",
+			const std::string& frxarray  = "",
+			const std::string& ftxarray  = "",
+			const std::string& fsequence = "",
+			const std::string& fmodel    = "");
 
 
 	/**
@@ -72,12 +71,12 @@ class Simulator {
 	/**
 	 * @brief Get my status
 	 */
-	bool GetStatus           () { return m_state; }
+	bool GetStatus           () const { return m_state; }
 
 	/**
 	 * @brief Get my evolution counter
 	 */
-	int         GetEvolution () { return m_evol;  }
+	int         GetEvolution () const { return m_evol;  }
 
 	/**
 	 * @brief Get a particular attribute value by a given key string
@@ -87,7 +86,7 @@ class Simulator {
 	 *
 	 * @return        The requested attribute string
 	 */
-	string      GetAttr      (DOMElement* element, string key);
+	string      GetAttr      (DOMElement* element, const string& key);
 
 	/**
 	 * @brief Get a array of attributes given by the array of key strings
@@ -114,7 +113,7 @@ class Simulator {
 	/**
 	 * @brief Set my sample from XML
 	 */
-	void      SetSample      (string fsample);
+	void      SetSample      (std::string fsample);
 
 	/**
 	 * @brief Set my sample to a new sample
@@ -223,6 +222,7 @@ class Simulator {
 	CoilArray*               m_tx_coil_array;     /**< @brief Transmit coil array         */
 	CoilArray*               m_rx_coil_array;     /**< @brief Receive coil array          */
 	DOMTreeErrorReporter*    m_domtree_error_rep; /**< @brief DOM tree error reporter     */
+	KSpace<double,4>*        m_kspace;            /**< @brief K-Space                     */
 
 };
 

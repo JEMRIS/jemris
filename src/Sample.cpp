@@ -33,8 +33,19 @@
 
 #include <math.h>
 
+
+template <class T>
+std::ostream& operator<< (std::ostream& os, const std::vector<T>& data) {
+	for (size_t i = 0; i < data.size(); ++i)
+		std::cout << data[i] << " " ;
+	return os;
+}
+
 /**********************************************************/
-void Sample::Prepare (std::string fname) {
+void Sample::Prepare (const std::string& fname) {
+
+	m_offset.resize(3);
+	m_res.resize(3);
 
     m_r2prime              = 0.0;
     m_pos_rand_perc        = 1.0;
@@ -57,8 +68,6 @@ void Sample::Prepare (std::string fname) {
 	// Standard sample has only one compartment
 	m_no_spin_compartments = 1;
 
-	m_helper_size          = 0;
-
     InitRandGenerator();
 
 	if (fname != "")
@@ -76,10 +85,17 @@ void Sample::ClearSpins() {
 
 
 /**********************************************************/
-void Sample::CreateSpins(long l) {
+void Sample::CreateSpins(const size_t l) {
 	
 	m_ensemble.Init (l);
 	
+}
+
+/**********************************************************/
+void Sample::CreateSpins(const size_t np, const size_t l) {
+
+	m_ensemble.Init (np, l);
+
 }
 
 /**********************************************************/
@@ -98,25 +114,20 @@ Sample::~Sample() {
 	if (m_reorder_strategy != NULL)
 		delete m_reorder_strategy;
 
-	if (m_helper_size)
-		free (m_helper);
+}
+
+
+/**********************************************************/
+void Sample::CreateHelper (const size_t l) {
+
+	if (l > 0)
+		m_helper.resize(l);
 
 }
 
 
 /**********************************************************/
-void Sample::CreateHelper (long l) {
-
-	if (l > 0) {
-		m_helper_size = l;
-		m_helper = (double*) malloc (l * sizeof(double));
-	}
-
-}
-
-
-/**********************************************************/
-Sample::Sample (long size) {
+Sample::Sample (const size_t size) {
 
 	Prepare();
 
@@ -124,7 +135,7 @@ Sample::Sample (long size) {
 
 
 /**********************************************************/
-Sample::Sample (string fname, int multiple) {
+Sample::Sample (const string& fname, const int multiple) {
 
 	Prepare (fname);
 	CropEnumerate();
@@ -133,108 +144,94 @@ Sample::Sample (string fname, int multiple) {
 }
 
 /**********************************************************/
-IO::Status Sample::Populate (string fname) {
+IO::Status Sample::Populate (const string& fname) {
+
+	m_index.resize(3);
 
 	// Binary interface
-	BinaryContext bc;
-	DataInfo      di;
-	bool          grid = false;
-
-	bc.Initialize (fname, IO::IN);
+	BinaryContext bc (fname, IO::IN);
 	if (bc.Status() != IO::OK)
 		return bc.Status();
+
+	NDData<double> data;
+
+	std::vector<size_t> dims;
+	std::vector<double> tmpdat;
+	bool          grid = false;
 
 	// ----------------------------------------------------
 	// Physical parameters of spins
-	di = bc.GetInfo (std::string("/sample/data"));
+
+	// Retrieve data from file
+	bc.Read(data, "data", "/sample");
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
-	double* tmpdat = (double*) malloc (di.GetSize() * sizeof(double));
-	int    tmpndim = di.ndim;
-	long   tmpdims [4];
-	int    size    = 1;
+	size_t tmpndim = data.NDim();
 
-	for (int i = 0; i<tmpndim; i++) {
-		tmpdims[tmpndim-1-i] = di.dims[i];
-		size *= di.dims[i];
-	}
+	dims          = data.Dims();
+	tmpdat        = data.Data();
 
-	int    nprops  = tmpdims[0];
+	size_t size   = data.Size();
+	size_t nprops = data.Dim(0);
 	size = size / nprops;
 
 	for (int i = tmpndim; i < 4; i++)
-		tmpdims[i] = 1;
+		dims.push_back(1);
 
-	memcpy (m_index, &tmpdims[1], 3*sizeof(long));
-
-	// Retrieve data from file
-	bc.ReadData(tmpdat);
-	if (bc.Status() != IO::OK)
-		return bc.Status();
-	// ----------------------------------------------------
+	memcpy (&m_index[0], &dims[1], 3*sizeof(size_t));
 
 	// ----------------------------------------------------
-	di = bc.GetInfo (std::string("/sample/resolution"));
-	if (bc.Status() == IO::OK) {
-		grid = true;
-		bc.ReadData (m_res);
-		if (bc.Status() != IO::OK)
-			return bc.Status();
-	} else 
-		grid = false; 
-	// ----------------------------------------------------
 
-	// ----------------------------------------------------
-	di = bc.GetInfo (std::string("/sample/offset"));
-	if (bc.Status() == IO::OK) {
-		bc.ReadData (m_offset);
-		if (bc.Status() != IO::OK)
-			return bc.Status();
-	} 
+	bc.Read (data, "resolution", "/sample");
+	grid = (bc.Status() == IO::OK);
+	m_res = data.Data();
+
+
+	bc.Read (data, "offset", "/sample");
+	m_offset = data.Data();
+
 	// ----------------------------------------------------
 
 	if (grid) {
 
-		m_ensemble.Init (tmpndim, tmpdims, size);
+		m_ensemble.Init (dims, size);
 		
-		int  nprop = tmpdims[0] + 4;
-		long n     = 0;
+		int  nprop = dims[0] + 4;
+		size_t n     = 0;
 		
-		for (long nz = 0; nz < m_index[ZC]; nz++)
-			for (long ny = 0; ny < m_index[YC]; ny++)
-				for (long nx = 0; nx < m_index[XC]; nx++, n++) {
+		for (size_t nz = 0; nz < m_index[ZC]; nz++)
+			for (size_t ny = 0; ny < m_index[YC]; ny++)
+				for (size_t nx = 0; nx < m_index[XC]; nx++, n++) {
 					
-					long epos = n * nprop;
-					long spos = n * tmpdims[0];
-					
+					size_t epos = n * nprop;
+					size_t spos = n * dims[0];
+					std::vector<double>::const_iterator sposi = tmpdat.begin() + spos;
+					std::vector<double>::iterator eposi = m_ensemble.At(M0 + epos);
+
 					if (tmpdat[spos] > 0) {
 						
 						// Copy values over
-						memcpy (&m_ensemble[M0 + epos], &tmpdat[spos], sizeof(double)*tmpdims[0]);
+						std::copy (sposi, sposi + dims[0], eposi);
 
 						// Interpolate spatial position
 						m_ensemble[XC+epos] = (nx-0.5*(m_index[XC]-1))*m_res[XC]+m_offset[XC];
 						m_ensemble[YC+epos] = (ny-0.5*(m_index[YC]-1))*m_res[YC]+m_offset[YC];
 						m_ensemble[ZC+epos] = (nz-0.5*(m_index[ZC]-1))*m_res[ZC]+m_offset[ZC];
 						
-						// Assign counter id (dpflug: Could be randomized here)
-
 					}
 
 				}
 		
 	} else {
 
-		tmpdims[0] -= 4;
-		m_ensemble.Init (tmpndim, tmpdims, size);
+		dims[0] -= 4;
+		m_ensemble.Init (dims, size);
 		
-		memcpy (&m_ensemble[0], tmpdat, m_ensemble.Size()*sizeof(double));
+		memcpy (&m_ensemble[0], &tmpdat[0], m_ensemble.Size()*sizeof(double));
 
 
 	}
-
-	free (tmpdat);
 
 	return bc.Status();
 	
@@ -247,8 +244,8 @@ void Sample::CropEnumerate () {
 	long osize = m_ensemble.NSpins();
  	int nprops = m_ensemble.NProps();
 
-	double* tmp = (double*) malloc (osize * nprops * sizeof(double));
-	memcpy (tmp, m_ensemble.Data(), osize * nprops * sizeof(double));
+	std::vector<double> tmp (osize * nprops);
+	memcpy (&tmp[0], m_ensemble.Data(), osize * nprops * sizeof(double));
 
 	for (int i = 0; i < osize; i++)
 		if (m_ensemble[i * nprops + M0] > 0)
@@ -270,7 +267,6 @@ void Sample::CropEnumerate () {
 
 		}
 
-	free (tmp);
 }
 
 /**********************************************************/
@@ -304,12 +300,12 @@ if (multiple>1){
 }
 
 /**********************************************************/
-long    Sample::GetSize   ()       {
+size_t  Sample::GetSize   ()     const  {
 	return m_ensemble.NSpins();
 }
 
 /**********************************************************/
-void Sample::GetValues (long l, double* val) {
+void Sample::GetValues (const size_t l, double* val) {
 
 	//copy the properties of the l-th spin to m_val
 
@@ -323,7 +319,7 @@ void Sample::GetValues (long l, double* val) {
 }
 
 /**********************************************************/
-double  Sample::GetDeltaB (long pos) {
+double  Sample::GetDeltaB (size_t pos) {
 
 	//get off-resonance : convert m_val from [Hz] to [kHz] and add the Lorentzian random offset
 	double r2prime = (
@@ -576,17 +572,17 @@ int Sample::SpinsLeft() {
 
 /*********************************************************/
 void Sample::GetHelper (double* target) {	
-	memcpy (target, m_helper, m_helper_size * sizeof (double)); 
+	memcpy (target, &m_helper[0], m_helper.size() * sizeof (double));
 }
 
 /*********************************************************/
 double* Sample::GetHelper () {	
-	return m_helper;
+	return &m_helper[0];
 }
 
 /*********************************************************/
-long Sample::GetHelperSize () {	
-	return m_helper_size;
+size_t Sample::GetHelperSize () {
+	return m_helper.size();
 }
 
 /*********************************************************/
@@ -603,6 +599,6 @@ void Sample::SetNoSpinCompartments (int n) {
 void Sample::CopyHelper (double* out) {
 	
 	if (GetHelperSize())
-		memcpy (out, m_helper, GetHelperSize() * sizeof(double));
+		memcpy (out, &m_helper[0], GetHelperSize() * sizeof(double));
 	
 }

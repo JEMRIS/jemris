@@ -1,7 +1,7 @@
 #include "MultiPoolSample.h"
 #include "BinaryContext.h"
 
-MultiPoolSample::MultiPoolSample (std::string fname) {
+MultiPoolSample::MultiPoolSample (const std::string& fname) {
 
 	Prepare(fname);
 	CropEnumerate();
@@ -9,39 +9,33 @@ MultiPoolSample::MultiPoolSample (std::string fname) {
 } 
 
 
-MultiPoolSample::MultiPoolSample (long size) {
+MultiPoolSample::MultiPoolSample (const long size): m_noofpools (1) {
 
 	Prepare();
 
 } 
 
 
-IO::Status MultiPoolSample::Populate (string fname) {
+IO::Status MultiPoolSample::Populate (const std::string& fname) {
 
 	// Doing 
 	Sample::Populate (fname);
 
-	BinaryContext bc;
-	DataInfo      di;
+	BinaryContext bc (fname, IO::IN);
+	if (bc.Status() != IO::OK)
+		return bc.Status();
+
+	NDData<double>      di;
 	IO::Status    ios;
-
-	bc.Initialize (fname, IO::IN);
-	if (bc.Status() != IO::OK)
-		return bc.Status();
-
-	di = bc.GetInfo (std::string("/sample/helper"));
-	if (bc.Status() != IO::OK)
-		return bc.Status();
 
 	if (di.NDim() != 2)
 		return IO::UNMATCHED_DIMENSIONS;
 
-	m_no_spin_compartments = di.Dims()[0];
+	bc.Read(di, "sample", "helper");
+	if (bc.Status() != IO::OK)
+		return bc.Status();
 
-	// Helper in world is used for storing the global exchange rates
-	CreateHelper(m_no_spin_compartments*m_no_spin_compartments);
-
-	bc.ReadData (m_helper);
+	m_helper = di.Data();
 
 	return IO::OK;
 
@@ -49,13 +43,16 @@ IO::Status MultiPoolSample::Populate (string fname) {
 
 
 
-void MultiPoolSample::Prepare (std::string fname) {
+void MultiPoolSample::Prepare (const std::string& fname) {
 
 	Sample::Prepare(fname);
 
 }
 
-/**********************************************************/
+
+
+
+
 void MultiPoolSample::CropEnumerate () {
 	
 	int  nsize = 0;

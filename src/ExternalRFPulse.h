@@ -40,7 +40,7 @@ class ExternalRFPulse : public RFPulse {
     /**
      * @brief Default constructor
      */
-    ExternalRFPulse() {};
+    ExternalRFPulse() :m_scale(1.) {};
 
     /**
      * @brief Copy constructor.
@@ -63,7 +63,7 @@ class ExternalRFPulse : public RFPulse {
      * @param  mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return      Success.
      */
-    virtual bool Prepare  (PrepareMode mode);
+    virtual bool Prepare  (const PrepareMode mode);
 
 
     /**
@@ -77,7 +77,7 @@ class ExternalRFPulse : public RFPulse {
      * @param time The flip angle as double.
      * @return the Magnitude.
      */
-    virtual double   GetMagnitude  (double time ){return m_pulse_data.GetData(time); };
+    virtual double   GetMagnitude  (const double time ){return m_pulse_data.GetData(time); };
 
     /**
      * @brief Get function pointer to phase evaluation
@@ -94,7 +94,11 @@ class ExternalRFPulse : public RFPulse {
     string           GetInfo      ();
 
     ExternalPulseData		   m_pulse_data; /**<contains the data*/
+
     string m_fname;                /**< @brief Filename containing the RF amps and phases  */
+    string m_dname;
+    string m_dpath;
+
     double m_scale;                /**< @brief Scaling factor for the amps                 */
 };
 

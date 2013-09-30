@@ -71,7 +71,7 @@ unsigned int CoilArray::Populate () {
 }
 
 /***********************************************************/
-bool CoilArray::Prepare (PrepareMode mode) {
+bool CoilArray::Prepare (const PrepareMode mode) {
 
 	for (unsigned int i=0; i<m_coils.size(); i++)
 		m_coils.at(i)->Prepare(mode);
@@ -156,10 +156,9 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 		}*/
 
 
-	BinaryContext bc;
-	DataInfo      di;
-
-	bc.Initialize ("signals.h5", IO::OUT);
+	BinaryContext bc ("signals.h5", IO::OUT);
+	NDData<double> di;
+	std::string URL, URN;
 
 	for (int c = 0; c < GetSize(); c++) {
 		
@@ -192,27 +191,19 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 			}
 			
 		}
-		
-		di.fname   = "signals.h5";
-		
+
 		stringstream sstr;
 		sstr << setw(2) << setfill('0') << c;
 
-		di.ndim    = 2;
-		di.dims[0] = repository->Samples();
-		di.dims[1] = repository->NProps();
-		di.path    = "/signal/channels/";
-		di.dname   = sstr.str();
-		bc.SetInfo (di);
-		bc.WriteData (repository->Data());
+		di = NDData<double> (repository->Samples(), repository->NProps());
+		memcpy (&di[0], repository->Data(), di.Size() * sizeof(double));
+		URN = sstr.str();
+		bc.Write(di, URN, "/signal/channels/");
 		
-		if (di.dname == "00") {
-			di.ndim    = 1;
-			di.dims[0] = repository->Samples();
-			di.path    = "/signal/";
-			di.dname   = "times";
-			bc.SetInfo (di);
-			bc.WriteData (repository->Times());
+		if (URN == "00") {
+			di = NDData<double> (repository->Samples());
+			memcpy (&di[0], repository->Times(), di.Size() * sizeof(double));
+			bc.Write(di, "times", "/signal");
 		}
 
 
@@ -226,53 +217,26 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 /**********************************************************/
 IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	
-	BinaryContext bc;
-	DataInfo      di;
-	IO::Status    ios = IO::OK;
-	
-	bc.Initialize (std::string("sensmaps.h5"), IO::OUT);
+	BinaryContext bc (std::string("sensmaps.h5"), IO::OUT);
+	size_t sl = m_coils[0]->GetPoints();
+	NDData<double> mag (m_coils.size(), sl, sl, (m_coils[0]->GetNDim() == 3) ? sl : 1),
+			pha (m_coils.size(), sl, sl, (m_coils[0]->GetNDim() == 3) ? sl : 1);
 	
 	if (bc.Status() != IO::OK)
 		return bc.Status();
-	
-	di.fname = "sensmaps.h5";
-	
-	// Nx x Ny x Nz x Nc
-    di.ndim = 4;
 
-	di.dims[3] = m_coils[0]->GetPoints();
-	di.dims[2] = m_coils[0]->GetPoints();
-	di.dims[1] = (m_coils[0]->GetNDim() == 3) ? m_coils[0]->GetPoints() : 1;
-	di.dims[0] = m_coils.size();
+	long size = mag.Size()/m_coils.size();
 
-	long size = 1;
-	for (int i = 1; i < 4; i++)
-		size *= di.dims[i];
-
-	double* maps = (double*) malloc (m_coils.size()*size*sizeof(double));
-
-	di.path  = "/maps/";
-	di.dname = "magnitude";
-	bc.SetInfo(di);
-	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {
+	for (unsigned i = 0; i < m_coils.size(); ++i) {
 		m_coils[i]->GridMap();
-		memcpy (&maps[n], m_coils[i]->MagnitudeMap(), sizeof(double)*size);
-		n += size; 
+		memcpy (&mag[i*size], m_coils[i]->MagnitudeMap(), sizeof(double)*size);
+		memcpy (&pha[i*size], m_coils[i]->PhaseMap(), sizeof(double)*size);
 	}
-	bc.WriteData (maps);
 
-	di.path  = "/maps/";
-	di.dname = "phase";
-	bc.SetInfo(di);
-	for (unsigned i = 0, n = 0; i < m_coils.size(); i++) {
-		memcpy (&maps[n],     m_coils[i]->PhaseMap(), sizeof(double)*size);
-		n += size; 
-	}
-	bc.WriteData (maps);
+	bc.Write (mag, "magnitude", "/maps");
+	bc.Write (pha, "phase", "/maps");
 	
-	free (maps);
-
-	return ios;
+	return IO::OK;
 	
 }
 

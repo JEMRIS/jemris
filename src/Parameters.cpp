@@ -65,7 +65,7 @@ void Parameters::SetDefaults() {
 }
 
 /**********************************************************/
-bool    Parameters::Prepare(PrepareMode mode) {
+bool    Parameters::Prepare(const PrepareMode mode) {
 
 	m_type     = MOD_VOID;
 	m_prepared = true;

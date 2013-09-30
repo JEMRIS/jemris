@@ -1,4 +1,4 @@
-/** @file Pulse.h
+	/** @file Pulse.h
  *  @brief Implementation of JEMRIS Pulse
  */
 
@@ -59,24 +59,18 @@ class Pulse :public Module {
     /**
      * @brief Copy constructor.
      */
-    Pulse                  (const Pulse&)     {};
+    Pulse                  (const Pulse&) :
+    	m_adc(0), m_initial_delay(0), m_axis(AXIS_VOID), m_phase_lock(0) {};
 
     /**
      * See Module::GetValue
      */
-    virtual void GetValue  (double * dAllVal, double const time) {};
+    virtual void GetValue  (double * dAllVal, double const time) const {};
 
     /**
      *  @brief  see Module::Prepare()
      */
-    virtual bool Prepare   (PrepareMode mode) ;
-
-    /**
-     * @brief Get the duration of this pulse.
-     *
-     * @return Duration
-     */
-    inline double GetDuration    ()                  { return m_duration; };
+    virtual bool Prepare   (const PrepareMode mode) ;
 
     /**
      * @brief Set the duration of this pulse.
@@ -92,7 +86,7 @@ class Pulse :public Module {
      * Set the Axis of propagation of this pulse to the given PulseAxis.
      * @param eAxis the axis as stated above.
      */
-    inline void SetAxis           (PulseAxis eAxis)  { m_axis = eAxis; };
+    inline void SetAxis           (const PulseAxis eAxis)  { m_axis = eAxis; };
 
     /**
      * @brief Get the Axis of propagation of this pulse.
@@ -100,7 +94,7 @@ class Pulse :public Module {
      * Get the Axis of propagation of this pulse to the given PulseAxis.
      * @return Axis of propagation.
      */
-    inline PulseAxis GetAxis      ()                 { return m_axis; };
+    inline PulseAxis GetAxis      ()   const              { return m_axis; };
 
 
     /**

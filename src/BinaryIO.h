@@ -1,12 +1,6 @@
-/** @file BinaryIO.h
- *  @brief Implementation of JEMRIS Sample
- */
-
 /*
- *  JEMRIS Copyright (C)
- *                        2006-2013  Tony Stoecker
- *                        2007-2013  Kaveh Vahedipour
- *                        2009-2013  Daniel Pflugfelder
+ *  JEMRIS Copyright (C) 2007-2010  Tony Stoecker, Kaveh Vahedipour
+ *                                  Forschungszentrum Juelich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,53 +21,22 @@
 #define BINARY_IO_H_
 
 #include "Declarations.h"
+#include "NDData.h"
 
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
-#include <string.h>
 
-
-/**
- * @brief  Simple information structure.
- *         Might show to be too unflexible and be eventually replaced by a dom node?
- */
-struct DataInfo {
-
-	std::string  fname; /**< File name */
-	std::string  dname; /**< Data name (i.e. sample, sensitivities, signals and sequence timing)*/
-	std::string  path;  /**< Path (i.e. Group name in HDF5) not used for SimpleIO */
-
-	int          ndim;  /**< # of dimensions */
-	int          dims[256];  /**< dimensions */
-	int          size;  /**< size of each cell (i.e. 8 for doubles etc) */
-
-	IO::Mode     mode;  /**< 0: Read, 1: Write */
-
-	long GetSize () {
-
-		long size = 0;
-
-		if (ndim > 0) {
-			size = 1;
-			for (unsigned short i = 0; i < ndim; i++)
-				size *= dims[i];
-		}
-
-		return size;
-
+inline static std::string
+URI (const std::string& URL, const std::string& URN) {
+	std::string uri ("/" + URL + "/" + URN);
+	size_t pos = uri.find(DSLASH);
+	while (pos != std::string::npos) {
+		uri.replace (pos, 2, SLASH);
+		pos = uri.find(DSLASH);
 	}
-
-	int* Dims() {
-		return dims;
-	}
-
-	int NDim() {
-		return ndim;
-	}
-
-};
-
+	return uri;
+}
 
 /**
  * @brief Base class for binary IO strategies
@@ -83,24 +46,23 @@ class BinaryIO {
 public:
 	
 
+    
+	BinaryIO () : m_status(IO::OK), m_type(IO::NONE), m_fname (""), m_mode (IO::IN) {}
+
 	/**
 	 * @brief Contructor
 	 */
-	BinaryIO     ()                         {
-
-		m_info.fname = "";
-		m_info.ndim  = 0;
-		for (int i=0; i<256; i++)
-			m_info.dims[i]  = 0;
-		m_info.size  = sizeof(double);
-
-	};
+	BinaryIO     (const std::string& fname, const IO::Mode mode) :
+		m_status(IO::OK), m_type(IO::NONE), m_fname (fname), m_mode (mode) {
+		FileAccess ();
+	}
 	
 
 	/**
 	 * @brief Destructor
 	 */
-	virtual ~BinaryIO     ()                        {};
+	virtual
+    ~BinaryIO () {};
 	 
 
 	/**
@@ -109,125 +71,81 @@ public:
 	 * @return  File name
 	 */
 	inline const std::string 
-	GetFileName   ()                       { 
-		
-		return m_info.fname; 
-		
-	};
+	GetFileName   ()                       {
+		return m_fname;
+	}
 	
 
-	/**
-	 * @brief        Set file name
-	 *
-	 * @param  fname File name
-	 */
-	inline const     
-	void             SetFileName      (const std::string fname) { 
-		
-		m_info.fname = fname;
-		
-	};
-	
+	IO::Strategy
+	IOStrategy () const {
+		return m_type;
+	}
+
 
 	/**
 	 * @brief        Read data from file to container
 	 *
 	 * @param  dc    Data container
 	 */
-	virtual const
-	IO::Status       ReadData         (double* dc)           = 0;
+	template<class T> IO::Status
+	Read (NDData<T>& data, const std::string& urn, const std::string& url = "") {
+		std::cout << "Oh Oh: You are wrong here!" << std::endl;
+	}
 	
-
 	/**
 	 * @brief        Write data from container to file
 	 *
 	 * @param  dc    Data container
 	 */
-	virtual const
-	IO::Status       WriteData        (double* dc)           = 0;
+	template<class T> IO::Status
+	Write (const NDData<T>& dc, const std::string& urn, const std::string& url = "") {
+		std::cout << "Oh Oh: You are wrong here!" << std::endl;
+	}
 	
-
-	/**
-	 * @brief        Get information on the dataset in binary file
-	 *
-	 * @param dname  Dataset name
-	 */
-	virtual inline const 
-	DataInfo         GetInfo          (std::string dname = "") {
-		
-		m_info.dname = dname; 
-		return m_info;
-
-	};
-	
-
-	/**
-	 * @brief        Get information on the data in binary file
-	 */
-	inline const     
-	void             SetInfo          (DataInfo info)          {
-
-		m_info = info;
-
-	};
-
 
 	/**
 	 * @brief        File access?
 	 */
-	inline const  
-	IO::Status       FileAccess    () {
+	virtual IO::Status
+	FileAccess    () {
 
-		if (m_info.fname.length() > 0) {
+		if (m_fname.length() > 0) {
 			
-					if (m_info.mode == IO::IN) {
-		
-						std::ifstream in (m_info.fname.c_str(), std::ios::binary);
-						m_status = (in) ? IO::OK : IO::FILE_NOT_FOUND;
-
-					} else {
-						
-						std::ofstream out (m_info.fname.c_str() , std::ios::binary);
-						m_status = (out) ? IO::OK : IO::INSUFFICIENT_PRIVILEGES;
-
-					}
+			if (m_mode == IO::IN) {
+				std::ifstream in (m_fname.c_str(), std::ios::binary);
+				m_status = (in) ? IO::OK : IO::FILE_NOT_FOUND;
+			} else {
+				std::ofstream out (m_fname.c_str() , std::ios::binary);
+				m_status = (out) ? IO::OK : IO::INSUFFICIENT_PRIVILEGES;
+			}
 			
 		} else
 			m_status = IO::EMPTY_FILE_NAME;
 
 		return m_status;
 
-	};
-
-
-	/**
-	 * @brief     Initialize file access. Look for existence if reading. Check permissions.
-	 */
-	inline const  
-	IO::Status    Initialize    (std::string fname, IO::Mode mode) {
- 
-		m_info.fname = fname;
-		m_info.mode  = mode;
-		
-		return FileAccess ();
-
-	};
+	}
 
 
 	/**
 	 * @brief     Get last status
 	 */
-	inline const  
-	IO::Status    Status        () {
-
+	inline const IO::Status
+	Status () {
 		return m_status;
+	}
+	
 
-	};
-	
+
+
+
 protected: 
-	
-	DataInfo       m_info;
+
+	std::string    m_fname;
+	NDData<double> m_data;
+	IO::Mode       m_mode;
 	IO::Status     m_status;
+	IO::Strategy   m_type;
 	
 };
 

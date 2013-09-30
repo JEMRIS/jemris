@@ -215,10 +215,13 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t of
 		seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
 		seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
 		GetValue(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
+        GetValueLingeringEddyCurrents(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
 		seqdata(7,offset+i+1) = m_tpoi.GetMask(i);
 	}
 
-	this->SetNonLinGrad(rem);
+    this->UpdateEddyCurrents();
+    this->PrepareEddyCurrents();
+    this->SetNonLinGrad(rem);
 
 }
 
