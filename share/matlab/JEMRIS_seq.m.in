@@ -3,7 +3,7 @@ function varargout = JEMRIS_seq(varargin)
 
 %
 %  JEMRIS Copyright (C) 
-%                        2006-2013  Tony Stöcker
+%                        2006-2013  Tony Stoecker
 %                        2007-2013  Kaveh Vahedipour
 %                        2009-2013  Daniel Pflugfelder
 %                                  
@@ -118,7 +118,7 @@ set(handles.HiddenAttr,'Visible','off');
 
 set(handles.addADCs,'Visible','off');
 set(handles.ContDraw,'Visible','off');
-for i=1:15
+for i=1:17
     eval(['set(handles.SOtag',num2str(i),',''Visible'',''off'');'])
     eval(['set(handles.SOEtag',num2str(i),',''Visible'',''off'');'])
 end
@@ -534,6 +534,15 @@ common_SOEtags(hObject,handles)
 
 % --- Executes during object creation, after setting all properties.
 function SOEtag16_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function SOEtag17_Callback(hObject, eventdata, handles)
+common_SOEtags(hObject,handles)
+
+% --- Executes during object creation, after setting all properties.
+function SOEtag17_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
