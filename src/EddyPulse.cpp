@@ -35,7 +35,7 @@ void	EddyPulse::Init           () {
 	 m_parent = NULL;
 	 m_gen_pulse = NULL;
 	 m_prepared = false;
-	 m_length = 200;
+	 m_length = 500;		/* TMP !!! needs to be user-defined */
 	 m_dt	  = 0.0;
 	 m_linger_time = 0.0;
 }
@@ -57,24 +57,13 @@ bool EddyPulse::Prepare  (PrepareMode mode) {
     SetAxis     ( m_gen_pulse->GetAxis()       );
     SetDuration ( m_gen_pulse->GetDuration()   );
     SetName     ( "EC_"+m_gen_pulse->GetName() );
+    m_initial_delay = m_gen_pulse->GetInitialDelay() ;
 
-
-	if ( !m_prepared ) 	m_prepared = ( ConvKernel() && Insert(mode) );
+	if ( !m_prepared ) 	m_prepared = Insert(mode);
 	if ( !m_prepared ) return false; //should never happen
 
 	//prepare for GetValue of decaying eddies outside the atom
-	double d = m_gen_pulse->GetDuration() + m_kernel.size()*m_dt;
-	if (d>m_parent->GetDuration()) {
-		World* pW = World::instance();
-		m_linger_time = d - m_parent->GetDuration() ;
-		multimap<EddyPulse*,double>::iterator iter = pW->m_eddies.find(this);
-		if( iter == pW->m_eddies.end() )
-			pW->m_eddies.insert(pair<EddyPulse*,double>(this, -m_linger_time));
-		//else
-			//iter->second = -m_linger_time;
-		d = m_parent->GetDuration();
-	}
-    SetDuration ( d );
+	ConvKernel() ;
 
     m_area = GetAreaNumeric(1000);
 
@@ -109,7 +98,7 @@ bool  EddyPulse::ConvKernel () {
 		t = (i+1)*m_dt;
 		d = m_gen_pulse->GetAttribute("EddyCurrents")->EvalCompiledExpression(t,"EddyTime");
 		s += pow(d,2.0);
-		if ( s > 0.999*e ) { imax=i; break; }
+		if ( s > 0.99*e ) { imax=i; break; }
 	}
 	//step 3: store IRF
 	for (int i=0; i<imax; ++i) {
@@ -118,7 +107,26 @@ bool  EddyPulse::ConvKernel () {
 		m_kernel.push_back(d);
 	}
 
-	cout << " CS (" << t << ") = " << s << " at " << imax << endl;
+	//cout << " CS (" << t << ") = " << s << " at " << imax << endl;
+
+	// - set duration of this EddyCurrent
+	// - if longer than parent, add this EddyCurrent to world multimap lingering
+	d = m_gen_pulse->GetDuration() + m_kernel.size()*m_dt;
+	//cout << "! MD = " << m_parent->GetDuration() << " : " << m_gen_pulse->GetDuration() << " : "<< m_kernel.size() << endl;
+	if (d>m_parent->GetDuration()) {
+		World* pW = World::instance();
+		m_linger_time = d - m_parent->GetDuration() ;
+		multimap<EddyPulse*,double>::iterator iter = pW->m_eddies.find(this);
+		if( iter == pW->m_eddies.end() )
+			pW->m_eddies.insert(pair<EddyPulse*,double>(this, -m_linger_time));
+		else
+			iter->second = -m_linger_time;
+		d = m_parent->GetDuration();
+		//cout << "!! " << m_linger_time << endl;
+	}
+
+    SetDuration ( d );
+
 	return true;
 }
 /*****************************************************************/

@@ -185,6 +185,8 @@ void    AtomicSequence::GetValueLingeringEddyCurrents (double * dAllVal, double 
 										+ time );
 	}
 
+	Rotation(&dAllVal[2]);
+
 }
 
 /***********************************************************/

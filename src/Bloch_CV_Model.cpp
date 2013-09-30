@@ -68,6 +68,11 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( d_SeqVal, t );        // calculates also pW->NonLinGradField
     double Bx=0.0,By=0.0,Bz=0.0;
 
+    //lingering eddy currents
+    pW->pAtom->GetValueLingeringEddyCurrents(d_SeqVal,t);
+    pW->pAtom->UpdateEddyCurrents();
+    pW->pAtom->PrepareEddyCurrents();
+
     //Transverse Components: RF field
     Bx = d_SeqVal[RF_AMP]*cos(d_SeqVal[RF_PHS]);
     By = d_SeqVal[RF_AMP]*sin(d_SeqVal[RF_PHS]);
