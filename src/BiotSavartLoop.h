@@ -40,7 +40,7 @@ class BiotSavartLoop : public Coil {
 	/**
 	 * @brief Default constructor
 	 */
-	BiotSavartLoop  () {};
+	BiotSavartLoop  () : m_mask(0), m_biosavart_phase(0.), m_radius(0.) {};
 
 	/**
 	 * @brief Default destructor
@@ -53,7 +53,7 @@ class BiotSavartLoop : public Coil {
 	 * @param  position Position.
 	 * @return          Sensitivity at requested position.
 	 */
-	virtual double GetSensitivity (double* position);
+	virtual double GetSensitivity (const double* position);
 
 	/**
 	 * @brief  Request sensitivity at given position
@@ -61,7 +61,7 @@ class BiotSavartLoop : public Coil {
 	 * @param  position Position.
 	 * @return          Sensitivity at requested position.
 	 */
-	inline double GetPhase (double* position) {return this->m_biosavart_phase;};
+	inline double GetPhase (const double* position) {return this->m_biosavart_phase;};
 
 	/**
 	 * @brief Clone.
@@ -76,7 +76,7 @@ class BiotSavartLoop : public Coil {
      * @param  mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return      Success
      */
-    virtual bool Prepare (PrepareMode mode);
+    virtual bool Prepare (const PrepareMode mode);
 
 
  private:

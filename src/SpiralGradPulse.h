@@ -40,12 +40,12 @@ class SpiralGradPulse : public GradPulse {
     /**
      * Constructor
      */
-    SpiralGradPulse               () {m_alloc = false;};
+    SpiralGradPulse               ();
 	
     /**
      * Copy constructor.
      */
-    SpiralGradPulse               (const SpiralGradPulse&) {};
+    SpiralGradPulse               (const SpiralGradPulse&);
 	
     /**
      * Destructor.
@@ -62,7 +62,7 @@ class SpiralGradPulse : public GradPulse {
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      */
-    virtual bool     Prepare      (PrepareMode mode);
+    virtual bool     Prepare      (const PrepareMode mode);
 
     /**
      * See Module::GetValue
@@ -87,8 +87,7 @@ class SpiralGradPulse : public GradPulse {
     double  m_beta;          /**< Beta */
 	int     m_inward;        /**< Spiral in? */
 	long    m_samples;       /**< Number of samples */
-	double* m_amps;          /**< Gradient amplitudes */
-	bool    m_alloc;         /**< Memory allocated? */
+	std::vector<double> m_amps;          /**< Gradient amplitudes */
 
 };
 

@@ -40,7 +40,7 @@ public:
     /**
      * @brief Default constructor
      */
-    ConstantGradPulse() {};
+    ConstantGradPulse() : m_amplitude(0) {};
 
     /**
      * @brief Default copy constructor.
@@ -60,7 +60,7 @@ public:
     /**
      * See Module::Prepare
      */
-    virtual bool        Prepare  (PrepareMode mode);
+    virtual bool        Prepare  (const PrepareMode mode);
 
     /**
      * See GradPulse::GetValue

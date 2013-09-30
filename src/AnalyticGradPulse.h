@@ -61,17 +61,12 @@ public:
     /**
      * See Module::Prepare
      */
-    virtual bool        Prepare  (PrepareMode mode);
+    virtual bool        Prepare  (const PrepareMode mode);
 
     /**
      * See GradPulse::GetValue
      */
     virtual double GetGradient (double const time) {return m_pulse_shape.GetShape(time); };
-
-    /**
-     *
-     */
-    AnalyticPulseShape* GetAnalyticPulseShape () {return &m_pulse_shape; };
 
     /**
      * @see Pulse::SetTPOIs

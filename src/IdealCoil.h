@@ -61,7 +61,7 @@ class IdealCoil : public Coil {
 	 * @param  position Spin position.
 	 * @return Ideal coil delivers 1.0 at every point.
 	 */
-	virtual double GetSensitivity (double* position) {return 1.0;};
+	virtual double GetSensitivity (const double* position) {return 1.0;};
 
 };
 

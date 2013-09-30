@@ -38,7 +38,7 @@ Pulse::Pulse  () {
 }
 
 /***********************************************************/
-bool Pulse::Prepare  (PrepareMode mode) {
+bool Pulse::Prepare  (const PrepareMode mode) {
 
 	m_type = MOD_PULSE;
 
@@ -57,16 +57,12 @@ bool Pulse::Prepare  (PrepareMode mode) {
 inline void  Pulse::SetTPOIs () {
 
     m_tpoi.Reset();
-    if (GetDuration() == 0.0) return;
 
     m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0);
     m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
 
     for (unsigned i = 0; i < GetNADC(); i++)
     	m_tpoi + TPOI::set((i+1)*GetDuration()/(GetNADC()+1), (m_phase_lock?World::instance()->PhaseLock:0.0) );
-
-    if ( GetParent() != NULL && GetParent()->GetDuration()>GetDuration() )
-    	m_tpoi + TPOI::set(GetDuration()+TIME_ERR_TOL, -1.0);
 
 }
 

@@ -3,10 +3,8 @@
  */
 
 /*
- *  JEMRIS Copyright (C)
- *                        2006-2013  Tony Stoecker
- *                        2007-2013  Kaveh Vahedipour
- *                        2009-2013  Daniel Pflugfelder
+ *  JEMRIS Copyright (C) 2007-2010  Tony Stoecker, Kaveh Vahedipour
+ *                                  Forschungszentrum Juelich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,28 +33,29 @@ public:
 	/**
 	 * @brief Contructor
 	 */
-	SimpleIO     ()                      {};
+	SimpleIO     (const std::string& fname, const IO::Mode mode) :
+		BinaryIO::BinaryIO (fname, mode) {
+		m_type = IO::SIMPLE;
+	}
 	
 	/**
 	 * @brief Destructor
 	 */
-	~SimpleIO     ()                     {};
+	~SimpleIO     ()                     {}
 	
-	/**
-	 * @brief     Read data from file to container
-	 *
-	 * @param  dc Data container
-	 */
-	virtual const IO::Status
-	ReadData      (double* dc)           { return IO::OK; };
-	
+	template<class T> IO::Status
+	Read (NDData<T>& data, const std::string& urn,
+			const std::string& url = "") {return IO::OK; };
+
 	/**
 	 * @brief     Write data from container to file
 	 *
 	 * @param  dc Data container
 	 */
-	virtual const IO::Status
-	WriteData     (double* dc)           {return IO::OK; };
+	template<class T> IO::Status
+	Write (const NDData<T>& data, const std::string& urn,
+			const std::string& url = "") { return IO::OK; }
+
 
 };
 

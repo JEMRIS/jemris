@@ -141,7 +141,7 @@ class CoilArray  {
      *
      * @return      Success
      */
-    bool Prepare (PrepareMode mode);
+    bool Prepare (const PrepareMode mode);
 
     /**
      * @brief

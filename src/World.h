@@ -34,6 +34,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include <fstream>
+#include <vector>
 #include     <map>
 
 
@@ -85,7 +86,7 @@ class World {
 	 * @brief  Reference to helper array
 	 */
 	double*    Helper () {
-		return helper;
+		return &helper[0];
 	};
 
 
@@ -136,7 +137,7 @@ class World {
     double            phase;                /**< @brief Receiver phase taken from the TPOIs*/
     double            PhaseLock;            /**< @brief Locked Phase (the phase set by the last RF pulse)*/
     double            deltaB;               /**< @brief Any off-resonance terms*/
-    double*           solution;          /**< @brief Solution [M_r, phi, M_z] at the current time point*/
+    std::vector<double> solution;          /**< @brief Solution [M_r, phi, M_z] at the current time point*/
 
     double            RandNoise;            /**< @brief percentage of random noise added to the signal */
     double            GMAXoverB0;           /**< @brief Constant for the concomittant field term */
@@ -159,7 +160,8 @@ class World {
 	int               m_noofspinprops;      /**< @brief # of spin properties */
 	int               m_noofspincompartments; /** Number of spin compartments (i.e. MT pools etc.)*/
 
-	double*           helper;             /** @brief Any additional data necessary for solving the model. (i.e. Global MT exchange matrix) */
+	std::vector<double> helper;
+	//double*           helper;             /** @brief Any additional data necessary for solving the model. (i.e. Global MT exchange matrix) */
 	
 	multimap<EddyPulse*,double>	m_eddies; /**< @brief map of remaining eddies still to be played out (duration,pointer) */
 

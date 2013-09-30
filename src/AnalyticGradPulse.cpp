@@ -34,7 +34,7 @@ AnalyticGradPulse::AnalyticGradPulse  (const AnalyticGradPulse&) {
 }
 
 /***********************************************************/
-bool AnalyticGradPulse::Prepare  (PrepareMode mode) {
+bool AnalyticGradPulse::Prepare  (const PrepareMode mode) {
 
     //set attributes "Shape", "Diff", "Constants" and initialize GiNaC evaluation
     if (mode != PREP_UPDATE) m_pulse_shape.PrepareInit(mode==PREP_VERBOSE);

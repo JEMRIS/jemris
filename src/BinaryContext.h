@@ -3,10 +3,8 @@
  */
 
 /*
- *  JEMRIS Copyright (C)
- *                        2006-2013  Tony Stoecker
- *                        2007-2013  Kaveh Vahedipour
- *                        2009-2013  Daniel Pflugfelder
+ *  JEMRIS Copyright (C) 2007-2010  Tony Stoecker, Kaveh Vahedipour
+ *                                  Forschungszentrum Juelich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,6 +31,10 @@
 #include "HDF5IO.h"
 
 #include <vector>
+#include <typeinfo>
+
+//const std::type_info& hdf5_t = typeid(&HDF5IO);
+//const std::type_info& simple_t = typeid(&SimpleIO);
 
 class BinaryContext {
 	
@@ -41,52 +43,8 @@ public:
 	/**
 	 * @brief        Construct populating strategies
 	 */
-	BinaryContext    () {
-
-		m_strategies.push_back ((BinaryIO*) new SimpleIO ());
-		m_strategies.push_back ((BinaryIO*) new HDF5IO   ());
-
-		m_strategy = m_strategies.at(1);
-
-		m_status = IO::OK;
-		
-	};
-
-
-	/**
-	 * @brief        Default desctructor
-	 */
-	~BinaryContext   () {};
-	
-
-	/**
-	 * @brief        Initialise and check access status
-	 *
-	 * @param  fname File name
-	 * @param  mode  Access mode (i.e. read/write?)
-	 * @return       Status
-	 */
-	inline const     IO::Status 
-	Initialize       (std::string fname, IO::Mode mode) {
-		
-		return m_strategy->Initialize(fname, mode);
-		
-	};
-	
-
-	/**
-	 * @brief        Read data from file to appropriately sized container
-	 *
-	 * @param  in    Input container
-	 * @return       Status
-	 */
-	inline const     IO::Status
-    ReadData         (double* in)  {
-		
-		return m_strategy->ReadData(in); 
-		
-	};
-	
+	BinaryContext    (const std::string& fname, IO::Mode mode);
+	virtual ~BinaryContext    ();
 
 	/**
 	 * @brief        Write data from container to file 
@@ -94,53 +52,30 @@ public:
 	 * @param  out   Output container
 	 * @return       Status
 	 */
-	inline const     IO::Status
-	WriteData        (double* out)  {
-		
-		return m_strategy->WriteData(out); 
-		
-	};
+	template<class T> IO::Status
+	Write (const NDData<T>& data, const std::string& urn, const std::string& url = "") {
+		if (m_strategy->IOStrategy() == IO::HDF5)
+			return ((HDF5IO*)m_strategy)->Write(data, urn, url);
+		else if (m_strategy->IOStrategy() == IO::SIMPLE)
+			return ((SimpleIO*)m_strategy)->Write(data, urn, url);
+	}
 
 
-	/**
-	 * @brief        Set DataInfo structure
-	 *
-	 * @param  info  Incoming DataInfo
-	 */
-	inline const     void
-	SetInfo          (DataInfo info)  {
-		
-		m_strategy->SetInfo(info); 
-		
-	};
-
-
-	/**
-	 * @brief        Get information of dataset
-	 *
-	 * @param  dname Dataset
-	 *
-	 * @return       Dataset information
-	 */
-	inline const     DataInfo
-	GetInfo          (std::string dname = "")  {
-		
-		return m_strategy->GetInfo(dname); 
-		
-	};
-
+	template<class T> IO::Status
+	Read (NDData<T>& data, const std::string& urn, const std::string& url = "") {
+		if (m_strategy->IOStrategy() == IO::HDF5)
+			return ((HDF5IO*)m_strategy)->Read(data, urn, url);
+		else if (m_strategy->IOStrategy() == IO::SIMPLE)
+			return ((SimpleIO*)m_strategy)->Read(data, urn, url);
+	}
 
 	/**
 	 * @brief        Get last status
 	 *
 	 * @return       Status
 	 */
-	inline const     IO::Status
-	Status           ()              {
-		
-		return m_strategy->Status();
-		
-	}
+	IO::Status
+	Status           () const;
 	
 
 

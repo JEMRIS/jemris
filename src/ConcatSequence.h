@@ -41,7 +41,7 @@ class ConcatSequence : public Sequence {
     /**
      * @brief Default constructor
      */
-    ConcatSequence() {};
+    ConcatSequence() : m_repetitions(0), m_counter(0) {};
 
     /**
      * Copy constructor.
@@ -64,7 +64,7 @@ class ConcatSequence : public Sequence {
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return Success
      */
-    virtual bool    Prepare        (PrepareMode mode) ;
+    virtual bool    Prepare        (const PrepareMode mode) ;
 
     /**
      * See Module::GetValue
@@ -76,13 +76,7 @@ class ConcatSequence : public Sequence {
      */
     virtual void            GetValue       (double * dAllVal, double const time, double * pos[3]) {};
 
-
-    /**
-     * See Module::GetDuration
-     */
-    double          GetDuration    ();
-
-    /**
+   /**
      * @brief Default destructor.
      */
     virtual int     GetNumOfTPOIs ();
@@ -140,7 +134,14 @@ class ConcatSequence : public Sequence {
      */
     //virtual bool StaticDOM(DOMDocument* doc, DOMNode* node);
 
+
+    //virtual void CollectSeqData (NDData<double>& seqdata, double t, size_t offset);
+
  protected:
+
+
+    double CalcDuration ();
+
     /**
      * Get informations on this ConcatSequence
      *

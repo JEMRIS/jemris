@@ -56,34 +56,24 @@ static int ens_alloc = 0;
 /**
  * @brief Spin ensemble
  */
+template <class T = double>
 struct Ensemble {
 
-	unsigned m_ndim ;     /**< # of dimensions                                                      */
-	long     m_dims[256]; /**< Specific dimensions (arbitrary maximum to way too high limit of 256) */
-    double*  m_data;      /**< Actual serialized data (Data is stored column-major)                 */
-	long     m_nspins;    /**< Live spins (i.e. Spins with M0 > 0)                                  */
+	std::vector<size_t> m_dims; /**< Specific dimensions (arbitrary maximum to way too high limit of 256) */
+    std::vector<T> m_data;      /**< Actual serialized data (Data is stored column-major)                 */
+	size_t     m_nspins;    /**< Live spins (i.e. Spins with M0 > 0)                                  */
 
 	/**
 	 * @brief      Construct
 	 */
-	Ensemble () {
-
-		m_nspins = 0;
-		m_ndim   = 0;
-
-		for (unsigned i = 0; i < 256; i++)
-			m_dims[i] = 0;
-
-	}
+	Ensemble () : m_nspins(0) {}
 
 
 	/**
 	 * @brief      Destruct
 	 */
 	~Ensemble () {
-
 		Clear();
-
 	}
 
 
@@ -92,12 +82,9 @@ struct Ensemble {
 	 * 
 	 * @return      Number of elements in data store
 	 */
-	inline long 
-	Size () {
-
-		return NSpins() * NProps();
-
-	};
+	inline size_t Size () const {
+		return m_data.size();
+	}
 
 
 	/**
@@ -105,12 +92,9 @@ struct Ensemble {
 	 *
 	 * @return      Number of spins in data store
 	 */
-	inline long 
-	NSpins () {
-
+	inline size_t NSpins () const {
 		return m_nspins;
-
-	};
+	}
 
 
 	/**
@@ -118,12 +102,9 @@ struct Ensemble {
 	 *
 	 * @return      Number of physical and spatial properties of every spin
 	 */
-	inline long
-	NProps () const {
-
+	inline size_t	NProps () const {
 		return m_dims[0];
-
-	};
+	}
 	
 
 	/**
@@ -131,46 +112,28 @@ struct Ensemble {
 	 *
 	 * @return       Reference to number of physical and spatial properties of every spin. 
 	 */
-	inline long&
-	NProps () {
-
+	inline size_t& NProps () {
 		return m_dims[0];
-
-	};
+	}
 	
 
 	/**
 	 * @brief       Clear data store and dimensions.
 	 */
-	inline void 
-	Clear () {
-
-		// Reset dimensions
+	inline void Clear () {
 		m_nspins = 0;
-		for (unsigned i = 1; i < 256; i++)
-			m_dims[i] = 0;
-
-		// Free RAM
-		if (ens_alloc) {
-			free (m_data);
-			ens_alloc--;
-		}
-		
+		m_dims.clear();
+		m_data.clear();
 	};
 	
 
 	/**
 	 * @brief       Clear data store and dimensions.
 	 */
-	inline void 
-	ClearData () {
-
-		// Free RAM
-		if (ens_alloc) {
-			free (m_data);
-			ens_alloc--;
-		}
-		
+	inline void ClearData () {
+		m_nspins = 0;
+		m_dims.clear();
+		m_data.clear();
 	};
 	
 
@@ -181,14 +144,10 @@ struct Ensemble {
 	 * @param  dims Actual dimensions
 	 * @param  live Live (non-zero) spins
 	 */ 
-	inline void 
-	Init (int ndim, long* dims, long live) {
+	inline void Init (const size_t ndim, const size_t* dims, const size_t live) {
 
-		// Set dimensionality
-		m_ndim     = ndim; 
-
-		// Copy actual dimensions
-		memcpy (m_dims, dims, ndim*sizeof(long));
+		m_dims.resize(ndim);
+		std::copy (dims, dims+ndim, m_dims.begin());
 
 		// Add spatial dimensions 
 		m_dims[0] += 4;
@@ -196,35 +155,48 @@ struct Ensemble {
 		// Set number of live spins (Generally less spins may have M0 > 0)
 		m_nspins   = live;
 
-		// Allocate RAM and zero fields
 		Allocate();
 		Zero();
 
-	};
+	}
 
 	
 	/**
+	 * @brief  Initialize data store with dimensions and number of non-zero spins
+	 *
+	 * @param  ndim Number of dimensions
+	 * @param  dims Actual dimensions
+	 * @param  live Live (non-zero) spins
+	 */
+	inline void Init (const std::vector<size_t>& dims, const size_t live) {
+
+		m_dims = dims;
+		// Add spatial dimensions
+		m_dims[0] += 4;
+
+		// Set number of live spins (Generally less spins may have M0 > 0)
+		m_nspins   = live;
+
+		Allocate();
+		Zero();
+
+	}
+
+
+	/**
 	 * @brief      Allocate RAM
 	 */ 
-	inline void
-	Allocate () {
-
-		m_data     = (double*) malloc (NSpins() * NProps() * sizeof(double));
-		ens_alloc++;
-
-	};
+	inline void	Allocate () {
+		m_data.resize(NSpins() * NProps());
+	}
 
 
 	/**
 	 * @brief     Zero data 
 	 */
-	inline void 
-	Zero () {
-
-		for (int i = 0; i < Size(); i++)
-			m_data [i] = 0.0;
-
-	};
+	inline void Zero () {
+		m_data.assign(m_data.size(), 0.);
+	}
 
 
 	/**
@@ -232,28 +204,32 @@ struct Ensemble {
 	 *
 	 * @param  live Live (non-zero) spins
 	 */ 
-	inline void 
-	Init (long live) {
-
+	inline void	Init (const size_t live) {
 		m_nspins   = live;
 		Allocate();
 		Zero();
+	}
 
-
-	};
-
+	/**
+	 * @brief  Initialize data store number of non-zero spins only (MPI slaves)
+	 *
+	 * @param  live Live (non-zero) spins
+	 */
+	inline void	Init (const size_t nprops, const size_t live) {
+		m_dims.push_back(nprops);
+		m_nspins   = live;
+		Allocate();
+		Zero();
+	}
 
 	/**
 	 * @brief       Dimensions
 	 *
 	 * @return      Dimensions of the ensemble
 	 */
-	inline long*
-	Dims () {
-
-		return m_dims;
-
-	};
+	inline const size_t* Dims () const {
+		return m_dims.data();
+	}
 
 
 	/**
@@ -261,37 +237,50 @@ struct Ensemble {
 	 * @param  pos  Desired position 
 	 * @return      Reference to pos-th value in the store
 	 */
-	inline double
-	&operator[]     (long pos) {
-		
+	inline T& operator[] (const size_t pos) {
 		assert(pos >= 0);
-		assert(pos <  Size());
-		
+		assert(pos <  m_data.size());
 		return m_data[pos];
-		
-	};
+	}
+
+	/**
+	 * @brief       Access to position in store
+	 * @param  pos  Desired position
+	 * @return      Reference to pos-th value in the store
+	 */
+	inline T operator[] (size_t pos) const {
+		assert(pos >= 0);
+		assert(pos <  m_data.size());
+		return m_data[pos];
+	}
 
 	/**
 	 * @brief       Access to data
 	 *
 	 * @return      Reference to data
 	 */
-	inline double*
-	Data            () {
-		
-		return m_data;
-		
-	};
+	inline T* Data () {
+		return m_data.data();
+	}
 
+
+	typename std::vector<T>::iterator At (const size_t n) {
+		return m_data.begin() + n;
+	}
+
+	typename std::vector<T>::const_iterator At (const size_t n) const {
+		return m_data.begin() + n;
+	}
 };
 
 
 /**
  * @brief a container of spins
  */
+//template <class T = double>
 struct Spin {
-    long    size; 		/**< Data size    */
-    Ensemble *data;	/**< array of spins */
+    size_t    size; 		/**< Data size    */
+    Ensemble<double> *data;	/**< array of spins */
 };
 
 
@@ -313,7 +302,7 @@ class Sample {
      *
      * @param file Sample binary file
      */
-    Sample                              (string file,int multiple=1);
+    Sample                              (const string& file, const int multiple = 1);
 
     /**
      * Constructor
@@ -322,7 +311,7 @@ class Sample {
      *
      * @param size Size of the sample
      */
-    Sample                              (long size);
+    Sample                              (const size_t size);
 
     /**
      * Destructor
@@ -333,7 +322,7 @@ class Sample {
      * init variables which are same for all constructors
      *
      */
-    virtual void Prepare (std::string fname = "");
+    virtual void Prepare (const std::string& fname = "");
 
     /**
      * @brief delete the spin structure
@@ -345,28 +334,35 @@ class Sample {
      *
      * @param size Size of the spin structure to create
      */
-    void CreateSpins (long size);
+    void CreateSpins (const size_t size);
+
+    /**
+     * @brief create the spin structure
+     *
+     * @param size Size of the spin structure to create
+     */
+    void CreateSpins (const size_t nprops, const size_t size);
 
     /**
      * Get size of the sample
      *
      * @return Size of the sample
      */
-    long    GetSize                     ();
+    size_t    GetSize                     () const;
 
     /**
      * Get number of spin properties including spatial
      *
      * @return Numnber of spin properties
      */
-    inline long    GetNProps            () {return m_ensemble.NProps();};
+    inline size_t  GetNProps () const {return m_ensemble.NProps();};
 
     /**
      * Get number of spin properties including spatial
      *
      * @return Numnber of spin properties
      */
-    inline long*   GetSampleDims        () {return m_ensemble.Dims();};
+    inline const size_t* GetSampleDims () const {return m_ensemble.Dims();};
 
     /**
      * Get a subset of this sample
@@ -374,7 +370,7 @@ class Sample {
      * @param n    N-th subset
      * @param size Size of the subset
      */
-    Sample* GetSubSample                (int n, long size);
+    Sample* GetSubSample                (const int n, const size_t size);
 
     /**
      * @brief Get values for spin l and deliver them in val.
@@ -382,14 +378,14 @@ class Sample {
      * @param l   Spin number
      * @param val Output container
      */
-    void GetValues                   (long l, double* val) ;
+    void GetValues                   (const size_t l, double* val) ;
 
     /**
      * @brief Get grid resolution
      *
      * @return Grid resolution
      */
-    double* GetResolution()  { return m_res; };
+    double* GetResolution()   { return &m_res[0]; };
 
     /**
      * @brief Initialize the randome number generator
@@ -421,7 +417,7 @@ class Sample {
      * @param pos    Position of the spin. If negative, last acquired spin by GetValues is used.
      * @return       The off-resonance in unit [Khz]
      */
-    double  GetDeltaB                   (long pos = -1);
+    double  GetDeltaB             (size_t pos = -1);
 
     /**
      *
@@ -429,7 +425,7 @@ class Sample {
      *
      * @param file Sample binary file
      */
-	virtual IO::Status Populate (string file);
+	virtual IO::Status Populate (const string& file);
 
     /**
      * returns pointer to sample data (needed for MPI send/receive)
@@ -498,14 +494,14 @@ class Sample {
 
 	double* GetHelper ();
 
-	long    GetHelperSize ();
+	size_t    GetHelperSize ();
 	
 	// HACK
 	int     GetNoSpinCompartments ();
 	
 	void    SetNoSpinCompartments (int n);
 	
-	void    CreateHelper (long l);
+	void    CreateHelper (const size_t l);
 	
 	void    CopyHelper (double* out);
 
@@ -515,16 +511,16 @@ class Sample {
  protected:
 	void 	MultiplySample(int multiple);  /** clones sample 'multiple'-times, e.g. for diffusion simulation */
 
-	Ensemble     m_ensemble;
+	Ensemble<double>     m_ensemble;
 
 
-    long         m_index [3];  /** < Sample dimensions      */
-    double       m_res   [3];  /** < Sample resolution [mm] */
-    double       m_offset[3];  /** < Sample offeset to {0,0,0} origin */
+    vector<size_t> m_index;  /** < Sample dimensions      */
+    vector<double> m_res;  /** < Sample resolution [mm] */
+    vector<double> m_offset;  /** < Sample offeset to {0,0,0} origin */
 
-    RNG          m_rng;          /** < random number generator*/
-    double       m_r2prime;      /** < R2-Prime == shaping parameter of the Lorentzian distribution */
-    double       m_pos_rand_perc;/** < Percantage (of cartesian resolution) randomness in spin position .*/
+    RNG            m_rng;          /** < random number generator*/
+    double         m_r2prime;      /** < R2-Prime == shaping parameter of the Lorentzian distribution */
+    double         m_pos_rand_perc;/** < Percantage (of cartesian resolution) randomness in spin position .*/
 
     SampleReorderStrategyInterface *m_reorder_strategy;
 
@@ -544,8 +540,7 @@ class Sample {
     double			m_total_cpu_time;
     double			m_no_spins_done;
 
-	double*         m_helper;
-	int             m_helper_size;
+	vector<double>  m_helper;
 	int             m_no_spin_compartments;
 
 };

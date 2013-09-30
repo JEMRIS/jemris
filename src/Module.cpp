@@ -32,7 +32,7 @@
 #include "XMLIO.h"
 
 /***********************************************************/
-Module::Module() {
+Module::Module() : m_parameters (0) {
 
 	m_node          = NULL ;
 	m_seq_tree      = NULL ;
@@ -60,7 +60,7 @@ void            Module::Initialize (DOMNode* node) {
 }
 
 /***********************************************************/
-bool Module::Prepare  (PrepareMode mode){
+bool Module::Prepare  (const PrepareMode mode){
 
 	ATTRIBUTE("Duration", m_duration);
 	//ATTRIBUTE("Observe" , NULL);		//special case of observing attributes
@@ -83,7 +83,7 @@ Module*         Module::GetParent () {
 }
 
 /***********************************************************/
-vector<Module*> Module::GetChildren () {
+vector<Module*> Module::GetChildren () const {
 
 	if (m_seq_tree==NULL || m_node==NULL) return vector<Module*>() ;
 	return m_seq_tree->GetChildren(m_node);
@@ -91,7 +91,7 @@ vector<Module*> Module::GetChildren () {
 }
 
 /***********************************************************/
-Module*         Module::GetChild (unsigned int position) {
+Module*         Module::GetChild (unsigned int position) const {
 
 	if (m_seq_tree==NULL || m_node==NULL) return NULL;
 	return m_seq_tree->GetChild(m_node, position);
@@ -99,7 +99,7 @@ Module*         Module::GetChild (unsigned int position) {
 }
 
 /***********************************************************/
-int             Module::GetNumberOfChildren () {
+int             Module::GetNumberOfChildren () const {
 
     vector<Module*> vc=GetChildren();
     return vc.size();
@@ -107,7 +107,7 @@ int             Module::GetNumberOfChildren () {
 }
 
 /***********************************************************/
-bool            Module::InsertChild (string name){
+bool            Module::InsertChild (const string& name){
 
 	if ( m_seq_tree==NULL || GetNode()==NULL) return false;
 
@@ -241,7 +241,7 @@ void           Module::AddAllDOMattributes (bool show_hidden){
 }
 
 /***********************************************************/
-void    Module::DumpTree (string file, Module* mod,int ichild, int level) {
+void    Module::DumpTree (const string& file, Module* mod,int ichild, int level) {
 
 	//root node redirects output buffer, if filename is given
 	streambuf* sobuf = 0;
@@ -318,7 +318,7 @@ void    Module::DumpTree (string file, Module* mod,int ichild, int level) {
 }
 
 /***********************************************************/
-bool           Module::WriteStaticXML (string xml_file) {
+bool           Module::WriteStaticXML (const string& xml_file) {
 
 	DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(StrX("Core").XMLchar() );
 
