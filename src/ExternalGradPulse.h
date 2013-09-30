@@ -42,7 +42,7 @@ class ExternalGradPulse : public GradPulse {
     /**
      * @brief Default constructor
      */
-    ExternalGradPulse               () : m_scale(1.) {};
+    ExternalGradPulse               () {};
 
     /**
      * @brief Copy constructor.
@@ -64,7 +64,7 @@ class ExternalGradPulse : public GradPulse {
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      */
-    virtual bool     Prepare      (const PrepareMode mode);
+    virtual bool     Prepare      (PrepareMode mode);
 
     /**
      * @see GradPulse::GetGradient

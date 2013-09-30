@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 2007-2008  Tony Stoecker, Kaveh Vahedipour
- *                                  Forschungszentrum Joelich, Germany
+ *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -64,9 +64,7 @@ struct BMAux {
 #endif
 
 #define NEQ   3                   // number of equations
-#ifndef RTOL
-	#define RTOL  1e-4                // scalar relative tolerance
-#endif
+#define RTOL  1e-4                // scalar relative tolerance
 #define ATOL1 1e-6                // vector absolute tolerance components
 #define ATOL2 1e-6
 #define ATOL3 1e-6

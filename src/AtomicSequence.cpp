@@ -26,6 +26,7 @@
 
 #include "AtomicSequence.h"
 #include "GradPulse.h"
+#include "EddyPulse.h"
 #include "RFPulse.h"
 
 /***********************************************************/
@@ -35,45 +36,49 @@ AtomicSequence::AtomicSequence  (const AtomicSequence& as) {
 	m_theta         = 0.0;
 	m_phi           = 0.0;
 	m_non_lin_grad  = false;
+	m_eddy			= false;
 
 }
 
 /***********************************************************/
-bool    AtomicSequence::Prepare(const PrepareMode mode) {
+bool    AtomicSequence::Prepare(PrepareMode mode) {
 
 	ATTRIBUTE("RotAngle"       , m_alpha );
 	ATTRIBUTE("Inclination"    , m_theta );
-	ATTRIBUTE("Azimut"         , m_phi   );
+	ATTRIBUTE("Azimuth"        , m_phi   );
 
 	if (mode != PREP_UPDATE) m_type = MOD_ATOM;
 
 	bool tag = Sequence::Prepare(mode); //Prepare all pulses
 	CollectTPOIs();  //of the pulses
 
-	CalcDuration();
 	return tag;
 
 }
 
-double AtomicSequence::CalcDuration () {
+/***********************************************************/
+double     AtomicSequence::GetDuration  () {
 
+	double dDuration = 0.0;
 	vector<Module*> children = GetChildren();
-	m_duration = 0.;
 
 	for (unsigned int j=0; j<children.size() ; ++j)
-		m_duration = fmax( m_duration, children[j]->GetDuration()+((Pulse*) children[j])->GetInitialDelay() );
+		dDuration = fmax( dDuration, children[j]->GetDuration()+((Pulse*) children[j])->GetInitialDelay() );
 
+	m_duration = dDuration;
 	DEBUG_PRINT("  AtomicSequence::GetDuration() of " << GetName() <<
 		    " calculates duration = " << dDuration << endl;)
 
 	Notify(m_duration);
 
+	return( dDuration );
+
 }
 
 /***********************************************************/
-inline void      AtomicSequence::GetValue (double * dAllVal, double const time) {
+void      AtomicSequence::GetValue (double * dAllVal, double const time) {
 
-    if (time < 0.0 || time > m_duration) { return ; }
+    if (time < 0.0 || time > GetDuration()) { return ; }
 
     if (m_non_lin_grad) World::instance()->NonLinGradField = 0.0;
     vector<Module*> children = GetChildren();
@@ -116,46 +121,23 @@ inline void      AtomicSequence::GetValue (double * dAllVal, double const time) 
 }
 
 /***********************************************************/
-inline void AtomicSequence::Rotation (double * Grot) {
+void AtomicSequence::Rotation (double * Grot) {
 
-    if (m_alpha == 0.0)
-    	return;
+    if ( m_alpha == 0.0 ) return;
 
     double Gx = Grot[0];
     double Gy = Grot[1];
     double Gz = Grot[2];
 
-    double pi_180 = PI/180.0;
-    double alpha = m_alpha * pi_180;
-    double theta = m_theta * pi_180;
-    double phi   = m_phi   * pi_180;
+    double alpha = m_alpha * PI/180.0;
+    double theta = m_theta * PI/180.0;
+    double phi   = m_phi   * PI/180.0;
 
-    double cos_theta   = cos(theta);
-    double sin_theta   = sin(theta);
-    double cos_2_theta = cos_theta * cos_theta;
-    double sin_2_theta = sin_theta * sin_theta;
-    double cos_alpha   = cos(alpha);
-    double sin_alpha   = sin(alpha);
-    double cos_phi     = cos(phi);
-    double sin_phi     = sin(phi);
-    
-    Grot[0] =
-        ((cos_phi*(cos_2_theta*cos_alpha+sin_2_theta)-sin_phi*cos_theta*sin_alpha)*
-        	cos_phi+(cos_phi*cos_theta*sin_alpha+sin_phi*cos_alpha)*sin_phi)*Gx+
-        	(-(cos_phi*(cos_2_theta*cos_alpha+sin_2_theta)-sin_phi*cos_theta*sin_alpha)*
-        	sin_phi+(cos_phi*cos_theta*sin_alpha+sin_phi*cos_alpha)*cos_phi)*Gy+
-        	(cos_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)+sin_phi*sin_theta*sin_alpha)*Gz;
+    Grot[0] = ((cos(phi)*(pow(cos(theta),2.0)*cos(alpha)+pow(sin(theta),2.0))-sin(phi)*cos(theta)*sin(alpha))*cos(phi)+(cos(phi)*cos(theta)*sin(alpha)+sin(phi)*cos(alpha))*sin(phi))*Gx+(-(cos(phi)*(pow(cos(theta),2.0)*cos(alpha)+pow(sin(theta),2.0))-sin(phi)*cos(theta)*sin(alpha))*sin(phi)+(cos(phi)*cos(theta)*sin(alpha)+sin(phi)*cos(alpha))*cos(phi))*Gy+(cos(phi)*(-cos(theta)*cos(alpha)*sin(theta)+sin(theta)*cos(theta))+sin(phi)*sin(theta)*sin(alpha))*Gz;
 
-    Grot[1] =
-        ((-sin_phi*(cos_2_theta*cos_alpha+sin_2_theta)-cos_phi*cos_theta*sin_alpha)*
-        	cos_phi+(-sin_phi*cos_theta*sin_alpha+cos_phi*cos_alpha)*sin_phi)*Gx+
-        	(-(-sin_phi*(cos_2_theta*cos_alpha+sin_2_theta)-cos_phi*cos_theta*sin_alpha)*
-        	sin_phi+(-sin_phi*cos_theta*sin_alpha+cos_phi*cos_alpha)*cos_phi)*Gy+
-        	(-sin_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)+cos_phi*sin_theta*sin_alpha)*Gz;
+    Grot[1] = ((-sin(phi)*(pow(cos(theta),2.0)*cos(alpha)+pow(sin(theta),2.0))-cos(phi)*cos(theta)*sin(alpha))*cos(phi)+(-sin(phi)*cos(theta)*sin(alpha)+cos(phi)*cos(alpha))*sin(phi))*Gx+(-(-sin(phi)*(pow(cos(theta),2.0)*cos(alpha)+pow(sin(theta),2.0))-cos(phi)*cos(theta)*sin(alpha))*sin(phi)+(-sin(phi)*cos(theta)*sin(alpha)+cos(phi)*cos(alpha))*cos(phi))*Gy+(-sin(phi)*(-cos(theta)*cos(alpha)*sin(theta)+sin(theta)*cos(theta))+cos(phi)*sin(theta)*sin(alpha))*Gz;
 
-    Grot[2] = (cos_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)-sin_phi*sin_theta*sin_alpha)*Gx+
-    		(-sin_phi*(-cos_theta*cos_alpha*sin_theta+sin_theta*cos_theta)-cos_phi*sin_theta*sin_alpha)*Gy+
-    		(sin_2_theta*cos_alpha+cos_2_theta)*Gz;
+    Grot[2] = (cos(phi)*(-cos(theta)*cos(alpha)*sin(theta)+sin(theta)*cos(theta))-sin(phi)*sin(theta)*sin(alpha))*Gx+(-sin(phi)*(-cos(theta)*cos(alpha)*sin(theta)+sin(theta)*cos(theta))-cos(phi)*sin(theta)*sin(alpha))*Gy+(pow(sin(theta),2.0)*cos(alpha)+pow(cos(theta),2.0))*Gz;
 
     return;
 
@@ -164,27 +146,20 @@ inline void AtomicSequence::Rotation (double * Grot) {
 void AtomicSequence::CollectTPOIs() {
 
 	vector<Module*> children = GetChildren();
-	Pulse* p;
-	double d;
 
 	m_tpoi.Reset();
 
-	for (size_t j = 0; j < children.size(); ++j) {
+	for (unsigned int j = 0; j < children.size(); ++j) {
 
-		p = ((Pulse*)children[j]);
-		d = p->GetInitialDelay();
+		Pulse* p = ((Pulse*)children[j]);
 		p->SetTPOIs();
+		for (int i=0; i<p->GetNumOfTPOIs(); ++i)  {
 
-
-		for (size_t i = 0; i < p->GetNumOfTPOIs(); ++i)  {
-
-			m_tpoi	+ TPOI::set(d + p->GetTPOIs()->GetTime(i),
-					p->GetTPOIs()->GetPhase(i), p->GetTPOIs()->GetMask(i));
-
-			//one TPOI prior to the pulse in case of intial delay phase == -2.0 -> ReInit CVode
-			if (d>TIME_ERR_TOL)
-				m_tpoi + TPOI::set(d-TIME_ERR_TOL/2, -2.0, 0);
-
+			double d = p->GetInitialDelay();
+			m_tpoi	+ TPOI::set(d+p->GetTPOIs()->GetTime(i), p->GetTPOIs()->GetPhase(i));
+			//one TPOI prior to the pulse in case of intial delay
+			//phase == -2.0 -> ReInit CVode
+			if (d>TIME_ERR_TOL) m_tpoi + TPOI::set(d-TIME_ERR_TOL/2, -2.0);
 		}
 
 	}
@@ -193,6 +168,87 @@ void AtomicSequence::CollectTPOIs() {
 	m_tpoi.Purge();
 
 }
+
+/***********************************************************/
+void    AtomicSequence::GetValueLingeringEddyCurrents (double * dAllVal, double const time) {
+
+	World* pW = World::instance();
+	multimap<EddyPulse*,double>::iterator iter;
+
+	for(iter = pW->m_eddies.begin(); iter != pW->m_eddies.end(); iter++) {
+
+		if ( iter->second < 0.0 ) continue;
+
+		iter->first->GetValue(dAllVal,    iter->first->GetParentDuration()
+										+ iter->first->GetLingerTime()
+										- iter->second
+										+ time );
+	}
+
+}
+
+/***********************************************************/
+void AtomicSequence::UpdateEddyCurrents() {
+
+	World* pW = World::instance();
+	multimap<EddyPulse*,double>::iterator iter;
+
+	//find eddy currents which are still alive
+	multimap<EddyPulse*,double>	m_still_alive;
+	for (iter = pW->m_eddies.begin(); iter != pW->m_eddies.end(); iter++ ) {
+		if ( iter->second > GetDuration() )
+			m_still_alive.insert(pair<EddyPulse*,double>(iter->first, iter->second - GetDuration() ));
+		iter->second = -iter->first->GetLingerTime();
+	}
+
+	//add eddies which are still alive to the multimap
+	for (iter = m_still_alive.begin(); iter != m_still_alive.end(); iter++)
+		pW->m_eddies.insert(pair<EddyPulse*,double>(iter->first, iter->second) );
+
+
+	//*/remove exact double entries from multimap (?)
+	multimap<EddyPulse*,double>::iterator it1 = pW->m_eddies.begin();
+	multimap<EddyPulse*,double>::iterator it2 = pW->m_eddies.begin();
+	multimap<EddyPulse*,double>::iterator it3 = pW->m_eddies.begin();
+	vector <multimap<EddyPulse*,double>::iterator> del;
+
+	for (it1 = pW->m_eddies.begin(); it1 != pW->m_eddies.end(); it1++ ) {
+		it3 = it1; it3++;
+		if (it3 == pW->m_eddies.end() ) break;
+		for (it2 = it3; it2!=pW->m_eddies.end(); it2++) {
+			if ( it1->first == it2->first && it1->second == it2->second )	{
+				bool b = true;
+				for (unsigned int j=0; j<del.size() ; ++j)
+					if ( del[j] == it1 ) {b=false; break;}
+				if (b) del.push_back(it1);
+			}
+		}
+	}
+	for (unsigned int j=0; j<del.size() ; ++j) pW->m_eddies.erase(del[j]);
+
+
+	//cout << "!!! " << pW->m_eddies.size() << endl << endl;
+}
+
+/***********************************************************/
+void AtomicSequence::PrepareEddyCurrents() {
+
+	if (!m_eddy) return;
+
+	World* pW = World::instance();
+	multimap<EddyPulse*,double>::iterator iter;
+	vector<Module*> children = GetChildren();
+
+	for (unsigned int j=0; j<children.size() ; ++j) {
+		PulseAxis ax = ((Pulse*) children[j])->GetAxis();
+		if ( ax==AXIS_RF || ax==AXIS_VOID ) continue;
+		iter = pW->m_eddies.find(((EddyPulse*) children[j])); //OK - finds the first inserted EddyPulse
+		if (iter == pW->m_eddies.end() ) continue;
+		iter->second = iter->first->GetLingerTime();
+	}
+
+}
+
 /***********************************************************/
 string          AtomicSequence::GetInfo() {
 
@@ -203,32 +259,3 @@ string          AtomicSequence::GetInfo() {
 	return s.str();
 
 }
-
-
-void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t offset) {
-
-	bool rem  = this->HasNonLinGrad();
-	this->SetNonLinGrad(false);
-
-	for (int i=0; i < GetNumOfTPOIs(); ++i) {
-		seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
-		seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
-		GetValue(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
-		seqdata(7,offset+i+1) = m_tpoi.GetMask(i);
-	}
-
-	this->SetNonLinGrad(rem);
-
-}
-
-
-long  AtomicSequence::GetNumOfADCs () {
-
-	int iADC = GetNumOfTPOIs();
-	for (int i=0; i<GetNumOfTPOIs(); ++i)
-		if (m_tpoi.GetPhase(i) < 0.0)
-			iADC--;
-	return iADC;
-
-}
-

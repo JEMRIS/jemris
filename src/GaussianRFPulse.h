@@ -61,7 +61,7 @@ class GaussianRFPulse : public RFPulse {
      * @brief Prepare the hard RF pulse.
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      */
-    virtual bool        Prepare            (const PrepareMode mode)  ;
+    virtual bool        Prepare            (PrepareMode mode)  ;
 
     /**
      * @brief Returns the Gaussian Magnitidue for all times.

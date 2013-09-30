@@ -50,21 +50,21 @@ class Coil : public Prototype {
      *
 	 * @return          Sensitivity with respect to spin in World
      */
-    double  GetSensitivity (const double time=0) ;
+    double  GetSensitivity (double time=0) ;
 
     /**
      * @brief Get the B1+ phase at point (x,y,z) of the current spin
      *
 	 * @return          Phase with respect to spin in World
      */
-    double  GetPhase (const double time=0) ;
+    double  GetPhase (double time=0) ;
 
     /**
      * @brief Interpolate the sensitivity at point (x,y,z)
      *
 	 * @return          Interpolated Sensitivity
      */
-    double InterpolateSensitivity (const double* position, bool magnitude=true);
+    double InterpolateSensitivity (double* position, bool magnitude=true);
 
     /**
      * @brief Get the B1+ magnitude at point (x,y,z)
@@ -74,7 +74,7 @@ class Coil : public Prototype {
      * @param position  At position.
      * @return          Sensitivity with respect to spin in World.
      */
-    virtual double  GetSensitivity (const double* position) = 0;
+    virtual double  GetSensitivity (double* position) = 0;
 
     /**
      * @brief Get the B1+ phase at point (x,y,z)
@@ -87,7 +87,7 @@ class Coil : public Prototype {
      * @param position  At position.
      * @return          B1+ phase with respect to spin in World.
      */
-    virtual double  GetPhase (const double* position) {return 0.0;};
+    virtual double  GetPhase (double* position) {return 0.0;};
 
     /**
      * @brief Initialize my signal repository
@@ -144,7 +144,7 @@ class Coil : public Prototype {
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      */
-    virtual bool Prepare  (const PrepareMode mode);
+    virtual bool Prepare  (PrepareMode mode);
 
     /**
      * @brief Initialize this prototype.

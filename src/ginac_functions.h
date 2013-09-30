@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -28,6 +28,7 @@
 #define GINAC_FUNCTIONS_H_
 
 #include <ginac/ginac.h>
+#include <ginac/power.h>
 #include <vector>
 #ifndef __MINGW32__
 #include <dlfcn.h>
@@ -74,6 +75,26 @@ const symbol & get_symbol(const string & sym_name)
         return symbol_list.insert(pair<string, symbol>(sym_name, symbol(sym_name))).first->second;
 }
 
+
+/**
+ * @brief sqrt-function.
+ * (problem on mac: libc++abi.dylib throws exception: "sqrt" function is not recognized in GiNaC::ex Constructor)
+ */
+/*
+static ex sqrt(const ex &x){ return pow(x,0.5); }
+static ex sqrt_evalf(const ex & x){ return (ex_to<numeric>(pow(x,0.5))).to_double(); }
+static ex sqrt_deriv(const ex & x, unsigned diff_param) { return 0.5*pow(x,-0.5); }
+static ex sqrt_real_part(const ex & x) { return real_part(pow(x,0.5)); }
+static ex sqrt_imag_part(const ex & x) { return imag_part(pow(x,0.5)); }
+static ex sqrt_conjugate(const ex & x) { return pow(x.conjugate(),0.5); }
+DECLARE_FUNCTION_1P(sqrt)
+REGISTER_FUNCTION(sqrt, eval_func      (sqrt_evalf    ).
+                        evalf_func     (sqrt_evalf    ).
+                        derivative_func(sqrt_deriv    ).
+                        real_part_func (sqrt_real_part).
+                        imag_part_func (sqrt_imag_part).
+                        conjugate_func (sqrt_conjugate))
+*/
 
 /**
  * @brief sinc-function.

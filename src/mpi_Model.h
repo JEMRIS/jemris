@@ -159,8 +159,7 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	MPI_Scatter  (sendcount, 1, MPI_INT, &recvbuf, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 	// broadcast number of individual spin prioperties:
-	long NProps = pSam->GetNProps();
-	MPI_Bcast    (&NProps,1,MPI_LONG,0, MPI_COMM_WORLD);
+	MPI_Bcast    (pSam->GetSampleDims(),1,MPI_LONG,0, MPI_COMM_WORLD);
 
 	long hsize = pSam->GetHelperSize();
 
@@ -267,10 +266,9 @@ Sample* mpi_receive_sample(int sender, int tag){
 
 	NPoints= (long) nospins;
 	//get number of physical properties per spin
-	long NProps;
-	MPI_Bcast    (&NProps,1,MPI_LONG,0, MPI_COMM_WORLD);
+	MPI_Bcast    (pSam->GetSampleDims(),1,MPI_LONG,0, MPI_COMM_WORLD);
 	
-	pSam->CreateSpins(NProps, NPoints);
+	pSam->CreateSpins(NPoints);
 
 	long hsize = 0;
 	MPI_Bcast (&hsize, 1, MPI_LONG,0, MPI_COMM_WORLD);

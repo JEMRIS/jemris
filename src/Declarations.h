@@ -127,7 +127,6 @@ namespace IO {
 	 * Binary io strategies
 	 */
 	enum Strategy {
-		NONE = -1,
 		SIMPLE,        /**< limited standard serialised data storage */
 		HDF5,          /**< Hirarchical data format 5                */
 		CDF,           /**< Common data format                       */
@@ -166,9 +165,8 @@ namespace IO {
 	 * Binary io modes
 	 */
 	enum Mode {
-		IN, /**< Read only */
-		OUT, /**< Write (overwrite) */
-		APPEND /**< Write (append) */
+		IN, /**< Read access */
+		OUT /**< R/W  access */
 	};
 	
 }

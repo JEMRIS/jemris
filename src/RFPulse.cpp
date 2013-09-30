@@ -28,16 +28,19 @@
 #include "Coil.h"
 
 /*****************************************************************/
-RFPulse::RFPulse  () : m_refocusing(0), m_coil_array(0),
-	m_channel(0), m_flip_angle(0.), m_bw(0.), m_symmetry(.5) {
+RFPulse::RFPulse  () {
 
-	m_axis = AXIS_RF;
-	m_initial_phase = 0.;
+    m_axis          = AXIS_RF;
+    m_coil_array    = NULL;
+    m_channel       =0;
+    m_flip_angle    =0.0;
+    m_bw            =0.0;
+    m_initial_phase =0.0;
 
 }
 
 /*****************************************************************/
-bool RFPulse::Prepare  (const PrepareMode mode) {
+bool RFPulse::Prepare  (PrepareMode mode) {
 
 	//every RFPulse might have FlipAngle, InitialPhase, Bandwidth, and Frequncy offset
 	ATTRIBUTE("FlipAngle"    , m_flip_angle   );
@@ -45,8 +48,6 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
 	ATTRIBUTE("Bandwidth"    , m_bw           );
 	ATTRIBUTE("Frequency"    , m_frequency    );
 	ATTRIBUTE("Channel"      , m_channel      );
-	ATTRIBUTE("Refocusing"   , m_refocusing   );
-	ATTRIBUTE("Symmetry"     , m_symmetry     );
 
     if (mode != PREP_UPDATE)
         insertGetPhaseFunction( &TxRxPhase::getLinearPhase );
@@ -59,18 +60,12 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
     	HideAttribute("PhaseLock",false);
     }
 
-    if (b && (m_symmetry <= 0. || m_symmetry > 1.)) {
-    	cout << "Preparation of DelayAtomicSequence '" << GetName() << "' not succesful. Symmtry = "
-    			<< m_symmetry << ". Must be (0.,1.]." << endl;
-    	b = false;
-    }
-
 	return b;
 
 }
 
 /*****************************************************************/
-void RFPulse::insertGetPhaseFunction (double (*FGetPhase)(Module*, double)) {
+void    RFPulse::insertGetPhaseFunction(double (*FGetPhase)(Module*, double)) {
 
     if (find( m_GetPhaseFunPtrs.begin(), m_GetPhaseFunPtrs.end(), FGetPhase) == m_GetPhaseFunPtrs.end())
 	    m_GetPhaseFunPtrs.push_back(FGetPhase);
@@ -79,13 +74,8 @@ void RFPulse::insertGetPhaseFunction (double (*FGetPhase)(Module*, double)) {
 
 }
 
-void RFPulse::SetTPOIs() {
-	Pulse::SetTPOIs();
-    m_tpoi + TPOI::set (m_symmetry * GetDuration(), -1., (m_refocusing) ? 8 : 4);
-}
-
 /*****************************************************************/
-void RFPulse::GetValue (double * dAllVal, double const time)  {
+void RFPulse::GetValue (double * dAllVal, double const time) {
 
     if (time < 0.0 || time > GetDuration())
         return;
@@ -101,7 +91,8 @@ void RFPulse::GetValue (double * dAllVal, double const time)  {
 		if (coil != NULL) {
 			magn  = coil->GetSensitivity(World::instance()->total_time + time);
 			phase = coil->GetPhase(World::instance()->total_time + time);
-		} else
+		}
+		else
 			cout << GetName() << " warning: my channel" << m_channel << "is not in the TxCoilArray\n";
 
 	}
@@ -142,8 +133,7 @@ double RFPulse::GetIntegralNumeric (int steps) {
 string          RFPulse::GetInfo () {
 
 	stringstream s;
-	s << Pulse::GetInfo() << " , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = ("
-			<< m_flip_angle << "," << GetInitialPhase() << "," << m_bw << "," << m_channel << "," << m_symmetry << ") ";
+	s << Pulse::GetInfo() << " , (Flipangle,Phase,Bandwidth,Channel) = (" << m_flip_angle << "," << GetInitialPhase() << "," << m_bw << "," << m_channel << ") ";
 	return s.str();
 
 }

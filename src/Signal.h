@@ -35,14 +35,20 @@ using namespace std;
 
 
 /**
+ * @brief Defined for robust memory handling
+ */
+static int sig_alloc = 0;
+
+
+/**
  *  @brief  Signal repository structure
  */
 struct Repository {
 
 	long     m_noofsamples;      /**< Number of samples             */
 	int      m_noofcompartments; /** < Number of compartments       */
-	std::vector<double> m_times;
-	std::vector<double> m_data;             /**< Data (column major)           */
+	double*  m_times;
+	double*  m_data;             /**< Data (column major)           */
 
 
 	/**
@@ -50,6 +56,9 @@ struct Repository {
 	 */
 	Repository () {
 
+		m_data  = 0;
+		m_times = 0;
+		
 		m_noofcompartments = 1; 
 		m_noofsamples      = 0;
 		
@@ -60,6 +69,13 @@ struct Repository {
 	 * @brief Destruct
 	 */
 	~Repository () {
+
+		if (sig_alloc) {
+			free (m_data);
+			free (m_times);
+			sig_alloc --;
+		}
+	
 	}
 
 
@@ -82,7 +98,7 @@ struct Repository {
 	 */
 	double* Data () {
 
-		return &m_data[0];
+		return m_data;
 
 	};
 	
@@ -94,7 +110,7 @@ struct Repository {
 	 */
 	double* Times () {
 
-		return &m_times[0];
+		return m_times;
 
 	};
 	
@@ -174,14 +190,21 @@ struct Repository {
 	 */
 	inline const void Initialize (long samples, int compartments) {
 
-		assert (samples);
-		assert (compartments);
+		assert (samples      > 0);
+		assert (compartments > 0);
 
 		m_noofcompartments = compartments;
 		m_noofsamples      = samples;
 
-		m_data.resize(Size());
-		m_times.resize(Samples());
+		m_data         = (double*) malloc (Size()    * sizeof (double));
+		m_times        = (double*) malloc (Samples() * sizeof (double));
+		sig_alloc ++;
+
+		for (int i = 0; i < Size(); i++) 
+			m_data[i]  = 0.0;
+
+		for (int i = 0; i < Samples(); i++) 
+			m_times[i] = 0.0;
 
 	};
 

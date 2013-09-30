@@ -27,13 +27,15 @@
 #include "EmptyPulse.h"
 
 /***********************************************************/
-bool EmptyPulse::Prepare  (const PrepareMode mode) {
+bool EmptyPulse::Prepare  (PrepareMode mode) {
 
     m_axis = AXIS_VOID;
 
     //set attributes "Shape", "Diff", "Constants" and initialize GiNaC evaluation
-    if (mode != PREP_UPDATE) m_pulse_shape.PrepareInit(mode==PREP_VERBOSE);
-
+    if (mode != PREP_UPDATE) {
+    	m_pulse_shape.PrepareInit(mode==PREP_VERBOSE);
+        HideAttribute ("TPOIs",false);
+    }
     // Base class Prepare && analytic prepare of pulse shape
     return ( Pulse::Prepare(mode) && m_pulse_shape.PrepareAnalytic(mode==PREP_VERBOSE) );
 

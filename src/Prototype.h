@@ -116,14 +116,14 @@ class Prototype {
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return Success
      */
-    virtual bool       Prepare    (const PrepareMode mode) = 0;
+    virtual bool       Prepare    (PrepareMode mode) = 0;
 
     /**
      * @brief Check if the Prototype is prepared.
      *
      * @return True, if prepared.
      */
-    inline bool IsPrepared () const {return m_prepared;};
+    inline bool IsPrepared () {return m_prepared;};
 
 
     /**
@@ -138,14 +138,14 @@ class Prototype {
      *
      * @param name New name of this module
      */
-    void               SetName    (const string& name);
+    void               SetName    (string name);
 
     /**
      * @brief Get the DOMNode of this module
      *
      * @return The value of the private member m_node
      */
-    inline DOMNode* GetNode () const {return m_node;};
+    inline DOMNode* GetNode () {return m_node;};
 
     /**
      * @brief Set the DOMNode of this module
@@ -178,14 +178,14 @@ class Prototype {
      *
      * @return The tag name of the DOMNode.
      */
-    inline string GetClassType () const {return XMLString::transcode(m_node->getNodeName());};
+    inline string GetClassType () {return XMLString::transcode(GetNode()->getNodeName());};
 
     /**
      * @brief Get the module type of this module.
      *
      * @return The module type: one of MOD_PULSE, MOD_ATOM, MOD_CONCAT
      */
-     Type GetType () const {return m_type;};
+    inline Type GetType () {return m_type;};
 
 
     /**
@@ -194,7 +194,7 @@ class Prototype {
      * @param attribute  The attribute of the DOMNode corresponding to this Module.
      * @return            The value of the attribute
      */
-    string GetDOMattribute    (const string& attribute){ return StrX(((DOMElement*) m_node)->getAttribute (StrX(attribute).XMLchar())).std_str() ;  }
+    string GetDOMattribute    (const string attribute){ return StrX(((DOMElement*) m_node)->getAttribute (StrX(attribute).XMLchar())).std_str() ;  }
 
     /**
      * @brief Check, if attribute exists in DOM node of this module
@@ -202,7 +202,7 @@ class Prototype {
      * @param attribute  The attribute of the DOMNode corresponding to this Module.
      * @return           True, if attribute exists in DOM (XML)
      */
-    bool HasDOMattribute    (const string& attribute) {	if (GetDOMattribute(attribute).empty()) return false; else return true;  }
+    bool HasDOMattribute    (const string attribute) {	if (GetDOMattribute(attribute).empty()) return false; else return true;  }
 
 
     /**
@@ -211,7 +211,7 @@ class Prototype {
      * @param name       The name of the attribute.
      * @return           The Attribute.
      */
-    Attribute*	GetAttribute(const string& name);
+    Attribute*	GetAttribute(string name);
 
     /**
      * @brief Check if an attribute exist.
@@ -219,7 +219,7 @@ class Prototype {
      * @param name       The name of the attribute
      * @return           Success/Failure of operation.
      */
-    inline bool HasAttribute (const string& name) {if (GetAttribute(name)==NULL) return false; else return true;};
+    inline bool HasAttribute (string name) {if (GetAttribute(name)==NULL) return false; else return true;};
 
     /**
      * @brief Hide an attribute.
@@ -232,7 +232,7 @@ class Prototype {
      * @param attrib       Name of the attribute to hide
      * @param observable   Keep this attribute still observable? (default: true)
      */
-      void  HideAttribute (const string& attrib, const bool observable = true);
+      void  HideAttribute (string attrib, bool observable = true);
 
     /**
      * @brief Get a Prototype by value of an attribute
@@ -248,7 +248,7 @@ class Prototype {
      *
      * @return The value of the private member m_name
      */
-    inline string GetName () const { return m_name; };
+    inline string GetName () { return m_name; };
 
     /**
      * @brief Set up the list of observations
@@ -263,7 +263,7 @@ class Prototype {
      * @param verbose		If true, dump possible warnings to stdout
      * @return success/failure of operation
      */
-    bool Observe (Attribute* attrib, const string& prot_name, const string& attrib_name, const bool verbose);
+    bool Observe (Attribute* attrib, string prot_name, string attrib_name, bool verbose);
 
     /**
      * @brief Notify all observers of an attribute.

@@ -38,7 +38,7 @@ TriangleGradPulse::TriangleGradPulse  (const TriangleGradPulse&) {
 }
 
 /***********************************************************/
-bool TriangleGradPulse::Prepare  (const PrepareMode mode) {
+bool TriangleGradPulse::Prepare  (PrepareMode mode) {
 
 	bool btag = true;
 

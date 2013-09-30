@@ -45,7 +45,7 @@ public:
     /**
      * @brief Default constructor
      */
-	TriangleGradPulse() : m_amplitude(0.), m_triangle_type(TRIANGLE_UP) {};
+	TriangleGradPulse() {};
 
     /**
      * @brief Default copy constructor.
@@ -65,7 +65,7 @@ public:
     /**
      * See Module::Prepare
      */
-    virtual bool        Prepare  (const PrepareMode mode);
+    virtual bool        Prepare  (PrepareMode mode);
 
     /**
      * See GradPulse::GetValue

@@ -35,13 +35,13 @@ ExternalGradPulse::ExternalGradPulse               (const ExternalGradPulse&)  {
 }
 
 /***********************************************************/
-bool              ExternalGradPulse::Prepare     (const PrepareMode mode)   {
+bool              ExternalGradPulse::Prepare     (PrepareMode mode)   {
 
     ATTRIBUTE("Filename" , m_fname);
     ATTRIBUTE("Scale"    , m_scale);
 
 	//read data
-	bool btag = m_pulse_data.ReadPulseShape (m_fname, "", "", mode == PREP_UPDATE);
+	bool btag = m_pulse_data.ReadPulseShape (m_fname, mode == PREP_UPDATE);
 
 	if ( btag && m_tpoi.GetSize()>0 ) m_area = GetAreaNumeric(m_tpoi.GetSize());
 

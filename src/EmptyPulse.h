@@ -63,7 +63,7 @@ class EmptyPulse : public Pulse {
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return     Success.
      */
-    virtual bool Prepare (const PrepareMode mode);
+    virtual bool Prepare (PrepareMode mode);
 
     /**
      * @brief Allows non-equdistant setting of ADCs via Shape attribute (GiNaC formula)

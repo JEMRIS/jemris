@@ -34,7 +34,7 @@ AnalyticRFPulse::AnalyticRFPulse  (const AnalyticRFPulse& hrfp) {
 }
 
 /***********************************************************/
-bool AnalyticRFPulse::Prepare  (const PrepareMode mode) {
+bool AnalyticRFPulse::Prepare  (PrepareMode mode) {
 
 
     //set attributes "Shape", "Diff", "Constants" and initialize GiNaC evaluation

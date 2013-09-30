@@ -64,7 +64,7 @@ class AnalyticRFPulse : public RFPulse {
      * @param  mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return      Success.
      */
-    virtual bool Prepare  (const PrepareMode mode);
+    virtual bool Prepare  (PrepareMode mode);
 
     /**
      * @brief Get Magnitude

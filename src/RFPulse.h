@@ -52,25 +52,17 @@ class RFPulse : public Pulse, public TxRxPhase {
     /**
      * @brief Default copy constructor.
      */
-    RFPulse (const RFPulse& rfp) {
-    	m_flip_angle = rfp.m_flip_angle;
-    	m_bw = rfp.m_bw;
-    	m_channel = rfp.m_channel;
-    	m_coil_array = rfp.m_coil_array;
-    	m_GetPhaseFunPtrs = rfp.m_GetPhaseFunPtrs;
-    	m_refocusing = rfp.m_refocusing;
-    	m_symmetry = rfp.m_symmetry;
-    }
+    RFPulse (const RFPulse&) {};
 
     /**
      *  @brief see Module::GetValue()
      */
-    virtual void GetValue (double * dAllVal, double const time)  ;
+    virtual void GetValue (double * dAllVal, double const time) ;
 
     /**
      * @brief see Module::Prepare()
      */
-    virtual bool Prepare  (const PrepareMode mode);
+    virtual bool Prepare  (PrepareMode mode);
 
     /**
      * @brief Get the B1 integral of this pulse
@@ -85,21 +77,21 @@ class RFPulse : public Pulse, public TxRxPhase {
      *
      * @return Flip angle.
      */
-    inline double  GetFlipAngle  () const {return m_flip_angle;};
+    inline double  GetFlipAngle  () {return m_flip_angle;};
 
     /**
      * @brief       Set the flip angle of this RF pulse.
      *
      * @param fa Flip angle.
      */
-    inline void    SetFlipAngle  (const double fa) {m_flip_angle = fa; };
+    inline void    SetFlipAngle  (double fa) {m_flip_angle = fa; };
 
     /**
      * @brief  Get the CoilArray channel of this pulse.
      *
      * @return Flip angle.
      */
-    inline int  GetChannel  () const {return m_channel;};
+    inline int  GetChannel  () {return m_channel;};
 
     /**
      * @brief       Set the CoilArray channel of this RF pulse.
@@ -120,7 +112,7 @@ class RFPulse : public Pulse, public TxRxPhase {
      * @param time Time-point at which the magnitude is requested.
      * @return Magnitude.
      */
-    virtual double    GetMagnitude  (const double time )  { return 0.0 ; } ;
+    virtual double    GetMagnitude  (double time ) { return 0.0 ; } ;
 
     /**
      * @brief  Get the band width of this pulse.
@@ -156,9 +148,6 @@ class RFPulse : public Pulse, public TxRxPhase {
      */
     CoilArray*     GetCoilArray () {return m_coil_array;};
 
-    virtual void SetTPOIs ();
-
-
  protected:
 
     /**
@@ -171,8 +160,6 @@ class RFPulse : public Pulse, public TxRxPhase {
     double    m_flip_angle;   /**< @brief Flipangle of this pulse        */
     double    m_bw;           /**< @brief Bandwidth of this pulse        */
     int       m_channel;      /**< @brief Transmit channel of this pulse */
-    bool      m_refocusing;   /**< @brief Refocussing pulse? */
-    double    m_symmetry;     /**< @brief KSpace symmetry */
 
     // Provides sensitivies in GetValue
     CoilArray* m_coil_array;  /**< @brief Transmit array in simulation   */

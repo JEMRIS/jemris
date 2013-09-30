@@ -33,7 +33,7 @@
     #include <boost/math/special_functions/ellint_1.hpp>
 #endif
 
-bool BiotSavartLoop::Prepare (const PrepareMode mode) {
+bool BiotSavartLoop::Prepare (PrepareMode mode) {
 
     bool success = true;
 
@@ -49,7 +49,7 @@ bool BiotSavartLoop::Prepare (const PrepareMode mode) {
 
 }
 
-double BiotSavartLoop::GetSensitivity(const double* position) {
+double BiotSavartLoop::GetSensitivity(double* position) {
 
     double a     = m_radius;
     double px = position[XC]-m_position[XC];

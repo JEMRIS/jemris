@@ -42,7 +42,7 @@ class AtomicSequence : public Sequence {
     /**
      * @brief Default constructor
      */
-    AtomicSequence() :m_theta(0.), m_non_lin_grad(0.), m_alpha(0.), m_phi(0.) {};
+    AtomicSequence() {};
 
     /**
      * @brief Copy constructor.
@@ -64,7 +64,7 @@ class AtomicSequence : public Sequence {
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      */
-    virtual bool    Prepare        (const PrepareMode mode);
+    virtual bool    Prepare        (PrepareMode mode);
 
     /**
      * @brief Get the pulse given by number.
@@ -87,9 +87,31 @@ class AtomicSequence : public Sequence {
     virtual void    GetValue          (double * dAllVal, double const time) ;
 
     /**
-     * @brief See Module::GetValue
+     * @brief GetValue of lingering eddy currents
      */
-    //virtual void    GetValue          (double * dAllVal, double const time, double * pos[3]) {};
+    void    GetValueLingeringEddyCurrents (double * dAllVal, double const time);
+
+    /**
+     * @brief prepare lingering eddy currents in this atom for GetValue in next atom
+     */
+    void    PrepareEddyCurrents ();
+
+    /**
+     * @brief update lingering eddy currents which are still alive after this atom
+     */
+    void    UpdateEddyCurrents ();
+
+    /**
+     * @brief true, if this atom contains eddy currents
+     * @return status of eddy currents
+     */
+    bool    HasEddyCurrents () {return m_eddy; };
+
+    /**
+     * @brief true, if this atom contains eddy currents
+     * @return status of eddy currents
+     */
+    void    SetEddyCurrents (bool val) {m_eddy = val; };
 
     /**
      * @brief Perform a Rotation of the gradients.
@@ -106,16 +128,17 @@ class AtomicSequence : public Sequence {
     inline bool          HasNonLinGrad () {return m_non_lin_grad;};
 
     /**
-     * @brief Marh this atom, if nonlinear gradients are present
+     * @brief Mark this atom, if nonlinear gradients are present
      *
      * @param val True, if nonlinear gradients are present
      */
     inline void          SetNonLinGrad (bool val) {m_non_lin_grad=val;};
 
+
     /**
-     * @brief Calculate my duration
+     * @brief See Module::GetDuration
      */
-    double          CalcDuration ();
+    double          GetDuration       ();
 
     /**
      * @brief Collect the TPOIs of child pulses
@@ -127,10 +150,6 @@ class AtomicSequence : public Sequence {
      * through observation.
      */
     void           CollectTPOIs       ();
-
-
-    virtual void CollectSeqData (NDData<double>& seqdata, double t, size_t offset);
-    virtual long  GetNumOfADCs ();
 
 
  protected:
@@ -147,6 +166,7 @@ class AtomicSequence : public Sequence {
     vector<Pulse*> m_pulses;       /**< @brief vector of pointers to child pulses */
 
     bool           m_non_lin_grad; /**< @brief A flag for nonlinear gradients */
+    bool           m_eddy; 		   /**< @brief A flag for eddy currents in this atom */
     double         m_alpha;        /**< @brief Gradient Rotation matrix: Rotation angle */
     double         m_theta;        /**< @brief Gradient Rotation matrix: polar inclination from z-axis */
     double         m_phi;          /**< @brief Gradient Rotation matrix: azimutal phase measured from x-axis*/

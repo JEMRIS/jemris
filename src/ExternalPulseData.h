@@ -67,7 +67,7 @@ class ExternalPulseData {
      *
      * @param fname name of binary file
      */
-    bool     ReadPulseShape (const string& fname, const string& path, const string& dname , bool verbose);
+    bool     ReadPulseShape(string fname, bool verbose);
 
     /**
      * @see Pulse::SetTPOIs

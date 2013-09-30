@@ -28,7 +28,7 @@
 
 
 /***********************************************************/
-void Prototype::SetName (const string& name) {
+void Prototype::SetName (string name) {
 
 	m_name = name;
 	if (m_node == NULL) return;
@@ -75,7 +75,7 @@ vector<string>  Prototype::Tokenize(const string& str, const string& delimiters 
 }
 
 /***********************************************************/
-Attribute*	Prototype::GetAttribute(const string& name){
+Attribute*	Prototype::GetAttribute(string name){
 
 	map<string,Attribute*>::iterator iter = m_attributes.find(name);
 	if( iter != m_attributes.end() ) return iter->second;
@@ -84,7 +84,7 @@ Attribute*	Prototype::GetAttribute(const string& name){
 }
 
 /***********************************************************/
-void           Prototype::HideAttribute (const string &attrib, const bool observable){
+void           Prototype::HideAttribute (string attrib, bool observable){
 
 	Attribute* a  = GetAttribute(attrib);
 	if (a!=NULL) {
@@ -95,7 +95,7 @@ void           Prototype::HideAttribute (const string &attrib, const bool observ
 }
 
 /***********************************************************/
-bool Prototype::Observe (Attribute* attrib, const string& prot_name, const string& attrib_name, const bool verbose){
+bool Prototype::Observe (Attribute* attrib, string prot_name, string attrib_name, bool verbose){
 
 	Prototype* M = GetPrototypeByAttributeValue("Name",prot_name);
 	if (M==NULL ) {
@@ -127,7 +127,7 @@ bool Prototype::Observe (Attribute* attrib, const string& prot_name, const strin
 }
 
 /***********************************************************/
-bool Prototype::Prepare  (const PrepareMode mode){
+bool Prototype::Prepare  (PrepareMode mode){
 
 	//nothing to be done for updating modules
 	if (mode==PREP_UPDATE) return(true);

@@ -39,7 +39,7 @@ class ExternalCoil : public Coil {
     /**
      * @brief Default constructor
      */
-	ExternalCoil() : m_channel(1) {};
+	ExternalCoil() {};
 
 	/**
 	 * @brief Default destructor
@@ -61,7 +61,7 @@ class ExternalCoil : public Coil {
      * @param position  At position.
      * @return          Sensitivity with respect to spin in World.
      */
-	virtual double GetSensitivity (const double* position);
+	virtual double GetSensitivity (double* position);
 
     /**
      * @brief Get the B1+ phase at point (x,y,z)
@@ -74,7 +74,7 @@ class ExternalCoil : public Coil {
      * @param position  At position.
      * @return          B1+ phase with respect to spin in World.
      */
-	virtual double GetPhase (const double* position);
+	virtual double GetPhase (double* position);
 
     /**
      * @brief Prepare a coil with provided sensitivity map.
@@ -83,7 +83,7 @@ class ExternalCoil : public Coil {
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE}.
      * @return     Success
      */
-    virtual bool Prepare  (const PrepareMode mode);
+    virtual bool Prepare  (PrepareMode mode);
 
 	IO::Status LoadMap ();
 

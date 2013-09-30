@@ -42,7 +42,7 @@ void Coil::Initialize (DOMNode* node) {
 	
 	m_sens_mag = NULL;
 	m_sens_pha = NULL;
-	m_node     = node;
+	m_node    = node;
 	
 	string s = StrX(((DOMElement*) node)->getAttribute (StrX("Name").XMLchar() )).std_str() ;
 	
@@ -136,7 +136,7 @@ unsigned Coil::GetNDim () {
 
 
 /**********************************************************/
-double  Coil::GetPhase (const double time) {
+double  Coil::GetPhase (double time) {
 
     if (!m_complex) return m_phase;
 
@@ -155,7 +155,7 @@ double  Coil::GetPhase (const double time) {
 }
 
 /**********************************************************/
-double  Coil::GetSensitivity (const double time) {
+double  Coil::GetSensitivity (double time) {
 
     double position[3];
     position[0]=World::instance()->Values[XC];
@@ -174,7 +174,7 @@ double  Coil::GetSensitivity (const double time) {
 
 
 /**********************************************************/
-double Coil::InterpolateSensitivity (const double* position, bool magnitude){
+double Coil::InterpolateSensitivity (double* position, bool magnitude){
 
 	// expects  -m_extent/2 <= position[j] <= m_extent/2
     double x = (position[XC]+m_extent/2)*m_points/m_extent;
@@ -229,7 +229,7 @@ double Coil::Unwrap(double checkwrap, bool magnitude){
 
 /**********************************************************/
 
-bool Coil::Prepare  (const PrepareMode mode) {
+bool Coil::Prepare  (PrepareMode mode) {
 
 	bool success = false;
 	m_azimuth = 0.0;

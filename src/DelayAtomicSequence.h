@@ -50,9 +50,7 @@ class DelayAtomicSequence : public AtomicSequence {
     /**
      * @brief Default constructor
      */
-    DelayAtomicSequence() :
-    	m_mod_start(0), m_mod_stop(0), m_adc(0), m_delay_time(0),
-    	m_phase_lock(0), m_dt(DELAY_B2E), m_await_time(0) {};
+    DelayAtomicSequence() {};
 
     /**
      * @brief Copy constructor
@@ -75,7 +73,7 @@ class DelayAtomicSequence : public AtomicSequence {
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
 	 * @return     Success.
      */
-    virtual bool                 Prepare           (const PrepareMode mode);
+    virtual bool                 Prepare           (PrepareMode mode);
 
     /**
      * See Module::GetValue()
@@ -104,7 +102,7 @@ class DelayAtomicSequence : public AtomicSequence {
 	 * @param  mode Prepare mode.
      * @return      Success
      */
-    double  GetDelay(const PrepareMode mode);
+    double  GetDelay(PrepareMode mode);
 
  private:
 
@@ -115,7 +113,7 @@ class DelayAtomicSequence : public AtomicSequence {
     double    m_await_time;    /**< @brief Rest time. Real length of Delay in ms. Is calculated during runtime. */
     double    m_delay_time;    /**< @brief Declared length of Delay.                                            */
 
-    double	  m_durations[20]; /**< @brief Durations of other modules which have to be observed                  */
+    double	  m_durations[20]; /**< @brief Durations of other modules which has to be observed                  */
 
     Module*   m_mod_start;     /**< @brief Module after which the delay shall starts.                           */
     Module*   m_mod_stop;      /**< @brief Module from after which the delay shall starts.                      */

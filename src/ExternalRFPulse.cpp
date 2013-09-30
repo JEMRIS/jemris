@@ -36,27 +36,24 @@ ExternalRFPulse::ExternalRFPulse  (const ExternalRFPulse& hrfp) {
 };
 
 /***********************************************************/
-bool ExternalRFPulse::Prepare  (const PrepareMode mode) {
+bool ExternalRFPulse::Prepare  (PrepareMode mode) {
 
 	m_bw  = 1e16;
 
-	ATTRIBUTE ("Scale"   , m_scale);
-
-	ATTRIBUTE ("Filename", m_fname);
-	ATTRIBUTE ("DataPath", m_dpath);
-
-	if (!m_dpath.length())
-		m_dpath = "/";
+	ATTRIBUTE("Filename", m_fname );
+	ATTRIBUTE("Scale"   , m_scale );
 
 	//read data
-	bool btag = m_pulse_data.ReadPulseShape (m_fname, m_dpath, m_dname, mode == PREP_UPDATE) ;
+	bool btag = m_pulse_data.ReadPulseShape (m_fname, mode == PREP_UPDATE) ;
 
 	if (mode != PREP_UPDATE) insertGetPhaseFunction( &ExternalPulseData::GetPhase );
 
 	btag = ( RFPulse::Prepare(mode) && btag);
 
-	if (mode != PREP_UPDATE)
-		HideAttribute ("Bandwidth", false);
+	if (mode != PREP_UPDATE) {
+		HideAttribute ("Bandwidth",false);
+		HideAttribute ("Duration");
+	}
     
 	if (!btag && mode == PREP_VERBOSE)
 		cout	<< "\n warning in Prepare(1) of ExternalRFPulse " << GetName()

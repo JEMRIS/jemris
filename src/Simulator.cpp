@@ -37,18 +37,22 @@
 
 
 /**********************************************************/
-Simulator::Simulator() :
-	m_rx_coil_array (0), m_xio(0), m_domtree_error_rep (0), m_dom_doc(0), m_evol(0),
-	m_world (World::instance()), m_model(0), m_tx_coil_array(0), m_sample(0),
-	m_sequence(0), m_state(0) {
+Simulator::Simulator() {
+
 	Simulator ("simu.xml");
+
 }
 
 /**********************************************************/
-Simulator::Simulator ( const string& fname, const string& fsample, const string& frxarray,
-		const string& ftxarray, const string& fsequence, const string& fmodel) :
-	m_rx_coil_array (0), m_evol(0),	m_world (World::instance()), m_model(0), m_tx_coil_array(0),
-	m_sample(0), m_sequence(0) {
+Simulator::Simulator (string fname, string fsample, string frxarray, string ftxarray, string fsequence, string fmodel) {
+
+	m_world	            = NULL;
+	m_sample            = NULL;
+	m_sequence	        = NULL;
+	m_rx_coil_array	    = NULL;
+	m_tx_coil_array	    = NULL;
+	m_model	            = NULL;
+	m_state             = false;
 
 	m_domtree_error_rep = new DOMTreeErrorReporter;
 	m_xio               = new XMLIO();
@@ -87,28 +91,33 @@ Simulator::Simulator ( const string& fname, const string& fsample, const string&
 
 /**********************************************************/
 void Simulator::SetWorld          () {
+
 	m_world = World::instance();
+
 }
 
 /**********************************************************/
-void Simulator::SetSample         (std::string fsample) {
+void Simulator::SetSample         (string fsample) {
 
 	if (fsample.empty())  // REVISE: IS THIS EVER FALSE?
 		fsample = GetAttr(GetElem("sample"), "uri");
 	
-	std::string type (GetAttr (GetElem ("sample"), "type"));
-	std::string mult (GetAttr (GetElem ("sample"), "multiple"));
-	int multiple = !mult.empty() ? atoi(mult.c_str()) : 1;
+	std::string type = GetAttr (GetElem ("sample"), "type");
+	string mult = GetAttr(GetElem("sample"), "multiple");
+	int multiple=1;
+	if (!mult.empty()) multiple = atoi(mult.c_str());
 	
-	m_sample = (type == "multipool") ?
-			new MultiPoolSample (fsample) :
-			new Sample (fsample,multiple);
-
+		
+	if (type == "multipool")
+		m_sample = new MultiPoolSample (fsample);
+	else {
+		m_sample = new Sample (fsample,multiple);
+	}
 	m_world->TotalSpinNumber = m_sample->GetSize();
 	m_world->SetNoOfSpinProps(m_sample->GetNProps());
 	m_world->SetNoOfCompartments(m_sample->GetNoSpinCompartments());
 	m_world->InitHelper (m_sample->GetHelperSize());
-	m_sample->CopyHelper(m_world->Helper());
+	m_sample->CopyHelper(m_world->helper);
 	m_sample->ReorderSample();
 
 	string sentinterval = GetAttr(GetElem("sample"),"SentInterval");
@@ -119,7 +128,7 @@ void Simulator::SetSample         (std::string fsample) {
 }
 
 /**********************************************************/
-void      Simulator::SetSample      (Sample* sample) {
+void      Simulator::SetSample      (Sample* sample){
 
 	m_sample = sample;
 	//re-setting of model and simulation-parameters
@@ -131,16 +140,13 @@ void      Simulator::SetSample      (Sample* sample) {
 /**********************************************************/
 void Simulator::SetRxCoilArray      (string frxarray) {
 
-	if (frxarray.empty())
-		frxarray = GetAttr(GetElem("RXcoilarray"), "uri");
+	if (frxarray.empty()) frxarray = GetAttr(GetElem("RXcoilarray"), "uri");
 
 	m_rx_coil_array = new CoilArray();
 	m_rx_coil_array->setMode(0);
 
-	std::string sp (GetAttr(GetElem("RXcoilarray"), "SignalPrefix"));
-
-	if (!sp.empty())
-		m_rx_coil_array->SetSignalPrefix(sp);
+	string sp = GetAttr(GetElem("RXcoilarray"), "SignalPrefix");
+	if (!sp.empty()) m_rx_coil_array->SetSignalPrefix(sp);
 
 	m_rx_coil_array->Initialize(frxarray);
 	m_rx_coil_array->Populate();
@@ -150,9 +156,7 @@ void Simulator::SetRxCoilArray      (string frxarray) {
 /**********************************************************/
 void Simulator::SetTxCoilArray      (string ftxarray) {
 
-	if (ftxarray.empty())
-		ftxarray = GetAttr(GetElem("TXcoilarray"), "uri");
-
+	if (ftxarray.empty()) ftxarray = GetAttr(GetElem("TXcoilarray"), "uri");
 	m_tx_coil_array = new CoilArray();
 	m_tx_coil_array ->setMode(1);
 	m_tx_coil_array ->Initialize(ftxarray);
@@ -161,7 +165,7 @@ void Simulator::SetTxCoilArray      (string ftxarray) {
 }
 
 /**********************************************************/
-void Simulator::SetModel          (std::string fmodel) {
+void Simulator::SetModel          (string fmodel) {
 
 	if (fmodel.empty()) 
 		fmodel = GetAttr(GetElem("model"), "type");
@@ -262,7 +266,7 @@ void Simulator::SetParameter      () {
 }
 
 /**********************************************************/
-string Simulator::GetAttr         (DOMElement* element, const string& key) {
+string Simulator::GetAttr         (DOMElement* element, string key) {
 	return StrX( element->getAttribute( StrX(key).XMLchar()) ).std_str() ;
 }
 
@@ -276,18 +280,13 @@ void Simulator::Simulate          (bool bDumpSignal) {
 
 	m_rx_coil_array->InitializeSignals (m_sequence->GetNumOfADCs());
 
-	if (bDumpSignal) {
-		m_kspace = new KSpace<double,4>();
-		KSpace<double,4>::KPoint p;
-		m_kspace->PushBack(p);
+	if (bDumpSignal) 
 		CheckRestart();
-	}
 
 	m_model->Solve();
 
 	if (bDumpSignal) {
 		m_rx_coil_array->DumpSignals();
-		m_kspace->Write("signals.h5", "kspace", "/");
 		DeleteTmpFiles();
 	}
 
@@ -324,7 +323,7 @@ Simulator::~Simulator             () {
 	//the simulator deletes the singletons !
 	if (m_world != NULL) delete m_world;
 
-	delete SequenceTree::instance();
+	//delete SequenceTree::instance();
 
 }
 /**********************************************************/

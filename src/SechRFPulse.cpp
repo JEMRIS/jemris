@@ -32,7 +32,7 @@ SechRFPulse::SechRFPulse  (const SechRFPulse&) {
 }
 
 /***********************************************************/
-bool SechRFPulse::Prepare  (const PrepareMode mode) {
+bool SechRFPulse::Prepare  (PrepareMode mode) {
 
     m_max_amplitude = 1.0;
     m_sech_phase    = 0.0;

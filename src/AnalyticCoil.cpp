@@ -7,7 +7,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -34,7 +34,7 @@
 #include "AnalyticCoil.h"
 
 
-bool AnalyticCoil::Prepare (const PrepareMode mode) {
+bool AnalyticCoil::Prepare (PrepareMode mode) {
 
     bool success = true;
 
@@ -85,7 +85,7 @@ bool AnalyticCoil::Prepare (const PrepareMode mode) {
 }
 
 /*******************************************************************/
-double AnalyticCoil::GetSensitivity(const double* position) {
+double AnalyticCoil::GetSensitivity(double* position) {
 
 	if ( !m_analytic )	return 0.0;
 

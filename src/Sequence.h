@@ -29,8 +29,6 @@
 
 #include "Module.h"
 #include "Parameters.h"
-#include "NDData.h"
-
 
 //! Super class for all sequence (non-pulse) modules
 
@@ -59,19 +57,26 @@ public:
     virtual void    GetValue   (double * dAllVal, double const time) {};
 
     /**
+     * Get the duration of this module.
+     *
+     * @return Duration in ms
+     */
+    virtual double GetDuration () = 0;
+
+    /**
      * Prepare the sequence.
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return Success
      */
-    virtual bool Prepare       (const PrepareMode mode) ;
+    virtual bool Prepare       (PrepareMode mode) ;
 
     /**
      * Sequence Diag
      *
      * @param fname File name
      */
-    void  SeqDiag  (const string& fname = "seq.h5");
+    void  SeqDiag  (string fname = "seq.bin");
 
     /**
      * Write sequence file
@@ -79,14 +84,14 @@ public:
      * @param pfout File output stream
      * @param time  Time: More elaborate description, please.
      */
-    virtual void CollectSeqData          (NDData<double>& seqdata, double time, size_t offset);
+    void CollectSeqData          (vector <double*> seqdata, double& time, long& offset);
 
     /**
      * Get the number of ADCs for this sequence.
      *
      * @return The nmuber of ADCs.
      */
-    virtual long GetNumOfADCs ();
+    long GetNumOfADCs ();
 
 
  protected:

@@ -29,7 +29,7 @@
 #include "AnalyticGradPulse.h"
 
 /***********************************************************/
-AnalyticPulseShape::AnalyticPulseShape () : m_pulse(0), m_phase(0.) {
+AnalyticPulseShape::AnalyticPulseShape ()  {
   
 	m_prepared		= false;
 	m_rfpulse		= false;
@@ -85,7 +85,7 @@ void  AnalyticPulseShape::PrepareInit (bool verbose) {
 	( (AnalyticRFPulse*) m_pulse)->insertGetPhaseFunction( &AnalyticPulseShape::GetPhase );
     }
     
-    //init obervable and visible attributes: "Shape", "TPOIs"
+    //init observable and visible attributes: "Shape", "TPOIs"
     if (m_pulse->m_attributes.find("Shape")==m_pulse->m_attributes.end() )
 	m_pulse->m_attributes.insert(pair<string,Attribute*>("Shape",new Attribute("Shape",m_pulse, true, true, m_analytic_value)));  
     if (m_pulse->m_attributes.find("TPOIs")==m_pulse->m_attributes.end() )

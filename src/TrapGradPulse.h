@@ -62,7 +62,7 @@ class TrapGradPulse : public GradPulse {
      *
      * See Module::Prepare
      */
-    virtual bool    Prepare       (const PrepareMode mode);
+    virtual bool    Prepare       (PrepareMode mode);
 
     /**
      * See GradPulse::GetGradient

@@ -68,7 +68,7 @@ ModulePrototypeFactory::ModulePrototypeFactory () {
 	m_Clonables.insert( pair<string,Module*>( "CONSTANTGRADPULSE",   new ConstantGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "ANALYTICGRADPULSE",   new AnalyticGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "ANALYTICRFPULSE",     new AnalyticRFPulse     () ));
-	m_Clonables.insert( pair<string,Module*>( "SPIRALGRADPULSE",     new SpiralGradPulse     () ));
+	m_Clonables.insert( pair<string,Module*>( "SPIRALGRADPULSE",     new SpiralGradPulse            () ));
 	m_Clonables.insert( pair<string,Module*>( "EXTERNALGRADPULSE",   new ExternalGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "CONCATSEQUENCE",      new ConcatSequence      () ));
 	m_Clonables.insert( pair<string,Module*>( "ATOMICSEQUENCE",      new AtomicSequence      () ));

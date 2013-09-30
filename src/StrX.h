@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -30,6 +30,7 @@
 #include <string>
 #include <xercesc/util/XMLString.hpp>
 
+using namespace std;
 XERCES_CPP_NAMESPACE_USE
 
 //! Simple class for transcoding sax errors to the machines locale
@@ -41,59 +42,52 @@ class StrX {
     /**
      * @brief Contructor.
      */
-    StrX (const XMLCh* const);
+    StrX(const XMLCh* const toTranscode);
 
     /**
      * @brief Construct with char array.
      */
-    StrX (const char* const);
+    StrX(const char* toTranscode);
 
     /**
      * @brief Construct with string.
      */
-    StrX (const std::string&);
-
-    /**
-     * @brief Construct with string.
-     */
-    StrX (const StrX&);
+    StrX(const string toTranscode);
 
     /**
      * @brief Destructor
      */
-    ~StrX ();
-
-    /**
-     * @brief Construct with string.
-     */
-    StrX& operator= (const StrX&);
+    ~StrX();
 
     /**
      * @brief Transcode to local form char array
      *
      * @return Transcoded char array.
      */
-    const char* localForm () const;
+    const char* localForm() const;
 
     /**
      * @brief Transcode to string.
      *
      * @return Transcoded string.
      */
-    const std::string std_str () const;
+    const string std_str() const;
 
     /**
      * @brief Transcode to XMLCh*.
      *
      * @return Transcoded XMLCh*.
      */
-    const XMLCh* XMLchar () ;
+    const XMLCh* XMLchar() ;
 
 private :
-    
-    XMLCh*  _xmlch;
-    std::string  _string;
-    
+    char*   fLocalForm;
+    string  mString;
+    bool    brelease;
+    bool    brelease2;
+    XMLCh*  tmp;
+
+
 };
 
 #endif /*STRX_H_*/

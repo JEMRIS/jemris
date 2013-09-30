@@ -27,30 +27,6 @@
 #include <algorithm>
 #include "SpiralGradPulse.h"
 
-
-SpiralGradPulse::SpiralGradPulse() :
-m_slewrate(0), m_amps(0), m_beta(0), m_fov(0), m_arms(0), m_max_grad(0),
-m_grad_samp_int(0), m_pitch(0), m_samples(0), m_bw(0), m_inward(0) {}
-
-
-SpiralGradPulse::SpiralGradPulse (const SpiralGradPulse& sp) :
-m_slewrate(0), m_amps(0), m_beta(0), m_fov(0), m_arms(0), m_max_grad(0),
-m_grad_samp_int(0), m_pitch(0), m_samples(0), m_bw(0), m_inward(0){
-
-	m_slew_rate = sp.m_slewrate;
-	m_amps = sp.m_amps;
-	m_beta = sp.m_beta;
-	m_fov = sp.m_fov;
-	m_max_grad = sp.m_max_grad;
-	m_grad_samp_int = sp.m_grad_samp_int;
-	m_pitch = sp.m_pitch;
-	m_samples = sp.m_samples;
-	m_bw = sp.m_bw;
-	m_inward = sp.m_inward;
-
-}
-
-
 /***********************************************************/
 double            SpiralGradPulse::GetGradient (double const time)  {
 
@@ -61,7 +37,7 @@ double            SpiralGradPulse::GetGradient (double const time)  {
 }
 
 /***********************************************************/
-bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
+bool              SpiralGradPulse::Prepare     (PrepareMode mode)   {
 
     bool btag = true;
 	m_inward  = 0;
@@ -134,7 +110,7 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 		double g    [3];
 		double gabs           = 0.0;
 
-		m_amps.resize(m_samples+1);
+		m_amps            = (double*) malloc ((m_samples+1)*sizeof(double));
 		
 		k[XC]                 = 0.0;
 		k[YC]                 = 0.0;
@@ -222,4 +198,9 @@ string          SpiralGradPulse::GetInfo() {
 
 
 /**********************************************************/
-SpiralGradPulse::~SpiralGradPulse ()  { }
+SpiralGradPulse::~SpiralGradPulse ()  { 
+
+	//if (m_amps)
+	//delete [] m_amps;
+
+}

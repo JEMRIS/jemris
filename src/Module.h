@@ -103,7 +103,7 @@ class Module : public Prototype {
      *
      * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      */
-    virtual bool Prepare  (const PrepareMode mode);
+    virtual bool Prepare  (PrepareMode mode);
 
 
     /**
@@ -129,7 +129,7 @@ class Module : public Prototype {
      *
      * @return Duration in ms
      */
-     double GetDuration () const { return m_duration; };
+    virtual double GetDuration () {return 0.0; };
 
     /**
      * @brief Get the Number of TPOIs of this module.
@@ -143,21 +143,21 @@ class Module : public Prototype {
      *
      * @return Vector of child modules.
      */
-    vector<Module*> GetChildren () const;
+    vector<Module*> GetChildren ();
 
     /**
      * @brief Get Child
      *
      * @param position The position in the list of children.
      */
-    Module*         GetChild    (unsigned int position) const;
+    Module*         GetChild    (unsigned int position);
 
     /**
      * @brief Get number of Children
      *
      * @return Number of child modules.
      */
-    int GetNumberOfChildren () const;
+    int GetNumberOfChildren ();
 
     /**
      * @brief Insert Child
@@ -165,7 +165,7 @@ class Module : public Prototype {
      * @param name The name of the module from the ModulePrototypeFactory
      * @return Success
      */
-    bool InsertChild (const string& name);
+    bool InsertChild (string name);
 
 	virtual Module* GetPrototypeByAttributeValue (string name, string attrib);
 
@@ -188,7 +188,7 @@ class Module : public Prototype {
      *
      * @return      Pointer to the private member TPOI.
      */
-     virtual TPOI* GetTPOIs () { return &m_tpoi; }
+     TPOI* GetTPOIs ()      { return &m_tpoi; }
 
     /**
      * @brief Dump the sequence tree.
@@ -198,7 +198,7 @@ class Module : public Prototype {
      * @param ichild More elaborate description
      * @param level  More elaborate description
      */
-      void  DumpTree (const string& file="", Module* mod=NULL, int ichild = 0, int level = 0) ;
+      void  DumpTree (string file="", Module* mod=NULL,int ichild=0, int level=0);
 
     /**
      * @brief Rewrite XML-tree where all expressions are evaluated (for IDEA)
@@ -206,7 +206,7 @@ class Module : public Prototype {
      * @param xml_file name of XML file
      * @return success or failure
      */
-      bool WriteStaticXML(const string& xml_file);
+      bool WriteStaticXML(string xml_file);
 
     /**
      * @brief Create a DOM tree where all expressions are evaluated (for IDEA)

@@ -21,7 +21,6 @@ public:
 	/**
 	 * Shuffles the sample. uses always the same seed (-> reproducible)
 	 */
-	//template <class T>
 	virtual void Execute(Spin* data);
 };
 

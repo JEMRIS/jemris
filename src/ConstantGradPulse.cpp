@@ -33,7 +33,7 @@ ConstantGradPulse::ConstantGradPulse  (const ConstantGradPulse&) {
 }
 
 /***********************************************************/
-bool ConstantGradPulse::Prepare  (const PrepareMode mode) {
+bool ConstantGradPulse::Prepare  (PrepareMode mode) {
 
 	bool btag = true;
 

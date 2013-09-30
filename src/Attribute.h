@@ -7,7 +7,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -62,19 +62,19 @@ class Attribute {
      * @brief Constructors: must provide name (XML), Prototype, public/observable status, and the member variable
      *
      */
-    Attribute (const std::string& name, Prototype* proto, const bool& pub, const bool& obs, const    double& val) { Initialize(name,proto,pub,obs,val); };
-    Attribute (const std::string& name, Prototype* proto, const bool& pub, const bool& obs, const       int& val) { Initialize(name,proto,pub,obs,val); };
-    Attribute (const std::string& name, Prototype* proto, const bool& pub, const bool& obs, const      long& val) { Initialize(name,proto,pub,obs,val); };
-    Attribute (const std::string& name, Prototype* proto, const bool& pub, const bool& obs, const  unsigned& val) { Initialize(name,proto,pub,obs,val); };
-    Attribute (const std::string& name, Prototype* proto, const bool& pub, const bool& obs, const      bool& val) { Initialize(name,proto,pub,obs,val); };
-    Attribute (const std::string& name, Prototype* proto, const bool& pub, const bool& obs, const    std::string& val) { Initialize(name,proto,pub,obs,val); };
-    Attribute (const std::string& name, Prototype* proto, const bool& pub, const bool& obs, const PulseAxis& val) { Initialize(name,proto,pub,obs,val); };
+    Attribute (const string& name, Prototype* proto, const bool& pub, const bool& obs, const    double& val) { Initialize(name,proto,pub,obs,val); };
+    Attribute (const string& name, Prototype* proto, const bool& pub, const bool& obs, const       int& val) { Initialize(name,proto,pub,obs,val); };
+    Attribute (const string& name, Prototype* proto, const bool& pub, const bool& obs, const      long& val) { Initialize(name,proto,pub,obs,val); };
+    Attribute (const string& name, Prototype* proto, const bool& pub, const bool& obs, const  unsigned& val) { Initialize(name,proto,pub,obs,val); };
+    Attribute (const string& name, Prototype* proto, const bool& pub, const bool& obs, const      bool& val) { Initialize(name,proto,pub,obs,val); };
+    Attribute (const string& name, Prototype* proto, const bool& pub, const bool& obs, const    string& val) { Initialize(name,proto,pub,obs,val); };
+    Attribute (const string& name, Prototype* proto, const bool& pub, const bool& obs, const PulseAxis& val) { Initialize(name,proto,pub,obs,val); };
 
     /**
      * @brief Constructor for an unobservable Attribute which does not represent a member variable
      *
      */
-    Attribute (const std::string& name, Prototype* proto, const bool& pub, const bool& obs) {
+    Attribute (const string& name, Prototype* proto, const bool& pub, const bool& obs) {
         m_public        = true;
         m_observable    = false;
         m_dynamic       = false;
@@ -172,21 +172,21 @@ class Attribute {
      * @param val The order of the derivative
      * @param sym Symbol
      */
-    void SetDiff(int val=0, std::string sym="diff")    { m_diff = val; m_sym_diff = sym; }
+    void SetDiff(int val=0, string sym="diff")    { m_diff = val; m_sym_diff = sym; }
 
     /**
      * @brief Get the name of the attribute.
      *
      * @return The name of the attribute.
      */
-    std::string GetName() const    { return m_name; }
+    string GetName() const    { return m_name; }
 
     /**
      * @brief Get the type ID of the attribute.
      *
      * @return The type ID of the attribute.
      */
-    std::string GetTypeID() const   { return m_datatype; }
+    string GetTypeID() const   { return m_datatype; }
 
     /**
      * @brief Get the pointer to the value represented by this attribute.
@@ -207,7 +207,21 @@ class Attribute {
      *
      * return the GiNaC symbol
      */
-    std::string	GetSymbol() { return m_symbol_name; };
+    string	GetSymbol() { return m_symbol_name; };
+
+    /**
+      * @brief Get the GiNaC formula of this attribute.
+      *
+      * return the GiNaC symbol
+      */
+     string	GetFormula() { return m_formula; };
+
+    /**
+     * @brief Get the GiNaC expression of this attribute.
+     *
+     * return the GiNaC epxression
+     */
+    GiNaC::ex GetExpression() { return m_expression; };
 
     /**
      * @brief Set the Prototype's private member represented by this attribute.
@@ -222,7 +236,7 @@ class Attribute {
      * @param verbose		if true, warnings will be dumped to stdout
      * @return				success/failure of operation
      */
-    bool SetMember (std::string expr, const std::vector<Attribute*>& obs_attribs, bool verbose = false);
+    bool SetMember (string expr, const vector<Attribute*>& obs_attribs, bool verbose = false);
 
     /**
      * @brief Evaluate the GiNaC expression of this attribute
@@ -251,7 +265,7 @@ class Attribute {
      * @param attrib	attribute representing the function input value
      * @return			expression evaluation
      */
-    double EvalCompiledExpression (double const val, std::string const attrib );
+    double EvalCompiledExpression (double const val, string const attrib );
 
     /**
      * @brief Evaluate the compiled GiNaC expression of the NLG attribute (nonlinear gradients)
@@ -375,7 +389,7 @@ class Attribute {
      */
     template <typename T> T GetMember (){
     	T d = *((T*) m_address);
-    	if (std::isnan(d)) return 0;
+    	if (isnan(d)) return 0;
     	return d;
     }
 
@@ -388,7 +402,7 @@ class Attribute {
      * @param obs observable status
      * @param val the member variable
      */
-	template <typename T> void Initialize(const std::string& name, Prototype* proto, const bool& pub, const bool& obs, const T& val){
+	template <typename T> void Initialize(const string& name, Prototype* proto, const bool& pub, const bool& obs, const T& val){
         m_public        = pub;
         m_observable    = obs;
         m_dynamic       = false;
@@ -414,28 +428,28 @@ class Attribute {
 	bool       		m_public;		/**< @brief Indicating whether the attribute is accessible through XML. */
 	bool       		m_observable;	/**< @brief Indicating whether the attribute is observable. */
 	bool       		m_dynamic;		/**< @brief Indicating whether the attribute dynamically changes its value in runtime. */
-	std::string     		m_name;			/**< @brief Name of the attribute (in XML).*/
+	string     		m_name;			/**< @brief Name of the attribute (in XML).*/
 	void*      		m_address;		/**< @brief Pointer to the Prototype member variable, which is represented by this attribute.  */
-	std::string     		m_datatype;		/**< @brief Type of the Prototype member variable, which is represented by this attribute.  */
+	string     		m_datatype;		/**< @brief Type of the Prototype member variable, which is represented by this attribute.  */
 	void*      		m_backup;		/**< @brief Backup value of the Prototype member variable, which is represented by this attribute.  */
     Prototype*		m_prototype;	/**< @brief Pointer to the Prototype object, which instantiated this attribute.  */
-    std::string			m_symbol_name;	/**< @brief GiNaC symbol name of the attribute.*/
-    std::string			m_sym_diff;		/**< @brief GiNaC symbol name for symbolic derivative.*/
-	std::string     		m_formula;		/**< @brief Mathematical formula of the attribute (in XML) for GiNaC evaluation.*/
+    string			m_symbol_name;	/**< @brief GiNaC symbol name of the attribute.*/
+    string			m_sym_diff;		/**< @brief GiNaC symbol name for symbolic derivative.*/
+	string     		m_formula;		/**< @brief Mathematical formula of the attribute (in XML) for GiNaC evaluation.*/
 	GiNaC::ex       m_expression;	/**< @brief GiNaC Mathematical expression of the attribute */
 	GiNaC::lst		m_symlist;		/**< @brief GiNaC list of all symbols involved in the calculation.*/
 	bool			m_ginac_excomp;	/**< @brief True, if GiNaC external compiler is available on this system.*/
 	unsigned int	m_num_fp;		/**< @brief Number of GiNaC expression function pointers owned by this attribute.*/
 	unsigned int	m_cur_fp;		/**< @brief Current GiNaC expression function pointer.*/
-	std::vector<bool>	m_compiled;		/**< @brief True, if GiNaC expression is compiled successfully in run time.*/
-	std::vector<GiNaC::FUNCP_1P> m_fp;	/**< @brief Function pointers to GiNaC expression evaluation.*/
-	std::vector<GiNaC::FUNCP_1P> m_fpi;	/**< @brief Function pointers to GiNaC expression evaluation of imaginary part.*/
+	vector<bool>	m_compiled;		/**< @brief True, if GiNaC expression is compiled successfully in run time.*/
+	vector<GiNaC::FUNCP_1P> m_fp;	/**< @brief Function pointers to GiNaC expression evaluation.*/
+	vector<GiNaC::FUNCP_1P> m_fpi;	/**< @brief Function pointers to GiNaC expression evaluation of imaginary part.*/
 	FUNCP_4P 		m_nlgfp;		/**< @brief Function pointer to GiNaC expression evaluation of nonlinear gradients.*/
 	int				m_diff;			/**< @brief Number of symbolic differentiations of the attribute's expression.*/
 	bool            m_complex;      /**< @brief If symbolic expressions are complex, the imaginary part is considered */
     double          m_imaginary;    /**< @brief The imaginary part of complex expression evaluation.*/
-    std::vector<Attribute*> m_subjects;  /**< @brief Vector of attributes under observation by this attribute */
-    std::vector<Attribute*> m_observers; /**< @brief Vector of attributes observing this attribute  */
+    vector<Attribute*> m_subjects;  /**< @brief Vector of attributes under observation by this attribute */
+    vector<Attribute*> m_observers; /**< @brief Vector of attributes observing this attribute  */
 };
 
 #endif /* ATTRIBUTE_H_ */

@@ -65,7 +65,7 @@ public:
      * @param  mode Prepare mode (Here only PREP_INIT)
      * @return      Success
      */
-    bool Prepare(const PrepareMode mode = PREP_INIT);
+    bool Prepare(PrepareMode mode = PREP_INIT);
 
     /**
      * @brief Set default parameters.

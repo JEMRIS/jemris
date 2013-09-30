@@ -3,7 +3,7 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stöcker, Kaveh Vahedipour
+ *  JEMRIS Copyright (C) 2007-2008  Tony Stoecker, Kaveh Vahedipour
  *                                  Forschungszentrum Jülich, Germany
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -391,7 +391,7 @@ void Bloch_McConnell_CV_Model::InitSolver    () {
 
 
 	//Compute local exchange rates and return them in member matrix
-	LocalExchangeRates (m_world->Helper(), m_bmaux.exrates, m0s, m_ncomp);
+	LocalExchangeRates (m_world->helper, m_bmaux.exrates, m0s, m_ncomp);
 
 	delete [] m0s;
 	

@@ -38,7 +38,7 @@ SincRFPulse::SincRFPulse  (const SincRFPulse& hrfp) {
 }
 
 /*****************************************************************/
-bool    SincRFPulse::Prepare  (const PrepareMode mode) {
+bool    SincRFPulse::Prepare  (PrepareMode mode) {
 
     //attributes of the sinc
     ATTRIBUTE("Zeros"       , m_zeros);

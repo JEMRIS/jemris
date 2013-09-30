@@ -34,19 +34,16 @@ ConcatSequence::ConcatSequence  (const ConcatSequence& cs ) {
 }
 
 /***********************************************************/
-bool    ConcatSequence::Prepare (const PrepareMode mode){
+bool    ConcatSequence::Prepare(PrepareMode mode){
 
 	m_type = MOD_CONCAT;
 
-	ATTRIBUTE("Repetitions", m_repetitions);
-	HIDDEN_ATTRIBUTE("Counter", m_counter);
+	       ATTRIBUTE("Repetitions", m_repetitions);
+	HIDDEN_ATTRIBUTE("Counter"    , m_counter    );
 
-	if (mode != PREP_UPDATE)
-		SetRepCounter( 0);
+	if (mode != PREP_UPDATE)	SetRepCounter( 0);
 
-	CalcDuration();
-
-    return Sequence::Prepare(mode);
+        return Sequence::Prepare(mode);
 }
 
 /***********************************************************/
@@ -63,20 +60,21 @@ void    ConcatSequence::SetRepetitions (unsigned int val){
 }
 
 /***********************************************************/
-inline double ConcatSequence::CalcDuration () {
+double     ConcatSequence::GetDuration  (){
 
-	 m_duration = 0.;
-
+	double duration = 0.0;
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r)
 		for (unsigned int j=0; j<children.size() ; ++j)
-			m_duration += children[j]->GetDuration();
+			duration += children[j]->GetDuration();
 
-	//m_duration = duration;
+	m_duration = duration;
 	DEBUG_PRINT("  ConcatSequence::GetDuration() of " << GetName() << " calculates  duration = " << duration << endl;)
 
 	Notify(m_duration);
+
+	return duration;
 
 }
 
@@ -97,49 +95,43 @@ int  ConcatSequence::GetNumOfTPOIs (){
 /***********************************************************/
 void  ConcatSequence::GetValue (double * dAllVal, double const time) {
 
-	if (time < 0.0 || time > m_duration) { return ; }
+        if (time < 0.0 || time > GetDuration()) { return ; }
 
-	double dRemTime  =  time;
+        double dRemTime  =  time;
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r)
 		for (unsigned int j=0; j<children.size() ; ++j) {
 
-			if (dRemTime < children[j]->GetDuration()) {
-				children[j]->GetValue(dAllVal,dRemTime);
-				return ;
-			}
-		dRemTime -= children[j]->GetDuration();
-	}
+                        if (dRemTime < children[j]->GetDuration()) {
+                                children[j]->GetValue(dAllVal,dRemTime);
+                                return ;
+                        }
+                        dRemTime -= children[j]->GetDuration();
+                }
 
-	cout << "???" << endl; //this should never happen !!!
+        cout << "???" << endl; //this should never happen !!!
 
 }
+/***********************************************************/
+/*
+bool ConcatSequence::StaticDOM(DOMDocument* doc, DOMNode* node){
 
+	bool ret = true;
+	DOMElement* concat    = doc->createElement (  StrX("CONCAT").XMLchar() );
+	node->appendChild(concat);
+
+	vector<Module*> children = GetChildren();
+		for (unsigned int j=0; j<children.size() ; ++j)
+                  ret = ( children[j]->StaticDOM(doc, concat) && ret);
+
+	return ret;
+}
+ */
 /***********************************************************/
 string          ConcatSequence::GetInfo() {
+
 	stringstream s;
 	s << " Repetitions = " << m_repetitions;
 	return s.str();
 }
-
-/*
-void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t offset) {
-
-	vector<Module*> children = GetChildren();
-	ConcatSequence* pSeq     = ((ConcatSequence*) this);
-
-	for (RepIter r=pSeq->begin(); r<pSeq->end(); ++r) {
-
-		for (unsigned int j=0; j<children.size() ; ++j) {
-
-			((Sequence*) children[j])->CollectSeqData(seqdata, t, offset);
-			if (children[j]->GetType() != MOD_CONCAT) {
-				t   += children[j]->GetDuration();
-				offset += children[j]->GetNumOfTPOIs();
-			}
-		}
-	}
-
-}*/
-

@@ -6,7 +6,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -34,6 +34,10 @@
 #include "SequenceTree.h"
 #include "ConcatSequence.h"
 #include "config.h"
+
+#ifndef SVN_REVISION
+	#define SVN_REVISION "unkown"
+#endif
 
 using namespace std;
 
@@ -64,14 +68,9 @@ void do_simu (Simulator* sim) {
 	cout << endl;
 }
 
-
 int main (int argc, char *argv[]) {
 	//print usage
-	cout << "\nJEMRIS " << VERSION ;
-#ifdef GIT_COMMIT
-		cout << " (" << GIT_COMMIT << " - " << GIT_COMMIT_DATE << ")" << endl;
-#endif
-
+	cout << "\nJEMRIS " << VERSION << " r"<< SVN_REVISION <<"\n\n";
 
 	if (argc==1) {
 		usage();
@@ -84,7 +83,7 @@ int main (int argc, char *argv[]) {
 	if (input == "modlist")  {
 		SequenceTree* seqTree = SequenceTree::instance();
 		seqTree->SerializeModules("mod.xml");
-		delete seqTree;
+		//delete seqTree;
 		return 0;
 	}
 
@@ -97,6 +96,7 @@ int main (int argc, char *argv[]) {
 		seq->SeqDiag("seq.bin");
 		seq->DumpTree();
 		if (argc==3) seq->WriteStaticXML("jemris_seq.xml");
+		//delete seqTree;
 		return 0;
 	}
 

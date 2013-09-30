@@ -27,7 +27,7 @@
 #include "GaussianRFPulse.h"
 
 /***********************************************************/
-bool GaussianRFPulse::Prepare  (const PrepareMode mode) {
+bool GaussianRFPulse::Prepare  (PrepareMode mode) {
 
     m_max_amplitude = 1;
     m_max_amplitude = (PI/180.0) * GetFlipAngle() / GetIntegralNumeric(10000) ;

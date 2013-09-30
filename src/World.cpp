@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -26,6 +26,7 @@
 
 #include "World.h"
 #include "Model.h"
+
 
 World* World::m_instance = 0;
 
@@ -61,8 +62,6 @@ World* World::instance() {
 
     }
 
-    XMLPlatformUtils::Initialize ();
-    
     return m_instance;
 
 }
@@ -96,8 +95,8 @@ void World::SetNoOfSpinProps (int n) {
 }
 
 void World::InitHelper (long size)  {
-  if (size > 0)
-    helper.resize(size);
+	if (size > 0)
+		helper = (double*) malloc (size * sizeof(double));
 
 }
 
@@ -107,10 +106,12 @@ int World::GetNoOfCompartments () {
 
 void World::SetNoOfCompartments (int n) {
 
+	// We will potentially get as many solutions for m[x-z] as compartments.
 	m_noofspincompartments = n;
+	if (!solution) {
+		solution = new double [m_noofspincompartments * 3];
+	}
 
-    if (solution.empty())
-        solution.resize(m_noofspincompartments * 3);
 
 }
    
@@ -118,6 +119,9 @@ void World::SetNoOfCompartments (int n) {
 World::~World () { 
 	
 	m_instance=0; 
+	
+	if (helper)
+		free (helper);
 	
 	if (Values)
 		delete Values; 

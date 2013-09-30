@@ -29,8 +29,10 @@
 
 #include "Pulse.h"
 
-//! Base class and prototype for all gradient pulses
+//forward declaration of EddyPulse (which itself is a GradPulse)
+class EddyPulse;
 
+//! Base class and prototype for all gradient pulses
 class GradPulse : public Pulse {
 
  public:
@@ -64,14 +66,19 @@ class GradPulse : public Pulse {
     virtual double GetGradient (double const time){return 0.0; };
 
     // @brief see Module::Prepare
-    virtual bool Prepare  (const PrepareMode mode);
+    virtual bool Prepare  (PrepareMode mode);
 
     /**
      * @brief Preparation of Nonlinear Gradient fields
      *
      * @param mode for preparation
      */
-    virtual bool PrepareNLGfield  (const PrepareMode mode);
+    virtual bool PrepareNLGfield  (PrepareMode mode);
+
+    /**
+     * @brief Calculate Eddy Currents of this Gradient
+     */
+    virtual bool PrepareEddyCurrents (PrepareMode mode, int steps = 5000);
 
     /**
      * @brief get the area of this gradient pulse by numerical integration.
@@ -123,6 +130,13 @@ class GradPulse : public Pulse {
    double m_nlg_py;          /**< @brief y-position to compute the NLG field*/
    double m_nlg_pz;          /**< @brief z-position to compute the NLG field*/
    double m_nlg_val;         /**< @brief gradient value to compute the NLG field*/
+
+   bool              m_eddy_currents; /**< @brief A flag for nonlinear gradients */
+   double			 m_eddy_time;      /**< @brief time of eddy current*/
+   double		     m_eddy_val;      /**< @brief value of eddy current*/
+   double			 m_ec_area;		  /**< @brief area of eddy current*/
+   EddyPulse* 		 m_eddy_pulse;    /**< @brief pulse for eddy currents*/
+   bool   m_hide;            /**< @brief Hide this gradient (not played out, but its ECs!)  */
 
 };
 
