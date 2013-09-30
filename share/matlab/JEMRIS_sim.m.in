@@ -2,8 +2,10 @@ function varargout = JEMRIS_sim (varargin)
 %GUI for jemris simulation visualisation
 
 %
-%  JEMRIS Copyright (C) 2007-2010  Tony Stcker, Kaveh Vahedipour
-%                                  Forschungszentrum Jlich, Germany
+%  JEMRIS Copyright (C)
+%                        2006-2013  Tony Stöcker
+%                        2007-2013  Kaveh Vahedipour
+%                        2009-2013  Daniel Pflugfelder
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -87,7 +89,7 @@ else
     handles.PJemrisCall = ['setenv LD_LIBRARY_PATH ""; @MPIRUN@  @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
   else    % a BASH 
     handles.JemrisCall  = ['LD_LIBRARY_PATH=""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
-    handles.PJemrisCall = ['LD_LIBRARY_PATH=""; @MPIRUN@  @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
+    handles.PJemrisCall = ['LD_LIBRARY_PATH=""; @MPIRUN@  @MPIRUN_PROC_OPT@ 5 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
   end
   %CLUSTER call works only, if the CWD belongs to cluster
   cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/srv/data/',cwd(n:end)];
