@@ -5,8 +5,11 @@ function [SeqTree,ax]=plotseq(handles,moment_flag,kspace_flag)
 %output: Sequence tree and axes limts for the seuqence diagram
 
 %
-%  JEMRIS Copyright (C) 2007-2010  Tony St??cker, Kaveh Vahedipour
-%                                  Forschungszentrum J??lich, Germany
+%  JEMRIS Copyright (C) 
+%                        2006-2013  Tony Stoecker
+%                        2007-2013  Kaveh Vahedipour
+%                        2009-2013  Daniel Pflugfelder
+%                                  
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -70,19 +73,16 @@ TXP=h5read('seq.h5','/seqdiag/TXP');
 GX =h5read('seq.h5','/seqdiag/GX');
 GY =h5read('seq.h5','/seqdiag/GY');
 GZ =h5read('seq.h5','/seqdiag/GZ');
-KX =h5read('seq.h5','/seqdiag/KX');
-KY =h5read('seq.h5','/seqdiag/KY');
-KZ =h5read('seq.h5','/seqdiag/KZ');
 Iadc=find(RXP>=0);
 Tadc=t(Iadc);
 Rec_Phs=RXP(Iadc)*180/pi;
-A=[TXM TXP GX GY GZ KX KY KZ]; A(:,2)=A(:,2)*180/pi;
+A=[TXM TXP GX GY GZ]; A(:,2)=A(:,2)*180/pi;
  
 if length(ax)==1;ax=[min(t) max(t)];end
 
-DO_2D = isempty(find(A(:,5),1)); 
-[~,i1]=min(abs(t-ax(1)));
-[~,i2]=min(abs(t-ax(2)));
+DO_2D = isempty(find(A(:,5))); 
+[dummy,i1]=min(abs(t-ax(1)));
+[dummy,i2]=min(abs(t-ax(2)));
 
 if moment_flag
     A(:,[3 4 5])=cumtrapz(t,A(:,[3 4 5]));
@@ -105,21 +105,21 @@ if moment_flag
             if j<length(J);n_end=J(j+1)-1+handles.cd;else n_end=length(A(:,3));end
             n_all=[J(j)+1-handles.cd:1:n_end];
             if DO_2D
-                plot(A(n_all,6),A(n_all,7),'color',C(j,:))
+                plot(A(n_all,3),A(n_all,4),'color',C(j,:))
             else
-                plot3(A(n_all,6),A(n_all,7),A(n_all,8),'color',C(j,:)),view(3),grid
+                plot3(A(n_all,3),A(n_all,4),A(n_all,5),'color',C(j,:)),view(3),grid
             end
         end
         if kspace_flag==2;
             if DO_2D
-                plot(A(Iadc,6),A(Iadc,7),'.g')
+                plot(A(Iadc,3),A(Iadc,4),'.g')
             else
-                plot3(A(Iadc,6),A(Iadc,7),A(Iadc,8),'.g')
+                plot3(A(Iadc,3),A(Iadc,4),A(Iadc,5),'.g')
             end
         end 
         set(gca,'color',[0 0 0]);
-        if (min(A(:,6))<max(A(:,6)) && min(A(:,7))<max(A(:,7)) )
-            axis(1.1*[min(A(:,6)) max(A(:,6)) min(A(:,7)) max(A(:,7))]);
+        if (min(A(:,3))<max(A(:,3)) && min(A(:,4))<max(A(:,4)) )
+            axis(1.1*[min(A(:,3)) max(A(:,3)) min(A(:,4)) max(A(:,4))]);
         end
         axis equal; hold off;
         xlabel('Kx [rad / mm]','fontsize',12,'fontweight','bold')

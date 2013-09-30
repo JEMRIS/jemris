@@ -3,8 +3,11 @@ function [S,x]=plotSeqTree(S,handles,x,y)
 %helper function of JEMRIS_seq.m
 
 %
-%  JEMRIS Copyright (C) 2007-2010  Tony Stöcker, Kaveh Vahedipour
-%                                  Forschungszentrum Jülich, Germany
+%  JEMRIS Copyright (C) 
+%                        2006-2013  Tony Stoecker
+%                        2007-2013  Kaveh Vahedipour
+%                        2009-2013  Daniel Pflugfelder
+%                                  
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -192,7 +195,7 @@ if isempty(seq.Attributes)
     seq.Attributes.Value=seq.Name;
 end
 
-for i=1:15
+for i=1:17
     if i>length(A)
         bvis='''off''';
     else
