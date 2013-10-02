@@ -48,15 +48,13 @@ void mpi_send_paket_signal(Signal* pSig,int CoilID);
 void mpi_recv_paket_signal(Signal* pSig,int SlaveID,int CoilID);
 
 /*****************************************************************************/
-MPI_Datatype  MPIspindata() {
+inline MPI_Datatype MPIspindata () {
 
-	int    NUM_DATA = World::instance()->GetNoOfSpinProps();
+	int NUM_DATA = World::instance()->GetNoOfSpinProps();
 
     MPI_Datatype MPI_SPINDATA ;
-
-	MPI_Aint     disp = 0;
 	MPI_Datatype type = MPI_DOUBLE;
-	
+	MPI_Aint     disp = 0;
 
     MPI_Type_struct( 1, &NUM_DATA, &disp, &type, &MPI_SPINDATA);
     MPI_Type_commit( &MPI_SPINDATA);
@@ -130,53 +128,45 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	// end copy + paste thread example
 #endif
 
-    int size;
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-	int ilen;
-    char hm[MPI_MAX_PROCESSOR_NAME];
-    char* hostname=&hm[0];
-	MPI_Get_processor_name(hostname,&ilen);
+    int size, ilen;
+    std::string hm (MPI_MAX_PROCESSOR_NAME,' ');
 
-	cout << endl << hostname << " -> Master Process: send MR sample (" << pSam->GetSize()
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+	MPI_Get_processor_name(&hm[0], &ilen);
+
+	cout << endl << hm.c_str() << " -> Master Process: send MR sample (" << pSam->GetSize()
 		 << " spins) to " << size-1 << " slave(s)"<< endl << endl << flush;
 
-	int*     sendcount; 		    // array with NumberOfSpins[slaveid]
-	int*     displs;
+	std::vector<int> sendcount (size); 		    // array with NumberOfSpins[slaveid]
+	std::vector<int> displs (size);
 	int      recvbuf;
 	double*  recvdummy = 0;	// dummy buffer
-
-	// create sendcounts, displs
-	sendcount 	 = new int[size];
-	displs		 = new int[size];
 
 	// no spin data for master:
 	displs[0]	 = 0;
 	sendcount[0] = 0;
 	
-	pSam->GetScatterVectors(sendcount,displs,size);
+	pSam->GetScatterVectors(sendcount.data(), displs.data(), size);
 
 	// scatter sendcounts:
-	MPI_Scatter  (sendcount, 1, MPI_INT, &recvbuf, 1, MPI_INT, 0, MPI_COMM_WORLD);
+	MPI_Scatter  (sendcount.data(), 1, MPI_INT, &recvbuf, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 	// broadcast number of individual spin prioperties:
 	long NProps = pSam->GetNProps();
-	MPI_Bcast    (&NProps,1,MPI_LONG,0, MPI_COMM_WORLD);
+	MPI_Bcast    (&NProps, 1, MPI_LONG, 0, MPI_COMM_WORLD);
 
 	long hsize = pSam->GetHelperSize();
 
-	// scatter sendcounts:
-	MPI_Bcast    (&hsize,            1,    MPI_LONG,0, MPI_COMM_WORLD);
-
-	// broadcast number of individual spin prioperties:
-	MPI_Bcast    (pSam->GetHelper(),hsize,MPI_DOUBLE,0, MPI_COMM_WORLD);
-
+	MPI_Bcast    (&hsize, 1, MPI_LONG, 0, MPI_COMM_WORLD);
+	MPI_Bcast    (pSam->GetHelper(), hsize, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 	int csize = pSam->GetNoSpinCompartments();
-	MPI_Bcast    (&csize , 1 ,MPI_INT,0, MPI_COMM_WORLD);
+	MPI_Bcast    (&csize , 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 	MPI_Datatype MPI_SPINDATA = MPIspindata();
 
 	//scatter sendcounts:
-	MPI_Scatterv (pSam->GetSpinsData(),sendcount,displs,MPI_SPINDATA,&recvdummy,0,MPI_SPINDATA,0, MPI_COMM_WORLD);
+	MPI_Scatterv (pSam->GetSpinsData(), sendcount.data(), displs.data(),
+			MPI_SPINDATA, &recvdummy, 0, MPI_SPINDATA, 0, MPI_COMM_WORLD);
 	// broadcast resolution:
 	MPI_Bcast    (pSam->GetResolution(),3,MPI_DOUBLE,0, MPI_COMM_WORLD);
 
@@ -187,9 +177,9 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 		int     SlaveID;
 		int     NoSpins;
 		int     NextSpinToSend;
-		//double* spindata = pSam->GetSpinsData();
 		MPI_Status status;
-		MPI_Recv(&SlaveID,1,MPI_INT,MPI_ANY_SOURCE,REQUEST_SPINS, MPI_COMM_WORLD, &status);
+		MPI_Recv(&SlaveID, 1, MPI_INT, MPI_ANY_SOURCE,
+				REQUEST_SPINS, MPI_COMM_WORLD, &status);
 
 		//get next spin paket to send:
 		pSam->GetNextPacket(NoSpins,NextSpinToSend,SlaveID);
@@ -207,14 +197,17 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 		// now send NoSpins
 		MPI_Send(&NoSpins,1,MPI_INT,SlaveID,SEND_NO_SPINS, MPI_COMM_WORLD);
 		if (NoSpins > 0)
-			MPI_Send(&(pSam->GetSpinsData())[NextSpinToSend*pSam->GetNProps()],NoSpins,MPI_SPINDATA,SlaveID,SEND_SAMPLE, MPI_COMM_WORLD);
+			MPI_Send(&(pSam->GetSpinsData())[NextSpinToSend*pSam->GetNProps()],
+					NoSpins, MPI_SPINDATA,SlaveID,SEND_SAMPLE, MPI_COMM_WORLD);
 
 #ifndef HAVE_MPI_THREADS
 
 		// without threads: write progress bar each time new spins are sent:
 		static int progress_percent = -1;
-		static int spinsdone=0;
-		spinsdone+=sendcount[SlaveID];	sendcount[SlaveID]=NoSpins;
+		static int spinsdone = 0;
+		spinsdone += sendcount[SlaveID];
+		sendcount[SlaveID] = NoSpins;
+
 		//update progress counter (pjemris without threads support)
 		World* pW = World::instance();
 		int progr = (100*(spinsdone+1)/pW->TotalSpinNumber);
@@ -232,9 +225,6 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	}  // end while (SlavesDone < size -1)
 
 	flush (cout);
-
-	delete[] sendcount;
-	delete[] displs;
 
 #ifdef HAVE_MPI_THREADS
 	/* join threads: */
@@ -291,8 +281,8 @@ Sample* mpi_receive_sample(int sender, int tag){
 	//get resolution (needed for position randomness)
 	MPI_Bcast    (pSam->GetResolution(),3,MPI_DOUBLE,0, MPI_COMM_WORLD);
 
-	int ilen; char hm[MPI_MAX_PROCESSOR_NAME]; char* hostname=&hm[0];
-	MPI_Get_processor_name(hostname,&ilen);
+	int ilen; std::string  hm (MPI_MAX_PROCESSOR_NAME, ' ');
+	MPI_Get_processor_name(&hm[0],&ilen);
 	//cout << hostname << " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
 	//     << NPoints << " spins for simulation ..." << endl << flush;
 
@@ -332,8 +322,8 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	// Receive
 	MPI_Datatype MPI_SPINDATA = MPIspindata();
 	MPI_Recv(samp->GetSpinsData(),NoSpins,MPI_SPINDATA,0,SEND_SAMPLE,MPI_COMM_WORLD,&status);
-	int ilen; char hm[MPI_MAX_PROCESSOR_NAME]; char* hostname=&hm[0];
-	MPI_Get_processor_name(hostname,&ilen);
+	int ilen; std::string hm (MPI_MAX_PROCESSOR_NAME, ' ');
+	MPI_Get_processor_name(&hm[0],&ilen);
 	//cout << hostname << " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
 	//     << NoSpins << " spins for simulation ..." << endl << flush;
 
@@ -341,7 +331,7 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 
 }
 /*****************************************************************************/
-void mpi_send_paket_signal (Signal* pSig, int CoilID) {
+void mpi_send_paket_signal (Signal* pSig, const int CoilID) {
 	
 	int     tsize = (int) pSig->Repo()->Size();
 	
@@ -354,22 +344,20 @@ void mpi_send_paket_signal (Signal* pSig, int CoilID) {
 }
 
 /*****************************************************************************/
-void mpi_recv_paket_signal(Signal *pSig, int SlaveId, int CoilID) {
+void mpi_recv_paket_signal(Signal *pSig, const int SlaveId, const int CoilID) {
 
 	int     tsize = (int) pSig->Repo()->Size();
 	double* data  = pSig->Repo()->Data(); 
-	double* tmp   = (double*) malloc (tsize*sizeof(double));
+	std::vector<double> tmp (tsize);
 	MPI_Status status;
 	
 	if (SlaveId == 1)
 	  MPI_Recv(pSig->Repo()->Times(), (int) pSig->Repo()->Samples(), MPI_DOUBLE, SlaveId, SIG_TP + (CoilID)*4,MPI_COMM_WORLD,&status);
 	
-	MPI_Recv(tmp, tsize, MPI_DOUBLE, SlaveId, SIG_MX + (CoilID)*4,MPI_COMM_WORLD,&status);
+	MPI_Recv(&tmp[0], tsize, MPI_DOUBLE, SlaveId, SIG_MX + (CoilID)*4,MPI_COMM_WORLD,&status);
 
 	for (int i = 0; i < tsize; i++) 
 		data[i] += tmp[i];
-	
-	free (tmp);
 
 }
 

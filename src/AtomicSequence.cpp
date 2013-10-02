@@ -30,14 +30,8 @@
 #include "RFPulse.h"
 
 /***********************************************************/
-AtomicSequence::AtomicSequence  (const AtomicSequence& as) {
-
-	m_alpha         = 0.0;
-	m_theta         = 0.0;
-	m_phi           = 0.0;
-	m_non_lin_grad  = false;
-
-}
+AtomicSequence::AtomicSequence  (const AtomicSequence& as) :
+	m_eddy(0), m_alpha(0.), m_phi(0.), m_theta(0.), m_non_lin_grad(false) {}
 
 /***********************************************************/
 bool    AtomicSequence::Prepare(const PrepareMode mode) {
@@ -244,7 +238,8 @@ void    AtomicSequence::GetValueLingeringEddyCurrents (double * dAllVal, double 
 
 	for(iter = pW->m_eddies.begin(); iter != pW->m_eddies.end(); iter++) {
 
-		if ( iter->second < 0.0 ) continue;
+		if ( iter->second < 0.0 )
+			continue;
 
 		iter->first->GetValue(dAllVal,    iter->first->GetParentDuration()
 										+ iter->first->GetLingerTime()

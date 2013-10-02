@@ -39,7 +39,7 @@
 #include "Trajectory.h"
 
 /**************************************************/
-Model::Model() {
+Model::Model() : m_tx_coil_array(0), m_sample(0), m_rx_coil_array(0), m_concat_sequence(0) {
 
     m_world            = World::instance();
     m_aux              = false;
@@ -167,16 +167,17 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 		double  dtsh = dTimeShift;
 		long    ladc = lIndexShift;
 		int     iadc = m_world->pAtom->GetNumOfADCs();
-		double* dmxy = new double[iadc*m_world->GetNoOfCompartments()];
-		double* dmph = new double[iadc*m_world->GetNoOfCompartments()];
-		double* dmz  = new double[iadc*m_world->GetNoOfCompartments()];
+		std::vector<double> dmxy (iadc*m_world->GetNoOfCompartments());
+		std::vector<double> dmph (iadc*m_world->GetNoOfCompartments());
+		std::vector<double> dmz  (iadc*m_world->GetNoOfCompartments());
 		double  dMt  = m_world->solution[0];
 		double  dMp  = m_world->solution[1];
 		double  dMz  = m_world->solution[2];
 		
 		iadc=0;
 
-		if (bCollectTPOIs) m_world->pAtom->CollectTPOIs () ;
+		if (bCollectTPOIs)
+			m_world->pAtom->CollectTPOIs () ;
 
 		//Solve problem at every TPOI in the atom
 		m_world->total_time = dTimeShift;
@@ -221,7 +222,6 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				  iadc++;
 				}
 				
-				delete[] dmxy; delete[] dmph; delete[] dmz;
 				FreeSolver();				
 				
 				m_accuracy_factor *= 0.1; // increase accuray by factor 1e-3
@@ -235,7 +235,8 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				return;
 			}
 
-			if (m_world->phase < 0.0) continue;	//negative receiver phase == no ADC !
+			if (m_world->phase < 0.0)
+				continue;	//negative receiver phase == no ADC !
 
 			m_world->time  += dTimeShift;
 			m_rx_coil_array->Receive(lIndexShift++);
@@ -261,8 +262,6 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 		}
 
 		dTimeShift += m_world->pAtom->GetDuration();
-
-		delete[] dmxy; delete[] dmph; delete[] dmz;
 		FreeSolver();
 
 	}
