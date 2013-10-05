@@ -194,6 +194,7 @@ void AtomicSequence::CollectTPOIs() {
 	m_tpoi.Purge();
 
 }
+
 /***********************************************************/
 string          AtomicSequence::GetInfo() {
 
@@ -206,6 +207,7 @@ string          AtomicSequence::GetInfo() {
 }
 
 
+/***********************************************************/
 void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t offset) {
 
 	bool rem  = this->HasNonLinGrad();

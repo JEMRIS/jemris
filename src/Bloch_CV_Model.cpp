@@ -69,9 +69,9 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     double Bx=0.0,By=0.0,Bz=0.0;
 
     //lingering eddy currents
+    //cout << d_SeqVal[GRAD_X] << " ! " << endl;
     pW->pAtom->GetValueLingeringEddyCurrents(d_SeqVal,t);
-    pW->pAtom->UpdateEddyCurrents();
-    pW->pAtom->PrepareEddyCurrents();
+    //cout << d_SeqVal[GRAD_X] << " !! " << endl << endl;
 
     //Transverse Components: RF field
     Bx = d_SeqVal[RF_AMP]*cos(d_SeqVal[RF_PHS]);

@@ -63,7 +63,7 @@ void  AnalyticPulseShape::SetTPOIs () {
 
     m_pulse->Pulse::SetTPOIs();
 
-    for (unsigned i = 1; i < m_more_tpois; i++)
+    for (int i = 1; i < m_more_tpois; i++)
     	m_pulse->m_tpoi + TPOI::set((i+1)*m_pulse->GetDuration()/(m_more_tpois+1), -1.0 );
 
 

@@ -53,10 +53,10 @@ inline void  EmptyPulse::SetTPOIs () {
 	  m_tpoi.Reset();
 	  double D=GetDuration();
 	  m_tpoi + TPOI::set(D, -1.0);
-	  unsigned int N = GetNADC();
+	  int N = GetNADC();
 	  double first = GetAttribute("Shape")->EvalCompiledExpression(0.0,"AnalyticTime");
 	  double last  = GetAttribute("Shape")->EvalCompiledExpression(D,"AnalyticTime");
-	  for (unsigned i = 0; i < N; i++) {
+	  for (int i = 0; i < N; i++) {
 	    double t = (i+1)*D/(GetNADC()+1);
 	    double shape = GetAttribute("Shape")->EvalCompiledExpression(t,"AnalyticTime");
 	    double adc   = D*(shape-first)/(last-first); //scale adc event into livetime of this emptypulse

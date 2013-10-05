@@ -56,6 +56,7 @@ GradPulse::GradPulse  () {
 	m_eddy_val		= 0.0;
 	m_eddy_time		= 0.0;
 	m_ec_area		= 0.0;
+	m_ec_length     = 100;
 
 
 }
@@ -177,8 +178,9 @@ bool GradPulse::Prepare  (PrepareMode mode) {
     ATTRIBUTE       ("NLG_field", m_nlg_field );
 
     //attribute for eddy current evaluation
-	ATTRIBUTE("EddyCurrents"   , m_eddy_val );
-	HIDDEN_ATTRIBUTE("EC_Area" , m_ec_area  );
+	ATTRIBUTE("EddyCurrents"   , m_eddy_val  );
+	ATTRIBUTE("EddyConvLength" , m_ec_length );
+	HIDDEN_ATTRIBUTE("EC_Area" , m_ec_area   );
 
 
     // avoid Prototype::Prepare of the "NLG_field" attribute
@@ -205,7 +207,7 @@ void GradPulse::GetValue (double * dAllVal, double const time) {
 
 	if (time < 0.0 || time > GetDuration() || m_hide) { return ; }
 
-        dAllVal[1+m_axis] += GetGradient(time);
+	dAllVal[1+m_axis] += GetGradient(time);
 
 	return;
 }
@@ -249,6 +251,8 @@ string          GradPulse::GetInfo() {
 	if ( HasDOMattribute("NLG_field") )
 		s << " , " << "NLG_field = " << GetDOMattribute("NLG_field");
 
+	if ( m_hide )
+		s << " , " << " hidden! " ;
 	return s.str();
 }
 
