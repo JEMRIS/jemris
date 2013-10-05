@@ -324,7 +324,7 @@ Simulator::~Simulator             () {
 	//the simulator deletes the singletons !
 	if (m_world != NULL) delete m_world;
 
-	delete SequenceTree::instance();
+	//delete SequenceTree::instance();
 
 }
 /**********************************************************/

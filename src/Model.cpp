@@ -204,6 +204,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				if (found_next == false) next_tStop = 1e200;
 			}
 
+
 			//if numerical or occures in calculation, repeat the current atom with increased accuracy
 			if (!Calculate(next_tStop)) {				
 				//remove wrong contribution to the signal(s)
@@ -263,6 +264,9 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 
 		dTimeShift += m_world->pAtom->GetDuration();
 		FreeSolver();
+
+		m_world->pAtom->UpdateEddyCurrents();
+		m_world->pAtom->PrepareEddyCurrents();
 
 	}
 

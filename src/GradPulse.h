@@ -132,9 +132,10 @@ class GradPulse : public Pulse {
    double m_nlg_val;         /**< @brief gradient value to compute the NLG field*/
 
    bool              m_eddy_currents; /**< @brief A flag for nonlinear gradients */
-   double			 m_eddy_time;      /**< @brief time of eddy current*/
+   double			 m_eddy_time;     /**< @brief time of eddy current*/
    double		     m_eddy_val;      /**< @brief value of eddy current*/
    double			 m_ec_area;		  /**< @brief area of eddy current*/
+   int  			 m_ec_length;     /**< @brief convolution length of eddy current*/
    EddyPulse* 		 m_eddy_pulse;    /**< @brief pulse for eddy currents*/
    bool   m_hide;            /**< @brief Hide this gradient (not played out, but its ECs!)  */
 

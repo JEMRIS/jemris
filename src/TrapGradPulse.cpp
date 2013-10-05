@@ -71,11 +71,13 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 
 	ATTRIBUTE("FlatTopArea"         , m_flat_top_area   );
 	ATTRIBUTE("FlatTopTime"         , m_flat_top_time   );
-	ATTRIBUTE("Asymetric"           , m_asym_sr         );
+	ATTRIBUTE("Asymmetric"          , m_asym_sr         );
 	HIDDEN_ATTRIBUTE("Amplitude"    , m_amplitude       );
 	HIDDEN_ATTRIBUTE("RampUpTime"   , m_ramp_up_time    );
 	HIDDEN_ATTRIBUTE("RampDnTime"   , m_ramp_dn_time    );
 	HIDDEN_ATTRIBUTE("EndOfFlatTop" , m_time_to_ramp_dn ); //for convinience: m_time_to_ramp_dn = m_ramp_up_time + m_flat_top_time
+
+    if (mode != PREP_UPDATE) HideAttribute("Vector",false);
 
 	if ( mode != PREP_UPDATE )
 	{
@@ -240,7 +242,7 @@ inline void  TrapGradPulse::SetTPOIs () {
     		m_tpoi + TPOI::set(TIME_ERR_TOL              , -1.0);
     		m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
 		//add ADCs  only on the flat top
-    		for (unsigned int i = 0; i < GetNADC(); i++)
+    		for (int i = 0; i < GetNADC(); i++)
     			m_tpoi + TPOI::set(m_ramp_up_time + (i+1)*m_flat_top_time/(GetNADC()+1),
 					   (m_phase_lock?World::instance()->PhaseLock:0.0)                 );
 	}

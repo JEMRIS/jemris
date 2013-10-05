@@ -54,6 +54,9 @@ bool EddyPulse::Prepare  (PrepareMode mode) {
 
     if (m_gen_pulse == NULL ) return false;
 
+    if (m_gen_pulse->HasDOMattribute("EddyConvLength"))
+    	m_length = *((int*) m_gen_pulse->GetAttribute("EddyConvLength")->GetAddress());
+
     SetAxis     ( m_gen_pulse->GetAxis()       );
     SetDuration ( m_gen_pulse->GetDuration()   );
     SetName     ( "EC_"+m_gen_pulse->GetName() );
@@ -163,8 +166,8 @@ inline void  EddyPulse::SetTPOIs () {
 
 /***********************************************************/
 void EddyPulse::GetValue  (double * dAllVal, double const time){
-
 	if (time < 0.0 || time > m_parent->GetDuration() + m_linger_time ) { return ; }
+
     dAllVal[1+m_axis] += GetGradient(time);
 
 return;

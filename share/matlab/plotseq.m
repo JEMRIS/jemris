@@ -73,11 +73,14 @@ GZ =h5read('seq.h5','/seqdiag/GZ');
 KX =h5read('seq.h5','/seqdiag/KX');
 KY =h5read('seq.h5','/seqdiag/KY');
 KZ =h5read('seq.h5','/seqdiag/KZ');
+
+A=[TXM TXP GX GY GZ KX KY KZ]; A(:,2)=A(:,2)*180/pi;
+t=[0;t]; A=[0 0 0 0 0 0 0 0;A]; RXP=[-1;RXP];
+
 Iadc=find(RXP>=0);
 Tadc=t(Iadc);
 Rec_Phs=RXP(Iadc)*180/pi;
-A=[TXM TXP GX GY GZ KX KY KZ]; A(:,2)=A(:,2)*180/pi;
- 
+
 if length(ax)==1;ax=[min(t) max(t)];end
 
 DO_2D = isempty(find(A(:,5),1)); 
@@ -88,14 +91,18 @@ if moment_flag
     %A(:,[3 4 5])=cumtrapz(t,A(:,[3 4 5]));
     A(:,[3 4 5])=A(:,[6 7 8]);
     %set moment to zero after every RF pulse
-    J=find(diff(A(:,1)));J=J(2:2:end);
+    J=find(diff(A(:,1))); %J=J(2:2:end);
+%save tmp A J t
     if handles.cd==1; J=2; end
     for j=1:length(J)
         fact=1; %try to guess phase inversions from 180 degree pulses!
-        if abs(pi-trapz(t(J(j)-1:J(j)),A(J(j)-1:J(j),1)))<1e-4;fact=2;end
-        A(J(j)+1:end,3)=A(J(j)+1:end,3)-fact*A(J(j),3);
-        A(J(j)+1:end,4)=A(J(j)+1:end,4)-fact*A(J(j),4);
-        A(J(j)+1:end,5)=A(J(j)+1:end,5)-fact*A(J(j),5);
+        if (j>1)
+        %FAR=trapz(t(J(j):J(j+1)),A(J(j):J(j+1),1));
+        %if abs(pi-FAR)<1e-4;fact=2;end; [J(j) J(j+1) FAR*180/pi]
+         A(J(j)+1:end,3)=A(J(j)+1:end,3)-fact*A(J(j),3);
+         A(J(j)+1:end,4)=A(J(j)+1:end,4)-fact*A(J(j),4);
+         A(J(j)+1:end,5)=A(J(j)+1:end,5)-fact*A(J(j),5);
+        end
     end
     if kspace_flag
         if handles.cd==1; J=[1:20:size(A,1)]'; else;J=[0;J]; end
@@ -103,7 +110,7 @@ if moment_flag
         axes(hax{8});cla(hax{8},'reset');set(gca,'visible','on');hold on
         C=flipud(autumn(length(J)));
         for j=1:length(J)
-            if j<length(J);n_end=J(j+1)-1+handles.cd;else n_end=length(A(:,3));end
+            if j<length(J);n_end=J(j+1)-2+handles.cd;else n_end=length(A(:,3))-1;end
             n_all=[J(j)+1-handles.cd:1:n_end];
             if DO_2D
                 plot(A(n_all,6),A(n_all,7),'color',C(j,:))
