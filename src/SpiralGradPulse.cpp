@@ -54,8 +54,7 @@ m_grad_samp_int(0), m_pitch(0), m_samples(0), m_bw(0), m_inward(0){
 /***********************************************************/
 double            SpiralGradPulse::GetGradient (double const time)  {
 
-	long index = (long) floor (time / m_grad_samp_int);
-
+	size_t index (floor (time / m_grad_samp_int));
 	return (m_inward) ? -m_amps[index] : m_amps[index]; 
 
 }
