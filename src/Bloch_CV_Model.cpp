@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stöcker
+ *                        2006-2013  Tony Stoecker
  *                        2007-2013  Kaveh Vahedipour
  *                        2009-2013  Daniel Pflugfelder
  *                                  
@@ -28,22 +28,25 @@
 #include "DynamicVariables.h"
 
 /**********************************************************/
-static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
+inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
+
     World* pW = (World*) pWorld;
     DynamicVariables* dv = DynamicVariables::instance();
-	t = (double) t;
+	double t = (double) rt;
 
     //get current B-field values from the sequence
-    if (t<0.0 || t>pW->pAtom->GetDuration()) {
+    if (t < 0.0 || t > pW->pAtom->GetDuration()) {
     	// this case can happen when searching for step size; in this area no solution is needed
     	// -> set ydot to any defined value.
-    	NV_Ith_S(ydot,AMPL) = 0; NV_Ith_S(ydot,PHASE) = 0; NV_Ith_S(ydot,ZC) = 0;
+    	NV_Ith_S(ydot,AMPL) = 0;
+    	NV_Ith_S(ydot,PHASE) = 0;
+    	NV_Ith_S(ydot,ZC) = 0;
     	return 0;
     }
 
 	double time = pW->total_time+t;
-    double Mxy,phi,Mz; /*cylndrical components of mangetization*/
-    double s,c,Mx,My,Mx_dot,My_dot,Mz_dot;
+    double Mxy, phi, Mz; /*cylndrical components of mangetization*/
+    double s, c, Mx, My, Mx_dot, My_dot, Mz_dot;
     Mz_dot = 0.0;
 
     //sample variables:
@@ -51,22 +54,22 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     double r2 = pW->Values[R2];
     double m0 = pW->Values[M0];
     double position[3];
-    position[0]=pW->Values[XC];position[1]=pW->Values[YC];position[2]=pW->Values[ZC];
+    position[0] = pW->Values[XC];position[1]=pW->Values[YC];position[2]=pW->Values[ZC];
     double DeltaB = pW->deltaB;
 
     // update sample variables if they are dynamic:
-    dv->m_Diffusion->GetValue(time,position);
-    dv->m_Motion->GetValue(time,position);
-    dv->m_T2prime->GetValue(time,&DeltaB );
-    dv->m_R1->GetValue(time,&r1 );
-    dv->m_R2->GetValue(time,&r2 );
-    dv->m_M0->GetValue(time,&m0 );
+    dv->m_Diffusion->GetValue(time, position);
+    dv->m_Motion->GetValue(time, position);
+    dv->m_T2prime->GetValue(time, &DeltaB);
+    dv->m_R1->GetValue(time, &r1);
+    dv->m_R2->GetValue(time, &r2);
+    dv->m_M0->GetValue(time, &m0);
 
 
-    double  d_SeqVal[5]={0.0,0.0,0.0,0.0,0.0}; //[B1magn,B1phase,Gx,Gy,Gz]
+    double d_SeqVal[5] = {0., 0., 0., 0., 0.,}; //[B1magn,B1phase,Gx,Gy,Gz]
     pW->pAtom->GetValue( d_SeqVal, t );        // calculates also pW->NonLinGradField
     if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( d_SeqVal, t );        // calculates also pW->NonLinGradField
-    double Bx=0.0,By=0.0,Bz=0.0;
+    double Bx, By, Bz;
 
     //lingering eddy currents
     pW->pAtom->GetValueLingeringEddyCurrents(d_SeqVal,t);
@@ -85,21 +88,23 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     // check if double precision is still enough for sin/cos:
     if (fabs(NV_Ith_S(y,PHASE))>1e11 ) {
         //important: restrict phase to [0, 2*PI]
-        NV_Ith_S(y,PHASE) = fmod(NV_Ith_S(y,PHASE),6.283185307179586476925286766559005768394338798750211641949889185);
+        NV_Ith_S(y,PHASE) = fmod (NV_Ith_S(y,PHASE), TWOPI);
     }
 
-    Mxy = NV_Ith_S(y,AMPL); phi = NV_Ith_S(y,PHASE); Mz = NV_Ith_S(y,ZC);
+    Mxy = NV_Ith_S(y,AMPL);
+    phi = NV_Ith_S(y,PHASE);
+    Mz  = NV_Ith_S(y,ZC);
 
     //avoid CVODE warnings (does not change physics!)    
     //trivial case: no transv. magnetisation AND no excitation
     if (Mxy<ATOL1*m0 && d_SeqVal[RF_AMP]<BEPS) {
-//        NV_Ith_S(y,AMPL)    = 0; NV_Ith_S(y,PHASE)    = 0;
-        NV_Ith_S(ydot,AMPL) = 0; NV_Ith_S(ydot,PHASE) = 0;
+
+        NV_Ith_S(ydot,AMPL) = 0;
+        NV_Ith_S(ydot,PHASE) = 0;
 
         //further, longit. magnetisation already fully relaxed
         if (fabs(m0 - Mz)<ATOL3) {
-//	    NV_Ith_S(y,ZC)    = m0; 
-	    NV_Ith_S(ydot,ZC) = 0;
+        	NV_Ith_S(ydot,ZC) = 0;
             return 0;
         }
 
@@ -112,9 +117,9 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
         My = s*Mxy;
         
         //compute bloch equations
-        Mx_dot = -r2*Mx + Bz*My                                              - By*Mz;
-        My_dot = -Bz*Mx             - r2*My                                  + Bx*Mz;
-        Mz_dot =  By*Mx             - Bx*My ;
+        Mx_dot =   Bz*My - By*Mz - r2*Mx;
+        My_dot = - Bz*Mx + Bx*Mz - r2*My;
+        Mz_dot =   By*Mx - Bx*My ;
 
     	//compute derivatives in cylindrical coordinates
     	NV_Ith_S(ydot,AMPL)  =  c*Mx_dot + s*My_dot;
@@ -123,14 +128,14 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
 
     //longitudinal relaxation
     Mz_dot +=  r1*(m0 - Mz);
-    NV_Ith_S(ydot,ZC)    = Mz_dot;
+    NV_Ith_S(ydot,ZC) = Mz_dot;
 
     return 0;
 
 }
 
 /**********************************************************/
-Bloch_CV_Model::Bloch_CV_Model     () {
+Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
 
     m_world->solverSettings = new nvec;
 /*    for (int i=0;i<OPT_SIZE;i++) {m_iopt[i]=0; m_ropt[i]=0.0;}
@@ -140,18 +145,23 @@ Bloch_CV_Model::Bloch_CV_Model     () {
 
     //cvode2.5:
     // create cvode memory pointer; no mallocs done yet.
-    m_cvode_mem = CVodeCreate(CV_ADAMS,CV_FUNCTIONAL);
+    m_cvode_mem = CVodeCreate (CV_ADAMS, CV_FUNCTIONAL);
 
     // cvode allocate memory.
     // do CVodeMalloc with dummy values y0,abstol once here;
     // -> CVodeReInit can later be used
-    N_Vector y0,abstol;
+    N_Vector y0, abstol;
     y0		= N_VNew_Serial(NEQ);
     abstol	= N_VNew_Serial(NEQ);
     ((nvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ);
 
-    NV_Ith_S(y0,AMPL) = 0; NV_Ith_S(y0,PHASE) = 0; NV_Ith_S(y0,ZC) = 0;
-    NV_Ith_S(abstol,AMPL) = ATOL1; NV_Ith_S(abstol,PHASE) = ATOL2; NV_Ith_S(abstol,ZC) = ATOL3;
+    NV_Ith_S(y0, AMPL)  = 0;
+    NV_Ith_S(y0, PHASE) = 0;
+    NV_Ith_S(y0, ZC)    = 0;
+
+    NV_Ith_S(abstol, AMPL)  = ATOL1;
+    NV_Ith_S(abstol, PHASE) = ATOL2;
+    NV_Ith_S(abstol, ZC)    = ATOL3;
 
 #ifndef CVODE26
     if(CVodeMalloc(m_cvode_mem,bloch,0,y0,CV_SV,m_reltol,abstol) != CV_SUCCESS ) {
@@ -236,7 +246,7 @@ bool Bloch_CV_Model::Calculate(double next_tStop){
 	
 	m_world->solverSuccess=true;
 	
-	CVodeSetStopTime(m_cvode_mem,next_tStop);
+	CVodeSetStopTime(m_cvode_mem, next_tStop);
     
 	int flag;
 #ifndef CVODE26
