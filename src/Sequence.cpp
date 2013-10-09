@@ -65,7 +65,7 @@ bool    Sequence::Prepare(const PrepareMode mode){
 void Sequence::SeqDiag (const string& fname ) {
 
 	//prepare H5 file structure
-	BinaryContext bc ("seq.h5", IO::OUT);
+	BinaryContext bc (fname, IO::OUT);
 	if (bc.Status() != IO::OK) return;
 
 	NDData<double>      di (GetNumOfTPOIs() + 1);
@@ -115,21 +115,6 @@ void Sequence::SeqDiag (const string& fname ) {
 		if (i == 6)
 			bc.Write (cumtrapz(di,t,meta), "KZ", "/seqdiag");
 	}
-
-}
-
-/***********************************************************/
-void  Sequence::CollectSeqData  (NDData<double>& seqdata, double t, size_t offset) {
-
-	vector<Module*> children = GetChildren();
-	ConcatSequence* pSeq     = ((ConcatSequence*) this);
-
-	for (RepIter r=pSeq->begin(); r<pSeq->end(); ++r)
-		for (unsigned int j=0; j<children.size() ; ++j) {
-			((Sequence*) children[j])->CollectSeqData(seqdata, t, offset);
-            t   += children[j]->GetDuration();
-            offset += children[j]->GetNumOfTPOIs();
-		}
 
 }
 

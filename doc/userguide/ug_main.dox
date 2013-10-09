@@ -1,4 +1,4 @@
-
+/**
   \page ug_main User guide
   \mainpage Welcome
 
@@ -19,7 +19,7 @@ The manual intends to give a brief hands-on introduction. \n
   \n
   \n
   See also <a href="http://www.jemris.org">www.jemris.org</a>
-
+*/
 
 /**
  \page ug_uis User Interfaces

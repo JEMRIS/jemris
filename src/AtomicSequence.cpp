@@ -206,7 +206,6 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t of
 
 	bool rem  = this->HasNonLinGrad();
 	this->SetNonLinGrad(false);
-
 	for (int i=0; i < GetNumOfTPOIs(); ++i) {
 		seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
 		seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
@@ -242,6 +241,14 @@ void    AtomicSequence::GetValueLingeringEddyCurrents (double * dAllVal, double 
 
 		if ( iter->second < 0.0 )
 			continue;
+
+		if (HasNonLinGrad () && iter->first->HasNonLinGrad()) {
+			iter->first->SetNonLinGradField(  iter->first->GetParentDuration()
+											+ iter->first->GetLingerTime()
+											- iter->second
+											+ time  );
+    	    continue;
+    	}
 
 		iter->first->GetValue(dAllVal,    iter->first->GetParentDuration()
 										+ iter->first->GetLingerTime()

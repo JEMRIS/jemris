@@ -123,7 +123,7 @@ string          ConcatSequence::GetInfo() {
 	return s.str();
 }
 
-/*
+/***********************************************************/
 void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t offset) {
 
 	vector<Module*> children = GetChildren();
@@ -141,5 +141,5 @@ void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t of
 		}
 	}
 
-}*/
+}
 

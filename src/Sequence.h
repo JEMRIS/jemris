@@ -74,12 +74,9 @@ public:
     void  SeqDiag  (const string& fname = "seq.h5");
 
     /**
-     * Write sequence file
-     *
-     * @param pfout File output stream
-     * @param time  Time: More elaborate description, please.
+     * @brief Recursively collect sequence data (for plotting the sequence diagram)
      */
-    virtual void CollectSeqData          (NDData<double>& seqdata, double time, size_t offset);
+    virtual void CollectSeqData          (NDData<double>& seqdata, double time, size_t offset) = 0;
 
     /**
      * Get the number of ADCs for this sequence.

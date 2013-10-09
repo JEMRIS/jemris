@@ -91,8 +91,8 @@ section \ref ug_JEMRIS_seq_ginac ).
 This section briefly summarizes all %sequence building modules and its attributes.
 The interaction of these modules is explained in the next section \ref ug_JEMRIS_seq_ginac.
 
-\subsection ug_JEMRIS_seq_intro_para The Parameters Module The
-parameter module (orange circle) is always present in a %sequence. It
+\subsection ug_JEMRIS_seq_intro_para The Parameters Module
+The parameter module (orange circle) is always present in a %sequence. It
 is not a part of the sequence tree but exists only once. The module
 contains global attributes such as field of view \f$ FOV_{x/y/z} \f$,
 the size of the image matrix, the gradient slew rate etc.
@@ -338,11 +338,11 @@ does not work, i.e. these attributes can not be observed by other modules! These
 
 \li \c "Observe": Of course the Observe attribute itself can not be observed.
 
-\li \c "Vector": Every pulse has the attribute \c "Vector". It is a space-separated list of floating point values which can be accessed by another attribute of this pulse. The values can be addressed by observation of loop counters, for instance an RF pulse may set \c "Observe=C1,Counter" and \c "FlipAnlge=Vector(a1)". Thus, the flip angle will loop through the vector as the loop-counter of the ConcatSequence increases. Note that in the Matlab GUI, \c "Vector" can also take any Matlab expression which results in a vector as input such as e.g. \c "rand(10,1)".
+\li \c "Vector": Every pulse has the attribute \c "Vector". It is a space-separated list of floating point values which can be accessed by another attribute of this pulse. The values can be addressed by observation of loop counters, for instance an RF pulse may set \c "Observe=C1,Counter" and \c "FlipAngle=Vector(a1)". Thus, the flip angle will loop through the vector as the loop-counter of the ConcatSequence increases. Note that in the Matlab GUI, \c "Vector" can also take any Matlab expression which results in a vector as input such as e.g. \c "rand(10,1)".
 
 \li \c "Shape": For analytical RF / gradient pulses, this attribute defines the shape of the pulse using an analytical expression using the time variable \c "T". For RF-pulses, this expression can be complex to define the magnitude and phase of the RF-pulse. Use \c "I" as imaginary unit. The expression is again evaluated using GiNaC which is capable to perform derivatives. If here additionally the attribute \c "Diff=1" is set, the expression provided by the \c "Shape" attribute will be differentiated once, thus it is possible to directly provide the gradient moments.
 
-\li \c "NLG_field": an analytical expression for non-linear gradient field can be specified to every gradient module. Use \c "X,Y,Z" as space variables, and \c "G" as gradient the value, e.g.  \c "NLG_field=X*G+0.001*X*G^2" will simulate a linear x-gradient field with a small quadratic term.
+\li \c "NLG_field": an analytical expression for non-linear gradient field can be specified to every gradient module. Use \c "X,Y,Z" as space variables, and \c "G" as the gradient value, e.g.  \c "NLG_field=X*G+0.001*X*G^2" will simulate a linear x-gradient field with a small quadratic term.
 
 ***************************************************
 */

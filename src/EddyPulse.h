@@ -117,6 +117,11 @@ class EddyPulse : public GradPulse {
      */
     void SetGenPulse  (GradPulse* pulse) {m_gen_pulse=pulse;};
 
+    /**
+     * @brief Get the pulse which generates the eddy currents
+     */
+    GradPulse* GetGenPulse() {return m_gen_pulse;};
+
  protected:
 
     /**

@@ -144,8 +144,8 @@ expression syntax.
 \subsection ug_coil_gui_external External Coil
 
 \li <b>"Filename"</b> Specifies the HDF5-file from which jemris reads the externally defined sensitivities. The file
-has two datasets, "/maps/magnitude" and "/maps/phase", respecitvely, each of sqare (2D) or cubic (3D) size to specifiy the
-coil sensitivities.  Note, that such external HDF5-file is easily constructed by
+has two datasets, "/maps/magnitude" and "/maps/phase", respecitvely, each of square (2D) or cubic (3D) size to specify the
+coil sensitivities.  Note, that such an external HDF5-file is easily constructed by
 the GUI: generate a global matlab variable which is a complex data cube of coil sensitivities.
 Then write the name of the variable to the attribute "Filename". The GUI will automatically construct the necessary HDF5-file.
 
