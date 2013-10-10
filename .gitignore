@@ -36,3 +36,4 @@ Makefile
 seq.h5
 signals.h5
 sensmaps.h5
+mod.xml

@@ -147,9 +147,11 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 		
 		m_amps[0]             = 0.0;
 		
+		m_area = 0.;
+
 		for (long i = 0; i <= m_samples; i++) {
 			
-			time = (double) i * m_grad_samp_int / 1000;
+			time = (double) i * m_grad_samp_int / 1000.;
 			
 			if ( time_of_switch == 0.0 ) // Limited slewrate
 				phi = m_beta * pow (time, 2.0) / (2.0 + 2.0 * pow(2.0*m_beta/3.0, 1.0/6.0) * pow(time, 1.0/3.0) + pow(2*m_beta/3, 2.0/3.0) * pow(time, 4.0/3.0));
@@ -162,18 +164,21 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 			
 			if (i > 0) {
 				
-				g[XC]  = 10000000.0 * (k[XC] - klast[XC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
-				g[YC]  = 10000000.0 * (k[YC] - klast[YC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
-				g[ZC]  = 10000000.0 * (k[ZC] - klast[ZC]) / m_fov * 2 * PI / (gamma * m_grad_samp_int);
+				g[XC]  = 10000000. * (k[XC] - klast[XC]) / m_fov * 2. * PI / (gamma * m_grad_samp_int);
+				g[YC]  = 10000000. * (k[YC] - klast[YC]) / m_fov * 2. * PI / (gamma * m_grad_samp_int);
+				g[ZC]  = 10000000. * (k[ZC] - klast[ZC]) / m_fov * 2. * PI / (gamma * m_grad_samp_int);
 				
-				if (m_axis == AXIS_GX)
+				if (m_axis == AXIS_GX) {
 					m_amps[i] = g[XC];
-				else if (m_axis == AXIS_GY)
+					m_area += g[XC] * m_grad_samp_int;
+				} else if (m_axis == AXIS_GY) {
 					m_amps[i] = g[YC];
-				else
+					m_area += g[YC] * m_grad_samp_int;
+				} else {
 					m_amps[i] = g[ZC];
+				}
 
-				gabs   = sqrt (pow(g[XC],2) + pow(g[YC],2) + pow(g[ZC],2));
+				gabs   = sqrt (pow(g[XC],2.) + pow(g[YC],2.) + pow(g[ZC],2.));
 				
 			}
 			
@@ -188,8 +193,10 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 				max_phi        = phi;
 			}
 			
+
 		}
 		
+
 		if (m_inward)  {
 			
 			double* tmp = (double*) malloc ((m_samples+1)*sizeof(double)); 
