@@ -136,7 +136,7 @@ class Model {
     /**
      * updates process counter file
      */
-    void UpdateProcessCounter(long lSpin);
+    void UpdateProcessCounter (const long lSpin);
 
     /**
      * dumps restart information(serial jemris.)

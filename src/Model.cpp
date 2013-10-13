@@ -344,7 +344,7 @@ void Model::DumpRestartInfo(long lSpin){
 }
 
 /*************************************************************************/
-void progressbar (int percent) {
+inline static void progressbar (int percent) {
 
 	static string bars   = "***************************************************";
 	static string blancs = "                                                   ";
@@ -357,7 +357,7 @@ void progressbar (int percent) {
 }
 
 /*************************************************************************/
-void Model::UpdateProcessCounter(long lSpin) {
+inline void Model::UpdateProcessCounter (const long lSpin) {
 	
 	if ((m_world->m_myRank > 0 )){
 
