@@ -14,8 +14,8 @@ spherical phantom slice with adjustable values is presented
 accompanied by some default values. JEMRIS_sim is described in some
 detail here: \ref ug_usage_simulation_gui.
 
-\image html pics/jemris_sim_epi_1.png \image latex
-pics/jemris_sim_epi_1.png
+\image html pics/jemris_sim_epi_1.png
+\image latex pics/jemris_sim_epi_1.png
 
 Let us load our EPI sequence, \c <b>MyEPI</b>:
 
@@ -73,8 +73,7 @@ MPI Process Wtime = 39.6328 seconds<br/><br/>
 
 Should you want to have a look at the simulation result in image- and k-space,
 you will able to find corresponding options in the drop-down at the bottom right.
-Just select the desired view. The last option in the drop-down is only available,
-Evolution, will be discussed in an other Tutorial.
+Just select the desired view.
 
 ***************************************************
 */

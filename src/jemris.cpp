@@ -97,7 +97,7 @@ int main (int argc, char *argv[]) {
 	if (seqTree->GetStatus()) {
 		seqTree->Populate();
 		ConcatSequence* seq = seqTree->GetRootConcatSequence();
-		seq->SeqDiag("seq.bin");
+		seq->SeqDiag("seq.h5");
 		seq->DumpTree();
 		if (argc==3) seq->WriteStaticXML("jemris_seq.xml");
 		//delete seqTree;

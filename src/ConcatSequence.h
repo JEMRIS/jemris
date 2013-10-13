@@ -135,7 +135,10 @@ class ConcatSequence : public Sequence {
     //virtual bool StaticDOM(DOMDocument* doc, DOMNode* node);
 
 
-    //virtual void CollectSeqData (NDData<double>& seqdata, double t, size_t offset);
+    /**
+     * @brief Recursively collect sequence data (for plotting the sequence diagram)
+     */
+    virtual void CollectSeqData (NDData<double>& seqdata, double& t, long& offset);
 
  protected:
 

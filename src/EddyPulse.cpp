@@ -62,8 +62,7 @@ bool EddyPulse::Prepare  (PrepareMode mode) {
     SetName     ( "EC_"+m_gen_pulse->GetName() );
     m_initial_delay = m_gen_pulse->GetInitialDelay() ;
 
-	if ( !m_prepared ) 	m_prepared = Insert(mode);
-	if ( !m_prepared ) return false; //should never happen
+	if ( !Insert(mode) ) return false; //should never happen
 
 	//prepare for GetValue of decaying eddies outside the atom
 	ConvKernel() ;
@@ -71,9 +70,12 @@ bool EddyPulse::Prepare  (PrepareMode mode) {
     m_area = GetAreaNumeric(1000);
 
 	//use NLGs from the generating pulse
-	if ( m_parent->HasDOMattribute("NLG_field") && !HasDOMattribute("NLG_field") ) {
-		AddDOMattribute("NLG_field",m_parent->GetDOMattribute("NLG_field"));
-	}
+    //cout << GetName() << " : " << m_gen_pulse->HasDOMattribute("NLG_field") << " : " << HasDOMattribute("NLG_field") << endl;
+    if ( mode !=PREP_UPDATE) {
+    	if ( m_gen_pulse->HasDOMattribute("NLG_field") && !HasDOMattribute("NLG_field") )
+    		AddDOMattribute("NLG_field",m_gen_pulse->GetDOMattribute("NLG_field"));
+    		//cout << " !! " << GetDOMattribute("NLG_field") << endl;
+    }
 
 	//prepare call of base class
 	m_prepared = (GradPulse::Prepare(mode) && m_prepared);
@@ -135,7 +137,7 @@ bool  EddyPulse::ConvKernel () {
 /*****************************************************************/
 bool  EddyPulse::Insert (PrepareMode mode) {
 
-	if (mode==PREP_UPDATE) return true;
+	if (m_prepared || mode==PREP_UPDATE) return true;
 
 	//insert DOM-node in parent
 	DOMElement* node = SequenceTree::instance()->GetDOMDocument()->createElement(StrX("EDDYCURRENT").XMLchar());
@@ -143,7 +145,7 @@ bool  EddyPulse::Insert (PrepareMode mode) {
 	m_parent->GetNode()->appendChild (node);
 	SequenceTree::instance()->GetModuleMap()->insert(pair<DOMNode*, Module*> (node, this));
 	Initialize(node);
-
+	m_prepared = true;
 	return true;
 
 }

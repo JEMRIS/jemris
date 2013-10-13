@@ -44,7 +44,7 @@ class AtomicSequence : public Sequence {
     /**
      * @brief Default constructor
      */
-    AtomicSequence() :m_theta(0.), m_non_lin_grad(0.), m_alpha(0.), m_phi(0.) {};
+    AtomicSequence() :m_theta(0.), m_non_lin_grad(0.), m_alpha(0.), m_phi(0.), m_eddy(false) {};
 
     /**
      * @brief Copy constructor.
@@ -130,8 +130,15 @@ class AtomicSequence : public Sequence {
      */
     void           CollectTPOIs       ();
 
+    /**
+     * @brief Collect sequence data (for plotting the sequence diagram)
+     */
+    virtual void CollectSeqData (NDData<double>& seqdata, double& t, long& offset);
 
-    virtual void CollectSeqData (NDData<double>& seqdata, double t, size_t offset);
+    /**
+     * @brief Get Number of ADCs in this atom
+     * @return number of ADCs
+     */
     virtual long  GetNumOfADCs ();
 
 
