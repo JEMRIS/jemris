@@ -45,13 +45,13 @@ using namespace std;
  * Print usage information
  */
 void usage () {
-  cout << endl << "jemris usage " << endl << endl;
-	cout   << "       1. jemris <xml-file>        " << endl;
-	cout   << "       The file could be either a a) Simulation, b) Sequence, or c) Coilarray file, " << endl;
-	cout   << "       so that a) the simultion is performed, b) a sequence diagram is written, " << endl;
-	cout   << "       or c) the sensitivity maps are dumped, respectively." << endl << endl;
-	cout   << "       2. jemris modlist           " << endl;
-	cout   << "       Writes the file mod.xml containing a list of all available modules." << endl << endl;
+  cout << endl << "  Usage:" << endl << endl;
+	cout   << "  1. jemris <xml-file>        " << endl;
+	cout   << "     The file could be either a a) Simulation, b) Sequence, or c) Coilarray file, " << endl;
+	cout   << "     so that a) the simultion is performed, b) a sequence diagram is written, " << endl;
+	cout   << "     or c) the sensitivity maps are dumped, respectively." << endl << endl;
+	cout   << "  2. jemris modlist           " << endl;
+	cout   << "     Writes the file mod.xml containing a list of all available modules." << endl << endl;
 }
 
 void do_simu (Simulator* sim) {
@@ -70,7 +70,11 @@ void do_simu (Simulator* sim) {
 
 int main (int argc, char *argv[]) {
 	//print usage
-	cout << "\nJEMRIS " << VERSION << " r"<< SVN_REVISION <<"\n\n";
+		cout << "\njemris "  << VERSION;
+#ifdef GIT_COMMIT
+		cout << " (" << GIT_COMMIT << ")";
+#endif
+        cout << endl;
 
 	if (argc==1) {
 		usage();
