@@ -35,10 +35,6 @@
 #include "ConcatSequence.h"
 #include "config.h"
 
-#ifndef SVN_REVISION
-	#define SVN_REVISION "unkown"
-#endif
-
 using namespace std;
 
 /**
@@ -74,7 +70,7 @@ int main (int argc, char *argv[]) {
 #ifdef GIT_COMMIT
 		cout << " (" << GIT_COMMIT << ")";
 #endif
-        cout << endl;
+        cout << "\n" << endl;
 
 	if (argc==1) {
 		usage();
