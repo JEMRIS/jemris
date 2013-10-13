@@ -147,13 +147,25 @@ There exist several pulses which may be inserted into an AtomicSequence. All pul
  \li \c InitialDelay: A pulse may start at a later time within the atom, e.g. an RF pulse may wait for the ramp-up time of a gradient pulse. 
 
  \li \c ADC: The ADCs specify the number of readout events. These events are equidistantly distributed over the length of the pulse,
-        and the simulator will save the acquired signal at each of these time points. 
+        and the simulator will save the acquired signal at each of these time points. It is possible to specify a negative number:
+	in this case the time points are not ADC events, but so called TPOIs (Time Points Of Interest), at which the pulse is evaluated but
+        no signal acquired, as specified by ADCs. This concept is good for a) better visualization of certain pulse shapes and b) force
+	the simulator to evaluate the solution at these time points. However, keep in mind that many TPOIs (or ADCs) will slow down the
+	simulation. 
 
  \li \c Phaselock: Locks the phase of the ADCs inside the module to the phase of the last RF pulse. Can be \c 1 (true) or \c 0 (false).
 
-The most simple pulse-shape module is the <b> \c "EmptyPulse".</b> It represents a dead-time according its specified duration in which, if ADCs
-are present, simulated data is acquired. (The above introduced DelayAtomicSequence is a special implementation of an AtomicSequence which
-has a single EmptyPulse as a child.)
+The most simple pulse-shape module is the 
+<ul> 
+	<li> <b> \c EmptyPulse</b>: It represents a dead-time according its specified duration in which, if ADCs
+				    are present, simulated data is acquired.
+				    (The above introduced DelayAtomicSequence is a special implementation of an AtomicSequence which
+				    has a single EmptyPulse as a child.) The EmptyPulse has one new attribute
+	 <ol>
+         	<li> \c "Shape" An analytic expression to specify non-equidistant ADC sampling during the pulse length.
+			See \ref ug_JEMRIS_seq_spec for explanation.
+	 </ol>
+</ul> 
 
 All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pulses, respectively. The following
 <b> RF pulse Modules</b> are defined in JEMRIS:

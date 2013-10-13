@@ -138,7 +138,7 @@ class ConcatSequence : public Sequence {
     /**
      * @brief Recursively collect sequence data (for plotting the sequence diagram)
      */
-    virtual void CollectSeqData (NDData<double>& seqdata, double t, size_t offset);
+    virtual void CollectSeqData (NDData<double>& seqdata, double& t, long& offset);
 
  protected:
 

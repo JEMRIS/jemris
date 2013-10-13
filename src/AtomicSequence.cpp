@@ -50,6 +50,7 @@ bool    AtomicSequence::Prepare(const PrepareMode mode) {
 
 }
 
+/***********************************************************/
 double AtomicSequence::CalcDuration () {
 
 	vector<Module*> children = GetChildren();
@@ -83,7 +84,9 @@ inline void      AtomicSequence::GetValue (double * dAllVal, double const time) 
     	if (pulse_time < 0.0) continue;
 
     	//special case: non linear gradients
-    	if (m_non_lin_grad && ((Pulse*) children[j])->GetAxis()!=AXIS_RF && ((GradPulse*) children[j])->HasNonLinGrad()) {
+    	if (m_non_lin_grad && ((Pulse*) children[j])->GetAxis()!=AXIS_RF
+    					   && ((Pulse*) children[j])->GetAxis()!=AXIS_VOID
+    			           && ((GradPulse*) children[j])->HasNonLinGrad()) {
     	    ((GradPulse*) children[j])->SetNonLinGradField(pulse_time);
     	    continue;
     	}
@@ -187,6 +190,13 @@ void AtomicSequence::CollectTPOIs() {
 	m_tpoi.Sort();
 	m_tpoi.Purge();
 
+/*
+	  cout << GetName() << ",  D=" << GetDuration() << " TPOIS inserted!" << endl;
+		for (int i=0; i < GetNumOfTPOIs(); ++i)
+			cout << " " << m_tpoi.GetTime(i);
+		cout << endl << endl;
+*/
+
 }
 
 /***********************************************************/
@@ -202,11 +212,12 @@ string          AtomicSequence::GetInfo() {
 
 
 /***********************************************************/
-void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t offset) {
+void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& offset) {
 
 	bool rem  = this->HasNonLinGrad();
 	this->SetNonLinGrad(false);
 	for (int i=0; i < GetNumOfTPOIs(); ++i) {
+		//cout << GetName() << " " << t << " " << m_tpoi.GetTime(i)+t << endl;
 		seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
 		seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
 		GetValue(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
@@ -218,9 +229,14 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double t, size_t of
     this->PrepareEddyCurrents();
     this->SetNonLinGrad(rem);
 
+    //increase sequence time and TPOI offset
+	t      += GetDuration();
+	offset += GetNumOfTPOIs();
+
 }
 
 
+/***********************************************************/
 long  AtomicSequence::GetNumOfADCs () {
 
 	int iADC = GetNumOfTPOIs();

@@ -76,7 +76,7 @@ public:
     /**
      * @brief Recursively collect sequence data (for plotting the sequence diagram)
      */
-    virtual void CollectSeqData          (NDData<double>& seqdata, double time, size_t offset) = 0;
+    virtual void CollectSeqData          (NDData<double>& seqdata, double& t, long& offset) = 0;
 
     /**
      * Get the number of ADCs for this sequence.

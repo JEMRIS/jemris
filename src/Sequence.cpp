@@ -90,10 +90,10 @@ void Sequence::SeqDiag (const string& fname ) {
 	seqaxis.push_back("KZ");	//Z gradient
 
 	// recursive data collect
-	double time   =  0.;
+	double seqtime=  0.;
 	long   offset =  0l;
 	seqdata (1,0) = -1.;
-	CollectSeqData (seqdata, time, offset);
+	CollectSeqData (seqdata, seqtime, offset);
 
 	// Faster
 	seqdata = transpose(seqdata);

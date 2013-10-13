@@ -131,9 +131,9 @@ class AtomicSequence : public Sequence {
     void           CollectTPOIs       ();
 
     /**
-     * @brief Recursively collect sequence data (for plotting the sequence diagram)
+     * @brief Collect sequence data (for plotting the sequence diagram)
      */
-    virtual void CollectSeqData (NDData<double>& seqdata, double t, size_t offset);
+    virtual void CollectSeqData (NDData<double>& seqdata, double& t, long& offset);
 
     /**
      * @brief Get Number of ADCs in this atom
