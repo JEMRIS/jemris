@@ -26,7 +26,7 @@
 
 #include "BinaryIO.h"
 
-#define VERBOSEN
+//#define VERBOSE
 
 #include <H5Cpp.h>
 #include <algorithm>
@@ -155,29 +155,28 @@ public:
 
 		if (m_mode == IO::IN) {
 			m_file = H5::H5File (m_fname, H5F_ACC_RDONLY);
-#ifdef VERBOSEN
+#ifdef VERBOSE
 			printf ("\nFile %s opened for RO\n", m_fname.c_str());
 #endif
 		} else if (m_mode == IO::OUT) {
 
 			try {
 				m_file = H5::H5File  (m_fname, H5F_ACC_TRUNC);
-#ifdef VERBOSEN
+#ifdef VERBOSE
 				printf ("\nFile %s opened for RW\n", m_fname.c_str());
 #endif
 			} catch (const H5::Exception& e) {
 				m_file = H5::H5File  (m_fname, H5F_ACC_RDWR);
-#ifdef VERBOSEN
+#ifdef VERBOSE
 				printf ("\nFile %s created for RW\n", m_fname.c_str());
 #endif
 			}
 		} else if (m_mode == IO::APPEND) {
 			try  {
 				m_file = H5::H5File  (m_fname, H5F_ACC_RDWR);
-#ifdef VERBOSEN
+#ifdef VERBOSE
 				printf ("\nFile %s created for RW\n", m_fname.c_str());
 #endif
-
 			} catch (const H5::Exception& e) {
 				printf ("\nOops!\n");
 			}
