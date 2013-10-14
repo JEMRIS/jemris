@@ -4,10 +4,8 @@ function handles=plotsensitivity(handles,plot_coils_call)
 %
 
 %
-%  JEMRIS Copyright (C)
-%                        2006-2013  Tony Stoecker
-%                        2007-2013  Kaveh Vahedipour
-%                        2009-2013  Daniel Pflugfelder
+%  JEMRIS Copyright (C) 2007-2010  Tony St??cker, Kaveh Vahedipour
+%                                  Forschungszentrum J??lich, Germany
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -85,12 +83,16 @@ end
 a = h5read ('sensmaps.h5', '/maps/magnitude'); 
 p = h5read ('sensmaps.h5', '/maps/phase');
 A = a.*exp(sqrt(-1)*(p));
-if numel(COILS)==1
-    A=permute(A(:,:,:,COILS),[2 1 3]);
-else
- A = permute(sum(A,4),[2 1 3]);
-end
 
+if numel(COILS)==1
+    if (ndims(A)==3)
+        A = A(:,:,COILS);
+    else
+        A = A(:,:,:,COILS);
+    end
+else
+    A = sum(A,ndims(A));
+end
 %complex data selection
 C=get(handles.ComplexMenu,'String');
 T=C{get(handles.ComplexMenu,'Value')};
