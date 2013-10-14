@@ -1,5 +1,5 @@
 AC_PREREQ(2.61)
-AC_INIT(JEMRIS, [2.6], k.vahedipour@fz-juelich.de)
+AC_INIT(JEMRIS, [2.7], k.vahedipour@fz-juelich.de)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
