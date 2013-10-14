@@ -38,6 +38,7 @@ ExternalRFPulse::ExternalRFPulse  (const ExternalRFPulse& hrfp) {
 /***********************************************************/
 bool ExternalRFPulse::Prepare  (const PrepareMode mode) {
 
+	bool btag;
 	m_bw  = 1e16;
 
 	ATTRIBUTE ("Scale"   , m_scale);
@@ -49,7 +50,7 @@ bool ExternalRFPulse::Prepare  (const PrepareMode mode) {
 		m_dpath = "/";
 
 	//read data
-	bool btag = m_pulse_data.ReadPulseShape (m_fname, m_dpath, m_dname, mode == PREP_UPDATE) ;
+	btag = m_pulse_data.ReadPulseShape (m_fname, m_dpath, m_dname, mode == PREP_UPDATE);
 
 	if (mode != PREP_UPDATE) insertGetPhaseFunction( &ExternalPulseData::GetPhase );
 

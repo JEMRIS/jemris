@@ -105,7 +105,7 @@ if test x$boost = xtrue; then
     	[AC_MSG_RESULT([cannot find boost ellint_1.hpp and/or ellint_2.hpp, Biot-Savart-Loop not available])])
 fi
 
-LIBS="${LIBS} -lblas -llapack"
+LIBS="${LIBS}"
 
 AC_CHECK_HEADERS([H5Cpp.h],          [], [AC_MSG_RESULT([cannot find H5Cpp.h, hdf5 dump / read functionality unavailable!])])
 
