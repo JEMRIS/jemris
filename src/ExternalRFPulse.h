@@ -40,7 +40,7 @@ class ExternalRFPulse : public RFPulse {
     /**
      * @brief Default constructor
      */
-    ExternalRFPulse() :m_scale(1.) {};
+    ExternalRFPulse() :m_scale(1.), m_dname(""), m_dpath("") {};
 
     /**
      * @brief Copy constructor.

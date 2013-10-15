@@ -48,12 +48,6 @@ XERCES_CPP_NAMESPACE_USE
 
 
 /**
- * Defined for memory allocation testing.
- */
-static int ens_alloc = 0;
-
-
-/**
  * @brief Spin ensemble
  */
 template <class T = double>

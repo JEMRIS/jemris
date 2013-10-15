@@ -1,5 +1,5 @@
 AC_PREREQ(2.61)
-AC_INIT(JEMRIS, [2.6], k.vahedipour@fz-juelich.de)
+AC_INIT(JEMRIS, [2.7], k.vahedipour@fz-juelich.de)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
@@ -105,7 +105,7 @@ if test x$boost = xtrue; then
     	[AC_MSG_RESULT([cannot find boost ellint_1.hpp and/or ellint_2.hpp, Biot-Savart-Loop not available])])
 fi
 
-LIBS="${LIBS} -lblas -llapack"
+LIBS="${LIBS}"
 
 AC_CHECK_HEADERS([H5Cpp.h],          [], [AC_MSG_RESULT([cannot find H5Cpp.h, hdf5 dump / read functionality unavailable!])])
 

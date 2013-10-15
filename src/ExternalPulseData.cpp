@@ -71,7 +71,7 @@ void  ExternalPulseData::SetTPOIs () {
 
     m_pulse->Pulse::SetTPOIs();
 
-    for (unsigned int i=0; i<m_times.size(); ++i)
+    for (size_t i=0; i<m_times.size(); ++i)
     	m_pulse->m_tpoi + TPOI::set(m_times.at(i), -1.0);
 
 };
@@ -81,21 +81,22 @@ double    ExternalPulseData::GetPhase  (Module* mod, double time ) {
 
 	ExternalPulseData*  p = ( (ExternalRFPulse*) mod)->GetPulseData();
 
-    unsigned i = ((unsigned) (time * p->m_times.size() / mod->GetDuration()));
+    size_t i = ((size_t) (time * p->m_times.size() / mod->GetDuration()));
 
     if (i<p->m_phases.size())
-    	return ( p->m_phases.at(i) * 180.0 / PI );
+    	return ( p->m_phases.at(i) * 180. / PI );
 
     return 0.0 ;
 };
 
 
 /***********************************************************/
-bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpath,
-		const string& dname, bool verbose) {
+bool  ExternalPulseData::ReadPulseShape (const string& fname,
+		const string& dpath, const string& dname, bool verbose) {
 
 	//read data if filename changed
 	if (m_fname == fname) return true;
+	string temp;
 
 	BinaryContext bc (fname, IO::IN);
 	NDData<double> data;
@@ -107,13 +108,20 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 	}
 	
 	int columns = (m_pulse->GetAxis() == AXIS_RF) ? 3 : 2;
-	
-	if (bc.Read(data, "mag", dpath) != IO::OK)
+
+	temp = (dname.length()) ? dname : "mag";
+
+	printf ("Opening magnitude data %s \n", URI(dpath, temp).c_str());
+	if (bc.Read(data, temp, dpath) != IO::OK) {
+		printf ("Couldn't read magnitude data %s \n", URI(dpath, temp).c_str());
 		return false;
+	}
 	m_magnitudes = data.Data();
 
-	if (bc.Read(data, "times", dpath) != IO::OK)
+	if (bc.Read(data, "times", dpath) != IO::OK) {
+		printf ("Couldn't read timing data %s \n", URI(dpath, "times").c_str());
 		return false;
+	}
 	m_times = data.Data();
 
 	m_pulse->m_tpoi.Reset();
@@ -121,8 +129,9 @@ bool  ExternalPulseData::ReadPulseShape (const string& fname, const string& dpat
 		m_pulse->m_tpoi + (m_times[i], -1.0);
 
 	if (bc.Read(data, "pha", dpath) != IO::OK)
-		return false;
-	m_phases = data.Data();
+		printf ("Couldn't read phase data %s \n", URI(dpath, "pha").c_str());
+	else
+		m_phases = data.Data();
 
 	m_pulse->SetDuration(m_times.back());
 	m_pulse->m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0);

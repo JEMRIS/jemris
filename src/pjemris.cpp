@@ -35,11 +35,6 @@ using namespace std;
 #include "config.h"
 #include "Mpi2Evolution.h"
 
-#ifndef SVN_REVISION
-	#define SVN_REVISION "unkown"
-#endif
-
-
 int main (int argc, char *argv[]) {
   
 	//init MPI
@@ -80,7 +75,11 @@ int main (int argc, char *argv[]) {
 
 	//MASTER: writes seq-file, Dump seq-report, and sends the sample
 	if ( my_rank == master) {
-		cout << "\nPARALLEL JEMRIS " << VERSION << " r"<< SVN_REVISION <<"\n\n";
+		cout << "\nParallel jemris " << VERSION << " "
+#ifdef GIT_COMMIT
+             << "(" << GIT_COMMIT << ")" 
+#endif
+             <<"\n\n";
 		cout << "Model    : " << psim->GetAttr(psim->GetElem("model"),  "name")<< "\t  , solver = "
 		     << psim->GetAttr(psim->GetElem("model"), "type")  << endl;
 		cout << "Sample   : " << psim->GetAttr(psim->GetElem("sample"), "name")<< "\t  , spins  = " << World::instance()->TotalSpinNumber  << endl;

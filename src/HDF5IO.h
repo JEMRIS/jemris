@@ -177,8 +177,9 @@ public:
 #ifdef VERBOSE
 				printf ("\nFile %s created for RW\n", m_fname.c_str());
 #endif
-
-			} catch (const H5::Exception& e) {}
+			} catch (const H5::Exception& e) {
+				printf ("\nOops!\n");
+			}
 		}
 
 		return m_status;
