@@ -215,7 +215,8 @@ A=permute(A,[2 3 4 1]); %permutes to (X,Y,Z,type)
       B=B(:,:,z); 
   end
   imagesc(flipud(B'))
-  axis image,axis off,title(T{i},'fontsize',14,'fontweight','bold')
+  axis off,title(T{i},'fontsize',14,'fontweight','bold')
+  if (size(B,2) ~= 11),axis image,end
   colorbar
  end
  

@@ -73,10 +73,15 @@ GZ =h5read('seq.h5','/seqdiag/GZ');
 KX =h5read('seq.h5','/seqdiag/KX');
 KY =h5read('seq.h5','/seqdiag/KY');
 KZ =h5read('seq.h5','/seqdiag/KZ');
+B  =h5read('seq.h5','/seqdiag/META'); 
+J=find(B>1);
 
 A=[TXM TXP GX GY GZ KX KY KZ]; A(:,2)=A(:,2)*180/pi;
-t=[0;t]; A=[0 0 0 0 0 0 0 0;A]; RXP=[-1;RXP];
+%t=t(1:end-2); A=A(1:end-2,:);RXP=RXP(1:end-2);
 
+%t=[0;t]; A=[0 0 0 0 0 0 0 0;A]; RXP=[-1;RXP];
+%[t,I]=sort(t);
+%A=A(I,:);
 Iadc=find(RXP>=0);
 Tadc=t(Iadc);
 Rec_Phs=RXP(Iadc)*180/pi;
@@ -87,37 +92,38 @@ DO_2D = isempty(find(A(:,5),1));
 [~,i1]=min(abs(t-ax(1)));
 [~,i2]=min(abs(t-ax(2)));
 
-if moment_flag
-    %A(:,[3 4 5])=cumtrapz(t,A(:,[3 4 5]));
-    A(:,[3 4 5])=A(:,[6 7 8]);
-    %set moment to zero after every RF pulse
-    J=find(diff(A(:,1))); %J=J(2:2:end);
-%save tmp A J t
-    if handles.cd==1; J=2; end
+
+%continuous moments
+if ( handles.cd==1 && ( kspace_flag || moment_flag ) )
     for j=1:length(J)
-        fact=1; %try to guess phase inversions from 180 degree pulses!
-        if (j>1)
-        %FAR=trapz(t(J(j):J(j+1)),A(J(j):J(j+1),1));
-        %if abs(pi-FAR)<1e-4;fact=2;end; [J(j) J(j+1) FAR*180/pi]
-         A(J(j)+1:end,3)=A(J(j)+1:end,3)-fact*A(J(j),3);
-         A(J(j)+1:end,4)=A(J(j)+1:end,4)-fact*A(J(j),4);
-         A(J(j)+1:end,5)=A(J(j)+1:end,5)-fact*A(J(j),5);
-        end
+        if j<length(J);n_end=J(j+1)-2+handles.cd;else n_end=length(A(:,3))-1;end
+        n_all=[J(j)+1-handles.cd:1:n_end];            
+        if j>1, for k=1:3; A(n_all,5+k)=A(n_all,5+k)+a(k); end, end
+        a=A(n_end,6:8);
     end
-    if kspace_flag
-        if handles.cd==1; J=[1:20:size(A,1)]'; else;J=[0;J]; end
+end
+
+
+%plot k-space trajecotry
+if kspace_flag
+        
         for i=1:6;cla(hax{i},'reset');set(hax{i},'visible','off');end
         axes(hax{8});cla(hax{8},'reset');set(gca,'visible','on');hold on
-        C=flipud(autumn(length(J)));
+        C=flipud(autumn(length(J))); a=zeros(1,3);
+        
         for j=1:length(J)
+            
             if j<length(J);n_end=J(j+1)-2+handles.cd;else n_end=length(A(:,3))-1;end
             n_all=[J(j)+1-handles.cd:1:n_end];
+            
             if DO_2D
                 plot(A(n_all,6),A(n_all,7),'color',C(j,:))
             else
                 plot3(A(n_all,6),A(n_all,7),A(n_all,8),'color',C(j,:)),view(3),grid
             end
         end
+        
+        %add ADCs
         if kspace_flag==2;
             if DO_2D
                 plot(A(Iadc,6),A(Iadc,7),'.g')
@@ -125,6 +131,7 @@ if moment_flag
                 plot3(A(Iadc,6),A(Iadc,7),A(Iadc,8),'.g')
             end
         end 
+        
         set(gca,'color',[0 0 0]);
         if (min(A(:,6))<max(A(:,6)) && min(A(:,7))<max(A(:,7)) )
             axis(1.1*[min(A(:,6)) max(A(:,6)) min(A(:,7)) max(A(:,7))]);
@@ -142,7 +149,13 @@ if moment_flag
             axes(h);xlabel('early','color',[0 0 0]);title('late','color',[0 0 0])
         end
         return
-    end
+end
+
+%plot sequence diagram
+
+Iax=[1 2 3 4 5];
+if moment_flag
+    Iax=[1 2 6 7 8];
 end
 
 J=find(Tadc>ax(1) & Tadc<ax(2));
@@ -159,7 +172,7 @@ set(gca,'xlim',[ax(1) ax(2)],'ylim',[-180 180]),grid
 ylabel(YL{1},'fontsize',14,'fontweight','bold')
 
 for i=1:5
- cla(hax{i+1},'reset');axes(hax{i+1}),plot(t(I),A(I,i),'linewidth',2),grid
+ cla(hax{i+1},'reset');axes(hax{i+1}),plot(t(I),A(I,Iax(i)),'linewidth',2),grid
  ylabel(YL{i+1},'fontsize',14,'fontweight','bold')
  set(gca,'xlim',[ax(1) ax(2)])
  ay=get(gca,'ylim');
