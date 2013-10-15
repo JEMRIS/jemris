@@ -79,12 +79,12 @@ IO::Status ExternalCoil::LoadMap () {
 	int size = (int) (pow((double) m_points,(double) m_dim) + 1e-20);
 	int pos  = m_channel*size;
 
-	memcpy (&(m_sens_mag[0][0][0]), &tmpdat[pos], size * sizeof(double));
+	memcpy (m_sensmag.Ptr(), &tmpdat[pos], size * sizeof(double));
 
 	if (bc.Read(tmpdat, "phase", "/maps") != IO::OK)
 		return bc.Status();
 
-	memcpy (&(m_sens_pha[0][0][0]), &tmpdat[pos], size * sizeof(double));
+	memcpy (m_senspha.Ptr(), &tmpdat[pos], size * sizeof(double));
 
 	return IO::OK;
 

@@ -32,16 +32,16 @@
 Coil::~Coil() {
 	
 	if (m_signal   != NULL) delete    m_signal;
-	if (m_sens_mag != NULL) vaDelete (m_sens_mag);
-	if (m_sens_pha != NULL) vaDelete (m_sens_pha);
+	//if (m_sens_mag != NULL) vaDelete (m_sens_mag);
+	//if (m_sens_pha != NULL) vaDelete (m_sens_pha);
 	
 }
 
 /**********************************************************/
 void Coil::Initialize (DOMNode* node) {
 	
-	m_sens_mag = NULL;
-	m_sens_pha = NULL;
+	//m_sens_mag = NULL;
+	//m_sens_pha = NULL;
 	m_node     = node;
 	
 	string s = StrX(((DOMElement*) node)->getAttribute (StrX("Name").XMLchar() )).std_str() ;
@@ -107,10 +107,10 @@ void Coil::GridMap () {
 
                 position [XC] = i*m_extent/m_points-m_extent/2;
                 double mag   = m_scale*GetSensitivity(position);
-                m_sens_mag[i][j][k] = mag;
+                m_sensmag(i,j,k) = mag;
                 max = (max>mag?max:mag);
-                m_sens_pha[i][j][k] = ( (m_conjugate?-1.0:1.0) * ( GetPhase(position) + m_phase) );
-                if (m_sens_pha[i][j][k] != 0.0) m_complex = true;
+                m_senspha(i,j,k) = ( (m_conjugate?-1.0:1.0) * ( GetPhase(position) + m_phase) );
+                if (m_senspha(i,j,k) != 0.0) m_complex = true;
             }
         }
     }
@@ -119,11 +119,11 @@ void Coil::GridMap () {
 }
 
 double* Coil::PhaseMap () {
-	return &m_sens_pha[0][0][0];
+	return m_senspha.Ptr();
 }
 
 double* Coil::MagnitudeMap () {
-	return &m_sens_mag[0][0][0];
+	return m_sensmag.Ptr();
 }
 
 int Coil::GetPoints () {
@@ -191,11 +191,11 @@ double Coil::InterpolateSensitivity (const double* position, bool magnitude){
 	int ny = (py+1<m_points?py+1:m_points-1);
 	double i11, i21;
 	if (magnitude) {
-		i11 = m_sens_mag[px][py][pz]+(m_sens_mag[px][ny][pz]-m_sens_mag[px][py][pz])*normy;
-		i21 = m_sens_mag[nx][py][pz]+(m_sens_mag[nx][ny][pz]-m_sens_mag[nx][py][pz])*normy;
+		i11 = m_sensmag(px,py,pz) + (m_sensmag(px,ny,pz)-m_sensmag(px,py,pz))*normy;
+		i21 = m_sensmag(nx,py,pz) + (m_sensmag(nx,ny,pz)-m_sensmag(nx,py,pz))*normy;
 	} else {
-		i11 = m_sens_pha[px][py][pz]+Unwrap(m_sens_pha[px][ny][pz]-m_sens_pha[px][py][pz],magnitude)*normy;
-		i21 = m_sens_pha[nx][py][pz]+Unwrap(m_sens_pha[nx][ny][pz]-m_sens_pha[nx][py][pz],magnitude)*normy;
+		i11 = m_senspha(px,py,pz)+Unwrap(m_senspha(px,ny,pz)-m_senspha(px,py,pz),magnitude)*normy;
+		i21 = m_senspha(nx,py,pz)+Unwrap(m_senspha(nx,ny,pz)-m_senspha(nx,py,pz),magnitude)*normy;
 	}
 	double iz1 = i11+Unwrap(i21-i11,magnitude)*normx;
 
@@ -206,11 +206,11 @@ double Coil::InterpolateSensitivity (const double* position, bool magnitude){
 	int nz = (pz+1<m_points?pz+1:m_points-1);
 	double i12, i22;
 	if (magnitude) {
-		i12 = m_sens_mag[px][py][nz]+Unwrap(m_sens_mag[px][ny][nz]-m_sens_mag[px][py][nz],magnitude)*normy;
-		i22 = m_sens_mag[nx][py][nz]+Unwrap(m_sens_mag[nx][ny][nz]-m_sens_mag[nx][py][nz],magnitude)*normy;
+		i12 = m_sensmag(px,py,nz)+Unwrap(m_sensmag(px,ny,nz)-m_sensmag(px,py,nz),magnitude)*normy;
+		i22 = m_sensmag(nx,py,nz)+Unwrap(m_sensmag(nx,ny,nz)-m_sensmag(nx,py,nz),magnitude)*normy;
 	} else {
-		i12 = m_sens_pha[px][py][nz]+Unwrap(m_sens_pha[px][ny][nz]-m_sens_pha[px][py][nz],magnitude)*normy;
-		i22 = m_sens_pha[nx][py][nz]+Unwrap(m_sens_pha[nx][ny][nz]-m_sens_pha[nx][py][nz],magnitude)*normy;
+		i12 = m_senspha(px,py,nz)+Unwrap(m_senspha(px,ny,nz)-m_senspha(px,py,nz),magnitude)*normy;
+		i22 = m_senspha(nx,py,nz)+Unwrap(m_senspha(nx,ny,nz)-m_senspha(nx,py,nz),magnitude)*normy;
 	}
 	double iz2 = i12+Unwrap(i22-i12,magnitude)*normx;
 
@@ -266,16 +266,9 @@ bool Coil::Prepare  (const PrepareMode mode) {
     m_interpolate = (m_points>0 && m_extent>0.0);
     // dimensions with m_points==0 lead to undefined memory access in vaArray.
     if (m_points==0) m_points=1;
-   	m_sens_mag = vaCreate_3d(m_points, m_points, (m_dim==3?m_points:1), double, NULL);
-   	m_sens_pha = vaCreate_3d(m_points, m_points, (m_dim==3?m_points:1), double, NULL);
+    m_sensmag = NDData<double> (m_points, m_points, (m_dim==3?m_points:1));
+    m_senspha = NDData<double> (m_points, m_points, (m_dim==3?m_points:1));
 
-    //normalize sensitivity at origin
-    //double position[3]  = {0.0,0.0,0.0};
-    //double norm = GetSensitivity (position);
-    //if (norm>1e-15) { m_norm = 1.0/norm; }
-
-
-
-	return success;
+    return success;
 
 }

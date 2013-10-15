@@ -30,7 +30,7 @@
 #include "Prototype.h"
 #include "Signal.h"
 #include "Declarations.h"
-#include "var_array++.h"
+#include "NDData.h"
 
 /**
  * @brief Base class of coil objects
@@ -183,8 +183,8 @@ class Coil : public Prototype {
     double			m_extent;  		/**< Array extend of support region [mm] */
     int				m_points;  		/**< Sampling points of the array */
 
-    vaArray_3d(double) m_sens_mag;  /**< Array to store sensitivity magnitudes */
-    vaArray_3d(double) m_sens_pha;  /**< Array to store sensitivity phases */
+    NDData<double>  m_sensmag;
+    NDData<double>  m_senspha;
 
     double Unwrap(double diff,bool magnitude); /**< helper function to check for phase wraps in interpolation of phase maps. */
 

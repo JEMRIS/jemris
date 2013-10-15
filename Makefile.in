@@ -238,7 +238,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL NEWS README 
-SUBDIRS = src 
+SUBDIRS = src share
 ACLOCAL_AMFLAGS = -I m4
 all: all-recursive
 
