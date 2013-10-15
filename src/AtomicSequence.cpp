@@ -258,7 +258,7 @@ void    AtomicSequence::GetValueLingeringEddyCurrents (double * dAllVal, double 
 		if ( iter->second < 0.0 )
 			continue;
 
-		if (HasNonLinGrad () && iter->first->HasNonLinGrad()) {
+		if (HasNonLinGrad() && iter->first->HasNonLinGrad()) {
 			iter->first->SetNonLinGradField(  iter->first->GetParentDuration()
 											+ iter->first->GetLingerTime()
 											- iter->second
@@ -289,6 +289,13 @@ void AtomicSequence::UpdateEddyCurrents() {
 			m_still_alive.insert(pair<EddyPulse*,double>(iter->first, iter->second - GetDuration() ));
 		iter->second = -iter->first->GetLingerTime();
 	}
+
+	//check for nonlinear gradients
+	bool b = HasNonLinGrad();
+	for (iter = pW->m_eddies.begin(); iter != pW->m_eddies.end(); iter++ ) {
+		if ( iter->first->HasNonLinGrad() ) { b=true; break;}
+	}
+	SetNonLinGrad(b);
 
 	//add eddies which are still alive to the multimap
 	for (iter = m_still_alive.begin(); iter != m_still_alive.end(); iter++)

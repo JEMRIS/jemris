@@ -65,6 +65,9 @@ if ~isfield(Sample,'NN'), Sample.NN =zeros(size(Sample.M0)); end
 if numel(Sample.RES)==1 Sample.RES=[1 1 1]*Sample.RES; end;
 if numel(Sample.OFFSET)==1 Sample.OFFSET=[1 1 1]*Sample.OFFSET; end;
 
+if numel(Sample.RES)==2 Sample.RES=[Sample.RES 1]; end;
+if numel(Sample.OFFSET)==2 Sample.OFFSET=[Sample.OFFSET 0]; end;
+
 %write binary file
 A(:,:,:,1)=Sample.M0;
 I=find(Sample.T1); R1 =zeros(size(Sample.T1));  R1(I) =1./Sample.T1(I);
@@ -78,13 +81,14 @@ A(:,:,:,5)=Sample.DB;
 %save 4D data array for JEMRIS in the order (type , X, Y, Z)
 A=permute(A,[4 1 2 3]); 
 
-if exist('sample.h5')==2, delete('sample.h5'); end
-h5create('sample.h5','/sample/data',size(A));
-h5create('sample.h5','/sample/resolution',[1 3]);
-h5create('sample.h5','/sample/offset',[1 3]);
-h5write('sample.h5','/sample/data', A);
-h5write('sample.h5','/sample/resolution',Sample.RES);
-h5write('sample.h5','/sample/offset',Sample.OFFSET);
+SF=[pwd,'/sample.h5'];
+if exist(SF)==2, delete(SF); end
+h5create(SF,'/sample/data',size(A));
+h5create(SF,'/sample/resolution',[1 3]);
+h5create(SF,'/sample/offset',[1 3]);
+h5write(SF,'/sample/data', A);
+h5write(SF,'/sample/resolution',Sample.RES);
+h5write(SF,'/sample/offset',Sample.OFFSET);
 
 
 maxM0 = max(Sample.M0(:));
@@ -117,6 +121,30 @@ function Sample=getShape(VA)
                  eval([S{i},'=',S{i},'*A;']);
                 end
                if length(VA)<11, fname=sprintf('sphere_%d.bin',length(L)); end
+            case '1d column'
+                dim = dim/2;
+                A=zeros(dim(1)*dim(2),11);
+                [nx,ny,nz]=size(A);
+                [I,J,K]=meshgrid(1:nx,1:ny,1:nz); 
+                %index of odd and even blocks        
+                Lo=[]; Le=[]; II=[1:dim(1)]';
+                for i=1:dim(2)
+                    if mod(i,2)
+                        Lo = [Lo ; [II]+(i-1)*dim(1)];
+                    else
+                        Le = [Le ; [II]+(i-1)*dim(1)];
+                    end
+                end
+                A(Lo,6)=1;
+            
+                for i=1:6
+                 if length(VA)>3+i
+                 eval([S{i},'=VA{4+i}(1);']);
+                 end
+                 eval([S{i},'=',S{i},'*A;']);
+                 s=VA{4+i}(min([2 length(VA{4+i})]));
+                 eval([S{i},'(Le,6)=s;']);
+                end
             case '2d 2-spheres'
                 %outer sphere
                 R=max(dim)/2;
@@ -147,7 +175,7 @@ function Sample=getShape(VA)
                 end
                 if length(VA)<11, fname=sprintf('sphere_%d.bin',length(L)); end
             otherwise
-                error('unkown pre-defined sample string')
+                error('unknown pre-defined sample string')
         end
 
         res    = VA{3};

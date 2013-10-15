@@ -3,7 +3,7 @@ function varargout = JEMRIS_sim (varargin)
 
 %
 %  JEMRIS Copyright (C)
-%                        2006-2013  Tony Stöcker
+%                        2006-2013  Tony Stoecker
 %                        2007-2013  Kaveh Vahedipour
 %                        2009-2013  Daniel Pflugfelder
 %
@@ -81,9 +81,9 @@ if (handles.win)
     handles.PJemrisCall   = ['start cmd /s /k "echo Do not close this window! Simulating ... && set PATH="" && "', handles.MPICHCall, '" -localonly 9 "', handles.JemrisPath, 'pjemris" simu.xml > .sim.out && exit"'];
     handles.JemrisCall    = ['start cmd /s /k "echo Do not close this window! Simulating ... && "', handles.JemrisPath,'jemris.exe" simu.xml > .sim.out && exit"'];
 else
-  handles.JemrisPath='@prefix@/bin';                                      
-  handles.JemrisShare='@prefix@/share/jemris/matlab'; 
-  [s,w]=system('setenv');
+    handles.JemrisPath='@prefix@/bin';                                      
+    handles.JemrisShare='@prefix@/share/jemris/matlab'; 
+    [s,w]=system('setenv');
   if s==0 % a TCSH
     handles.JemrisCall  = ['setenv LD_LIBRARY_PATH ""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
     handles.PJemrisCall = ['setenv LD_LIBRARY_PATH ""; @MPIRUN@  @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
@@ -140,7 +140,7 @@ C={'Sample','Signal','k-Space','k-Space (Phase)','Image','Image (phase)'};
 set(handles.showLeft,'String',C);
 C={'Signal','k-Space','k-Space (Phase)','Image','Image (phase)','Evolution'};
 set(handles.showRight,'String',C);
-C={'2D sphere','2D 2-spheres','brain','user defined'};
+C={'2D sphere','2D 2-spheres','1D column','brain','user defined'};
 set(handles.Sample,'String',C);
 set(handles.EPI_L,'Visible','off');
 set(handles.EPI_R,'Visible','off');
@@ -210,7 +210,7 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
     T1=handles.sample.T1; T2=handles.sample.T2;  T2S=handles.sample.T2S;
     M0=handles.sample.M0; CS=handles.sample.CS;
     R=handles.sample.R;  res=handles.sample.DxDy;
-    handles.maxM0=writeSample(sample.name,round(2*R/res),res,0,M0,T1,T2,T2S,CS,0,sample.file);
+    handles.maxM0=writeSample(sample.name,round(2*R./res),res,0,M0,T1,T2,T2S,CS,0,sample.file);
  else
     handles.maxM0=writeSample(handles.UserSample);
  end
@@ -277,6 +277,7 @@ function Sample_Callback(hObject, eventdata, handles)
  set(handles.gamBoTag,'Visible','off');    
  set(handles.gamBoText,'Visible','off');    
  set(handles.SusceptTag,'Value',0,'Visible','off');
+
  switch Nsample
     case 1 %sphere
         bv1='on';bv2='on';
@@ -290,13 +291,19 @@ function Sample_Callback(hObject, eventdata, handles)
         handles.sample.M0=[1 1];handles.sample.R=[50 25];handles.sample.DxDy=1;
         handles.sim.R2P=0;handles.sim.CSF=1;
         M0str='M0'; CSstr='CS [Hz]'; SSstr='Radius'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
-   case 3 %brain
+   case 3 %column
+        bv1='on';bv2='on';
+        handles.sample.T1=[100 50];handles.sample.T2=[100 50];handles.sample.T2S=[100 50];handles.sample.CS=[0 0];
+        handles.sample.M0=[1 0.5];handles.sample.R=[50 4];handles.sample.DxDy=1;
+        handles.sim.R2P=0;handles.sim.CSF=1;
+        M0str='M0'; CSstr='CS [Hz]'; SSstr='Length/Blocks'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
+   case 4 %brain
         bv1='off';bv2='on';
         set(handles.SusceptTag,'Value',0,'Visible','on');
         handles.sample.T1=1;handles.sample.T2=1;handles.sample.T2S=1;handles.sample.CS=1;
         handles.sample.M0=1;handles.sample.R=90;handles.sample.DxDy=1;
         M0str='M0 x'; CSstr='CS x'; SSstr='slice(s) [1st,last]'; T1str='T1 x';  T2str='T2 x'; T2Sstr='T2* x';
-   case 4 %user defined
+   case 5 %user defined
        bv1='off';bv2='off';
        M0str=''; CSstr=''; SSstr=''; T1str='';  T2str=''; T2Sstr='';
  end
@@ -317,14 +324,14 @@ function Sample_Callback(hObject, eventdata, handles)
  set(handles.setGrid,'String',num2str(handles.sample.DxDy),'Visible',bv2);
  
  %user defined sample
- if Nsample==4;
+ if Nsample==5;
      [FileName,PathName] = uigetfile('*.mat','Select the Sample Mat file');
      if FileName==0,return;end
      handles.UserSample=load(FileName);
  end
  
  %brain slice(s)
- if Nsample==3; handles.UserSample=brainSample(handles); end
+ if Nsample==4; handles.UserSample=brainSample(handles); end
  
  %redraw sample
  handles=write_simu_xml(handles,1);

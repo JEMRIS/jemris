@@ -69,6 +69,7 @@ void Sequence::SeqDiag (const string& fname ) {
 	if (bc.Status() != IO::OK) return;
 
 	NDData<double>      di (GetNumOfTPOIs() + 1);
+	NDData<size_t>      mi (GetNumOfTPOIs() + 1);
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
 	int numaxes = 7;
@@ -101,13 +102,18 @@ void Sequence::SeqDiag (const string& fname ) {
 	for (size_t i = 1; i < meta.size(); ++i)
 		meta[i] = seqdata(i,7);
 
-	bc.Write (seqdata, "A", "/seqdiag");
+	//bc.Write (seqdata, "A", "/seqdiag"); %OLD copied all in one go
 
-	//write to HDF5 file
-	for (size_t i=0; i<numaxes; i++) {
+	//write columns to HDF5 file
+	for (size_t i=0; i<numaxes+1; i++) {
 		std::string URN (seqaxis[i]);
-		memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
-		bc.Write(di, URN, "/seqdiag");
+		if (i < numaxes ) {
+			memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
+			bc.Write(di, URN, "/seqdiag");
+		} else {
+			memcpy (&mi[0], &seqdata[i*mi.Size()], mi.Size() * sizeof(size_t));
+			bc.Write (mi, "META", "/seqdiag");
+		}
 		if (i == 4)
 			bc.Write (cumtrapz(di,t,meta), "KX", "/seqdiag");
 		if (i == 5)
