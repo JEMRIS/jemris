@@ -190,13 +190,6 @@ void AtomicSequence::CollectTPOIs() {
 	m_tpoi.Sort();
 	m_tpoi.Purge();
 
-/*
-	  cout << GetName() << ",  D=" << GetDuration() << " TPOIS inserted!" << endl;
-		for (int i=0; i < GetNumOfTPOIs(); ++i)
-			cout << " " << m_tpoi.GetTime(i);
-		cout << endl << endl;
-*/
-
 }
 
 /***********************************************************/

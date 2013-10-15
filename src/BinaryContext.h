@@ -59,6 +59,10 @@ public:
 		else if (m_strategy->IOStrategy() == IO::SIMPLE)
 			return ((SimpleIO*)m_strategy)->Write(data, urn, url);
 	}
+	template<class T> IO::Status
+	Write (const NDData<T>& data, const char* urn, const char* url = "") {
+		return Write(data, std::string(urn), std::string(url));
+	}
 
 
 	template<class T> IO::Status
@@ -68,7 +72,10 @@ public:
 		else if (m_strategy->IOStrategy() == IO::SIMPLE)
 			return ((SimpleIO*)m_strategy)->Read(data, urn, url);
 	}
-
+	template<class T> IO::Status
+	Read (NDData<T>& data, const char* urn, const char* url = "") {
+		return Read (data, std::string(urn), std::string(url));
+	}
 	/**
 	 * @brief        Get last status
 	 *

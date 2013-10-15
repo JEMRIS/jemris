@@ -184,4 +184,23 @@ namespace Sim {
 	
 }
 
+#include <algorithm>
+
+static inline std::string strtoupper (const std::string& str) {
+    std::string res = str;
+    std::transform(res.begin(), res.end(), res.begin(), ::toupper);
+    return res;
+}
+
+static inline std::string strtolower (const std::string& str) {
+    std::string res = str;
+    std::transform(res.begin(), res.end(), res.begin(), ::tolower);
+    return res;
+}
+
+static inline bool strcompare (const std::string& a, const std::string& b) {
+	return strtoupper(a).compare(strtoupper(b));
+}
+
+
 #endif /*DECLARATIONS_H_*/

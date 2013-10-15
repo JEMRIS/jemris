@@ -154,7 +154,12 @@ public:
 			return m_status;
 
 		if (m_mode == IO::IN) {
-			m_file = H5::H5File (m_fname, H5F_ACC_RDONLY);
+			try {
+				m_file = H5::H5File (m_fname, H5F_ACC_RDONLY);
+			} catch (const H5::FileIException& e) {
+				printf ("\n Error: cannot open file %s!", m_fname.c_str());
+				m_status = IO::FILE_NOT_FOUND;
+			}
 #ifdef VERBOSE
 			printf ("\nFile %s opened for RO\n", m_fname.c_str());
 #endif

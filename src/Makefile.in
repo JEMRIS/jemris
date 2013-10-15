@@ -79,10 +79,10 @@ am__objects_1 = AnalyticCoil.$(OBJEXT) AnalyticGradPulse.$(OBJEXT) \
 	DelayAtomicSequence.$(OBJEXT) DynamicVariables.$(OBJEXT) \
 	EddyPulse.$(OBJEXT) EmptyPulse.$(OBJEXT) \
 	ExternalCoil.$(OBJEXT) ExternalGradPulse.$(OBJEXT) \
-	ExternalPulseData.$(OBJEXT) ExternalRFPulse.$(OBJEXT) \
-	GaussianRFPulse.$(OBJEXT) GradPulse.$(OBJEXT) \
-	HardRFPulse.$(OBJEXT) HDF5IO.$(OBJEXT) IdealCoil.$(OBJEXT) \
-	Microstructure.$(OBJEXT) MicrostructureBoxes.$(OBJEXT) \
+	ExternalRFPulse.$(OBJEXT) GaussianRFPulse.$(OBJEXT) \
+	GradPulse.$(OBJEXT) HardRFPulse.$(OBJEXT) HDF5IO.$(OBJEXT) \
+	IdealCoil.$(OBJEXT) Microstructure.$(OBJEXT) \
+	MicrostructureBoxes.$(OBJEXT) \
 	MicrostructureCrossingFiber.$(OBJEXT) \
 	MicrostructureKissingFiber.$(OBJEXT) \
 	MicrostructureSingleFiber.$(OBJEXT) Model.$(OBJEXT) \
@@ -259,16 +259,16 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	DynamicVariables.cpp DynamicVariables.h EddyPulse.cpp \
 	EddyPulse.h EmptyPulse.cpp EmptyPulse.h ExternalCoil.cpp \
 	ExternalCoil.h ExternalGradPulse.cpp ExternalGradPulse.h \
-	ExternalPulseData.cpp ExternalPulseData.h ExternalRFPulse.cpp \
-	ExternalRFPulse.h GaussianRFPulse.cpp GaussianRFPulse.h \
-	GradPulse.cpp GradPulse.h HardRFPulse.cpp HardRFPulse.h \
-	HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h KSpace.h \
-	Microstructure.cpp Microstructure.h MicrostructureBoxes.cpp \
-	MicrostructureBoxes.h MicrostructureCrossingFiber.cpp \
-	MicrostructureCrossingFiber.h MicrostructureKissingFiber.cpp \
-	MicrostructureKissingFiber.h MicrostructureSingleFiber.cpp \
-	MicrostructureSingleFiber.h Model.cpp Model.h Module.cpp \
-	Module.h ModulePrototypeFactory.cpp ModulePrototypeFactory.h \
+	ExternalRFPulse.cpp ExternalRFPulse.h GaussianRFPulse.cpp \
+	GaussianRFPulse.h GradPulse.cpp GradPulse.h HardRFPulse.cpp \
+	HardRFPulse.h HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h \
+	KSpace.h Microstructure.cpp Microstructure.h \
+	MicrostructureBoxes.cpp MicrostructureBoxes.h \
+	MicrostructureCrossingFiber.cpp MicrostructureCrossingFiber.h \
+	MicrostructureKissingFiber.cpp MicrostructureKissingFiber.h \
+	MicrostructureSingleFiber.cpp MicrostructureSingleFiber.h \
+	Model.cpp Model.h Module.cpp Module.h \
+	ModulePrototypeFactory.cpp ModulePrototypeFactory.h \
 	Parameters.cpp Parameters.h Prototype.cpp Prototype.h \
 	PrototypeFactory.cpp PrototypeFactory.h Pulse.cpp Pulse.h \
 	RFPulse.cpp RFPulse.h RepIter.cpp RepIter.h \
@@ -427,7 +427,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EmptyPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ExternalCoil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ExternalGradPulse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ExternalPulseData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ExternalRFPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GaussianRFPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GradPulse.Po@am__quote@

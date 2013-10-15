@@ -28,7 +28,6 @@
 #define EXTERNALRFPULSE_H_
 
 #include "RFPulse.h"
-#include "ExternalPulseData.h"
 
 /**
  * @brief RF pulse with external pulse shape
@@ -69,7 +68,7 @@ class ExternalRFPulse : public RFPulse {
     /**
      * @see Pulse::SetTPOIs
      */
-    virtual void     SetTPOIs() { m_pulse_data.SetTPOIs(); } ;
+    virtual void     SetTPOIs();
 
     /**
      * @brief Returns a constant Magnitidue for all times.
@@ -77,12 +76,10 @@ class ExternalRFPulse : public RFPulse {
      * @param time The flip angle as double.
      * @return the Magnitude.
      */
-    virtual double   GetMagnitude  (const double time ){return m_pulse_data.GetData(time); };
+    virtual double   GetMagnitude  (const double time );
+    virtual double GetPhase (const double time);
+    static double  GetExtPhase (Module* mod, double time ) { return (((ExternalRFPulse*) mod)->GetPhase(time)  ); };
 
-    /**
-     * @brief Get function pointer to phase evaluation
-     */
-    ExternalPulseData*	GetPulseData(){return &m_pulse_data;};
 
  private:
 
@@ -93,11 +90,13 @@ class ExternalRFPulse : public RFPulse {
      */
     string           GetInfo      ();
 
-    ExternalPulseData		   m_pulse_data; /**<contains the data*/
-
     string m_fname;                /**< @brief Filename containing the RF amps and phases  */
     string m_dname;
     string m_dpath;
+
+    vector<double> m_times;       /**< @brief My sample time points                       */
+    vector<double> m_magnitudes;  /**< @brief My corresponding amplitudes                 */
+    vector<double> m_phases;      /**< @brief Vector of phases                            */
 
     double m_scale;                /**< @brief Scaling factor for the amps                 */
 };
