@@ -31,8 +31,6 @@
 #include <xercesc/dom/DOMNode.hpp>
 #include <cstdlib>
 
-#define PARAM_PI    3.14159265358979
-
 /**
  * @brief World parameters provide the parametric data of the sequence.
  */
