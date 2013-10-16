@@ -185,7 +185,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
-XSLTPROC = @XSLTPROC@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -238,7 +237,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL NEWS README 
-SUBDIRS = src share
+SUBDIRS = src share doc
 ACLOCAL_AMFLAGS = -I m4
 all: all-recursive
 
