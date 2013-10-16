@@ -35,12 +35,13 @@ if WHAT==7
    %S(1:Nx,1:Ny)=sqrt(sum(M(:,:,img_num,1:2).^2,4));
    %S(1:Nx,Ny+[1:Ny])=atan2(M(:,:,img_num,2),M(:,:,img_num,1))/pi;img_num
    S(1:Nx,1:Ny)=M(:,:,round(Nz/2),1,handles.img_num,1);
-   S(1:Nx,Ny+[1:Ny])=M(:,:,round(Nz/2),2,handles.img_num);
-   S(Nx+[1:Nx],Ny+[1:Ny])=M(:,:,round(Nz/2),3,handles.img_num);
-   imagesc(S),h=colorbar('peer',handles.hax{2},'southoutside');%set(h,'position',get(h,'position')-[.05 0 0 0]);
-   axis image,set(gca,'xtick',[],'ytick',[])
+   S(1:Nx,Ny+[1:Ny])=M(:,end:-1:1,round(Nz/2),2,handles.img_num);
+   S(Nx+[1:Nx],Ny+[1:Ny])=M(:,end:-1:1,round(Nz/2),3,handles.img_num);
+   imagesc(S'),h=colorbar('peer',handles.hax{2},'southoutside');%set(h,'position',get(h,'position')-[.05 0 0 0]);
+   if (size(M,2) ~= 11),axis image,end
+   set(gca,'xtick',[],'ytick',[])
    %text(.25*Nx,1.5*Ny,sprintf('|M_{xy}|   \\phi_{xy} \n\n           M_{z}'),'color','r','fontsize',12,'fontweight','bold')
-   text(.25*Nx,1.6*Ny,sprintf('M_{x}   M_{y} \n\n        M_{z}'),'color','y','fontsize',12,'fontweight','bold')
+   text(1.5*Nx,0.5*Ny,sprintf('M_{x} \n\nM_{y}    M_{z}'),'color','y','fontsize',12,'fontweight','bold')
    title(sprintf('t = %5.2f ms',t(handles.img_num)),'fontsize',12,'fontweight','bold')
    return
 end
