@@ -29,9 +29,10 @@
 
 #include <string>
 
-#define PI 3.141592653589793238462643383279502884197169399375105820974944592
+// from FFTW
+#define PI    3.141592653589793238462643383279502884197169399375105820974944592
 #define TWOPI 6.283185307179586476925286766559005768394338798750211641949889185
-const double TIME_ERR_TOL = 1e-6; // Avoid CVODE warnings. Doesn't affect physics.
+const double TIME_ERR_TOL = 2.5e-6; // Avoid CVODE warnings. Doesn't affect physics.
 
 /**
  * number of spin properties:
