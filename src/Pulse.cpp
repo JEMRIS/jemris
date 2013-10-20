@@ -62,6 +62,7 @@ inline void  Pulse::SetTPOIs () {
     m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
 
     double p = (m_phase_lock?World::instance()->PhaseLock:0.0);
+
     int N = abs(GetNADC());
     if ( GetNADC() < 0 ) p = -1.0;
 

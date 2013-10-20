@@ -85,6 +85,8 @@ void SequenceTree::Initialize(string seqFile) {
 	m_state   = false;
    	m_dom_doc = m_xio->Parse(seqFile);
 
+	DOMNodeList* dnl = m_dom_doc->getElementsByTagName( StrX("AtomicSequence").XMLchar() );
+
 	DOMNode* topnode;
 
 	if (!(topnode = m_dom_doc->getFirstChild()))
@@ -160,37 +162,31 @@ unsigned int        SequenceTree::Populate     ()  {
 	//find top node of the sequence tree
 	ConcatSequence* m_root_seq = GetRootConcatSequence();
 
-	//run Prepare() twice to solve all module cross-dependencies (silent)
+	//run Prepare() several times to solve module cross-dependencies (silent)
 	m_root_seq->Prepare(PREP_INIT);
 	m_root_seq->Prepare(PREP_INIT);
 	m_root_seq->Prepare(PREP_INIT);
+
+	//verbose Prepare call : errors have to be reported
+	m_root_seq->Prepare(PREP_VERBOSE);
 
 	//prep. static atom, if exists
 	World* pW = World::instance();
 	if (pW->pStaticAtom != NULL)
 	{
-		double d = m_root_seq->GetDuration();
-		vector<Module*> children = pW->pStaticAtom->GetChildren();
 		pW->pStaticAtom->Prepare(PREP_INIT);
-		pW->pStaticAtom->Prepare(PREP_INIT);
-		for (unsigned int j=0; j<children.size() ; ++j)
-			((Pulse*) children[j])->SetDuration(d);
-		//cout << children.size() << " " << pW->pStaticAtom->GetDuration() << " XX\n";
+		pW->pStaticAtom->Prepare(PREP_VERBOSE);
 	}
 
 	//check name consistency
 	map<DOMNode*,Module*>::iterator iter1;
 	map<DOMNode*,Module*>::iterator iter2;
-
 	for (iter1 = m_Modules.begin(); iter1!=m_Modules.end(); iter1++ )
 	  for (iter2 = iter1,iter2++; iter2!=m_Modules.end(); iter2++ )
 		if ( (iter1->second)->GetName() == (iter2->second)->GetName() )
 			cout	<< "SequenceTree::Populate warning: 2 modules with equal names exist: '"
 				<<  (iter1->second)->GetName() << "'. Class types: ("
 				<<  (iter1->second)->GetClassType() << "," <<  (iter2->second)->GetClassType() << ")" << endl;
-
-	//verbose Prepare call : errors have to be reported
-	m_root_seq->Prepare(PREP_VERBOSE);
 
 	return OK;
 
@@ -206,8 +202,9 @@ int        SequenceTree::RunTree (DOMNode* node, void* ptr, unsigned int (*fun) 
 		if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
 
 			string s = StrX(node->getNodeName()).std_str() ;
+			transform(s.begin(), s.end(), s.begin(), (int(*)(int)) toupper);
 
-			if ( s != "Parameters" ) {
+			if ( s != "PARAMETERS" ) {
 				unsigned int code = fun(ptr,node);
 				if (code>0) return depth;
 			}
@@ -215,15 +212,20 @@ int        SequenceTree::RunTree (DOMNode* node, void* ptr, unsigned int (*fun) 
 			depth++;
 			m_depth = (depth>m_depth?depth:m_depth);
 
+			bool static_atom = false;
+
 			for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
 			{
 				RunTree(child,ptr,fun,depth);
-				if (s == "Parameters" && StrX(child->getNodeName()).std_str() == "AtomicSequence" )
+				string cn = StrX(child->getNodeName()).std_str();
+				transform(cn.begin(), cn.end(), cn.begin(), (int(*)(int)) toupper);
+				if (s == "PARAMETERS" && cn == "ATOMICSEQUENCE" )
 				{
-					DOMNodeList* dnl = m_dom_doc->getElementsByTagName( StrX("AtomicSequence").XMLchar() );
-					AtomicSequence* A = ((AtomicSequence*) m_Modules.find(dnl->item(dnl->getLength()-1))->second);
+					if (static_atom) cout << "SequenceTree::Populate warning: multiple static Atoms defined!\n";
+					AtomicSequence* A = ((AtomicSequence*) m_Modules.find(child)->second);
 					World* pW = World::instance();
 					pW->pStaticAtom = A;
+					static_atom = true;
 				}
 			}
 		}

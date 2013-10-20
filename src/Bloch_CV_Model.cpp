@@ -67,9 +67,9 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
 
 
     double  d_SeqVal[5]={0.0,0.0,0.0,0.0,0.0}; //[B1magn,B1phase,Gx,Gy,Gz]
-    pW->pAtom->GetValue( d_SeqVal, t );        								// calculates also pW->NonLinGradField
-    if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( d_SeqVal, t );	// calculates static offsets
-    pW->pAtom->GetValueLingeringEddyCurrents(d_SeqVal,t);					// calculates lingering eddy currents
+    pW->pAtom->GetValue( d_SeqVal, t );        								    // calculates also pW->NonLinGradField
+    if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( d_SeqVal, time );	// calculates static offsets
+    pW->pAtom->GetValueLingeringEddyCurrents(d_SeqVal,t);					    // calculates lingering eddy currents
     double Bx, By, Bz;
 
     //Transverse Components: RF field

@@ -268,14 +268,19 @@ void    Module::DumpTree (const string& file, Module* mod,int ichild, int level)
 	stringstream spaces_aft;
 	for (int j=level; j<m_seq_tree->GetDepth(); ++j) spaces_aft << "  ";
 
-	if (ichild)	cout	<< spaces_bef.str() << "|_ child " << ichild << "   ";
-	else		cout	<< "dump of sequence tree\n"
-		<< spaces_aft.str() << "                  TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific\n"
-		<< spaces_aft.str() << "                  ----------------------------------------------------------------- |  ---------------\n"
-		<< "sequence-root";
+	if (ichild<0) {
+		cout << endl << " Static Events-------> ";
+	}
+	else {
+		if (ichild)	cout	<< spaces_bef.str() << "|_ child " << ichild << "   ";
+		else		cout	<< "dump of sequence tree\n"
+				<< spaces_aft.str() << "                  TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific\n"
+				<< spaces_aft.str() << "                  ----------------------------------------------------------------- |  ---------------\n"
+				<< "sequence-root";
 
- 	for (int j=level; j<m_seq_tree->GetDepth(); ++j) cout << "--";
-	cout << "> ";
+ 		for (int j=level; j<m_seq_tree->GetDepth(); ++j) cout << "--";
+		cout << "> ";
+	}
 
 	string class_type = mod->GetClassType();
 	string name       = mod->GetName();
@@ -308,6 +313,12 @@ void    Module::DumpTree (const string& file, Module* mod,int ichild, int level)
 
     for (unsigned int i=0; i<children.size() ; ++i)
         DumpTree(file, mod->GetChild(i),i+1,level);
+
+	// the static Atom
+    World* pW = World::instance();
+	if (ichild == 0 && pW->pStaticAtom != NULL ) {
+		DumpTree(file, ((Module*) pW->pStaticAtom),-1,level);
+	}
 
 	// root node restores cout to original state.
 	if (ichild == 0 && !file.empty() ) {

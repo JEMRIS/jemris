@@ -215,6 +215,8 @@ void GradPulse::GetValue (double * dAllVal, double const time) {
 /***********************************************************/
 void GradPulse::SetNonLinGradField(double const time){
 
+	if (m_hide) { return ; }
+
 	//evaluate NLG field and add it to the World
 	World::instance()->NonLinGradField += GetAttribute("NLG_field")->EvalCompiledNLGExpression
 			( World::instance()->Values[0], World::instance()->Values[1], World::instance()->Values[2], GetGradient(time) );

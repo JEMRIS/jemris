@@ -46,6 +46,13 @@ else
  MODULE_TYPE_COUNTER(j)=MODULE_TYPE_COUNTER(j)+1;
 end
 
+% plot static to the left (second child of parameters)
+if numel(handles.Seq(1).Children)>1
+ if strcmp(S.Attributes(1).Value,handles.Seq(1).Children(2).Attributes(1).Value)
+    x=1;
+ end
+end
+
 %draw symbol
 a=X+x;a=[a a(1)];b=Y+y;b=[b b(1)];
 S.hp=patch(a,b,C);

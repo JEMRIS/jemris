@@ -168,7 +168,7 @@ inline void  EddyPulse::SetTPOIs () {
 
 /***********************************************************/
 void EddyPulse::GetValue  (double * dAllVal, double const time){
-	if (time < 0.0 || time > m_parent->GetDuration() + m_linger_time ) { return ; }
+	//if (time < 0.0 || time > m_parent->GetDuration() + m_linger_time ) { return ; }
 
     dAllVal[1+m_axis] += GetGradient(time);
 
@@ -177,6 +177,8 @@ return;
 
 /***********************************************************/
 double EddyPulse::GetGradient  (double const time){
+
+	if (time < 0.0 || time > m_parent->GetDuration() + m_linger_time ) { return 0.0; }
 
 	double t=0.0, d=0.0;
 

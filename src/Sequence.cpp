@@ -90,6 +90,10 @@ void Sequence::SeqDiag (const string& fname ) {
 	seqaxis.push_back("KY");	//Y gradient
 	seqaxis.push_back("KZ");	//Z gradient
 
+	//turn off nonlinear gradients in static events for sequence diagram calculation
+	World* pW = World::instance();
+	if (pW->pStaticAtom != NULL) pW->pStaticAtom->SetNonLinGrad(false);
+
 	// recursive data collect
 	double seqtime=  0.;
 	long   offset =  0l;

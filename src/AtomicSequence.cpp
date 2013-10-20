@@ -207,20 +207,24 @@ string          AtomicSequence::GetInfo() {
 /***********************************************************/
 void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& offset) {
 
-	bool rem  = this->HasNonLinGrad();
+	World* pW = World::instance();
+
+	//turn off nonlinear gradients for sequence diagram calculation
 	this->SetNonLinGrad(false);
+	CollectTPOIs();
+
 	for (int i=0; i < GetNumOfTPOIs(); ++i) {
 		//cout << GetName() << " " << t << " " << m_tpoi.GetTime(i)+t << endl;
 		seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
 		seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
 		GetValue(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
+		if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( &seqdata(2,offset+i+1), m_tpoi.GetTime(i) + t );
         GetValueLingeringEddyCurrents(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
 		seqdata(7,offset+i+1) = m_tpoi.GetMask(i);
 	}
 
     this->UpdateEddyCurrents();
     this->PrepareEddyCurrents();
-    this->SetNonLinGrad(rem);
 
     //increase sequence time and TPOI offset
 	t      += GetDuration();

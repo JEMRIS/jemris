@@ -63,7 +63,7 @@ class GradPulse : public Pulse {
      * @param time  The time at which the gradient value is requested.
      * @return      The gradient value.
      */
-    virtual double GetGradient (double const time){return 0.0; };
+    virtual double GetGradient (double const time) = 0;
 
     // @brief see Module::Prepare
     virtual bool Prepare  (PrepareMode mode);

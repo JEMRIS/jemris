@@ -172,11 +172,21 @@ function NewModule=ChangeMe(Seq,handles)
 end
  
  %insert a module
+ static_atom = 0;
  if INSERT_MODULE_NUMBER>0 
       eval(['modname=''',handles.Modules{INSERT_MODULE_NUMBER},''';']);
       ispulse=strcmp(handles.ModType{INSERT_MODULE_NUMBER},'PULSE');
-      if  ( ispulse && ~strcmp('ATOMICSEQUENCE',upper(Seq.Name)) ) || ...
-          (~ispulse && ~strcmp('CONCATSEQUENCE',upper(Seq.Name)) )
+      isatom =strcmp(handles.ModType{INSERT_MODULE_NUMBER},'ATOM');
+      if  ( isatom  && strcmp('PARAMETERS',upper(Seq.Name)) )
+          static_atom = 1;
+          if numel(Seq.Children)>1
+            NewModule=[];
+            warndlg('Static Atom module is already inserted in Parameter node!')
+            return;          
+          end
+
+      elseif  ( ispulse && ~strcmp('ATOMICSEQUENCE',upper(Seq.Name)) ) || ...
+              (~ispulse && ~strcmp('CONCATSEQUENCE',upper(Seq.Name)) )      
           NewModule=[];
           warndlg(sprintf(['Insert of module %s into module \n',...
                            'of type %s is not possible!'],modname,Seq.Name))
@@ -211,6 +221,7 @@ end
       end
       MODULE_TYPE_COUNTER(j)=MODULE_TYPE_COUNTER(j)+1;
       sNAME=sprintf('%s%d',sNAME,MODULE_TYPE_COUNTER(j));
+      if (static_atom), sNAME='SA';end
       NewModule.Attributes(1).Value=sNAME;
       NewModule.current=1;NewModule.hp=0;NewModule.hl=0;NewModule.hi=0;NewModule.ht=0;
  end
