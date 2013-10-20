@@ -27,8 +27,6 @@
 #ifndef _RFPULSE_H_
 #define _RFPULSE_H_
 
-#define PI 3.14159265358979
-
 #include "Pulse.h"
 #include "TxRxPhase.h"
 #include "CoilArray.h"

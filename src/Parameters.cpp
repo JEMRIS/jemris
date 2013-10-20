@@ -95,9 +95,9 @@ bool    Parameters::Prepare(const PrepareMode mode) {
 	HIDDEN_ATTRIBUTE("Dy",    m_delta_y);
 	HIDDEN_ATTRIBUTE("Dz",    m_delta_z);
 
-	m_kmax_x = PARAM_PI/m_delta_x;
-	m_kmax_y = PARAM_PI/m_delta_y;
-	m_kmax_z = PARAM_PI/m_delta_z;
+	m_kmax_x = PI/m_delta_x;
+	m_kmax_y = PI/m_delta_y;
+	m_kmax_z = PI/m_delta_z;
 	HIDDEN_ATTRIBUTE("KMAXx", m_kmax_x);
 	HIDDEN_ATTRIBUTE("KMAXy", m_kmax_y);
 	HIDDEN_ATTRIBUTE("KMAXz", m_kmax_z);

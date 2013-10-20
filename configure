@@ -641,12 +641,9 @@ CCDEPMODE
 ac_ct_CC
 CFLAGS
 CC
-BUILD_API_FALSE
-BUILD_API_TRUE
 BUILD_DOCS_FALSE
 BUILD_DOCS_TRUE
 DOXYGEN
-XSLTPROC
 DOCUMENTATION_FALSE
 DOCUMENTATION_TRUE
 host_os
@@ -4092,58 +4089,6 @@ fi
 if test x$documentation = xtrue; then
 
 build_docs=yes
-
-XSLTPROC=
-for ac_prog in xsltproc
-do
-  # Extract the first word of "$ac_prog", so it can be a program name with args.
-set dummy $ac_prog; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_prog_XSLTPROC+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test -n "$XSLTPROC"; then
-  ac_cv_prog_XSLTPROC="$XSLTPROC" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_XSLTPROC="$ac_prog"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-fi
-fi
-XSLTPROC=$ac_cv_prog_XSLTPROC
-if test -n "$XSLTPROC"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $XSLTPROC" >&5
-$as_echo "$XSLTPROC" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-  test -n "$XSLTPROC" && break
-done
-
-if test -z "$XSLTPROC"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: xsltproc (from the libxslt source package) not found, not building documentation" >&5
-$as_echo "$as_me: WARNING: xsltproc (from the libxslt source package) not found, not building documentation" >&2;}
-  build_docs=no
-fi
-
-build_api=yes
-
 DOXYGEN=
 for ac_prog in doxygen
 do
@@ -4190,7 +4135,7 @@ done
 if test -z "$DOXYGEN"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: doxygen not found, not building documentation" >&5
 $as_echo "$as_me: WARNING: doxygen not found, not building documentation" >&2;}
-  build_api=no
+  build_docs=no
 fi
 
 fi
@@ -4201,14 +4146,6 @@ fi
 else
   BUILD_DOCS_TRUE='#'
   BUILD_DOCS_FALSE=
-fi
-
- if test x$build_api  = xyes; then
-  BUILD_API_TRUE=
-  BUILD_API_FALSE='#'
-else
-  BUILD_API_TRUE='#'
-  BUILD_API_FALSE=
 fi
 
 
@@ -6940,7 +6877,7 @@ rm -f conftest.*
   CXX=$MPICXX
 fi
 
-ac_config_files="$ac_config_files Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh"
+ac_config_files="$ac_config_files Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -7082,10 +7019,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILD_DOCS_TRUE}" && test -z "${BUILD_DOCS_FALSE}"; then
   as_fn_error $? "conditional \"BUILD_DOCS\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${BUILD_API_TRUE}" && test -z "${BUILD_API_FALSE}"; then
-  as_fn_error $? "conditional \"BUILD_API\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
@@ -7708,6 +7641,8 @@ do
     "share/matlab/JEMRIS_seq.m") CONFIG_FILES="$CONFIG_FILES share/matlab/JEMRIS_seq.m" ;;
     "share/matlab/JEMRIS_txrx.m") CONFIG_FILES="$CONFIG_FILES share/matlab/JEMRIS_txrx.m" ;;
     "share/matlab/pbs_script.sh") CONFIG_FILES="$CONFIG_FILES share/matlab/pbs_script.sh" ;;
+    "doc/doxy.conf") CONFIG_FILES="$CONFIG_FILES doc/doxy.conf" ;;
+    "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

@@ -34,27 +34,16 @@ AC_ARG_ENABLE([documentation],
 if test x$documentation = xtrue; then
 
 build_docs=yes
-
-XSLTPROC=
-AC_CHECK_PROGS([XSLTPROC], [xsltproc])
-if test -z "$XSLTPROC"; then
-  AC_MSG_WARN([xsltproc (from the libxslt source package) not found, not building documentation])
-  build_docs=no
-fi
-
-build_api=yes
-
 DOXYGEN=
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN"; then
   AC_MSG_WARN([doxygen not found, not building documentation])
-  build_api=no
+  build_docs=no
 fi
 
 fi
 
 AM_CONDITIONAL(BUILD_DOCS, test x$build_docs = xyes)
-AM_CONDITIONAL(BUILD_API,  test x$build_api  = xyes)
 
 # Checks for programs.
 AC_PROG_CXX
@@ -474,6 +463,6 @@ if test x$mpi = xtrue; then
   CXX=$MPICXX
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh])
+AC_CONFIG_FILES([Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile])
 
 AC_OUTPUT

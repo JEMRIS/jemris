@@ -106,7 +106,7 @@ void Sequence::SeqDiag (const string& fname ) {
 	for (size_t i = 1; i < meta.size(); ++i)
 		meta[i] = seqdata(i,7);
 
-	//bc.Write (seqdata, "A", "/seqdiag"); %OLD copied all in one go
+	//bc.Write (seqdata, "A", "/seqdiag"); // Need this Tony
 
 	//write columns to HDF5 file
 	for (size_t i=0; i<numaxes+1; i++) {

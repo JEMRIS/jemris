@@ -27,8 +27,6 @@
 #ifndef PULSE_H_
 #define PULSE_H_
 
-#define PI 3.14159265358979
-
 #include "Module.h"
 #include "Parameters.h"
 #include "TxRxPhase.h"
