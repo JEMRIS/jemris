@@ -3,8 +3,8 @@ instdir = $(DESTDIR)$(docdir)
 DOXY_STAMP = doxygen-build.stamp
 DOXY_FILE = doxy.conf
 
-EXTRA_DIST = $(static_docs) $(DOXY_FILE).in
-doc_DATA = $(EXTRA_DIST) doxygen-build.stamp 
+EXTRA_DIST = $(static_docs) $(DOXY_FILE).in doxygen-build.stamp 
+doc_DATA = $(EXTRA_DIST)
 
 # Generate local API documentation?
 if BUILD_DOCS
