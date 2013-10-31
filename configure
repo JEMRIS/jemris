@@ -2857,10 +2857,10 @@ am__tar='$${TAR-tar} chof - "$$tardir"' am__untar='$${TAR-tar} xf -'
 
 
 
-$as_echo "#define GIT_COMMIT \"a078ce06\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"7e834270\"" >>confdefs.h
 
 
-$as_echo "#define GIT_COMMIT_DATE \"\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT_DATE \"Tue Oct 29 08:29:59 2013 -0700\"" >>confdefs.h
 
 
 # copyright notice
