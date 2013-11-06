@@ -1,3 +1,13 @@
+jemris (2.7-1) stable; urgency=low
+  * Major Eddy currents introduced
+  * Major HDF5 file format replaces proprietry
+  * Major Framework clean and speed up
+  * Major ND-Data from codeare for higher dimensional objects
+  * Major Replacement of C++ by C interface in MPI
+  * Major Exciting and Refosing notions for RF pulses in order to have a K-Space
+
+ -- Kaveh Vahedipour <k.vahedipour@fz-juelich.de>  Wed, 29 Oct 2013 16:02:25 +0200
+
 jemris (2.5.2-1) stable; urgency=low
 
   * Major CVode interface adjusted. 90-180 produced z magnetisation.
