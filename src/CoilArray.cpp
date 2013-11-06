@@ -35,7 +35,8 @@ CoilArray::CoilArray () {
 
     m_dom_doc = 0;
     m_mode    = RX;
-    m_signal_prefix = "signal";
+    m_signal_prefix = "signals";
+	m_senmap_prefix = "sensmaps";
     m_cpf     = new CoilPrototypeFactory();
     m_xio     = new XMLIO();
 
@@ -156,7 +157,7 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 		}*/
 
 
-	BinaryContext bc ("signals.h5", IO::OUT);
+	BinaryContext bc (m_signal_prefix+".h5", IO::OUT);
 	NDData<double> di;
 	std::string URL, URN;
 
@@ -216,8 +217,8 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 
 /**********************************************************/
 IO::Status CoilArray::DumpSensMaps (bool verbose) {
-	
-	BinaryContext bc (std::string("sensmaps.h5"), IO::OUT);
+
+	BinaryContext bc (m_senmap_prefix+".h5", IO::OUT);
 	size_t sl = m_coils[0]->GetPoints();
 	NDData<double> mag (m_coils.size(), sl, sl, (m_coils[0]->GetNDim() == 3) ? sl : 1),
 			pha (m_coils.size(), sl, sl, (m_coils[0]->GetNDim() == 3) ? sl : 1);

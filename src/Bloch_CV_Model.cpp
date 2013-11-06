@@ -237,9 +237,8 @@ void Bloch_CV_Model::FreeSolver    () {
 /**********************************************************/
 bool Bloch_CV_Model::Calculate(double next_tStop){
 
-	if ( m_world->time < RTOL)
-	    m_world->time += RTOL;
-	
+	if ( m_world->time <= 0.0)  m_world->time = RTOL;
+
 	m_world->solverSuccess=true;
 	
 	CVodeSetStopTime(m_cvode_mem, next_tStop);
@@ -271,7 +270,7 @@ bool Bloch_CV_Model::Calculate(double next_tStop){
 	m_world->solution[PHASE] = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, PHASE );
 	m_world->solution[ZC]    = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, ZC );
     
-	//higher accuray than 1e-10 not useful. Return success and hope for the best.
+	//higher accuracy than 1e-10 not useful. Return success and hope for the best.
 	if(m_reltol < 1e-10) { m_world->solverSuccess=true; }
 	
 	return m_world->solverSuccess;

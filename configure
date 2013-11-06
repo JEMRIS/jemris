@@ -2898,10 +2898,10 @@ END
 fi
 
 
-$as_echo "#define GIT_COMMIT \"853425aa\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"a078ce06\"" >>confdefs.h
 
 
-$as_echo "#define GIT_COMMIT_DATE \"Tue Oct 15 19:14:13 2013 +0200\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT_DATE \"\"" >>confdefs.h
 
 
 # copyright notice

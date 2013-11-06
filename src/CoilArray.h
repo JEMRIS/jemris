@@ -124,7 +124,13 @@ class CoilArray  {
      * Set the prefix string for signal binary filenames.
      * @param val the prefix
      */
-    inline void SetSignalPrefix      (string val) {m_signal_prefix = val;};
+    void SetSignalPrefix      (string val) {m_signal_prefix = val;};
+
+    string GetSignalPrefix      () {return m_signal_prefix;};
+
+    void SetSenMaplPrefix      (string val) {m_senmap_prefix = val;};
+
+    string GetSenMaplPrefix      () {return m_senmap_prefix;};
 
     /**
      * @brief Get a particular coil
@@ -159,6 +165,7 @@ class CoilArray  {
     double                m_radius;        /**< @brief My radius        */
     unsigned short        m_mode;          /**< @brief My mode (RX/TX)  */
     string	          m_signal_prefix; /**< @brief prefix string to signal binary filenames */
+    string	          m_senmap_prefix; /**< @brief prefix string to sensitivity map filenames */
 
     CoilPrototypeFactory* m_cpf;           /**< @brief Coil factory    */
     DOMDocument*          m_dom_doc;       /**< @brief DOM document containing configuration */

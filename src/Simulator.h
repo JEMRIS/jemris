@@ -170,7 +170,7 @@ class Simulator {
 	 */
 	void	 DeleteTmpFiles();
 
- protected:
+ //protected:
 
 	/**
 	 * @brief Default constructor

@@ -287,7 +287,7 @@ void Simulator::Simulate          (bool bDumpSignal) {
 
 	if (bDumpSignal) {
 		m_rx_coil_array->DumpSignals();
-		m_kspace->Write("signals.h5", "kspace", "/");
+		m_kspace->Write(m_rx_coil_array->GetSignalPrefix()+".h5", "kspace", "/");
 		DeleteTmpFiles();
 	}
 
@@ -313,7 +313,6 @@ void Simulator::SetSequence       (string seq) {
 
 /**********************************************************/
 Simulator::~Simulator             () {
-
 	if (m_xio               != NULL) delete m_xio;
 	if (m_domtree_error_rep != NULL) delete m_domtree_error_rep;
 	if (m_rx_coil_array     != NULL) delete m_rx_coil_array;
@@ -324,7 +323,8 @@ Simulator::~Simulator             () {
 	//the simulator deletes the singletons !
 	if (m_world != NULL) delete m_world;
 
-	//delete SequenceTree::instance();
+	SequenceTree* seqTree = SequenceTree::instance();
+	delete seqTree;
 
 }
 /**********************************************************/

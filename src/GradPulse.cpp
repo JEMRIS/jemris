@@ -64,10 +64,6 @@ GradPulse::GradPulse  () {
 /***********************************************************/
 GradPulse::~GradPulse  () {
 
-	if (m_eddy_currents && GetParent() != NULL && m_eddy_pulse!=NULL) {
-			GetParent()->GetNode()->removeChild(m_eddy_pulse->GetNode());
-			delete m_eddy_pulse;
-	}
 }
 
 /***********************************************************/

@@ -85,6 +85,9 @@ class Model {
 	 */
     static void saveEvolution (long index, bool close_files) ;
 
+
+    void SetDumpProgress(bool val) { m_do_dump_progress = val; };
+
  protected:
 
 	/**
