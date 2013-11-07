@@ -109,21 +109,27 @@ static ex sinc_eval(const ex &x){
 }
 
 static ex sinc_evalf(const ex & x){
-     if (is_exactly_a<numeric>(x)) {
+     //if (is_exactly_a<numeric>(x)) {
     	 double d = (ex_to<numeric>(x)).to_double();
          return ( d==0.0 ? 1 : sin(d)/d );
-     }
-     else
-         return (sin(x)/x);
+     //}
+     //else
+     //    return (sin(x)/x);
  }
 
 static ex sinc_deriv(const ex & x, unsigned diff_param) {
-    return cos(x)/x - sin(x)/(x*x);
+	if ( x.is_zero() )
+		return 0;
+	else
+        return cos(x)/x - sin(x)/(x*x);
 }
 
 //real(sinc(a+I*b)) = (a*cosh(b)*sin(a) + b*cos(a)*sinh(b))/(a^2 + b^2)
 static ex sinc_real_part(const ex & x)
 {
+	if ( x.is_zero() )
+		return 1;
+	else
 	return ( ( ( real_part(x)*cosh(imag_part(x))*sin(real_part(x)) ) +
 			   ( imag_part(x)*sinh(imag_part(x))*cos(real_part(x)) ) ) /
 			   ( pow(real_part(x),2) + pow(imag_part(x),2) ) );
@@ -132,13 +138,19 @@ static ex sinc_real_part(const ex & x)
 //imag(sinc(a+I*b)) = (a*cos(a)*sinh(b) - b*cosh(b)*sin(a))/(a^2 + b^2)
 static ex sinc_imag_part(const ex & x)
 {
+	if ( x.is_zero() )
+		return 0;
+	else
 	return ( ( ( real_part(x)*sinh(imag_part(x))*cos(real_part(x)) ) -
 			   ( imag_part(x)*cosh(imag_part(x))*sin(real_part(x)) ) ) /
 			   ( pow(real_part(x),2) + pow(imag_part(x),2) ) );
 }
 
 static ex sinc_conjugate(const ex & x) {
-	return sin(x.conjugate())/x.conjugate();
+	if ( x.is_zero() )
+		return 1;
+	else
+    	return sin(x.conjugate())/x.conjugate();
 }
 
 DECLARE_FUNCTION_1P(sinc)

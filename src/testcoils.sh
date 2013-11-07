@@ -1,1 +1,4 @@
-time ./sanityck ../share/examples 3
+cd ../share/examples
+time ../../src/sanityck . 3
+cd ../../src
+

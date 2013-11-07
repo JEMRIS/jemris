@@ -1,10 +1,10 @@
 dump of sequence tree
                         TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
                         ----------------------------------------------------------------- |  ---------------
-sequence-root------>   CONCAT       CONCATSEQUENCE       C1    40.000       64       628  |  Repetitions = 1
-  |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1    10.000        0        52  | 
-    |_ child 1   -->    PULSE      ANALYTICRFPULSE       P1    10.000        0        50  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel) = (226.726,0,0,0)  , Shape = exp(-0.2*(T-5)^2+I*0.005*T^2)
-    |_ child 2   -->    PULSE        TRAPGRADPULSE       P2    10.000        0         3  |  Axis = GZ  , Area = 1
-  |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A3    30.000       64       576  | 
-    |_ child 1   -->    PULSE    ANALYTICGRADPULSE       P3    30.000        0       512  |  Axis = GX  , Area = -3.17389 , Shape =  d/dT sqrt(0.5+T)*cos(3*T)
-    |_ child 2   -->    PULSE    ANALYTICGRADPULSE       P4    30.000       64       576  |  Axis = GY  , Area = 3.47111 , Shape =  d/dT sqrt(0.05+0.5*T)*sin(3*T)
+sequence-root------>   CONCAT       CONCATSEQUENCE       C1    40.000       64       630  |  Repetitions = 1
+  |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1    10.000        0        53  | 
+    |_ child 1   -->    PULSE      ANALYTICRFPULSE       P1    10.000        0        51  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (226.726,0,0,0,0.5)  , Shape = exp(-0.2*(T-5)^2+I*0.005*T^2)
+    |_ child 2   -->    PULSE        TRAPGRADPULSE       P2    10.000        0         4  |  Axis = GZ  , Area = 1
+  |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A3    30.000       64       577  | 
+    |_ child 1   -->    PULSE    ANALYTICGRADPULSE       P3    30.000        0       513  |  Axis = GX  , Area = -3.17389 , Shape =  d/dT sqrt(0.5+T)*cos(3*T)
+    |_ child 2   -->    PULSE    ANALYTICGRADPULSE       P4    30.000       64       577  |  Axis = GY  , Area = 3.47111 , Shape =  d/dT sqrt(0.05+0.5*T)*sin(3*T)

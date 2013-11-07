@@ -174,10 +174,11 @@ int main (int argc, char *argv[]) {
 	coils.push_back("8chheadcyl.xml");
 	coils.push_back("1chext.xml");
 
+	bool          status = true;
+
 	//CASE 1: test sequence diagrams
 	if (input == "1") {
 
-		bool          status = true;
 		SequenceTree* seqTree;
 
 		cout << endl << "Test directory: " << path << endl;
@@ -237,11 +238,6 @@ int main (int argc, char *argv[]) {
 			}
 		}
 
-		if ( status )
-			return 0;
-		else
-			return 1;
-
 	}
 
 	//CASE 2: perform simulations with all sequences
@@ -293,11 +289,6 @@ int main (int argc, char *argv[]) {
 			}
 		}
 
-		if ( status )
-			return 0;
-		else
-			return 1;
-
 	}
 
 	if (input == "3") {
@@ -311,13 +302,14 @@ int main (int argc, char *argv[]) {
 
 		for (unsigned int i=0;i<coils.size();i++) {
 
-			CoilArray ca;
-			ca.Initialize(path+coils[i]);
-			ca.Populate();
+			CoilArray* ca = new CoilArray();
+			ca->Initialize(path+coils[i]);
 			string binfile = coils[i];
 			binfile.replace(binfile.find(".xml",0),4,"");
-			ca.SetSenMaplPrefix(path+binfile);
-			status = ca.DumpSensMaps(false);
+			ca->SetSenMaplPrefix(path+binfile);
+			status = ( ca->Populate() && status );
+			status = ( ca->DumpSensMaps(false) && status) ;
+			delete ca;
 			printf("%02d. %15s | %18s (sig-simu) ",i+1,coils[i].c_str(),binfile.c_str());
 
 			double d = compare_hdf5_fields(path+binfile+".h5",path+"approved/"+binfile+".h5","/maps/magnitude") ;
@@ -336,14 +328,13 @@ int main (int argc, char *argv[]) {
 		}
 
 
-		if ( status )
-			return 0;
-		else
-			return 1;
-
 	}
 
-	return 0;
+	if ( status )
+		return 0;
+	else
+		return 1;
+
 
 }
 
