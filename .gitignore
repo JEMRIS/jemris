@@ -15,11 +15,15 @@
 /share/matlab/JEMRIS_sim.m
 /share/matlab/JEMRIS_txrx.m
 /share/matlab/pbs_script.sh
+/src/test*.sh
 /signals.h5
 /src/stamp-h1
+/doc/doxy.conf
 /doc/site/nav.js
 /doc/userguide/doxy-jemris.conf
 /autom4te.cache
+
+/doc/html
 
 # implicit
 .deps/
@@ -32,8 +36,11 @@ Makefile
 *.o
 *.lo
 *.la
+*.log
+*.trs
 .jemris_progress.out
 seq.h5
 signals.h5
 sensmaps.h5
 mod.xml
+mpirun.out
