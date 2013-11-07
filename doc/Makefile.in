@@ -50,18 +50,16 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = share/matlab
+subdir = doc
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(srcdir)/JEMRIS_sim.m.in $(srcdir)/JEMRIS_seq.m.in \
-	$(srcdir)/JEMRIS_txrx.m.in $(srcdir)/pbs_script.sh.in
+	$(srcdir)/doxy.conf.in README
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/src/config.h
-CONFIG_CLEAN_FILES = JEMRIS_sim.m JEMRIS_seq.m JEMRIS_txrx.m \
-	pbs_script.sh
+CONFIG_CLEAN_FILES = doxy.conf
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -109,8 +107,8 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(matlabdir)"
-DATA = $(matlab_DATA)
+am__installdirs = "$(DESTDIR)$(docdir)"
+DATA = $(doc_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
@@ -217,9 +215,11 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = Contents.m JEMRIS_seq.fig JEMRIS_seq.m JEMRIS_sim.fig JEMRIS_sim.m JEMRIS_txrx.fig JEMRIS_txrx.m MNIbrain.mat MNIdeltaB.mat Makefile.am ModuleIcons.mat brainSample.m calcBfromXi.m changeSeqAttributes.m changeSeqTree.m getAllModules.m parseXMLseq.m pbs_script.sh plotCoils.m plotsensitivity.m plotSeqTree.m plotseq.m plotsim.m readEvol.m seqcad_uitoolbar.m uniform.xml userSample.mat writeSample.m writeXMLseq.m 
-matlabdir = $(datadir)/jemris/matlab
-matlab_DATA = $(EXTRA_DIST)
+instdir = $(DESTDIR)$(docdir)
+DOXY_STAMP = doxygen-build.stamp
+DOXY_FILE = doxy.conf
+EXTRA_DIST = $(static_docs) $(DOXY_FILE).in doxygen-build.stamp 
+doc_DATA = $(EXTRA_DIST)
 all: all-am
 
 .SUFFIXES:
@@ -232,9 +232,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign share/matlab/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign doc/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign share/matlab/Makefile
+	  $(AUTOMAKE) --foreign doc/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -253,35 +253,29 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-JEMRIS_sim.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_sim.m.in
+doxy.conf: $(top_builddir)/config.status $(srcdir)/doxy.conf.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-JEMRIS_seq.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_seq.m.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-JEMRIS_txrx.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_txrx.m.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-pbs_script.sh: $(top_builddir)/config.status $(srcdir)/pbs_script.sh.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-install-matlabDATA: $(matlab_DATA)
+install-docDATA: $(doc_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(matlab_DATA)'; test -n "$(matlabdir)" || list=; \
+	@list='$(doc_DATA)'; test -n "$(docdir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(matlabdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(matlabdir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(docdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(docdir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(matlabdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(matlabdir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(docdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(docdir)" || exit $$?; \
 	done
 
-uninstall-matlabDATA:
+uninstall-docDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(matlab_DATA)'; test -n "$(matlabdir)" || list=; \
+	@list='$(doc_DATA)'; test -n "$(docdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(matlabdir)'; $(am__uninstall_files_from_dir)
+	dir='$(DESTDIR)$(docdir)'; $(am__uninstall_files_from_dir)
 tags TAGS:
 
 ctags CTAGS:
@@ -323,7 +317,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(matlabdir)"; do \
+	for dir in "$(DESTDIR)$(docdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -356,9 +350,12 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+@BUILD_DOCS_FALSE@uninstall-local:
+@BUILD_DOCS_FALSE@install-data-local:
+@BUILD_DOCS_FALSE@clean-local:
 clean: clean-am
 
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-local mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -376,7 +373,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-matlabDATA
+install-data-am: install-data-local install-docDATA
 
 install-dvi: install-dvi-am
 
@@ -420,22 +417,60 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-matlabDATA
+uninstall-am: uninstall-docDATA uninstall-local
 
 .MAKE: install-am install-strip
 
-.PHONY: all all-am check check-am clean clean-generic cscopelist-am \
-	ctags-am distclean distclean-generic distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
+.PHONY: all all-am check check-am clean clean-generic clean-local \
+	cscopelist-am ctags-am distclean distclean-generic distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-data-local \
+	install-docDATA install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-matlabDATA install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am tags-am uninstall uninstall-am \
-	uninstall-matlabDATA
+	uninstall-docDATA uninstall-local
 
+
+# Generate local API documentation?
+
+@BUILD_DOCS_TRUE@doxygen-build.stamp: $(DOXY_FILE) $(top_srcdir)/src/*.h userguide/*.dox
+@BUILD_DOCS_TRUE@	doxygen $(DOXY_FILE)
+@BUILD_DOCS_TRUE@	touch doxygen-build.stamp
+
+@BUILD_DOCS_TRUE@install-data-local: doxygen-build.stamp
+@BUILD_DOCS_TRUE@	$(mkinstalldirs) $(instdir)
+@BUILD_DOCS_TRUE@	if test -d html; then \
+@BUILD_DOCS_TRUE@	  for f in html/*; do \
+@BUILD_DOCS_TRUE@	    if test -f $$f; then \
+@BUILD_DOCS_TRUE@		  $(INSTALL_DATA) $$f $(instdir)/; \
+@BUILD_DOCS_TRUE@	    fi \
+@BUILD_DOCS_TRUE@	  done; \
+@BUILD_DOCS_TRUE@	  for dir in html/*; do \
+@BUILD_DOCS_TRUE@	    if test -d $$dir; then \
+@BUILD_DOCS_TRUE@	      b=`basename $$dir`; \
+@BUILD_DOCS_TRUE@	      $(mkinstalldirs) $(instdir)/$$b; \
+@BUILD_DOCS_TRUE@	      for f in $$dir/*; do \
+@BUILD_DOCS_TRUE@	        if test -f $$f; then \
+@BUILD_DOCS_TRUE@		      $(INSTALL_DATA) $$f $(instdir)/$$b; \
+@BUILD_DOCS_TRUE@	        fi \
+@BUILD_DOCS_TRUE@	      done \
+@BUILD_DOCS_TRUE@	    fi \
+@BUILD_DOCS_TRUE@	  done \
+@BUILD_DOCS_TRUE@	fi; 
+
+@BUILD_DOCS_TRUE@uninstall-local:
+@BUILD_DOCS_TRUE@	rm -rf $(instdir)
+
+@BUILD_DOCS_TRUE@clean-local:
+@BUILD_DOCS_TRUE@	if test -d html; then rm -rf html; fi
+@BUILD_DOCS_TRUE@	if test -f doxy-build.stamp; then rm -f doxy-build.stamp; fi
+@BUILD_DOCS_TRUE@	if test -f doxy.conf; then rm -f doxy.conf; fi
+
+@BUILD_DOCS_FALSE@doxygen-build.stamp:
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
