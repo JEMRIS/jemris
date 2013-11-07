@@ -15,6 +15,8 @@ AC_COPYRIGHT([2007-2013 Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder])
 # C++ project
 AC_LANG(C++)
 
+AM_MAINTAINER_MODE
+
 # Check standard headers
 AC_HEADER_STDC
 
