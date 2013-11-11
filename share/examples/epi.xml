@@ -5,7 +5,7 @@
          <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" Name="P1"/>
       </AtomicSequence>
       <AtomicSequence Name="A2">
-         <TrapGradPulse Area="0.5*a1" Axis="GX" Name="P2" Observe="P4,Area"/>
+         <TrapGradPulse Area="-0.5*abs(a1)" Axis="GX" Name="P2" Observe="P4,Area"/>
          <TrapGradPulse Area="a1" Axis="GY" Name="P3" Observe="P,KMAXy"/>
       </AtomicSequence>
       <DelayAtomicSequence Delay="a1" DelayType="C2C" Name="D1" Observe="P,TE" StartSeq="A1" StopSeq="C2"/>

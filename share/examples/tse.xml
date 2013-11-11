@@ -11,14 +11,14 @@
          <DELAYATOMICSEQUENCE Delay="a1/2" DelayType="B2E" Name="D1" Observe="P,TE" StartSeq="A1"/>
          <CONCATSEQUENCE Name="I" Repetitions="4">
             <ATOMICSEQUENCE Name="A3">
-               <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="180" InitialPhase="90" Name="P3"/>
+               <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="180" InitialPhase="90" Name="P3" Refocusing="1"/>
             </ATOMICSEQUENCE>
             <ATOMICSEQUENCE Name="A4">
                <TRAPGRADPULSE Area="-a1+a2*(a3+a4*a5)" Axis="GY" Name="P4" Observe="P,KMAXy/P,DKy/I,Counter/I,Repetitions/O,Counter"/>
             </ATOMICSEQUENCE>
             <DELAYATOMICSEQUENCE Delay="a1/2" DelayType="C2C" Name="D2" Observe="P,TE" StartSeq="A3" StopSeq="A5"/>
             <ATOMICSEQUENCE Name="A5">
-               <TRAPGRADPULSE Axis="GX"  ADCs="a2" FlatTopArea="2*a1" FlatTopTime="4" Observe="P,KMAXx/P,Nx" Name="P5"/>
+               <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="4" Name="P5" Observe="P,KMAXx/P,Nx"/>
             </ATOMICSEQUENCE>
             <ATOMICSEQUENCE Name="A6">
                <TRAPGRADPULSE Area="-a1" Axis="GY" Name="P6" Observe="P4,Area"/>

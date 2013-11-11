@@ -2,13 +2,13 @@
 <Parameters FOVx="32" FOVy="32" FOVz="1" Name="P" Nx="32" Ny="32" Nz="1" TE="5" TR="20">
    <ConcatSequence Name="C" Observe="P,Ny" Repetitions="a1">
       <ATOMICSEQUENCE Name="A1">
-         <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="a3*sqrt(a1)/sqrt(a2)" Name="P1" Observe="C,Counter/C,Repetitions/P,FOVx"/>
+         <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="50" Name="P1" Observe="C,Counter/C,Repetitions/P,FOVx"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="A2" Observe="C,Counter/C,Repetitions" RotAngle="180*a1/a2">
          <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P2" Observe="P3,Area"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="A3" Observe="C,Counter/C,Repetitions" RotAngle="180*a1/a2">
-         <TRAPGRADPULSE Axis="GX" FlatTopArea="2*a1" ADCs="a2" FlatTopTime="8" Name="P3" Observe="P,KMAXx/P,Nx"/>
+         <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="8" Name="P3" Observe="P,KMAXx/P,Nx"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="A4" Observe="C,Counter/C,Repetitions" RotAngle="180*a1/a2">
          <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P4" Observe="P3,Area" Vector="0.9706    0.9572    0.4854    0.8003    0.1419    0.4218"/>

@@ -5,7 +5,7 @@ sequence-root-------->   CONCAT       CONCATSEQUENCE       C1   100.000     4096
   |_ child 1   ------>     ATOM       ATOMICSEQUENCE       A1     0.100        0         3  | 
     |_ child 1   ---->    PULSE          HARDRFPULSE       P1     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,1e+16,0,0.5) 
   |_ child 2   ------>     ATOM       ATOMICSEQUENCE       A2     0.654        0         6  | 
-    |_ child 1   ---->    PULSE        TRAPGRADPULSE       P2     0.654        0         4  |  Axis = GX  , Area = 0.908768
+    |_ child 1   ---->    PULSE        TRAPGRADPULSE       P2     0.654        0         4  |  Axis = GX  , Area = -0.908768
     |_ child 2   ---->    PULSE        TRAPGRADPULSE       P3     0.593        0         4  |  Axis = GY  , Area = 0.785398
   |_ child 3   ------>     ATOM  DELAYATOMICSEQUENCE       D1     4.072        0         2  |  DelayType = C2C  , StartSeq = A1 , StopSeq = C2
     |_ child 1   ---->    PULSE           EMPTYPULSE    eP_D1     4.072        0         2  |  Axis = none 

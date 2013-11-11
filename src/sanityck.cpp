@@ -213,8 +213,7 @@ int main (int argc, char *argv[]) {
 					d += compare_hdf5_fields(path+binfile,path+"approved/"+binfile,"/seqdiag/GX")  ;
 					d += compare_hdf5_fields(path+binfile,path+"approved/"+binfile,"/seqdiag/GY")  ;
 					d += compare_hdf5_fields(path+binfile,path+"approved/"+binfile,"/seqdiag/GZ")  ;
-					d = d / 7.0;
-				if (d > 1e-3 ) {
+				if (d > 0.1 ) {
 					status = false;
 					printf("is NOT ok (e=%7.3f %%)       | ",d);
 				} else
@@ -281,7 +280,7 @@ int main (int argc, char *argv[]) {
 				cout << "is NOT ok (#ADCs differs!)" << endl;
 			} else {
 				d += compare_hdf5_fields(path+binfile+".h5",path+"approved/"+binfile+".h5","/signal/channels/00") ;
-				if (d > 1e-2 ) {
+				if (d > 0.1 ) {
 					status = false;
 					printf("is NOT ok (e=%7.4f %%) \n",d);
 				} else
@@ -319,7 +318,7 @@ int main (int argc, char *argv[]) {
 				cout << "is NOT ok (# grid points differs!)" << endl;
 			} else {
 				d += compare_hdf5_fields(path+binfile+".h5",path+"approved/"+binfile+".h5","/maps/phase") ;
-				if (d > 1e-2 ) {
+				if (d > 0.1 ) {
 					status = false;
 					printf("is NOT ok (e=%7.4f %%) \n",d);
 				} else
