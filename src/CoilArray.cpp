@@ -220,8 +220,9 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 
 	BinaryContext bc (m_senmap_prefix+".h5", IO::OUT);
 	size_t sl = m_coils[0]->GetPoints();
-	NDData<double> mag (m_coils.size(), sl, sl, (m_coils[0]->GetNDim() == 3) ? sl : 1),
-			pha (m_coils.size(), sl, sl, (m_coils[0]->GetNDim() == 3) ? sl : 1);
+	NDData<double> pha, mag = (m_coils[0]->GetNDim() == 3) ? 
+		NDData<double> (sl, sl, sl) : NDData<double> (sl, sl);
+	pha = mag;
 	
 	if (bc.Status() != IO::OK)
 		return bc.Status();
