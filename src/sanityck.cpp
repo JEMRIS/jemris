@@ -41,8 +41,7 @@ void usage () {
   cout << endl << "sanityck usage " << endl << endl;
 	cout   << "  sanityck <path_to_example_data> 1 : creates tree-dumps and seq-diagrams for some sequences" << endl;
 	cout   << "  sanityck <path_to_example_data> 2 : performs simulation on a small sample for all these sequences " << endl;
-	cout   << "  sanityck <path_to_example_data> 3 : same as 3, but parallel simulation (should be started wth mpirun)" << endl;
-	cout   << "  sanityck <path_to_example_data> 4 : creates sensitivity maps" << endl << endl;
+	cout   << "  sanityck <path_to_example_data> 3 : creates sensitivity maps" << endl << endl;
 }
 
 /****************************************************/
