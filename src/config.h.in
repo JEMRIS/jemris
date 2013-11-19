@@ -3,6 +3,9 @@
 /* CVODE Version >= 2.6? */
 #undef CVODE26
 
+/* c++ compiler */
+#undef CXX
+
 /* git HEAD commit hash */
 #undef GIT_COMMIT
 
@@ -11,6 +14,9 @@
 
 /* Define to 1 if you have the <algorithm> header file. */
 #undef HAVE_ALGORITHM
+
+/* Support AVX (Advanced Vector Extensions) instructions */
+#undef HAVE_AVX
 
 /* boost is available */
 #undef HAVE_BOOST
@@ -99,6 +105,9 @@
 /* Description */
 #undef HAVE_MKSTEMPS
 
+/* Support MMX instructions */
+#undef HAVE_MMX
+
 /* define that mpi supports threads */
 #undef HAVE_MPI_THREADS
 
@@ -116,6 +125,24 @@
 
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT
+
+/* Support SSE (Streaming SIMD Extensions) instructions */
+#undef HAVE_SSE
+
+/* Support SSE2 (Streaming SIMD Extensions 2) instructions */
+#undef HAVE_SSE2
+
+/* Support SSE3 (Streaming SIMD Extensions 3) instructions */
+#undef HAVE_SSE3
+
+/* Support SSE4.1 (Streaming SIMD Extensions 4.1) instructions */
+#undef HAVE_SSE41
+
+/* Support SSE4.2 (Streaming SIMD Extensions 4.2) instructions */
+#undef HAVE_SSE42
+
+/* Support SSSE3 (Supplemental Streaming SIMD Extensions 3) instructions */
+#undef HAVE_SSSE3
 
 /* Define to 1 if you have the <sstream> header file. */
 #undef HAVE_SSTREAM
