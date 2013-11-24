@@ -82,7 +82,7 @@ class AnalyticRFPulse : public RFPulse {
     /**
      * @see Pulse::SetTPOIs
      */
-    virtual void     SetTPOIs() { m_pulse_shape.SetTPOIs(); } ;
+    //virtual void     SetTPOIs() { m_pulse_shape.SetTPOIs(); } ;
 
 
  protected:

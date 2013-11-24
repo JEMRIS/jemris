@@ -46,10 +46,11 @@ else
  MODULE_TYPE_COUNTER(j)=MODULE_TYPE_COUNTER(j)+1;
 end
 
-% plot static to the left (second child of parameters)
+% plot static atom to the right (second child of parameters)
 if numel(handles.Seq(1).Children)>1
  if strcmp(S.Attributes(1).Value,handles.Seq(1).Children(2).Attributes(1).Value)
-    x=1;
+    x=1.4;y=1.5;
+    C=[.5 .5 1];
  end
 end
 

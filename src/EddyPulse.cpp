@@ -75,6 +75,7 @@ bool EddyPulse::Prepare  (PrepareMode mode) {
     	if ( m_gen_pulse->HasDOMattribute("NLG_field") && !HasDOMattribute("NLG_field") )
     		AddDOMattribute("NLG_field",m_gen_pulse->GetDOMattribute("NLG_field"));
     		//cout << " !! " << GetDOMattribute("NLG_field") << endl;
+    		// -> nonsense? Observe ( GetAttribute("Area"), m_gen_pulse->GetName(),"Area", mode == PREP_VERBOSE);
     }
 
 	//prepare call of base class

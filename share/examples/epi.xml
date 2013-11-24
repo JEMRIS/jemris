@@ -14,7 +14,7 @@
             <TrapGradPulse ADCs="a3" Axis="GX" FlatTopArea="2*a1*(-1)^a2" FlatTopTime="1" Name="P4" Observe="P,KMAXx/C2,Counter/P,Nx"/>
          </AtomicSequence>
          <AtomicSequence Name="A4">
-            <TrapGradPulse Area="-a1" Axis="GY" Name="P5" Observe="P,DKy/C2,Counter/C2,Repetitions"/>
+            <TrapGradPulse Area="ite(1+a2,a3,0,-a1)" Axis="GY" Name="P5" Observe="P,DKy/C2,Counter/C2,Repetitions"/>
          </AtomicSequence>
       </ConcatSequence>
       <DelayAtomicSequence Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>

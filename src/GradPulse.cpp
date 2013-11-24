@@ -56,7 +56,7 @@ GradPulse::GradPulse  () {
 	m_eddy_val		= 0.0;
 	m_eddy_time		= 0.0;
 	m_ec_area		= 0.0;
-	m_ec_length     = 100;
+	m_ec_length     = 0.0;
 
 
 }
@@ -122,6 +122,7 @@ bool     GradPulse::PrepareEddyCurrents  (PrepareMode mode, int steps) {
 		//attributes for the current spin positions, and the gradient value
 		HIDDEN_ATTRIBUTE("EddyTime", m_eddy_time  );
 		Observe(GetAttribute("EddyCurrents"),GetName(),"EddyTime", mode == PREP_VERBOSE);
+		// -> nonsense!! Observe(GetAttribute("EddyCurrents"),GetName(),"Area", mode == PREP_VERBOSE);
 		stringstream sEC; sEC << "a" << m_obs_attribs.size();
 		ReplaceString(val,"T",sEC.str());
 		//set the GiNaC expression and mark this gradient as nonlinear

@@ -5,8 +5,8 @@
          <ANALYTICRFPULSE Duration="10" Name="P1" Shape="exp(-0.2*(T-5)^2+I*0.005*T^2)" TPOIs="50"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="A3">
-         <ANALYTICGRADPULSE Axis="GX" Diff="1" Duration="30" Name="P3" Shape="sqrt(0.5+T)*cos(3*T)" TPOIs="512"/>
-         <ANALYTICGRADPULSE ADCs="64" Axis="GY" Diff="1" Duration="30" Name="P4" Shape="sqrt(0.05+0.5*T)*sin(3*T)" TPOIs="512"/>
+         <ANALYTICGRADPULSE Axis="GX" ADCs="-512" Diff="1" Duration="30" Name="P3" Shape="sqrt(0.5+T)*cos(3*T)" />
+         <ANALYTICGRADPULSE Axis="GY" ADCs="64" Diff="1" Duration="30" Name="P4" Shape="sqrt(0.05+0.5*T)*sin(3*T)" />
       </ATOMICSEQUENCE>
    </ConcatSequence>
 </Parameters>

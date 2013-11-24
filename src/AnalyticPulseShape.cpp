@@ -33,7 +33,7 @@ AnalyticPulseShape::AnalyticPulseShape ()  {
   
 	m_prepared		= false;
 	m_rfpulse		= false;
-	m_more_tpois		= 0;
+	//m_more_tpois		= 0;
 	m_analytic_value	= 0.0;
 	m_analytic_time		= 0.0;
 	m_analytic_integral	= 0.0;
@@ -59,6 +59,7 @@ double            AnalyticPulseShape::GetShape (double const time)  {
 }
 
 /***********************************************************/
+/*
 void  AnalyticPulseShape::SetTPOIs () {
 
     m_pulse->Pulse::SetTPOIs();
@@ -68,6 +69,7 @@ void  AnalyticPulseShape::SetTPOIs () {
 
 
 };
+*/
 
 /*****************************************************************/
 double    AnalyticPulseShape::GetPhase  (Module* mod, double time ) {
@@ -88,8 +90,8 @@ void  AnalyticPulseShape::PrepareInit (bool verbose) {
     //init observable and visible attributes: "Shape", "TPOIs"
     if (m_pulse->m_attributes.find("Shape")==m_pulse->m_attributes.end() )
 	m_pulse->m_attributes.insert(pair<string,Attribute*>("Shape",new Attribute("Shape",m_pulse, true, true, m_analytic_value)));  
-    if (m_pulse->m_attributes.find("TPOIs")==m_pulse->m_attributes.end() )
-	m_pulse->m_attributes.insert(pair<string,Attribute*>("TPOIs",new Attribute("TPOIs",m_pulse, true, true, m_more_tpois)));
+    //if (m_pulse->m_attributes.find("TPOIs")==m_pulse->m_attributes.end() )
+	//m_pulse->m_attributes.insert(pair<string,Attribute*>("TPOIs",new Attribute("TPOIs",m_pulse, true, true, m_more_tpois)));
     
     //init unobservable and visible attributes: "Diff" and "Constants"
     if (m_pulse->m_attributes.find("Diff")==m_pulse->m_attributes.end() )

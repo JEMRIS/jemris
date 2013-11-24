@@ -85,7 +85,7 @@ class AnalyticPulseShape {
     /**
      * @see Pulse::SetTPOIs
      */
-    void     SetTPOIs();
+    //void     SetTPOIs();
 
     static double GetPhase (Module* mod, double time );
 
@@ -94,7 +94,7 @@ class AnalyticPulseShape {
     bool	m_rfpulse;	/**<@brief true, if my pulse is an RF pulse       */
     bool	m_prepared;	/**<@brief true, if prepared                      */
     
-    unsigned int  m_more_tpois;        /**< For analytic evaluation of GetValue */
+    //unsigned int  m_more_tpois;        /**< For analytic evaluation of GetValue */
     double        m_analytic_value;    /**< For analytic evaluation of GetValue */
     double        m_analytic_time;     /**< For analytic evaluation of GetValue */
     double        m_constant[20];      /**< For analytic evaluation of GetValue */

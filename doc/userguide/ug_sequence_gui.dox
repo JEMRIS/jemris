@@ -149,7 +149,7 @@ There exist several pulses which may be inserted into an AtomicSequence. All pul
  \li \c InitialDelay: A pulse may start at a later time within the atom, e.g. an RF pulse may wait for the ramp-up time of a gradient pulse. 
 
  \li \c ADC: The ADCs specify the number of readout events. These events are equidistantly distributed over the length of the pulse,
-        and the simulator will save the acquired signal at each of these time points. It is possible to specify a negative number:
+        and the simulator will save the acquired signal at each of these time points. It is possible to specify a <b> negative number of ADCs </b> :
 	in this case the time points are not ADC events, but so called TPOIs (Time Points Of Interest), at which the pulse is evaluated but
         no signal acquired, as specified by ADCs. This concept is good for a) better visualization of certain pulse shapes and b) force
 	the simulator to evaluate the solution at these time points. However, keep in mind that many TPOIs (or ADCs) will slow down the
@@ -195,7 +195,6 @@ All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pu
 		GaussianRFPulse, and additionally
 	 <ol>
          	<li> \c "Shape" The analytic expression of the RF pulse. See \ref ug_JEMRIS_seq_spec for explanation.
-         	<li> \c "TPOIs" A number of time points at which the value is evaluated (but no signal acquired, as specified by the ADCs) 
          	<li> \c "Diff" If set to 1, then the actual pulse shape is defined by the first derivative of the analytic expression.
 			In this case, the flip angle is set via the analytic expression rather than numerical integration.
          	<li> \c "Constants" A comma-sparated list of floating point numbers, which may be used as variables \c "c1,c2,..."
@@ -223,14 +222,20 @@ evaluation of an AnalyticRFPulse is slower, and an ExternalRFPulse is slowest, i
 Next, there exist several <b> Gradient Pulse Modules</b> in JEMRIS. All gradients can induce eddy currents, for which three additional attributes
 are in common for these pulses:
 
- \li \c EddyCurrents: An analytic expression, similar to the Shape attribute of AnalyticGradPulse (see below). It specifies the shape of the
-	eddy current, e.g. \c "EddyCurrent=01.*exp(-5*T)".
+ \li \c EddyCurrents: An analytic expression, similar to the Shape attribute of AnalyticGradPulse (see section \ref ug_JEMRIS_seq_spec). It specifies the 
+	shape of the eddy current, e.g. \c "EddyCurrent=01.*exp(-5*T)". The expression then gets compiled in runtime for fast evaluation of the eddy currents.
  \li \c EddyConvLength: The number of points to compute the convolution integral for the actual eddy current. Note that eddy currents are
 	computationally expensive, therefore a short convolution length increases simulation speed. Eddy currents are displayed in the GUI, thus
 	you can visually check if the length is sufficient.
  \li \c Hide: A boolean to hide the gradient event itself, but not its eddy current. If \c "Hide=1" the actual gradient is not played out. Thus, by copying
 	a gradient and hiding the copies, it is possible to individually specify arbirtrary eddy current cross terms.
 
+Eddy currents are implemented in a very flexible way: the eddy currents will adapt automatically, if the gradient module changes its shape
+during the sequence runtime (e.g. a phase-encoding gradient). Further, eddy currents typically last longer than the gradient event itself, i.e. beyond the
+AtomicSequence in which it was originated. In this case the transients are taken over to the next AtomicSequence - which could be again the
+same module, if it runs in a loop (e.g. in EPI). <b> Caution: </b> the latter will fail, if additionally the gradient dynamically changes its shape within
+the loop, as then the transients are no longer corrrect. In such a case, a dfferent way to implement the sequence has to be chosen. For instance in EPI one
+could use two readout gradient events with static polarities (positive and negative) within the echotrain loop.
 
 Further, each gradient can have a specific spatial dependence, i.e. it can be a nonlinear gradient. See \ref ug_JEMRIS_seq_spec for explanation.
 The following gradient pulse modules exist in JEMRIS:

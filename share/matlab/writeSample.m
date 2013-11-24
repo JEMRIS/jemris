@@ -123,6 +123,7 @@ function Sample=getShape(VA)
                if length(VA)<11, fname=sprintf('sphere_%d.bin',length(L)); end
             case '1d column'
                 dim = dim/2;
+                res = VA{3}; if numel(res)==1 && res ~=1; dim(2)=round(dim(2)*res); end
                 A=zeros(dim(1)*dim(2),11);
                 [nx,ny,nz]=size(A);
                 [I,J,K]=meshgrid(1:nx,1:ny,1:nz); 

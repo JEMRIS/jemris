@@ -284,19 +284,19 @@ function Sample_Callback(hObject, eventdata, handles)
         handles.sample.T1=1000;handles.sample.T2=100;handles.sample.T2S=100;handles.sample.CS=0;
         handles.sample.M0=1;handles.sample.R=50;handles.sample.DxDy=1;
         handles.sim.R2P=0;handles.sim.CSF=1;
-        M0str='M0'; CSstr='CS [Hz]'; SSstr='Radius'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
+        M0str='M0'; CSstr='CS [rad/sec]'; SSstr='Radius [mm]'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
     case 2 %2spheres
         bv1='on';bv2='on';
         handles.sample.T1=[100 50];handles.sample.T2=[100 50];handles.sample.T2S=[100 50];handles.sample.CS=[0 0];
         handles.sample.M0=[1 1];handles.sample.R=[50 25];handles.sample.DxDy=1;
         handles.sim.R2P=0;handles.sim.CSF=1;
-        M0str='M0'; CSstr='CS [Hz]'; SSstr='Radius'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
+        M0str='M0'; CSstr='CS [rad/sec]'; SSstr='Radius [mm]'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
    case 3 %column
         bv1='on';bv2='on';
         handles.sample.T1=[100 50];handles.sample.T2=[100 50];handles.sample.T2S=[100 50];handles.sample.CS=[0 0];
         handles.sample.M0=[1 0.5];handles.sample.R=[50 4];handles.sample.DxDy=1;
         handles.sim.R2P=0;handles.sim.CSF=1;
-        M0str='M0'; CSstr='CS [Hz]'; SSstr='Length/Blocks'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
+        M0str='M0'; CSstr='CS [rad/sec]'; SSstr='Length [mm]/Blocks'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
    case 4 %brain
         bv1='off';bv2='on';
         set(handles.SusceptTag,'Value',0,'Visible','on');
