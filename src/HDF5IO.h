@@ -32,6 +32,34 @@
 #include <algorithm>
 #include <string.h>
 
+template<class T> struct HDF5Types;
+
+template<> struct HDF5Types<size_t> {
+	static const H5::DataType Type() {
+		return H5::PredType::NATIVE_ULONG;
+	}
+};
+template<> struct HDF5Types<double> {
+	static const H5::DataType Type() {
+		return H5::PredType::NATIVE_DOUBLE;
+	}
+};
+template<> struct HDF5Types<float> {
+	static const H5::DataType Type() {
+		return H5::PredType::NATIVE_FLOAT;
+	}
+};
+template<> struct HDF5Types<int> {
+	static const H5::DataType Type()  {
+		return H5::PredType::NATIVE_INT;
+	}
+};
+template<> struct HDF5Types<long> {
+	static const H5::DataType Type() {
+		return H5::PredType::NATIVE_LONG;
+	}
+};
+
 /**
  * @brief HDF5 IO interface
  */
@@ -88,7 +116,7 @@ public:
 			}
 
 			H5::DataSpace dspace (data.NDim(), dims.data());
-			H5::FloatType dtype  (H5::PredType::NATIVE_DOUBLE);
+			H5::DataType dtype  (HDF5Types<T>::Type());
 			H5::DataSet   dset = group.createDataSet(urn, dtype, dspace);
 
 			dset.write(data.Ptr(), dtype);
@@ -129,7 +157,7 @@ public:
 			size_t        ndim   = dspace.getSimpleExtentDims(&dims[0], NULL);
 			data                 = NDData<T> (dims);
 
-			dset.read(data.Ptr(), dtype);
+			dset.read(data.Ptr(), HDF5Types<T>::Type());
 			dspace.close();
 			dset.close();
 
