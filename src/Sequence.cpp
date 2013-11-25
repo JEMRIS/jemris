@@ -69,7 +69,6 @@ void Sequence::SeqDiag (const string& fname ) {
 	if (bc.Status() != IO::OK) return;
 
 	NDData<double>      di (GetNumOfTPOIs() + 1);
-	NDData<size_t>      mi (GetNumOfTPOIs() + 1);
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
 	int numaxes = 7;
@@ -86,9 +85,7 @@ void Sequence::SeqDiag (const string& fname ) {
 	seqaxis.push_back("GX");	//X gradient
 	seqaxis.push_back("GY");	//Y gradient
 	seqaxis.push_back("GZ");	//Z gradient
-	seqaxis.push_back("KX");	//X gradient
-	seqaxis.push_back("KY");	//Y gradient
-	seqaxis.push_back("KZ");	//Z gradient
+	seqaxis.push_back("META");	//Z gradient
 
 	//turn off nonlinear gradients in static events for sequence diagram calculation
 	World* pW = World::instance();
@@ -111,14 +108,8 @@ void Sequence::SeqDiag (const string& fname ) {
 	//write columns to HDF5 file
 	for (size_t i=0; i<numaxes+1; i++) {
 		std::string URN (seqaxis[i]);
-		if (i < numaxes ) {
 			memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
 			bc.Write(di, URN, "/seqdiag");
-		} else {
-			for (size_t j = 0; j < mi.Size(); ++j)
-				mi[j] = seqdata[i*mi.Size()+j];
-			bc.Write (mi, "META", "/seqdiag");
-		}
 		if (i == 4)
 			bc.Write (cumtrapz(di,t,meta), "KX", "/seqdiag");
 		if (i == 5)
