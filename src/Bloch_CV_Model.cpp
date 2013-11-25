@@ -196,7 +196,7 @@ void Bloch_CV_Model::InitSolver    () {
     
     ((nvec*) (m_world->solverSettings))->y = N_VNew_Serial(NEQ);
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,AMPL )  = m_world->solution[AMPL] ;
-    NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,PHASE ) = fmod(m_world->solution[PHASE],6.28318530717958) ;
+    NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,PHASE ) = fmod(m_world->solution[PHASE],TWOPI) ;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,ZC )    = m_world->solution[ZC] ;
     
     ((nvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ);

@@ -115,7 +115,8 @@ void Sequence::SeqDiag (const string& fname ) {
 			memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
 			bc.Write(di, URN, "/seqdiag");
 		} else {
-			memcpy (&mi[0], &seqdata[i*mi.Size()], mi.Size() * sizeof(size_t));
+			for (size_t j = 0; j < mi.Size(); ++j)
+				mi[j] = seqdata[i*mi.Size()+j];
 			bc.Write (mi, "META", "/seqdiag");
 		}
 		if (i == 4)
