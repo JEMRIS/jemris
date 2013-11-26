@@ -1,1 +1,1 @@
-EXTRA_DIST = 1chext01.bin 8chheadcyl01.bin ThreePulses.bin ThreePulses.out ThreePulses01.bin analytic.bin analytic.out analytic01.bin epi.bin epi.out epi01.bin gre.bin gre.out gre01.bin mpi_simu.xml radial.bin radial.out radial01.bin sample.bin simu.xml sli_sel.bin sli_sel.out sli_sel01.bin tse.bin tse.out tse01.bin uniform.xml
+EXTRA_DIST = 1chext.h5 8chheadcyl.h5 ThreePulses.h5 ThreePulses.out analytic.h5 analytic.out epi.h5 epi.out gre.h5 gre.out mpi_simu.xml radial.h5 radial.out sample.h5 simu.xml sli_sel.h5 sli_sel.out tse.h5 tse.out uniform.xml

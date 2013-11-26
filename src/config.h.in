@@ -35,9 +35,6 @@
 /* Define to 1 if you have the <climits> header file. */
 #undef HAVE_CLIMITS
 
-/* Define to 1 if you have the <cln/cln.h> header file. */
-#undef HAVE_CLN_CLN_H
-
 /* Define to 1 if you have the <cmath> header file. */
 #undef HAVE_CMATH
 

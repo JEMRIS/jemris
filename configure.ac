@@ -91,7 +91,7 @@ AC_CHECK_HEADERS([nvector_serial.h],    [], [
     AC_CHECK_HEADERS([nvector/nvector_serial.h], [], [AC_MSG_ERROR([cannot find neither nvector_serial.h nor nvector/nvector_serial.h, bailing out])])
 ])
 AC_CHECK_HEADERS([ginac/ginac.h],                             [], [AC_MSG_ERROR([cannot find ginac/ginac.h, bailing out])])
-AC_CHECK_HEADERS([cln/cln.h],                                 [], [AC_MSG_ERROR([cannot find cln/cln.h, bailing out])])
+#AC_CHECK_HEADERS([cln/cln.h],                                 [], [AC_MSG_ERROR([cannot find cln/cln.h, bailing out])])
 AC_CHECK_HEADERS([xercesc/dom/DOM.hpp],                       [], [AC_MSG_ERROR([cannot find xercesc/dom/DOM.hpp, bailing out. Get it from http://xerces.apache.org/xerces-c.])])
 
 AC_ARG_ENABLE([boost],
