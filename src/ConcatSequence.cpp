@@ -44,9 +44,7 @@ bool    ConcatSequence::Prepare (const PrepareMode mode){
 	if (mode != PREP_UPDATE)
 		SetRepCounter( 0);
 
-	CalcDuration();
-
-    return Sequence::Prepare(mode);
+	    return Sequence::Prepare(mode);
 }
 
 /***********************************************************/
@@ -63,21 +61,22 @@ void    ConcatSequence::SetRepetitions (unsigned int val){
 }
 
 /***********************************************************/
-inline double ConcatSequence::CalcDuration () {
+inline double ConcatSequence::GetDuration () {
 
-	 m_duration = 0.;
+	 double duration = 0.;
 
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r)
 		for (unsigned int j=0; j<children.size() ; ++j)
-			m_duration += children[j]->GetDuration();
+			duration += children[j]->GetDuration();
 
-	//m_duration = duration;
+	m_duration = duration;
 	DEBUG_PRINT("  ConcatSequence::GetDuration() of " << GetName() << " calculates  duration = " << duration << endl;)
 
 	Notify(m_duration);
 
+	return duration;
 }
 
 /***********************************************************/

@@ -1,7 +1,7 @@
 dump of sequence tree
                           TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
                           ----------------------------------------------------------------- |  ---------------
-sequence-root-------->   CONCAT       CONCATSEQUENCE        R   330.571     1024      1726  |  Repetitions = 1
+sequence-root-------->   CONCAT       CONCATSEQUENCE        R  1600.000     1024      1726  |  Repetitions = 1
   |_ child 1   ------>   CONCAT       CONCATSEQUENCE        C  1600.000     1024      1726  |  Repetitions = 32
     |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     0.100        0         3  | 
       |_ child 1   -->    PULSE          HARDRFPULSE       P1     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (20,49600,1e+16,0,0.5) 

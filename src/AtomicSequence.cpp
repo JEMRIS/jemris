@@ -45,25 +45,27 @@ bool    AtomicSequence::Prepare(const PrepareMode mode) {
 	bool tag = Sequence::Prepare(mode); //Prepare all pulses
 	CollectTPOIs();  //of the pulses
 
-	CalcDuration();
 	return tag;
 
 }
 
 /***********************************************************/
-double AtomicSequence::CalcDuration () {
+double AtomicSequence::GetDuration () {
 
 	vector<Module*> children = GetChildren();
-	m_duration = 0.;
+	double duration = 0.;
 
 	for (unsigned int j=0; j<children.size() ; ++j)
-		m_duration = fmax( m_duration, children[j]->GetDuration()+((Pulse*) children[j])->GetInitialDelay() );
+		duration = fmax( duration, children[j]->GetDuration()+((Pulse*) children[j])->GetInitialDelay() );
 
 	DEBUG_PRINT("  AtomicSequence::GetDuration() of " << GetName() <<
 		    " calculates duration = " << dDuration << endl;)
 
+	m_duration = duration;
+
 	Notify(m_duration);
 
+	return duration;
 }
 
 /***********************************************************/

@@ -39,9 +39,14 @@
 #include     <typeinfo>
 #include     <cmath>
 
+#include     <iostream>
+#include     <iomanip>
+
 #include     "StrX.h"
 #include     <ginac/ginac.h>
 #include     <xercesc/dom/DOM.hpp>
+
+using namespace std;
 
 XERCES_CPP_NAMESPACE_USE
 

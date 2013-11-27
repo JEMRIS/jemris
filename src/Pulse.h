@@ -79,6 +79,11 @@ class Pulse :public Module {
     void SetDuration       (double val) ;
 
     /**
+     * See Module::GetDuration
+     */
+    double          GetDuration    () {return m_duration;};
+
+    /**
      * @brief Set the Axis of propagation of this pulse.
      *
      * Set the Axis of propagation of this pulse to the given PulseAxis.

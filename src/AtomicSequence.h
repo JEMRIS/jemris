@@ -88,6 +88,13 @@ class AtomicSequence : public Sequence {
      */
     virtual void    GetValue          (double * dAllVal, double const time) ;
 
+
+    /**
+     * See Module::GetDuration
+     */
+    double          GetDuration    ();
+
+
     /**
      * @brief See Module::GetValue
      */
@@ -113,11 +120,6 @@ class AtomicSequence : public Sequence {
      * @param val True, if nonlinear gradients are present
      */
     inline void          SetNonLinGrad (bool val) {m_non_lin_grad=val;};
-
-    /**
-     * @brief Calculate my duration
-     */
-    double          CalcDuration ();
 
     /**
      * @brief Collect the TPOIs of child pulses

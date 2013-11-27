@@ -76,7 +76,12 @@ class ConcatSequence : public Sequence {
      */
     virtual void            GetValue       (double * dAllVal, double const time, double * pos[3]) {};
 
-   /**
+    /**
+     * See Module::GetDuration
+     */
+    double          GetDuration    ();
+
+    /**
      * @brief Default destructor.
      */
     virtual int     GetNumOfTPOIs ();
@@ -142,8 +147,6 @@ class ConcatSequence : public Sequence {
 
  protected:
 
-
-    double CalcDuration ();
 
     /**
      * Get informations on this ConcatSequence

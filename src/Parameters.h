@@ -56,6 +56,10 @@ public:
     inline Parameters* Clone() const { return instance(); };
 
 
+    /**
+     * See Module::GetDuration
+     */
+    double          GetDuration    () {return -1.0;};
 
     /**
      * @see Prototype::Prepare()
