@@ -8,6 +8,7 @@ The manual intends to give a brief hands-on introduction. \n
   \n
   \n
  \subpage ug_intro \n \n
+ \subpage ug_downl \n \n
  \subpage ug_install \n \n
  \subpage ug_uis \n \n
  \subpage ug_tutor \n \n
@@ -19,6 +20,48 @@ The manual intends to give a brief hands-on introduction. \n
   \n
   \n
   See also <a href="http://www.jemris.org">www.jemris.org</a>
+*/
+
+/**
+ \page ug_downl  Download
+
+We have two small favours to ask:\n
+\n
+Please, let us know that you are downloading jemris by sending an E-Mail to
+<a href="mailto:k.vahedipour@fz-juelich.de?subject=jemris download">Kaveh Vahedipour</a>.
+In return, we will keep you up to date of updates and bug fixes. 
+\n
+And please, help us with improving the software by announcing bugs.
+<ul>
+	<li> <b> Sources </b>
+	     <ul>
+		<li> <a href="http://www.jemris.org/get/jemris-2.7.tar.bz2">jemris-2.7.tar.bz2</a>
+		<li> shasum: ef265f8c84a81b33ecbcd7dc522bca7ac6feba02
+		<li> md5sum: fcbbc1f741bade9fdd7cd2a777ae2fc6
+	     </ul>
+
+	<li> <b> Ubuntu Binary (64bit) </b>
+	     <ul>
+		<li> <a href="http://www.jemris.org/get/saucy/jemris_2.7-1_amd64.deb.bz2">jemris_2.7-1_amd64.deb.bz2</a>
+		<li> shasum: 34a6eb588a8e804421f222996685bc0413ea0a7a
+		<li> md5sum: c68bf125f56545f9783555fa99a93f4e
+	     </ul>
+
+	<li> <b> Mac Binary Mac </b>
+	     <ul>
+		<li> <a href="http://www.jemris.org/get/osx/jemris-2.7.pkg.zip">jemris-2.7.pkg.zip</a>
+		<li> shasum: ecc163b86f76b891b413072118ded2673fe8b6b2
+		<li> md5sum: 8b4ab51fbe51b5b457296db9c1600464
+	     </ul>
+
+	<li> <b> Windows Binary </b>
+	     <ul>
+		<li> <a href="http://www.jemris.org/get/win/jemris-2.7.zip">jemris-2.7.zip</a>
+		<li> shasum: e624697df9238e9fe9e9ac7426fa39d9be0dc26a
+		<li> md5sum: 5202ad8e5b7dae02ac5aab4fd472d323
+	     </ul>
+</ul>
+
 */
 
 /**
@@ -71,7 +114,7 @@ Use e.g. <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/share/jemris/matlab<
  \page ug_about About JEMRIS
 \section ug_version Version
 
-JEMRIS Version 2.6\n
+JEMRIS Version 2.7\n
 Copyright (C) 2006-2013  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
 
 This program is free software; you can redistribute it and/or modify

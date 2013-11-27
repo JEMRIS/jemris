@@ -4,7 +4,7 @@
 
 This section describes the installation procedures for building jemris from scratch.
 This is usually not necessary.
-Binary packages for Linux, Windows and Mac OS X, are available in the Download area at <a href="http://www.jemris.org">www.jemris.org</a>
+Binary packages for Linux, Windows and Mac OS X, are available in the section \ref ug_downl.
 
 \section ug_install_pre Prerequisites 
 
