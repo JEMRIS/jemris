@@ -205,7 +205,6 @@ void GradPulse::GetValue (double * dAllVal, double const time) {
 	if (time < 0.0 || time > GetDuration() || m_hide) { return ; }
 
 	dAllVal[1+m_axis] += GetGradient(time);
-
 	return;
 }
 

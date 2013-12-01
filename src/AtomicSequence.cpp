@@ -41,7 +41,7 @@ bool    AtomicSequence::Prepare(const PrepareMode mode) {
 	ATTRIBUTE("Azimut"         , m_phi   );
 
 	if (mode != PREP_UPDATE) m_type = MOD_ATOM;
-
+	if (mode != PREP_UPDATE) GetDuration();
 	bool tag = Sequence::Prepare(mode); //Prepare all pulses
 	CollectTPOIs();  //of the pulses
 

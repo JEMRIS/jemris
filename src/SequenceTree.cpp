@@ -176,6 +176,8 @@ unsigned int        SequenceTree::Populate     ()  {
 	{
 		pW->pStaticAtom->Prepare(PREP_INIT);
 		pW->pStaticAtom->Prepare(PREP_VERBOSE);
+		m_root_seq->GetDuration();
+		pW->pStaticAtom->GetDuration();			//set the duration of the static atom
 	}
 
 	//check name consistency
