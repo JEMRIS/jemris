@@ -122,6 +122,11 @@ class EddyPulse : public GradPulse {
      */
     GradPulse* GetGenPulse() {return m_gen_pulse;};
 
+    /**
+     * @brief Get the AtomicSequence in which eddy currents were generated
+     */
+    AtomicSequence* GetParentAtom() {return m_parent;}
+
  protected:
 
     /**

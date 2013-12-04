@@ -229,6 +229,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				m_world->solution[0] = dMt;
 				m_world->solution[1] = dMp;
 				m_world->solution[2] = dMz;
+				cout << "Error - increasing accuracy " << m_accuracy_factor << endl;
 				RunSequenceTree(dtsh, ladc, m_world->pAtom);
 				dTimeShift  = dtsh;
 				lIndexShift = ladc;

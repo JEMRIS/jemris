@@ -138,7 +138,7 @@ inline void AtomicSequence::Rotation (double * Grot) {
     double sin_alpha   = sin(alpha);
     double cos_phi     = cos(phi);
     double sin_phi     = sin(phi);
-    
+
     Grot[0] =
         ((cos_phi*(cos_2_theta*cos_alpha+sin_2_theta)-sin_phi*cos_theta*sin_alpha)*
         	cos_phi+(cos_phi*cos_theta*sin_alpha+sin_phi*cos_alpha)*sin_phi)*Gx+
@@ -265,13 +265,16 @@ void    AtomicSequence::GetValueLingeringEddyCurrents (double * dAllVal, double 
     	    continue;
     	}
 
-		iter->first->GetValue(dAllVal,    iter->first->GetParentDuration()
+		double d[7] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+		iter->first->GetValue(d,    iter->first->GetParentDuration()
 										+ iter->first->GetLingerTime()
 										- iter->second
 										+ time );
+
+		iter->first->GetParentAtom()->Rotation(&d[2]);
+		for (int i=2;i<5;++i) dAllVal[i] += d[i];
 	}
 
-	Rotation(&dAllVal[2]);
 
 }
 
