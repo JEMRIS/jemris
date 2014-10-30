@@ -207,6 +207,7 @@ All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pu
          	<li> \c "Filename" A HDF5-file with a single dataset "extpulse" of size \f$N \times 3\f$ where the 1st column holds the time points,
 			 and 2nd and 3rd column hold amplitudes and phases, respectively.
          	<li> \c "Scale" An optional scale of the amplitudes (default 1)
+         	<li> \c "Interpolate" if true, linear interpolation is performed, otherwise nearest neighbor look-up. Can be \c 1 (true) or \c 0 (false).
 	 </ol>
 		Note, that such external  HDF5-files are easily constructed with the GUI: generate a global matlab variable
 		of size \f$N \times 3\f$, where the first column are the time points and the remaining columns are
