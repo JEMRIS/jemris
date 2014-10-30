@@ -34,38 +34,45 @@ ExternalPulseData::ExternalPulseData ()  {
     m_fname = "";
     m_pulse = NULL;
     m_phase = 0;
+    m_interp = false;
   
 };
 
-/***********************************************************/
-double            ExternalPulseData::GetData (double const time)  {
 
-   unsigned i = ((unsigned) (time * m_times.size() / m_pulse->GetDuration()));
-   if (i<m_magnitudes.size())
-    return ( *((double*) m_pulse->GetAttribute("Scale")->GetAddress() ) * m_magnitudes.at(i) );
-/*   
-   if (time < 0.0 || time > m_pulse->GetDuration() ) return 0.0;
-   int i=0;
-   double diff = abs(time - m_times.at(0));
-   for (i=0; i<m_magnitudes.size(); i++) {
-     double diffn = abs(time - m_times.at(i));
-     if (diffn>diff) break;
-     diff=diffn;
-   }
-     
-     
-    double t = (diff==0.0 ? 0.0 : time*2.0/diff);//m_times.size() / m_pulse->GetDuration();
-    unsigned j = (diff==0.0 ? i : i+1);
-    //unsigned i = ((unsigned) t);
-    if (i<m_magnitudes.size()) {
-   //unsigned j = (i+1<m_times.size()?i+1:m_times.size()-1);  
-	cout << "Siz=" << m_times.size() << ", Dur=" <<  m_pulse->GetDuration()
-	     << ", time=" << time << " , t=" << t << ", i=" << i << ",  g= " 
-	     << m_magnitudes.at(i)+(m_magnitudes.at(j)-m_magnitudes.at(i))*(t-i) << endl;
-	return  m_magnitudes.at(i)+(m_magnitudes.at(j)-m_magnitudes.at(i))*(t-i);
-    }
-*/    
-    return 0.0;
+/***********************************************************/
+double  ExternalPulseData::Interp(double const t, vector<double> const &v)  {
+
+	unsigned s = m_times.size();
+	double x = t * s / m_pulse->GetDuration();
+	unsigned i   = ((unsigned) x);
+	x = x-i;
+
+	if (i<s) {
+		double v0 = v.at(i);
+		double v1 = ( (i+1)<s ? v.at(i+1) : ( (i-1)>0 ? 2*v0-v.at(i-1) : 0.0) );
+		return (1.0-x)*v0 + x*v1;
+	}
+
+	return 0.0;
+
+}
+
+/***********************************************************/
+double  ExternalPulseData::GetData (double const time)  {
+
+  double scale = *((double*) m_pulse->GetAttribute("Scale")->GetAddress() );
+
+  //linear interpolation
+  if (m_interp)
+		  return ( scale*Interp(time,m_magnitudes) );
+
+  //otherwise nearest neighbor
+  unsigned i   = ((unsigned) (time * m_times.size() / m_pulse->GetDuration()));
+  if (i<m_magnitudes.size())
+	  return ( scale * m_magnitudes.at(i) );
+
+  //time out of bounds
+  return 0.0;
 }
 
 /***********************************************************/
@@ -82,6 +89,9 @@ void  ExternalPulseData::SetTPOIs () {
 double    ExternalPulseData::GetPhase  (Module* mod, double time ) {
 
 	ExternalPulseData*  p = ( (ExternalRFPulse*) mod)->GetPulseData();
+
+	if (p->m_interp)
+		return ( p->Interp(time,p->m_phases) * 180.0 / PI );
 
     unsigned i = ((unsigned) (time * p->m_times.size() / mod->GetDuration()));
 

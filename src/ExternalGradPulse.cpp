@@ -31,17 +31,20 @@ ExternalGradPulse::ExternalGradPulse               (const ExternalGradPulse&)  {
     m_scale=1.0;
     m_fname="";
     m_pulse_data.SetPulse(this);
-  
+    m_interp=false;
 }
 
 /***********************************************************/
 bool              ExternalGradPulse::Prepare     (const PrepareMode mode)   {
 
-    ATTRIBUTE("Filename" , m_fname);
-    ATTRIBUTE("Scale"    , m_scale);
+    ATTRIBUTE("Filename"   , m_fname );
+    ATTRIBUTE("Scale"      , m_scale );
+    ATTRIBUTE("Interpolate", m_interp);
 
 	//read data
 	bool btag = m_pulse_data.ReadPulseShape (m_fname, mode == PREP_VERBOSE);
+
+	m_pulse_data.SetInterp(m_interp);
 
 	if ( btag && m_tpoi.GetSize()>0 ) m_area = GetAreaNumeric(m_tpoi.GetSize());
 

@@ -94,12 +94,10 @@ class ExternalRFPulse : public RFPulse {
     string           GetInfo      ();
 
     ExternalPulseData		   m_pulse_data; /**<contains the data*/
-
     string m_fname;                /**< @brief Filename containing the RF amps and phases  */
-    string m_dname;
-    string m_dpath;
-
     double m_scale;                /**< @brief Scaling factor for the amps                 */
+    bool   m_interp;			 /**< @brief if true, linear interpolation is applied     */
+
 };
 
 #endif /*HARDRFPULSE_H_*/

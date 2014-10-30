@@ -69,7 +69,7 @@ class ExternalGradPulse : public GradPulse {
     /**
      * @see GradPulse::GetGradient
      */
-    virtual double   GetGradient  (double const time) {return m_scale*m_pulse_data.GetData(time); };
+    virtual double   GetGradient  (double const time) {return m_pulse_data.GetData(time); };
 
     /**
      * @see Pulse::SetTPOIs
@@ -89,6 +89,7 @@ class ExternalGradPulse : public GradPulse {
     ExternalPulseData		   m_pulse_data; /**<contains the data*/
     string m_fname;                /**< @brief Filename containing the RF amps and phases  */
     double m_scale;                /**< @brief Scaling factor for the amps                 */
+    bool   m_interp;			 /**< @brief if true, linear interpolation is applied     */
 
 };
 

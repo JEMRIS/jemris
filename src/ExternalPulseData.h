@@ -63,6 +63,22 @@ class ExternalPulseData {
     double   GetData (double const time)  ;
 
     /**
+     * @brief linear interpolation
+     *
+     * @param t
+     * @return interpolated data
+     */
+    double   Interp(double const t, vector<double> const &v)  ;
+
+    /**
+     * @brief linear interpolation
+     *
+     * @param t
+     * @return interpolated data
+     */
+    void   SetInterp(bool b) {m_interp = b; } ;
+
+    /**
      * @brief Read the pulse shape data
      *
      * @param fname name of binary file
@@ -77,11 +93,12 @@ class ExternalPulseData {
     static double GetPhase (Module* mod, double time );
 
     Pulse* m_pulse;               /**<@brief My pulse*/
-    string m_fname;               /**< @brief Filename containing the RF amps and phases  */
-    vector<double> m_times;       /**< @brief My sample time points                       */
-    vector<double> m_magnitudes;  /**< @brief My corresponding amplitudes                 */
-    vector<double> m_phases;      /**< @brief Vector of phases                            */
-    double	m_phase;			  /**< @brief current phase                            */
+    string m_fname;               /**< @brief HDF5 file with time points and amps [and phases] */
+    vector<double> m_times;       /**< @brief My sample time points                            */
+    vector<double> m_magnitudes;  /**< @brief My corresponding amplitudes                      */
+    vector<double> m_phases;      /**< @brief Vector of phases                                 */
+    double	m_phase;			  /**< @brief current phase                                    */
+    bool	m_interp;			  /**< @brief if true, linear interpolation is applied         */
 };
 
 #endif /*_EXTERNALPULSEDATA_H*/

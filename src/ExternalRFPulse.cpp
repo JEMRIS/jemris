@@ -32,6 +32,7 @@ ExternalRFPulse::ExternalRFPulse  (const ExternalRFPulse& hrfp) {
     m_scale=1.0;
     m_fname="";
     m_pulse_data.SetPulse(this);
+    m_interp=false;
 
 };
 
@@ -42,9 +43,12 @@ bool ExternalRFPulse::Prepare  (const PrepareMode mode) {
 
 	ATTRIBUTE ("Scale"   , m_scale);
 	ATTRIBUTE ("Filename", m_fname);
+    ATTRIBUTE("Interpolate", m_interp);
 
 	//read data
 	bool btag = m_pulse_data.ReadPulseShape (m_fname, mode == PREP_UPDATE) ;
+
+	m_pulse_data.SetInterp(m_interp);
 
 	if (mode != PREP_UPDATE) insertGetPhaseFunction( &ExternalPulseData::GetPhase );
 
