@@ -25,82 +25,33 @@
  */
 
 #include "ExternalGradPulse.h"
-#include "BinaryContext.h"
-
 /***********************************************************/
 ExternalGradPulse::ExternalGradPulse               (const ExternalGradPulse&)  {
   
     m_scale=1.0;
     m_fname="";
-
+    m_pulse_data.SetPulse(this);
+  
 }
 
 /***********************************************************/
 bool              ExternalGradPulse::Prepare     (const PrepareMode mode)   {
 
-    ATTRIBUTE("Filename", m_fname);
-    ATTRIBUTE("Scale"   , m_scale);
-	ATTRIBUTE("DataPath", m_dpath);
+    ATTRIBUTE("Filename" , m_fname);
+    ATTRIBUTE("Scale"    , m_scale);
 
-	bool btag = GradPulse::Prepare(mode);
+	//read data
+	bool btag = m_pulse_data.ReadPulseShape (m_fname, mode == PREP_VERBOSE);
 
-	if (!m_dpath.length())
-		m_dpath = "/";
+	if ( btag && m_tpoi.GetSize()>0 ) m_area = GetAreaNumeric(m_tpoi.GetSize());
 
-	if (!m_fname.length()) {
-	       cout	<< "\n warning in Prepare(1) of ExternalGradPulse " << GetName()
-				<< " : can not read binary file  with empty name" << endl;
-		return false;
-	}
-
-	BinaryContext bc (m_fname, IO::IN);
-	NDData<double> data;
-
-	if (bc.Status() != IO::OK) {
-	       cout	<< "\n warning in Prepare(1) of ExternalGradPulse " << GetName()
-				<< " : can not read binary file " << m_fname << endl;
-		return false;
-	}
-
-	m_dname = "G";
-	if (m_axis == AXIS_GX)
-		m_dname += "x";
-	else if (m_axis == AXIS_GY)
-		m_dname += "y";
-	else if (m_axis == AXIS_GZ)
-		m_dname += "z";
-
-	if (bc.Read(data, m_dname, m_dpath) != IO::OK) {
-		printf ("Couldn't read %s from file %s\n", URI(m_dpath, m_dname).c_str(), m_fname.c_str());
-		return false;
-	}
-	m_magnitudes = data.Data();
-
-	if (bc.Read(data, "times", m_dpath) != IO::OK) {
-		printf ("Couldn't read timing data %s \n", URI(m_dpath, "times").c_str());
-		return false;
-	}
-	m_times = data.Data();
-
-	if (m_magnitudes.size() != m_times.size()) {
-	       cout	<< "\n warning in Prepare(1) of ExternalGradPulse " << GetName()
-				<< " : # of magnitude samples and time points must agree ("
-				<< m_magnitudes.size() << " != " << m_times.size() <<  ")" << endl;
-		return false;
-	}
-
-	m_duration = m_times.back();
-
-	if ( btag && m_tpoi.GetSize()>0 )
-		m_area = GetAreaNumeric(m_tpoi.GetSize());
-    
 	btag = ( GradPulse::Prepare(mode) && btag);
-
+    
 	if (mode != PREP_UPDATE) {
-		HideAttribute ("Duration");
-		HideAttribute ("Area");
-		HideAttribute ("MaxAmpl",false);
-		HideAttribute ("SlewRate",false);
+	  HideAttribute ("Duration");
+	  HideAttribute ("Area");
+	  HideAttribute ("MaxAmpl",false);
+	  HideAttribute ("SlewRate",false);
 	}
 
 	if (!btag && mode == PREP_VERBOSE)
@@ -111,30 +62,12 @@ bool              ExternalGradPulse::Prepare     (const PrepareMode mode)   {
 
 }
 
-
-inline double ExternalGradPulse::GetGradient (const double time) {
-
-	if (m_duration <= 0.)
-		return 0.;
-	size_t i = time * m_times.size() / m_duration;
-	return (i < m_magnitudes.size()) ? m_scale * m_magnitudes[i] : 0.;
-
-}
-
-
-string ExternalGradPulse::GetInfo() {
+/***********************************************************/
+string          ExternalGradPulse::GetInfo() {
 
 	stringstream s;
 	s << GradPulse::GetInfo() << " , binary file = " << m_fname ;
 
 	return s.str();
-
-}
-
-void ExternalGradPulse::SetTPOIs() {
-
-	m_tpoi.Reset();
-    for (size_t i = 0; i < m_times.size(); ++i)
-    	m_tpoi + TPOI::set(m_times.at(i), -1.);
 
 }
