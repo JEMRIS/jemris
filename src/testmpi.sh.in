@@ -2,12 +2,6 @@ echo
 echo "Test Case 4: testing parallel execution"
 echo "======================================="
 @MPIRUN@ @MPIRUN_PROC_OPT@ 3 ./pjemris ../share/examples/approved/mpi_simu.xml > mpirun.out
+ec=$?
 cat mpirun.out
-echo
-if test `grep Finished mpirun.out` = Finished ; then \
-  echo Success; \
-else \
-  echo Error; \                                                                                                                                                    
-fi
-echo
-
+exit $ec

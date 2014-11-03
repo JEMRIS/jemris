@@ -241,8 +241,6 @@ int main (int argc, char *argv[]) {
 	//CASE 2: perform simulations with all sequences
 	if (input == "2") {
 
-		bool          status = true;
-
 		cout << endl << "Test directory: " << path << endl;
 		cout << endl << "Test Case 2: simulating MR signals" << endl;
 		cout << "========================================"<< endl << endl;
@@ -291,8 +289,6 @@ int main (int argc, char *argv[]) {
 
 	if (input == "3") {
 
-		bool          status = true;
-
 		cout << endl << "Test directory: " << path << endl;
 		cout << endl << "Test Case 3:  dump coil sensitivities" << endl;
 		cout << "========================================"<< endl << endl;
@@ -305,8 +301,10 @@ int main (int argc, char *argv[]) {
 			string binfile = coils[i];
 			binfile.replace(binfile.find(".xml",0),4,"");
 			ca->SetSenMaplPrefix(path+binfile);
-			status = ( ca->Populate() && status );
-			status = ( ca->DumpSensMaps(false) && status) ;
+			int out = ca->Populate();
+			status = ( (out==0) && status );
+			out = ca->DumpSensMaps(false);
+			status = ( (out==0) && status) ;
 			delete ca;
 			printf("%02d. %15s | %18s (sig-simu) ",i+1,coils[i].c_str(),binfile.c_str());
 
@@ -331,6 +329,7 @@ int main (int argc, char *argv[]) {
 	if ( status )
 		return 0;
 	else
+		cout << "Warning: ERROR(S) occurred!" << endl;
 		return 1;
 
 
