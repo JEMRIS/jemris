@@ -58,7 +58,9 @@ public:
 			return ((HDF5IO*)m_strategy)->Write(data, urn, url);
 		else if (m_strategy->IOStrategy() == IO::SIMPLE)
 			return ((SimpleIO*)m_strategy)->Write(data, urn, url);
+		return IO::FILE_NOT_FOUND;
 	}
+
 	template<class T> IO::Status
 	Write (const NDData<T>& data, const char* urn, const char* url = "") {
 		return Write(data, std::string(urn), std::string(url));
@@ -71,6 +73,7 @@ public:
 			return ((HDF5IO*)m_strategy)->Read(data, urn, url);
 		else if (m_strategy->IOStrategy() == IO::SIMPLE)
 			return ((SimpleIO*)m_strategy)->Read(data, urn, url);
+		return IO::FILE_NOT_FOUND;
 	}
 	template<class T> IO::Status
 	Read (NDData<T>& data, const char* urn, const char* url = "") {

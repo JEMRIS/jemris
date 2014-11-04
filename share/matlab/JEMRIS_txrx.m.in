@@ -633,7 +633,7 @@ for i=1:length(CA.Children)
        for j=1:length(CA.Children(i).Attributes);
            if strcmp(AttrName,CA.Children(i).Attributes(j).Name), pos=j; end
        end
-       if strcmpi(AttrName,'conj'),AttrVal=num2str(boolean(str2num(AttrVal)));end
+       %if strcmpi(AttrName,'conj'),AttrVal=num2str(boolean(str2num(AttrVal)));end
        if pos>0
            if isempty(AttrVal)
                CA.Children(i).Attributes(pos)=[];              %delete attribute

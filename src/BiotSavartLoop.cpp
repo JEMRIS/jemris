@@ -83,7 +83,9 @@ double BiotSavartLoop::GetSensitivity(const double* position) {
     double angle = acos (pz/dist);
 
     // Bio-Savart closed form solution for a current loop
-    // online: http://www.netdenizen.com/emagnettest/offaxis/?offaxisloop
+    // see here: http://www.netdenizen.com/emagnettest/offaxis/?offaxisloop
+    // or here : https://www.wakari.io/sharing/bundle/ericdennison/magnets/Off%20Axis%20Field%20of%20a%20Current%20Loop.ipynb
+
     double r     = dist * sin (angle);	// distance off axis
     double x     = dist * cos (angle);	// distance on axis
 
@@ -104,12 +106,19 @@ double BiotSavartLoop::GetSensitivity(const double* position) {
     Ek = boost::math::ellint_2(k);
     #endif
 
-    //field parallel to coil normal vector
-    double Bx    = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*alpha) + Kk)         / (PI * sqrt(Q));
+    //field parallel to coil normal vector (normalized in coil center!)
+    double Bx    = 1.0;
     //field orthogonal to coil normal vector
-    double Br    = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*alpha) - Kk) * gamma / (PI * sqrt(Q)) ;
+    double Br    = 0.0;
 
-    // return to cartesian coordinate system of the coil
+    if (fabs(r) > 1e-5) {
+    	Bx = (Ek * (1.0 - pow(alpha,2) - pow(beta,2)) / (Q-4.0*alpha) + Kk)         / (PI * sqrt(Q));
+    	Br = (Ek * (1.0 + pow(alpha,2) + pow(beta,2)) / (Q-4.0*alpha) - Kk) * gamma / (PI * sqrt(Q)) ;
+    }
+    else if (fabs(x) > 1e-5)
+    	Bx = 2.0*pow(a,3) / ( 2.0 * pow(a*a + x*x,1.5) );
+
+    // return to Cartesian coordinate system of the coil
     double Bz, By, phi;
     phi = atan2(py,px);
     Bz = Bx;

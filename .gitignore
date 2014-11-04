@@ -68,4 +68,7 @@ share/examples/sli_sel_signal.h5
 share/examples/tse.h5
 share/examples/tse.out
 share/examples/tse_signal.h5
+share/examples/extpulses.h5
+share/examples/extpulses.out
+share/examples/extpulses_signal.h5
 

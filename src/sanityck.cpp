@@ -168,6 +168,7 @@ int main (int argc, char *argv[]) {
 	seq.push_back("analytic.xml");
 	seq.push_back("radial.xml");
 	seq.push_back("sli_sel.xml");
+	seq.push_back("extpulses.xml");
 
 	vector<string> coils;
 	coils.push_back("8chheadcyl.xml");
@@ -306,21 +307,32 @@ int main (int argc, char *argv[]) {
 			out = ca->DumpSensMaps(false);
 			status = ( (out==0) && status) ;
 			delete ca;
+
 			printf("%02d. %15s | %18s (sig-simu) ",i+1,coils[i].c_str(),binfile.c_str());
 
-			double d = compare_hdf5_fields(path+binfile+".h5",path+"approved/"+binfile+".h5","/maps/magnitude") ;
-
-			if ( d < 0.0 ) {
-				status = false;
-				cout << "is NOT ok (# grid points differs!)" << endl;
-			} else {
-				d += compare_hdf5_fields(path+binfile+".h5",path+"approved/"+binfile+".h5","/maps/phase") ;
-				if (d > 0.1 ) {
+			double d = 0.0;
+			for (unsigned int j=0; ca->GetSize(); j++) {
+				stringstream sstr;
+				sstr << setw(2) << setfill('0') << i;
+				double m = compare_hdf5_fields(	path+binfile+".h5",
+											path+"approved/"+binfile+".h5",
+											"/maps/magnitude/"+sstr.str()) ;
+				double p = compare_hdf5_fields(	path+binfile+".h5",
+											path+"approved/"+binfile+".h5",
+											"/maps/phase/"+sstr.str()) ;
+				if ( m < 0.0 || p < 0.0) {
 					status = false;
-					printf("is NOT ok (e=%7.4f %%) \n",d);
-				} else
-					printf("is ok (e=%7.4f %%) \n",d);
+					cout << "is NOT ok (# grid points differs!)" << endl;
+					break;
+				}
+				d += m+p;
 			}
+
+			if (d > 0.1 ) {
+				status = false;
+				printf("is NOT ok (e=%7.4f %%) \n",d);
+			} else
+				printf("is ok (e=%7.4f %%) \n",d);
 		}
 
 

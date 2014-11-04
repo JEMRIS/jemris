@@ -82,18 +82,33 @@ for i=COILS
         
 
 end
-a = h5read ('sensmaps.h5', '/maps/magnitude'); 
-p = h5read ('sensmaps.h5', '/maps/phase');
-A = a.*exp(sqrt(-1)*(p));
+
+%H.Groups.Groups(1).Datasets(1).Dataspace.Size;
+A=[];
+for i=1:NC
+ a = h5read ('sensmaps.h5', sprintf('/maps/magnitude/%02d',i-1)); 
+ p = h5read ('sensmaps.h5', sprintf('/maps/phase/%02d',i-1));
+ if DIM==2
+  A(:,:,i) = a.*exp(sqrt(-1)*(p));
+ else
+  A(:,:,:,i) = a.*exp(sqrt(-1)*(p));     
+ end
+end
 
 if numel(COILS)==1
-    if (ndims(A)==3)
+    %A=permute(A(:,:,:,COILS),[2 1 3]);
+    if DIM==2 %(ndims(A)==3)
         A = A(:,:,COILS);
     else
         A = A(:,:,:,COILS);
     end
 else
-    A = sum(A,ndims(A));
+    if DIM==2 %(ndims(A)==3)
+        A = sum(A,3);
+    else
+        A = permute(sum(A,4),[2 1 3]);
+    end
+    %A = sum(A,ndims(A));
 end
 %complex data selection
 C=get(handles.ComplexMenu,'String');
@@ -245,7 +260,6 @@ handles.sample.file = 'sample.h5';
  switch T
      case 'x-y slice'
          [dummy,i]=min(abs(az-z));
-         length(z)
          if length(z) > 1 && dummy>res(1); return; end
          S=A(:,:,i)';
          if min(size(S))<2

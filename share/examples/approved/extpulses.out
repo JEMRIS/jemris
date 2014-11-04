@@ -1,0 +1,7 @@
+dump of sequence tree
+                        TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
+                        ----------------------------------------------------------------- |  ---------------
+sequence-root------>   CONCAT       CONCATSEQUENCE       C1     3.000      200       320  |  Repetitions = 1
+  |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     3.000      200       320  | 
+    |_ child 1   -->    PULSE    EXTERNALGRADPULSE       P1     2.000      100       122  |  Axis = GX  , InitDelay = 1 , Area = -4.4234e-05 , binary file = ext_gx.h5
+    |_ child 2   -->    PULSE      EXTERNALRFPULSE       P2     1.000      100       202  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (0,0,1e+16,0,0.5)  , (Filename,Energy,TPOIs) = (ext_rf.h5,1.41738,202)

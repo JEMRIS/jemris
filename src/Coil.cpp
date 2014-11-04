@@ -148,10 +148,9 @@ double  Coil::GetPhase (const double time) {
     dv->m_Motion->GetValue(time,position);
 
     if (m_interpolate)
-		return ( InterpolateSensitivity(position,false));
+		return ( m_phase + (m_conjugate?-1.0:1.0) * InterpolateSensitivity(position,false));
 	else
-		return ( GetPhase(position));
-
+		return ( m_phase + (m_conjugate?-1.0:1.0) * GetPhase(position));
 }
 
 /**********************************************************/
@@ -165,10 +164,10 @@ double  Coil::GetSensitivity (const double time) {
     dv->m_Motion->GetValue(time,position);
 
 	if (m_interpolate) {
-		return m_norm*InterpolateSensitivity(position);
+		return m_scale*InterpolateSensitivity(position);
 	}
 	else {
-		return m_norm*GetSensitivity(position);
+		return m_scale*GetSensitivity(position);
 	}
 }
 

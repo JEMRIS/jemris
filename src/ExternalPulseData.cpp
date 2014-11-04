@@ -42,18 +42,13 @@ ExternalPulseData::ExternalPulseData ()  {
 /***********************************************************/
 double  ExternalPulseData::Interp(double const t, vector<double> const &v)  {
 
-	unsigned s = m_times.size();
+	unsigned s = v.size();
 	double x = t * s / m_pulse->GetDuration();
-	unsigned i   = ((unsigned) x);
+	unsigned i   = unsigned(x);
 	x = x-i;
-
-	if (i<s) {
-		double v0 = v.at(i);
-		double v1 = ( (i+1)<s ? v.at(i+1) : ( (i-1)>0 ? 2*v0-v.at(i-1) : 0.0) );
-		return (1.0-x)*v0 + x*v1;
-	}
-
-	return 0.0;
+	unsigned n = (i+1<s?i+1:s-1);
+	if (i>n) return 0.0;
+	return v.at(i) + x*(v.at(n)-v.at(i));
 
 }
 
@@ -131,8 +126,8 @@ bool  ExternalPulseData::ReadPulseShape (string fname, bool verbose) {
 
 	for (int i=0; i<iNumberOfTimePoints; ++i) {
 
-		m_times.push_back(data[i]);
-		m_pulse->m_tpoi + TPOI::set(data[i],-1.0);
+		m_times.push_back(data[i]-data[0]);
+		m_pulse->m_tpoi + TPOI::set(data[i]-data[0],-1.0);
 
 		m_magnitudes.push_back(data[iNumberOfTimePoints+i]);
 
@@ -142,7 +137,7 @@ bool  ExternalPulseData::ReadPulseShape (string fname, bool verbose) {
 
 	}
 
-	m_pulse->SetDuration(data[iNumberOfTimePoints-1]);
+	m_pulse->SetDuration(data[iNumberOfTimePoints-1]-data[0]);
 	m_pulse->m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0);
 	m_fname = fname;
 		
