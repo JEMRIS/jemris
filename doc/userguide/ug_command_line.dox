@@ -181,9 +181,19 @@ dumping sensitivity maps to sensmaps.h5 ...
 done!
 \endcode
 
-The coil sensitivity HDF5-file contains dataspaces "/maps/magnitude" and "/maps/phases" according to the grid size
-which is specified in the coil array XML file.
+The coil sensitivity HDF5-file contains dataspaces "/maps/magnitude/00" and "/maps/phase/00" which hold 2D or 3D coil maps according to the grid size
+which is specified in the coil array XML file. If the  coil-array has multiple channels (coils), the maps of the second coil are stored in datspaces
+"/maps/magnitude/01", "/maps/phase/01", etc.
 
+Example to read the complex sensitivty HDF5-file in Matlab, assuming 4 coils with 2D-sensitivites:
+\code
+for i = 1:4
+ a = h5read ('sensmaps.h5', sprintf('/maps/magnitude/%02d',i-1)); 
+ p = h5read ('sensmaps.h5', sprintf('/maps/phase/%02d',i-1));
+ SMAP(:,:,i)=a.*exp(sqrt(-1)*(p));
+end
+\endcode
+\n
 \n
 \subsection ug_command_line_jemris_sim Executing MRI Simulations
 

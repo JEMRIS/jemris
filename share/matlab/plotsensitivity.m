@@ -5,9 +5,9 @@ function handles=plotsensitivity(handles,plot_coils_call)
 
 %
 %  JEMRIS Copyright (C)
-%                        2006-2013  Tony Stoecker
-%                        2007-2013  Kaveh Vahedipour
-%                        2009-2013  Daniel Pflugfelder
+%                        2006-2014  Tony Stoecker
+%                        2007-2014  Kaveh Vahedipour
+%                        2009-2014  Daniel Pflugfelder
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -86,6 +86,7 @@ end
 %H.Groups.Groups(1).Datasets(1).Dataspace.Size;
 A=[];
 for i=1:NC
+ if ~handles.CoilArray.Children(i).HasMap,continue,end
  a = h5read ('sensmaps.h5', sprintf('/maps/magnitude/%02d',i-1)); 
  p = h5read ('sensmaps.h5', sprintf('/maps/phase/%02d',i-1));
  if DIM==2
