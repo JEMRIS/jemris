@@ -4,9 +4,9 @@ function [S,x]=plotSeqTree(S,handles,x,y)
 
 %
 %  JEMRIS Copyright (C) 
-%                        2006-2013  Tony Stoecker
-%                        2007-2013  Kaveh Vahedipour
-%                        2009-2013  Daniel Pflugfelder
+%                        2006-2014  Tony Stoecker
+%                        2007-2014  Kaveh Vahedipour
+%                        2009-2014  Daniel Pflugfelder
 %                                  
 %
 %  This program is free software; you can redistribute it and/or modify
@@ -155,8 +155,8 @@ function S=set_active(hp,S)
 function set_ButtonDownFnc(S,handles)
  set(S.hp,'ButtonDownFcn',{@seqcad_common,S,handles}); %the path
  set(S.hl,'ButtonDownFcn',{@seqcad_common,S,handles}); %the line
- if S.hi, set(S.hi,'ButtonDownFcn',{@seqcad_common,S,handles}); end %the image (pulse shape icon)
- if S.ht, set(S.ht,'ButtonDownFcn',{@seqcad_common,S,handles}); end %the text (loop connection number)
+ if S.hi ~= 0, set(S.hi,'ButtonDownFcn',{@seqcad_common,S,handles}); end %the image (pulse shape icon)
+ if S.ht ~= 0, set(S.ht,'ButtonDownFcn',{@seqcad_common,S,handles}); end %the text (loop connection number)
  for i=1:length(S.Children)
      set_ButtonDownFnc(S.Children(i),handles);
  end

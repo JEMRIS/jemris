@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2013  Tony Stoecker
- *                        2007-2013  Kaveh Vahedipour
- *                        2009-2013  Daniel Pflugfelder
+ *                        2006-2014  Tony Stoecker
+ *                        2007-2014  Kaveh Vahedipour
+ *                        2009-2014  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -32,16 +32,12 @@
 Coil::~Coil() {
 	
 	if (m_signal   != NULL) delete    m_signal;
-	//if (m_sens_mag != NULL) vaDelete (m_sens_mag);
-	//if (m_sens_pha != NULL) vaDelete (m_sens_pha);
 	
 }
 
 /**********************************************************/
 void Coil::Initialize (DOMNode* node) {
 	
-	//m_sens_mag = NULL;
-	//m_sens_pha = NULL;
 	m_node     = node;
 	
 	string s = StrX(((DOMElement*) node)->getAttribute (StrX("Name").XMLchar() )).std_str() ;
@@ -263,7 +259,8 @@ bool Coil::Prepare  (const PrepareMode mode) {
     m_polar   *= PI/180.0;
     m_azimuth *= PI/180.0;
     m_interpolate = (m_points>0 && m_extent>0.0);
-    // dimensions with m_points==0 lead to undefined memory access in vaArray.
+
+    // dimensions with m_points==0 may lead to undefined memory access
     if (m_points==0) m_points=1;
     m_sensmag = NDData<double> (m_points, m_points, (m_dim==3?m_points:1));
     m_senspha = NDData<double> (m_points, m_points, (m_dim==3?m_points:1));

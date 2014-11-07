@@ -28,7 +28,7 @@ two spheres, and one factor per parameter in case of the brain phantom):
                 reversible components are simulated. If specified, remember that a high spin density per voxel is needed to
 		correctly simulate T2*-induced de- and rephasing effects.
 \li <b>M0:</b> equilibrium magnetization. Units: arbitrary.
-\li <b>CS :</b> chemical shift. Units: [kHz].
+\li <b>CS :</b> chemical shift. Units: [rad/sec].
 \li <b>Radius (Sphere) / Slice (Brain):</b> The radius (radii) of the sphere(s), or the slice index in case of the
        brain phantom. 
 
