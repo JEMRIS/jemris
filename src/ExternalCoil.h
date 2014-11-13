@@ -39,7 +39,7 @@ class ExternalCoil : public Coil {
     /**
      * @brief Default constructor
      */
-	ExternalCoil() : m_channel(1) {};
+	ExternalCoil() {};
 
 	/**
 	 * @brief Default destructor
@@ -90,7 +90,6 @@ class ExternalCoil : public Coil {
  private:
 
      string    m_fname;        /**< @brief URI of the sensitivity map  */
-	 int       m_channel;      /**< @brief my channel */
 
 };
 #endif /*EXTERNALCOIl_H_*/

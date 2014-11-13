@@ -54,7 +54,6 @@ double ExternalCoil::GetPhase(const double* position) {
 bool ExternalCoil::Prepare (const PrepareMode mode) {
 
     ATTRIBUTE("Filename" , m_fname);
-    ATTRIBUTE("Channel"  , m_channel);
 
     Coil::Prepare(mode);
 	IO::Status ios     = LoadMap();
@@ -77,14 +76,13 @@ IO::Status ExternalCoil::LoadMap () {
 
 	// no 'int pow(int,int)' available! Use cast and add delta to avoid roundoff error.
 	int size = (int) (pow((double) m_points,(double) m_dim) + 1e-20);
-	int pos  = m_channel*size;
 
-	memcpy (m_sensmag.Ptr(), &tmpdat[pos], size * sizeof(double));
+	memcpy (m_sensmag.Ptr(), &tmpdat[0], size * sizeof(double));
 
 	if (bc.Read(tmpdat, "phase", "/maps") != IO::OK)
 		return bc.Status();
 
-	memcpy (m_senspha.Ptr(), &tmpdat[pos], size * sizeof(double));
+	memcpy (m_senspha.Ptr(), &tmpdat[0], size * sizeof(double));
 
 	return IO::OK;
 

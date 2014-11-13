@@ -2974,10 +2974,10 @@ fi
 
 
 
-$as_echo "#define GIT_COMMIT \"3a07d093\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"3e558545\"" >>confdefs.h
 
 
-$as_echo "#define GIT_COMMIT_DATE \"Mon Dec 9 14:31:58 2013 +0100\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT_DATE \"Thu Nov 13 08:03:56 2014 +0100\"" >>confdefs.h
 
 
 # copyright notice

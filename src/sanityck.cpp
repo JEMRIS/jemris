@@ -337,7 +337,7 @@ int main (int argc, char *argv[]) {
 	seq.push_back("ThreePulses.xml");
 	seq.push_back("epi.xml");
 	seq.push_back("gre.xml");
-	//seq.push_back("tse.xml");
+	seq.push_back("tse.xml");
 	seq.push_back("analytic.xml");
 	seq.push_back("radial.xml");
 	seq.push_back("sli_sel.xml");
@@ -345,8 +345,8 @@ int main (int argc, char *argv[]) {
 
 	//coils to test
 	vector<string> coils;
-	//coils.push_back("1chext.xml");
 	coils.push_back("8chheadcyl.xml");
+	coils.push_back("1chext.xml");
 
 	bool          status = true;
 
