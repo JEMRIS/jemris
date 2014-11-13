@@ -112,11 +112,9 @@ int main (int argc, char *argv[]) {
 
 	//CASE 4: try Dump of sensitivities from CoilArray xml-file
 	CoilArray* coils = new CoilArray();
-	cout << "dumping sensitivity maps to sensmaps.h5 ...\n";
 	coils->Initialize(input);
 	if (coils->Populate() == OK) {
 		coils->DumpSensMaps(true);
-		cout << "done!\n";
 		return 0;
 	}
 	

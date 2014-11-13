@@ -161,6 +161,8 @@ class Coil : public Prototype {
 
 	unsigned GetNDim ();
 
+	double GetNorm (){return m_norm;};
+
  protected:
 
     /**

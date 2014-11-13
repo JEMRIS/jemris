@@ -221,10 +221,12 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	BinaryContext bc (m_senmap_prefix+".h5", IO::OUT);
 	if (bc.Status() != IO::OK)	return bc.Status();
 
+	if (verbose) cout << "dumping sensitivity maps to " << m_senmap_prefix << ".h5 ...\n";
+
 	size_t sl = m_coils[0]->GetPoints();
 	NDData<double> mag = (m_coils[0]->GetNDim() == 3) ? NDData<double> (sl, sl, sl) : NDData<double> (sl, sl);
 	NDData<double> pha = mag;
-	
+
 	for (unsigned i = 0; i < m_coils.size(); ++i) {
 		stringstream sstr;
 		sstr << setw(2) << setfill('0') << i;
@@ -234,6 +236,8 @@ IO::Status CoilArray::DumpSensMaps (bool verbose) {
 	    bc.Write (mag, sstr.str(), "/maps/magnitude");
 	    bc.Write (pha, sstr.str(), "/maps/phase");
 	}
+
+	if (verbose) cout << "done!\n";
 
 	
 	return IO::OK;

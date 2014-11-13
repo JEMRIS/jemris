@@ -173,13 +173,6 @@ class CoilArray  {
     XMLIO*                m_xio;           /**< @brief My XML IO module   */
 
 
-    /**
-     * @brief Dump to binary file.
-     *        Dump sensitivities or signals coils to discrete files.
-     *
-     * @param what What should be dumped.
-     */
-    void Dump              (string what);
 };
 
 #endif /*COILARRAY_H_*/
