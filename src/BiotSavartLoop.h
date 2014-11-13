@@ -40,7 +40,7 @@ class BiotSavartLoop : public Coil {
 	/**
 	 * @brief Default constructor
 	 */
-	BiotSavartLoop  () : m_mask(0), m_biosavart_phase(0.), m_radius(0.) {};
+	BiotSavartLoop  () : m_mask(0), m_biosavart_phase(0.), m_radius(0.), m_first_call(true) {};
 
 	/**
 	 * @brief Default destructor
@@ -84,6 +84,7 @@ class BiotSavartLoop : public Coil {
     double            m_mask;               /**< Torus radius to mask field on the wire */
     double            m_radius;             /**< Loop radius */
     double            m_biosavart_phase;    /**< @brief Phase */
+    bool			  m_first_call;			/**< @brief print warning on first call if no boost available */
     
 };
 

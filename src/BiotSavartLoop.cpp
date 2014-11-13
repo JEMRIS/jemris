@@ -51,6 +51,13 @@ bool BiotSavartLoop::Prepare (const PrepareMode mode) {
 
 double BiotSavartLoop::GetSensitivity(const double* position) {
 
+#ifndef HAVE_BOOST
+	m_biosavart_phase = 0.0;
+	if (m_first_call) cout << "Warning! BiotSavartLoop misses BOOST library. Returns uniform sensitivity.\n";
+	m_first_call = false;
+	return 1.0;
+#endif
+
     double a     = m_radius;
     double px = position[XC]-m_position[XC];
     double py = position[YC]-m_position[YC];
