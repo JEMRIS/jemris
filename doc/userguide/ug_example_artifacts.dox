@@ -2,10 +2,9 @@
 ***************************************************
 * \page ug_example_artifacts %Example 1: Simulation of common MRI artifacts
 
-This section provides the details for reproducing the results in Figure 3 of the manuscript. 
+This section provides the details for reproducing the results in Figure 3 of the manuscript: 
 
-Stoecker T, Vahedipour K, Pflugfelder D, Shah NJ. High Performance Computer MRI Simulations.
-Magnetic Resonance in Medicine. <b> in press.</b>
+Stoecker T, Vahedipour K, Pflugfelder D, Shah NJ. High Performance Computer MRI Simulations. Magnetic Resonance in Medicine. 2010, 64(1), 186 - 193.
 
 \n
 

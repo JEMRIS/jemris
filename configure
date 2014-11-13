@@ -11,7 +11,7 @@
 # This configure script is free software; the Free Software Foundation
 # gives unlimited permission to copy, distribute and modify it.
 #
-# 2007-2013 - Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder
+# 2007-2014 - Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder
 ## -------------------- ##
 ## M4sh Initialization. ##
 ## -------------------- ##
@@ -1492,7 +1492,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This configure script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it.
 
-2007-2013 - Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder
+2007-2014 - Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder
 _ACEOF
   exit
 fi
@@ -2974,10 +2974,10 @@ fi
 
 
 
-$as_echo "#define GIT_COMMIT \"3e558545\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"a23edb8c\"" >>confdefs.h
 
 
-$as_echo "#define GIT_COMMIT_DATE \"Thu Nov 13 08:03:56 2014 +0100\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT_DATE \"Thu Nov 13 20:37:25 2014 +0100\"" >>confdefs.h
 
 
 # copyright notice
