@@ -57,12 +57,48 @@ And please, help us with improving the software by announcing bugs.
 	<li> <b> Windows Binary </b>
 	     <ul>
 		<li> <a href="http://www.jemris.org/get/win/jemris-2.7.zip">jemris-2.7.zip</a>
+        <br/> Parallel jemris requires <a href="http://www.mcs.anl.gov/research/projects/mpich2/downloads/tarballs/1.4.1p1/mpich2-1.4.1p1-win-ia32.msi">MPICH2 IA32 1.4.1p1</a>.<br/>
+             <a href="ug_mpiwin.html">Install guide</a> for Windows Vista, 7 &amp; 8.
 		<li> md5sum: 98570d906b8c39c39d3bd88fe7888a7d
 		<li> shasum: fc823884cf6f5e91dd560bc1485508ac2f9a77fb
 	     </ul>
 </ul>
 
 */
+
+/**
+ \page ug_mpiwin MPICH2 for Windows 
+Installing and running MPICH2 under Windows 64 >= Vista for a single computer with multiple cores
+\n
+<b>Installation</b>
+<ul>
+<li>Install msi file accepting the license and so on.</li>
+<li>Accept the preset passphrase for now</li>
+<li>On the next mask choose install for "Everyone"</li>
+<li>Confirm installation</li>
+</ul>
+\n
+<b>Configuration</b>
+<ul>
+<li>On the start menu right-click "Computer"</li>
+<li>From the list choose "Properties"</li>
+<li>From the list "Control Panel Home" on the left of the new window pick "Advanced system settings"</li>
+<li>Near the bottom click on "Environment Variables"</li>
+<li>Add to if existing or create the PATH variable to include C:\Program Files (x86)\MPICH2\bin or approriate path.</li>
+<li>Confirm with 3 times OK</li>
+<li>Open a command prompt by right clicking its symbol and choosing from the list "Run as administrator"
+<li>Execute including the quotation marks smpd -passphrase "yourpass" -install</li>
+<li>You should read somthing about the success.</li>
+<li>Close that command prompt again and open a new one with user priviledges.</li>
+<li>Execute now mpiexec -np 4 hostname</li>
+<li>You should now see the hostname of your computer 4 times.
+<li>At this point all ist setup and you should be able to use parallel jemris.</li>
+</ul>
+\n
+Should you want to connect multiple computers running Windows to perform HPC computing with jemris, be assured of our empathy. We wish you the best of luck. You will most centainly need some kind of Windows domain authentication hastle-hurdle-trap-pitfall.
+*/
+
+
 
 /**
  \page ug_uis User Interfaces
