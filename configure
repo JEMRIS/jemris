@@ -2950,7 +2950,6 @@ END
   fi
 fi
 
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 $as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
     # Check whether --enable-maintainer-mode was given.
@@ -2975,7 +2974,7 @@ fi
 
 
 
-$as_echo "#define GIT_COMMIT \"a19a6e09\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"5a74546a\"" >>confdefs.h
 
 
 $as_echo "#define GIT_COMMIT_DATE \"\"" >>confdefs.h
