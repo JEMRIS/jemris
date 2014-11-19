@@ -5,4 +5,4 @@ examples_DATA = $(EXTRA_DIST)
 SUBDIRS = approved
 
 clean-local:
-	rm -f *.out *.h5 *.bin
+	rm -f *.out 1chext.h5 8chheadcyl.h5 ThreePulses.h5 analytic.h5 epi.h5 gre.h5 radial.h5 sli_sel.h5 tse.h5
