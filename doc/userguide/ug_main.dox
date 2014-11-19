@@ -40,9 +40,9 @@ And please, help us with improving the software by announcing bugs.
 		<li> shasum: 0f41bd198273c1f2b0a0f4b230c2620bff663bc0
 	     </ul>
 
-	<li> <b> Ubuntu Binary (64bit) </b>
+	<li> <b> Ubuntu Binary (14.10 64bit) </b>
 	     <ul>
-		<li> <a href="http://www.jemris.org/get/saucy/jemris_2.7-1_amd64.deb.bz2">jemris_2.7-1_amd64.deb.bz2</a>
+		<li> <a href="http://www.jemris.org/get/utopic/jemris_2.7-1_amd64.deb.bz2">jemris_2.7-1_amd64.deb.bz2</a>
 		<li> md5sum: c68bf125f56545f9783555fa99a93f4e
 		<li> shasum: 34a6eb588a8e804421f222996685bc0413ea0a7a
 	     </ul>

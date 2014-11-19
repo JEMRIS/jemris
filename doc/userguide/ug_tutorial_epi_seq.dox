@@ -246,7 +246,7 @@ Click now on the check boxes \c <b>k-space trajecory</b> and \c <b>continuous</b
 \image html pics/jemris_sequence_6.png
 \image latex pics/jemris_sequence_6.png
 
-Let us go on to simulate the sequence: <a href="ug_tutorial_epi_sim.shtml">%First steps tutorial - simulation</a>
+Let us go on to simulate the sequence: <a href="ug_tutorial_epi_sim.html">%First steps tutorial - simulation</a>
 
 ***************************************************
 */

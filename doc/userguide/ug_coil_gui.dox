@@ -61,7 +61,7 @@ points in the direction of the coil (see below for definition of the direction).
 
 \li <b>"Show Sample" ["Hide Sample"]</b> Overlays a transparent view of the sample on the sensitivity map.
 The sample is read from the last generated output of the 
-<a href="ug_JEMRIS_sim.shtml">Simulation GUI \c JEMRIS_sim </a> in the current working directory.
+<a href="ug_JEMRIS_sim.html">Simulation GUI \c JEMRIS_sim </a> in the current working directory.
 
 \li <b>"All Coils" ["Active Coil"]</b> Either shows the sensitivity superposition of all coils or only the sensitivity map of the
 currently selected coil in the \ref ug_coil_gui_array.
