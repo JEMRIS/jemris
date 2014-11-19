@@ -642,7 +642,7 @@ uninstall-am: uninstall-examplesDATA
 
 
 clean-local:
-	rm -f *.out 1chext.h5 8chheadcyl.h5 ThreePulses.h5 analytic.h5 epi.h5 gre.h5 radial.h5 sli_sel.h5 tse.h5
+	rm -f *.out *_signal.h5 1chext.h5 8chheadcyl.h5 ThreePulses.h5 analytic.h5 epi.h5 gre.h5 radial.h5 sli_sel.h5 tse.h5
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
