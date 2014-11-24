@@ -27,7 +27,7 @@
 #ifndef _ANALYTICPULSESHAPE_H
 #define _ANALYTICPULSESHAPE_H
 
-#include <Pulse.h>
+#include "Pulse.h"
 
 /**
  * @brief prepare and GiNaC evaluation of analytic pulse shapes

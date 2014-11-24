@@ -27,7 +27,7 @@
 #ifndef _EXTERNALPULSEDATA_H
 #define _EXTERNALPULSEDATA_H
 
-#include <Pulse.h>
+#include "Pulse.h"
 
 /**
  * @brief Read and retrieve data of external pulse shapes
