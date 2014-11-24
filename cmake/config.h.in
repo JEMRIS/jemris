@@ -1,0 +1,8 @@
+#define VERSION "@jemris_VERSION@"
+#define GIT_COMMIT "@GIT_SHA1@"
+#define HAVE_NVECTOR_NVECTOR_SERIAL_H 1
+#define HAVE_CVODE_CVODE_H 1
+#define CVODE26 1
+#define HAVE_H5CPP_H 1
+#define HAVE_HDF5 1
+#define HAVE_XERCESC_DOM_DOM_HPP 1
