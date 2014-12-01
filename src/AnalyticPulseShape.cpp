@@ -126,7 +126,7 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
 			string constants = m_pulse->GetDOMattribute("Constants");
 			vector<string> vp = m_pulse->Tokenize(constants,",");
 			for (unsigned int i=0;i<vp.size();i++) {
-				m_constant[i] = atof( vp[i].c_str() );
+				m_constant[i] = atof(vp[i].c_str());
 				stringstream C; C << "Constant" << i+1;
 				if (m_pulse->m_attributes.find(C.str())==m_pulse->m_attributes.end() ) {
 				    m_pulse->m_attributes.insert(pair<string,Attribute*>(C.str(),new Attribute(C.str(),m_pulse, false, true, m_constant[i])));  

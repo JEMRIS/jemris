@@ -82,7 +82,7 @@ if(SIZEOF_VOID_P EQUAL 8)
   set_config_option(HAVE_64BIT_SIZE_T "Have64BitSizeT")
 endif(SIZEOF_VOID_P EQUAL 8)
 
-find_package(Boost 1.36.0)
+find_package(Boost)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   set (HAVE_BOOST ON CACHE BOOL "Found boost")
