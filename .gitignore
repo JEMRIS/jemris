@@ -22,7 +22,8 @@
 /doc/site/nav.js
 /doc/userguide/doxy-jemris.conf
 /autom4te.cache
-
+/build
+/doc/doxygen_sqlite3.db
 /doc/html
 
 # implicit
