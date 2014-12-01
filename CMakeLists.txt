@@ -117,22 +117,20 @@ add_subdirectory (share)
 
 # Packaging ---------------------------------------------------------------------
 
+# All
 include(InstallRequiredSystemLibraries)
-
-set(jemris_DESCRIPTION_SUMMARY "jemris mri simulator")
-set(jemris_VENDOR "jemris")
-set(jemris_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/Readme.txt")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set(jemris_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
-set(jemris_EXECUTABLES "jemris" "jemris executable")
-
 set (CPACK_GENERATOR "TBZ2;TGZ;DEB;RPM")
 set (CPACK_PACKAGE_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 set (CPACK_PACKAGE_NAME "jemris")
 set (CPACK_PACKAGE_CONTACT "Kaveh Vahedipour<kaveh@codeare.org>")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "JEMRIS, which is short for Juelich Extensible MRI Simulator, is a general MRI simulator. Visit http://www.jemris.org for more details.")
 
+# DEB
 set (CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 set (CPACK_DEBIAN_PACKAGE_DEPENDS "libginac2 (>= 1.4.4), ginac-tools, mpich2 (>= 1.2), libsundials-serial (>= 2.5.0), libxerces-c3.1 (>= 3.1.1), libhdf5-7 (>= 1.8)")
+
+# RPM
+set (CPACK_RPM_PACKAGE_REQUIRES "hdf5, ginac, xerces-c")
 
 include(CPack)
