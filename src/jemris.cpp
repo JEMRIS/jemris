@@ -29,18 +29,18 @@
 #include <iostream>
 #include <iomanip>
 #include <typeinfo>
-/*
+
 #include "Simulator.h"
 #include "SequenceTree.h"
 #include "ConcatSequence.h"
 #include "config.h"
-*/
+
 using namespace std;
 
 /**
  * Print usage information
  */
-/*
+
 void usage () {
   cout << endl << "  Usage:" << endl << endl;
 	cout   << "  1. jemris <xml-file>        " << endl;
@@ -50,8 +50,7 @@ void usage () {
 	cout   << "  2. jemris modlist           " << endl;
 	cout   << "     Writes the file mod.xml containing a list of all available modules." << endl << endl;
 }
-*/
-/*
+
 void do_simu (Simulator* sim) {
 	World* pW = World::instance();
 	cout << "Model    : " << sim->GetAttr(sim->GetElem("model"),  "name")<< "\t  , solver = "
@@ -65,23 +64,23 @@ void do_simu (Simulator* sim) {
 	cout << endl;
 	cout << endl;
 }
-*/
+
 int main (int argc, char *argv[]) {
-/*
+
 	//print usage
 		cout << "\njemris "  << VERSION;
 #ifdef GIT_COMMIT
 		cout << " (" << GIT_COMMIT << ")";
 #endif
         cout << "\n" << endl;
-/*
+
 	if (argc==1) {
 		usage();
 		return 0;
 	}
 
 	string input (argv[1]);
-/*
+
 	//CASE 1: Dump list of modules in xml file
 	if (input == "modlist")  {
 		SequenceTree* seqTree = SequenceTree::instance();
@@ -89,7 +88,7 @@ int main (int argc, char *argv[]) {
 		//delete seqTree;
 		return 0;
 	}
-/*
+
 	//CASE 2: try Dump of seq-diagram from Sequence xml-file
 	SequenceTree* seqTree = SequenceTree::instance();
 	seqTree->Initialize(input);
@@ -112,7 +111,7 @@ int main (int argc, char *argv[]) {
 		printf ("Actual simulation took %.2f seconds.\n", runtime / 1000000.0);
 		return 0;
 	}
-/*
+
 	//CASE 4: try Dump of sensitivities from CoilArray xml-file
 	CoilArray* coils = new CoilArray();
 	coils->Initialize(input);
@@ -123,7 +122,7 @@ int main (int argc, char *argv[]) {
 
 	//OTHERWISE: not a valid input
 	cout << input << " is not a valid input.\n";
-*/
+
         return 0;
 }
 

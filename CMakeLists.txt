@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 2.8)
 project (jemris) 
 set (jemris_VERSION_MAJOR 2)
 set (jemris_VERSION_MINOR 7)
-set (jemris_VERSION_PATCH 1)
+set (jemris_VERSION_PATCH 0)
 set (jemris_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
@@ -82,8 +82,11 @@ if(SIZEOF_VOID_P EQUAL 8)
   set_config_option(HAVE_64BIT_SIZE_T "Have64BitSizeT")
 endif(SIZEOF_VOID_P EQUAL 8)
 
-find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
+find_package(Boost 1.36.0)
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+  set (HAVE_BOOST ON CACHE BOOL "Found boost")
+endif()
 
 find_package(XercesC REQUIRED)
 
