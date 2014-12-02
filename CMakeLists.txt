@@ -30,36 +30,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   set(WINDOWS TRUE)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(LINUX TRUE)
-  # use the LSB stuff if possible :)
-  EXECUTE_PROCESS(
-    COMMAND cat /etc/lsb-release
-    COMMAND grep DISTRIB_ID
-    COMMAND awk -F= "{ print $2 }"
-    COMMAND tr "\n" " "
-    COMMAND sed "s/ //"
-    OUTPUT_VARIABLE LSB_ID
-    RESULT_VARIABLE LSB_ID_RESULT
-    )
-  EXECUTE_PROCESS(
-    COMMAND cat /etc/lsb-release
-    COMMAND grep DISTRIB_RELEASE
-    COMMAND awk -F= "{ print $2 }"
-    COMMAND tr "\n" " "
-    COMMAND sed "s/ //"
-    OUTPUT_VARIABLE LSB_VER
-    RESULT_VARIABLE LSB_VER_RESULT
-    )
-  EXECUTE_PROCESS(
-    COMMAND uname -m
-    COMMAND awk -F= "{ print $1 }"
-    COMMAND tr "\n" " "
-    COMMAND sed "s/ *//"
-    OUTPUT_VARIABLE LSB_ARCH
-    RESULT_VARIABLE LSB_ARCH_RESULT
-    )
-  message("LSB id:   ${LSB_ID}+")
-  message("LSB ver:  ${LSB_VER}+")
-  message("LSB arch: ${LSB_ARCH}+")
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(MACOSX TRUE)
 endif()
@@ -142,19 +112,11 @@ add_subdirectory (share)
 # All
 include (InstallRequiredSystemLibraries)
 set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set (CPACK_GENERATOR "TBZ2;DEB;RPM")
+set (CPACK_GENERATOR "TBZ2")
 set (CPACK_PACKAGE_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 set (CPACK_PACKAGE_NAME "jemris")
 set (CPACK_PACKAGE_CONTACT "Kaveh Vahedipour<kaveh@codeare.org>")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "JEMRIS, which is short for Juelich Extensible MRI Simulator, is a general MRI simulator. Visit http://www.jemris.org for more details.")
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set (CPACK_SYSTEM_NAME "${LSB_ID}_${LSB_VER}_${LSB_ARCH}")
-  if( LSB_ID STREQUAL "Ubuntu" )
-    set (CPACK_GENERATOR "TBZ2;DEB")
-  else()
-    set (CPACK_GENERATOR "TBZ2;RPM")
-  endif()
-endif()
 
 # DEB
 set (CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
