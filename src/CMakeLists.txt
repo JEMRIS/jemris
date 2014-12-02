@@ -36,7 +36,7 @@ list (APPEND CORE_SRC AnalyticCoil.cpp AnalyticCoil.h
   TrajectoryT2s.cpp TrajectoryT2s.h TrapGradPulse.cpp TrapGradPulse.h
   TriangleGradPulse.cpp TriangleGradPulse.h TxRxPhase.cpp TxRxPhase.h
   World.cpp World.h XMLIO.cpp XMLIO.h config.h ginac_functions.h list.h
-  list_c.h rng.cpp rng.h options.h options.cpp) 
+  list_c.h rng.cpp rng.h) 
 
 include_directories (${PROJECT_SOURCE_DIR}/src/core
   ${PROJECT_SOURCE_DIR}/src/matrix/io) 
