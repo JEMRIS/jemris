@@ -62,7 +62,6 @@ add_executable (sanityck Model.h Model.cpp sanityck.cpp)
 target_link_libraries (sanityck core ${COMMON_LIBS}) 
 
 if (MPI_FOUND)
-   message ("${MPI_LIBRARIES}")
   add_executable (pjemris Mpi2Evolution.h
     Mpi2Evolution.cpp mpi_Model.h Model.h Model.cpp pjemris.cpp)
   target_link_libraries (pjemris core ${COMMON_LIBS}
