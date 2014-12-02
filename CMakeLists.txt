@@ -6,6 +6,8 @@ set (jemris_VERSION_MINOR 7)
 set (jemris_VERSION_PATCH 0)
 set (jemris_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 
+message ("${CMAKE_SYSTEM}")
+
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 macro(set_config_option VARNAME STRING)
