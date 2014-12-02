@@ -6,7 +6,33 @@ set (jemris_VERSION_MINOR 7)
 set (jemris_VERSION_PATCH 0)
 set (jemris_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 
-message ("${CMAKE_SYSTEM}")
+# use the LSB stuff if possible :)
+EXECUTE_PROCESS(
+  COMMAND cat /etc/lsb-release
+  COMMAND grep DISTRIB_ID
+  COMMAND awk -F= "{ print $2 }"
+  COMMAND tr "\n" " "
+  COMMAND sed "s/ //"
+  OUTPUT_VARIABLE LSB_ID
+  RESULT_VARIABLE LSB_ID_RESULT
+)
+EXECUTE_PROCESS(
+  COMMAND cat /etc/lsb-release
+  COMMAND grep DISTRIB_RELEASE
+  COMMAND awk -F= "{ print $2 }"
+  COMMAND tr "\n" " "
+  COMMAND sed "s/ //"
+  OUTPUT_VARIABLE LSB_VER
+  RESULT_VARIABLE LSB_VER_RESULT
+)
+message("LSB output: ${LSB_ID_RESULT}:${LSB_ID} ${LSB_VER_RESULT}:${LSB_VER}")
+if(NOT ${LSB_ID} STREQUAL "")
+  # found some, use it :D
+  set(INSTALLER_PLATFORM "${LSB_ID}-${LSB_VER}" CACHE PATH "Installer chosen platform")
+else(NOT ${LSB_ID} STREQUAL "")
+  set(INSTALLER_PLATFORM "linux-generic" CACHE PATH "Installer chosen platform")
+endif(NOT ${LSB_ID} STREQUAL "")
+
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
@@ -122,7 +148,7 @@ add_subdirectory (share)
 # All
 include(InstallRequiredSystemLibraries)
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set (CPACK_GENERATOR "TBZ2;TGZ;DEB;RPM")
+set (CPACK_GENERATOR "TBZ2;DEB;RPM")
 set (CPACK_PACKAGE_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 set (CPACK_PACKAGE_NAME "jemris")
 set (CPACK_PACKAGE_CONTACT "Kaveh Vahedipour<kaveh@codeare.org>")

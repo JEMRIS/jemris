@@ -1,6 +1,6 @@
 add_subdirectory (matlab) 
 
-install(DIRECTORY .
+install(DIRECTORY ""
         DESTINATION share/jemris
         FILES_MATCHING
         PATTERN "*.xml"
