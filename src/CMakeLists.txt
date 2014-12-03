@@ -55,14 +55,13 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 endif()
 add_executable (jemris Model.h Model.cpp jemris.cpp)
 target_link_libraries (jemris core ${COMMON_LIBS}) 
-install (TARGETS jemris DESTINATION bin)
+install (TARGETS jemris DESTINATION "bin")
 
 
 add_executable (sanityck Model.h Model.cpp sanityck.cpp)
 target_link_libraries (sanityck core ${COMMON_LIBS}) 
 
 if (MPI_FOUND)
-   message ("${MPI_LIBRARIES}")
   add_executable (pjemris Mpi2Evolution.h
     Mpi2Evolution.cpp mpi_Model.h Model.h Model.cpp pjemris.cpp)
   target_link_libraries (pjemris core ${COMMON_LIBS}
@@ -76,7 +75,7 @@ if (MPI_FOUND)
     set_target_properties(pjemris PROPERTIES
       LINK_FLAGS "${MPI_LINK_FLAGS}")
   endif()
-  install (TARGETS pjemris DESTINATION bin)
+  install (TARGETS pjemris DESTINATION "bin")
 endif()
 
 add_test (

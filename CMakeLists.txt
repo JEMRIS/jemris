@@ -6,34 +6,6 @@ set (jemris_VERSION_MINOR 7)
 set (jemris_VERSION_PATCH 0)
 set (jemris_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 
-# use the LSB stuff if possible :)
-EXECUTE_PROCESS(
-  COMMAND cat /etc/lsb-release
-  COMMAND grep DISTRIB_ID
-  COMMAND awk -F= "{ print $2 }"
-  COMMAND tr "\n" " "
-  COMMAND sed "s/ //"
-  OUTPUT_VARIABLE LSB_ID
-  RESULT_VARIABLE LSB_ID_RESULT
-)
-EXECUTE_PROCESS(
-  COMMAND cat /etc/lsb-release
-  COMMAND grep DISTRIB_RELEASE
-  COMMAND awk -F= "{ print $2 }"
-  COMMAND tr "\n" " "
-  COMMAND sed "s/ //"
-  OUTPUT_VARIABLE LSB_VER
-  RESULT_VARIABLE LSB_VER_RESULT
-)
-message("LSB output: ${LSB_ID_RESULT}:${LSB_ID} ${LSB_VER_RESULT}:${LSB_VER}")
-if(NOT ${LSB_ID} STREQUAL "")
-  # found some, use it :D
-  set(INSTALLER_PLATFORM "${LSB_ID}-${LSB_VER}" CACHE PATH "Installer chosen platform")
-else(NOT ${LSB_ID} STREQUAL "")
-  set(INSTALLER_PLATFORM "linux-generic" CACHE PATH "Installer chosen platform")
-endif(NOT ${LSB_ID} STREQUAL "")
-
-
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 macro(set_config_option VARNAME STRING)
@@ -67,12 +39,10 @@ include (VcMacros)
 include (OptimizeForArchitecture)
 find_package (OpenMP)
 if(OPENMP_FOUND)
-  message("OPENMP FOUND")
+  message("-- Found OpenMP")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-  message ("${OpenMP_CXX_FLAGS}")
-  message ("${CMAKE_CXX_FLAGS}")
 endif()
 
 # C++ flags ---------------------------------------------------------------------
@@ -93,14 +63,6 @@ include(CheckFunctionExists)
 include(CheckIncludeFile)
 
 enable_testing()
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-  set(WINDOWS TRUE)
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(LINUX TRUE)
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  set(MACOSX TRUE)
-endif()
 
 include (VcMacros)
 include (OptimizeForArchitecture)
@@ -146,9 +108,9 @@ add_subdirectory (share)
 # Packaging ---------------------------------------------------------------------
 
 # All
-include(InstallRequiredSystemLibraries)
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set (CPACK_GENERATOR "TBZ2;DEB;RPM")
+include (InstallRequiredSystemLibraries)
+set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+set (CPACK_GENERATOR "TBZ2")
 set (CPACK_PACKAGE_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 set (CPACK_PACKAGE_NAME "jemris")
 set (CPACK_PACKAGE_CONTACT "Kaveh Vahedipour<kaveh@codeare.org>")
@@ -161,4 +123,4 @@ set (CPACK_DEBIAN_PACKAGE_DEPENDS "libginac2 (>= 1.4.4), ginac-tools, mpich2 (>=
 # RPM
 set (CPACK_RPM_PACKAGE_REQUIRES "hdf5, ginac, xerces-c")
 
-include(CPack)
+include (CPack)
