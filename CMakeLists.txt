@@ -17,11 +17,6 @@ endmacro(set_config_option)
 include(GetGitRevisionDescription)
 get_git_head_revision(GIT_REFSPEC GIT_SHA1)
 
-configure_file (
-  "${PROJECT_SOURCE_DIR}/cmake/config.h.in"
-  "${PROJECT_SOURCE_DIR}/src/config.h"
-  )
-
 include(ConfigureChecks.cmake)
 add_definitions(-DHAVE_CONFIG_H)
 
@@ -73,6 +68,7 @@ if(SIZEOF_VOID_P EQUAL 8)
 endif(SIZEOF_VOID_P EQUAL 8)
 
 find_package(Boost)
+message ("${Boost_FOUND}")
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   set (HAVE_BOOST ON CACHE BOOL "Found boost")
@@ -104,6 +100,11 @@ else()
   set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -lhdf5 -lhdf5_cpp")
   find_package(ZLIB REQUIRED)
 endif()
+
+configure_file (
+  "${PROJECT_SOURCE_DIR}/cmake/config.h.in"
+  "${PROJECT_SOURCE_DIR}/src/config.h"
+  )
 
 add_subdirectory (src) 
 add_subdirectory (share) 
