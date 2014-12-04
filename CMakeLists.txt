@@ -87,7 +87,10 @@ find_package(Sundials COMPONENTS CVODE REQUIRED)
 include_directories (${SUNDIALS_INCLUDE_DIR})
 
 find_package(MPI)
-include_directories (${MPI_INCLUDE_PATH})
+if(MPI_C_FOUND)
+  include_directories (${MPI_INCLUDE_PATH})
+  set (HAVE_MPI_THREADS ON CACHE BOOL "Found MPI with threads")
+endif()
 
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 include_directories (${HDF5_INCLUDE_DIRS})

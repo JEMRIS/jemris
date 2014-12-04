@@ -61,15 +61,18 @@ install (TARGETS jemris DESTINATION "bin")
 add_executable (sanityck Model.h Model.cpp sanityck.cpp)
 target_link_libraries (sanityck core ${COMMON_LIBS}) 
 
-if (MPI_FOUND)
+if (MPI_C_FOUND)
   add_executable (pjemris Mpi2Evolution.h
     Mpi2Evolution.cpp mpi_Model.h Model.h Model.cpp pjemris.cpp)
   target_link_libraries (pjemris core ${COMMON_LIBS}
-	${MPI_LIBRARIES})  
+	${MPI_C_LIBRARIES})  
   target_compile_definitions (pjemris PRIVATE PARALLEL)
-  if (MPI_COMPILE_FLAGS)
+  if (MPI_C_COMPILE_FLAGS)
     set_target_properties(pjemris PROPERTIES
       COMPILE_FLAGS "${MPI_COMPILE_FLAGS} -DHAVE_MPI_THREADS")
+  else()
+    set_target_properties(pjemris PROPERTIES
+      COMPILE_FLAGS "-DHAVE_MPI_THREADS")
   endif()
   if(MPI_LINK_FLAGS)
     set_target_properties(pjemris PROPERTIES
