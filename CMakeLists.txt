@@ -17,11 +17,6 @@ endmacro(set_config_option)
 include(GetGitRevisionDescription)
 get_git_head_revision(GIT_REFSPEC GIT_SHA1)
 
-configure_file (
-  "${PROJECT_SOURCE_DIR}/cmake/config.h.in"
-  "${PROJECT_SOURCE_DIR}/src/config.h"
-  )
-
 include(ConfigureChecks.cmake)
 add_definitions(-DHAVE_CONFIG_H)
 
@@ -78,7 +73,7 @@ if(Boost_FOUND)
   set (HAVE_BOOST ON CACHE BOOL "Found boost")
 endif()
 
-find_package(XercesC REQUIRED)
+find_package(Xerces 1.3.0 REQUIRED)
 
 find_package(GiNaC REQUIRED)
 include_directories (${GINAC_INCLUDE_DIRS})
@@ -103,6 +98,11 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 else()
   set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -lhdf5 -lhdf5_cpp")
 endif()
+
+configure_file (
+  "${PROJECT_SOURCE_DIR}/cmake/config.h.in"
+  "${PROJECT_SOURCE_DIR}/src/config.h"
+  )
 
 add_subdirectory (src) 
 add_subdirectory (share) 
