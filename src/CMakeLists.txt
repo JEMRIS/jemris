@@ -98,5 +98,5 @@ if (MPI_FOUND)
    add_test(
      NAME mpi 
      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/share
-     COMMAND ${MPIEXEC} -np 3 pjemris examples/approved/mpi_simu.xml)
+     COMMAND ${MPIEXEC} -np 3 ${PROJECT_BINARY_DIR}/src/pjemris examples/approved/mpi_simu.xml)
 endif()
