@@ -102,7 +102,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(ZLIB_FOUND "1")
 else()
   set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -lhdf5 -lhdf5_cpp")
-  find_package(ZLIB REQUIRED)
 endif()
 
 add_subdirectory (src) 

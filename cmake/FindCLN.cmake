@@ -36,10 +36,10 @@ set(CLN_FOUND)
 set(CLN_INCLUDE_DIR)
 set(CLN_LIBRARIES)
 
-include(FindPkgConfig)
-if (PKG_CONFIG_FOUND)
-  pkg_check_modules(_cln cln)
-endif()
+#include(FindPkgConfig)
+#if (PKG_CONFIG_FOUND)
+#  pkg_check_modules(_cln cln)
+#endif()
 
 find_path(CLN_INCLUDE_DIR NAMES cln/cln.h
     HINTS ${_cln_INCLUDE_DIRS}
