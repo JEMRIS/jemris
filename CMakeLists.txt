@@ -68,13 +68,12 @@ if(SIZEOF_VOID_P EQUAL 8)
 endif(SIZEOF_VOID_P EQUAL 8)
 
 find_package(Boost)
-message ("${Boost_FOUND}")
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   set (HAVE_BOOST ON CACHE BOOL "Found boost")
 endif()
 
-find_package(XercesC REQUIRED)
+find_package(Xerces 1.3.0 REQUIRED)
 
 find_package(GiNaC REQUIRED)
 include_directories (${GINAC_INCLUDE_DIRS})
