@@ -26,6 +26,7 @@
 /doc/doxygen_sqlite3.db
 /doc/html
 /share/examples/GiNaC*
+/Testing
 
 # implicit
 .deps/
