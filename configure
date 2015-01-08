@@ -2974,7 +2974,7 @@ fi
 
 
 
-$as_echo "#define GIT_COMMIT \"5a74546a\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"3d13c172\"" >>confdefs.h
 
 
 $as_echo "#define GIT_COMMIT_DATE \"\"" >>confdefs.h
