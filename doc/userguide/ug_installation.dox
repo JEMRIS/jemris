@@ -8,10 +8,11 @@ Binary packages for Linux, Windows and Mac OS X, are available in the section \r
 
 \section ug_install_pre Prerequisites 
 
-<b>JEMRIS</b> relies on three libraries, which need to be downloaded and installed prior to its compilation:
+<b>JEMRIS</b> relies on several libraries, which need to be downloaded and installed prior to its compilation:
 
 \li <a href="http://computation.llnl.gov/casc/sundials">CVODE</a> variable time stepping ODE solver >=2.5
 \li <a href="http://xerces.apache.org/xerces-c">Xerces-C++</a> XML parser >=2.8
+\li <a href="http://www.hdfgroup.org/HDF5/">HDF5</a> a file format for storing and managing data >=1.8
 \li <a href="http://www.ginac.de/CLN">CLN</a> library for Numbers version >=1.2.X
 \li <a href="http://www.ginac.de">GiNaC</a> library for symbolic mathematics >=1.4.X
 
@@ -19,17 +20,18 @@ Some Linux distributions have the above packages prebuilt and included in their 
 
 \section ug_install_opt Optionals
 
-\section ug_install_mpi MPICH
+\subsection ug_install_mpi MPICH
 
-Should you want to exploit more than one CPU core, you will need an implementation of MPI. <b>JEMRIS</b> has been throughly tested with <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2</a>. Mac OS X greater that 10.4 includes MPI with the <a href="http://developer.apple.com/technologies/xcode.html">XCode</a> package. But you might still want to look at <a href="http://hpc.sourceforge.net">HPC for Mac OS X</a>.
+Should you want to exploit more than one CPU core, you will need an implementation of MPI. <b>JEMRIS</b> has been tested with <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2</a>. Mac OS X greater that 10.4 includes MPI with the <a href="http://developer.apple.com/technologies/xcode.html">XCode</a> package. But you might still want to look at <a href="http://hpc.sourceforge.net">HPC for Mac OS X</a>.
 
 
-\section ug_install_boost Boost C++
+\subsection ug_install_boost Boost C++
 
-The boost C++ libraries are used for the evaluation of elliptical integration terms of the Biot-Savart law. <b>JEMRIS</b> is operational without the boost libraries while Biot-Savart-Loops behave like ideal
-coils.
+The boost C++ libraries are used for the evaluation of elliptical integration terms of the Biot-Savart law. <b>JEMRIS</b> is operational without the boost libraries while Biot-Savart-Loops behave like ideal coils.
 
 \section ug_install_compilation Compiling JEMRIS
+
+Note that all libraries above are mandatory for compiling JEMRIS (runtime and development versions need to be present)
 
 Download the JEMRIS package from [http://www.jemris.org/download.html]
 
