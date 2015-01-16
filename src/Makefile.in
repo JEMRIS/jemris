@@ -114,8 +114,8 @@ am__objects_1 = AnalyticCoil.$(OBJEXT) AnalyticGradPulse.$(OBJEXT) \
 	ExternalPulseData.$(OBJEXT) ExternalGradPulse.$(OBJEXT) \
 	ExternalRFPulse.$(OBJEXT) GaussianRFPulse.$(OBJEXT) \
 	GradPulse.$(OBJEXT) HardRFPulse.$(OBJEXT) HDF5IO.$(OBJEXT) \
-	IdealCoil.$(OBJEXT) Microstructure.$(OBJEXT) \
-	MicrostructureBoxes.$(OBJEXT) \
+	IdealCoil.$(OBJEXT) IncludeContainer.$(OBJEXT) \
+	Microstructure.$(OBJEXT) MicrostructureBoxes.$(OBJEXT) \
 	MicrostructureCrossingFiber.$(OBJEXT) \
 	MicrostructureKissingFiber.$(OBJEXT) \
 	MicrostructureSingleFiber.$(OBJEXT) Model.$(OBJEXT) \
@@ -544,7 +544,8 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	ExternalGradPulse.cpp ExternalGradPulse.h ExternalRFPulse.cpp \
 	ExternalRFPulse.h GaussianRFPulse.cpp GaussianRFPulse.h \
 	GradPulse.cpp GradPulse.h HardRFPulse.cpp HardRFPulse.h \
-	HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h KSpace.h \
+	HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h \
+	IncludeContainer.cpp IncludeContainer.h KSpace.h \
 	Microstructure.cpp Microstructure.h MicrostructureBoxes.cpp \
 	MicrostructureBoxes.h MicrostructureCrossingFiber.cpp \
 	MicrostructureCrossingFiber.h MicrostructureKissingFiber.cpp \
@@ -721,6 +722,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HDF5IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HardRFPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IdealCoil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IncludeContainer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Microstructure.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MicrostructureBoxes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MicrostructureCrossingFiber.Po@am__quote@

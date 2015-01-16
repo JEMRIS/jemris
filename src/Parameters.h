@@ -41,7 +41,7 @@ public:
     /**
      * @brief Default destructor
      */
-    ~Parameters() { _instance = 0; };
+    ~Parameters() { m_instance = 0; };
 
     /**
      * @brief Get the single instance of the World parameters
@@ -78,7 +78,7 @@ public:
     void SetDefaults();
 
 
-    static Parameters* _instance;
+    static Parameters* m_instance;
 
     // Sequence parameters
     double m_te;             /**< @brief Sequence TE */

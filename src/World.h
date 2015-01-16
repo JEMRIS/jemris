@@ -40,10 +40,13 @@
 
 using namespace std;
 
+//forward declarations
 class AtomicSequence;
+class ConcatSequence;
+class SequenceTree;
 class EddyPulse;
 
-//! The simulated reality
+//! Singleton with information about the simulation of the current spin
 
 class World {
 
@@ -127,6 +130,7 @@ class World {
 
 	void*             auxiliary;           /**< @brief Auxiliary data any kind of container needed for static methods can go here */
 
+	//members for solution of a particular spin
     long              SpinNumber;		    /**< @brief Number of the current spin*/
     long              TotalSpinNumber;      /**< @brief Total number of spins*/
     long              TotalADCNumber;       /**< @brief Total number of spins*/
@@ -140,16 +144,18 @@ class World {
     std::vector<double> solution;          /**< @brief Solution [M_r, phi, M_z] at the current time point*/
 
     double            RandNoise;            /**< @brief percentage of random noise added to the signal */
-    double            GMAXoverB0;           /**< @brief Constant for the concomittant field term */
-    double            NonLinGradField;      /**< @brief Non-linear contriution to B_z from gradients */
+    double            GMAXoverB0;           /**< @brief Constant for the concomitant field term */
+    double            NonLinGradField;      /**< @brief Non-linear contribution to B_z from gradients */
 
-    //members for saving the magnetisation evolution of the spins
+    //members for the current sequence
+    SequenceTree*     pSeqTree;             /**< @brief The main sequence tree*/
+    AtomicSequence*   pAtom;                /**< @brief Atomic sequence responsible for the current time point*/
+    AtomicSequence*   pStaticAtom;          /**< @brief Atomic sequence responsible for all time points*/
+
+    //members for saving the magnetization evolution of the spins
     int	              saveEvolStepSize;     /**< @brief Step-size (in numbers of ADC) at which the evolution is stored */
     string            saveEvolFileName;     /**< @brief Filename in which the evolution is stored */
     ofstream*         saveEvolOfstream;     /**< @brief Output stream for saving the evolutions */
-
-    AtomicSequence*   pAtom;                /**< @brief Atomic sequence repsonsible for the current time point*/
-    AtomicSequence*   pStaticAtom;          /**< @brief Atomic sequence repsonsible for all time points*/
 
     int 			  m_myRank;				/**< @brief MPI rank of this process. if m_myRank<0 process is serial jemris */
     bool			  m_useLoadBalancing;	/**< @brief use load balancing (send sample in small packages top slaves) */

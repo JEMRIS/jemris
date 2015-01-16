@@ -69,7 +69,7 @@ void Trajectory1D::LoadFile(string filename) {
 
     // data up to the end of trajectory?
     // if not: keep last data point until end.
-	SequenceTree* pSeqTree = SequenceTree::instance();
+	SequenceTree* pSeqTree = World::instance()->pSeqTree;
 	double seqDuration = pSeqTree->GetRootConcatSequence()->GetDuration();
     if (m_time.back() < seqDuration) {
     	m_time.push_back(seqDuration + 1);

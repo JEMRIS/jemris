@@ -1,5 +1,5 @@
-/** @file ContainerSequence.h
- *  @brief Implementation of JEMRIS ContainerSequence
+/** @file IncludeContainer.h
+ *  @brief Implementation of JEMRIS IncludeContainer
  */
 
 /*
@@ -24,38 +24,41 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef CONTAINERSEQUENCE_H_
-#define CONTAINERSEQUENCE_H_
+#ifndef INCLUDECONTAINER_H_
+#define INCLUDECONTAINER_H_
 
 #include "ConcatSequence.h"
 
+//declare ContainerSequence
+class ContainerSequence;
 
 /**
- * @brief Prototype of a SequenceContainer
+ * @brief Prototype of a IncludeContainer
  */
-class ContainerSequence : public ConcatSequence {
+
+class IncludeContainer : public ConcatSequence {
 
  public:
 
     /**
      * @brief Default constructor
      */
-    ContainerSequence() {};
+	IncludeContainer() {};
 
     /**
      * @brief Copy constructor
      */
-    ContainerSequence  (const ContainerSequence&);
+	IncludeContainer  (const IncludeContainer&);
 
     /**
      * @brief Default destructor.
      */
-    ~ContainerSequence () {};
+    ~IncludeContainer () {};
 
     /**
      *  See Module::clone
      */
-    inline ContainerSequence* Clone() const {return (new ContainerSequence(*this));};
+    inline IncludeContainer* Clone() const {return (new IncludeContainer(*this));};
 
     /**
      * @brief Prepare the delay atomic sequence.
@@ -81,6 +84,9 @@ class ContainerSequence : public ConcatSequence {
 
  private:
 
+    string				m_container_name; /**< @brief name of the ContainerSequence */
+    ContainerSequence*	m_container_seq;  /**< @brief pointer to the ContainerSequence */
 };
 
-#endif /*CONTAINERSEQUENCE_H_*/
+
+#endif /*INCLUDECONTAINER_H_*/

@@ -33,8 +33,6 @@
 #include "Pulse.h"
 #include "XMLIO.h"
 
-SequenceTree*            SequenceTree::m_instance = 0;
-
 /***********************************************************/
 SequenceTree::SequenceTree() {
 
@@ -51,8 +49,6 @@ SequenceTree::SequenceTree() {
 /***********************************************************/
 SequenceTree::~SequenceTree() {
 
-	SequenceTree::m_instance = 0;
-
 	delete m_xio;
 
 	XMLPlatformUtils::Terminate();
@@ -68,15 +64,6 @@ SequenceTree::~SequenceTree() {
 
 }
 
-/***********************************************************/
-SequenceTree* SequenceTree::instance() {
-
-    if(m_instance == 0)
-        m_instance = new SequenceTree();
-
-    return m_instance;
-
-}
 
 /***********************************************************/
 void SequenceTree::Initialize(string seqFile) {
@@ -243,10 +230,12 @@ unsigned int SequenceTree::CreateModule(void* ptr,DOMNode* node){
 	SequenceTree* ST = (SequenceTree*) ptr;
 	Module* module   = ST->m_mpf->CloneModule(node);
 
+
 	if (!module)
 	    return 1;
 
 	ST->m_Modules.insert(pair<DOMNode*, Module*> (node, module));
+	module->SetSeqTree(ST);
 	module->Initialize(node);
 
 	return OK;
@@ -341,6 +330,7 @@ void          SequenceTree::SerializeModules(string xml_file){
 		DOMElement* node   = doc->createElement ( StrX(module_name).XMLchar() );
 		Module* module     = m_mpf->CloneModule(node);
 
+		module->SetSeqTree(this);
 		module->Initialize(node);
 		module->Prepare(PREP_INIT);
 

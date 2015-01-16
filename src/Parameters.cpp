@@ -30,17 +30,17 @@
 
 using namespace std;
 
-Parameters* Parameters::_instance = 0;
+Parameters* Parameters::m_instance = 0;
 
 /**********************************************************/
 Parameters* Parameters::instance() {
 
-    if(_instance == 0) {
-        _instance = new Parameters;
-        _instance->SetDefaults();
+    if(m_instance == 0) {
+        m_instance = new Parameters;
+        m_instance->SetDefaults();
     }
 
-    return _instance;
+    return m_instance;
 
 }
 

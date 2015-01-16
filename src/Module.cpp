@@ -52,11 +52,12 @@ void            Module::Initialize (DOMNode* node) {
     //set the module name to the node name as well
 	SetName( StrX(node->getNodeName()).std_str() );
 
-	//set the instances of this node and the sequence tree
-	m_node       = node;
-	m_seq_tree   = SequenceTree::instance();
-	m_parameters = m_seq_tree->GetParameters();
+	//set the instances of the DOMNnode, SequenceTree, and Parameters
+	m_node = node;
 
+	if (m_seq_tree != NULL) 	m_parameters = m_seq_tree->GetParameters();
+
+	if (m_seq_tree == NULL)  cout << "Warning: Module " << GetName() << " has no SequenceTree.\n";
 }
 
 /***********************************************************/
@@ -119,6 +120,7 @@ bool            Module::InsertChild (const string& name){
 
 	GetNode()->appendChild (node);
 	m_seq_tree->GetModuleMap()->insert(pair<DOMNode*, Module*> (node, mod));
+	mod->SetSeqTree(m_seq_tree);
 	mod->Initialize(node);
 
 	return true;
