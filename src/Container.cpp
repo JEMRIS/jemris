@@ -24,17 +24,17 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "IncludeContainer.h"
+#include "Container.h"
 #include "ContainerSequence.h"
 
 /***********************************************************/
-IncludeContainer::IncludeContainer  (const IncludeContainer& as) {
+Container::Container  (const Container& as) {
 	m_container_name = "";
 	m_container_seq = NULL;
 }
 
 /***********************************************************/
-bool IncludeContainer::Prepare (const PrepareMode mode) {
+bool Container::Prepare (const PrepareMode mode) {
 
     bool b=true;
 
@@ -48,7 +48,7 @@ bool IncludeContainer::Prepare (const PrepareMode mode) {
 }
 
 /***********************************************************/
-string          IncludeContainer::GetInfo () {
+string          Container::GetInfo () {
 
 	string ret;
 
