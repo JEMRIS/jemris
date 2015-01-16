@@ -136,6 +136,12 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 
 	}
 	
+	//call Calculate for a Container
+	if (module-> GetType() == MOD_CONTAINER)	{
+		ContainerSequence* pCS = ((Container*) module)->GetContainerSequence();
+		RunSequenceTree(dTimeShift, lIndexShift, pCS);
+	}
+
 	//call Calculate for each TPOI in Atom
 	if (module-> GetType() == MOD_ATOM)	{
 		

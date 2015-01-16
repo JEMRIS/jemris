@@ -68,7 +68,7 @@ class ContainerSequence : public ConcatSequence {
     /**
      * See Module::GetValue()
      */
-    virtual void                 GetValue          (double * dAllVal, double const time) {};
+    //virtual void                 GetValue          (double * dAllVal, double const time) {};
 
 
  protected:

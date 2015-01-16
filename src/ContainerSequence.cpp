@@ -37,8 +37,17 @@ bool ContainerSequence::Prepare (const PrepareMode mode) {
 
     bool b=true;
 
+    //the ContainerSequence must not loop
+    m_repetitions = 1;
+    m_counter = 0;
+    HideAttribute ("Repetitions",false);
+    HideAttribute ("Counter",false);
+
+
     if (!b && mode == PREP_VERBOSE)
 		cout << "Preparation of ContainerSequence '" << GetName() << "' not succesful. " << endl;
+
+    b = ( ConcatSequence::Prepare(mode) && b);
 
     return b;
 

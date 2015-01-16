@@ -38,6 +38,7 @@ using std::string;
 // Class declarations to avoid including Module.h and thus a rereferenciation.
 class Module;
 class ConcatSequence;
+class ContainerSequence;
 
 //! Tree representation of the sequence
 
@@ -154,6 +155,13 @@ class SequenceTree {
      * @return The root ConcatSequence module.
      */
 	ConcatSequence*      GetRootConcatSequence    ();
+
+    /**
+     * Get the ContainerSequence module.
+     *
+     * @return The ContainerSequence module.
+     */
+	ContainerSequence*      GetContainerSequence    ();
 
     /**
      * Get first module in the tree, which has a matching

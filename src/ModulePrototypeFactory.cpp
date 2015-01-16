@@ -52,7 +52,8 @@
 ModulePrototypeFactory::~ModulePrototypeFactory() {
 	map<string,Module*>::iterator it;
 	for( it = m_Clonables.begin(); it != m_Clonables.end(); it++ )
-		delete it->second ;
+		if ( it->first != "PARAMETERS" ) // SeqTree deletes the Parameters singleton!
+			delete it->second ;
 }
 
 /***********************************************************/

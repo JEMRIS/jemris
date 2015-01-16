@@ -162,13 +162,13 @@ bool CheckSeqs(string path, vector<string> seq){
 
 	for (unsigned int i=0;i<seq.size();i++) {
 
-		SequenceTree seqTree;
-		seqTree.Initialize(path+seq[i]);
+		SequenceTree* seqTree = new SequenceTree;
+		seqTree->Initialize(path+seq[i]);
 
-		if (seqTree.GetStatus()) {
+		if (seqTree->GetStatus()) {
 
-			seqTree.Populate();
-			ConcatSequence* CS = seqTree.GetRootConcatSequence();
+			seqTree->Populate();
+			ConcatSequence* CS = seqTree->GetRootConcatSequence();
 			printf("%02d. %15s | ",i+1,seq[i].c_str());
 
 			//sequence-diagram
@@ -209,6 +209,7 @@ bool CheckSeqs(string path, vector<string> seq){
 				cout << "is NOT ok " << endl;
 			}
 		}
+		delete seqTree;
 	}
 	return status;
 

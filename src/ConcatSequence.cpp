@@ -117,6 +117,20 @@ void  ConcatSequence::GetValue (double * dAllVal, double const time) {
 }
 
 /***********************************************************/
+long  ConcatSequence::GetNumOfADCs () {
+
+	long lADC = 0;
+	vector<Module*> children = GetChildren();
+
+	for (RepIter r=begin(); r<end(); ++r)
+		for (size_t j=0; j<children.size() ; ++j)
+			lADC += ((Sequence*) children[j])->GetNumOfADCs();
+
+	return lADC;
+
+}
+
+/***********************************************************/
 string          ConcatSequence::GetInfo() {
 	stringstream s;
 	s << " Repetitions = " << m_repetitions;

@@ -29,6 +29,7 @@
 #include "World.h"
 #include "Parameters.h"
 #include "ConcatSequence.h"
+#include "ContainerSequence.h"
 #include "AtomicSequence.h"
 #include "Pulse.h"
 #include "XMLIO.h"
@@ -53,13 +54,11 @@ SequenceTree::~SequenceTree() {
 
 	XMLPlatformUtils::Terminate();
 
-	// Delete all Modules, except the Parameters singleton
+	// Delete all Modules
 	map<DOMNode*,Module*>::iterator iter;
 	for (iter = m_Modules.begin(); iter != m_Modules.end(); iter++ )
-		if (m_parameters != iter->second)
-			delete iter->second;
+		delete iter->second;
 
-	// Delete the factory (deletes the Parameters singleton!)
 	delete m_mpf;
 
 }
@@ -148,6 +147,12 @@ unsigned int        SequenceTree::Populate     ()  {
 	m_depth--;
 	//find top node of the sequence tree
 	ConcatSequence* m_root_seq = GetRootConcatSequence();
+
+	//if tree comes from a container sequence, use it as the root
+	ContainerSequence* cs = GetContainerSequence();
+	if (cs!=NULL) {
+		m_root_seq = (ConcatSequence*) cs;
+	}
 
 	//run Prepare() several times to solve module cross-dependencies (silent)
 	m_root_seq->Prepare(PREP_INIT);
@@ -284,7 +289,17 @@ Module*               SequenceTree::GetChild     (DOMNode* node, unsigned int po
 ConcatSequence*               SequenceTree::GetRootConcatSequence() {
 
 	DOMNodeList* dnl = m_dom_doc->getElementsByTagName( StrX("ConcatSequence").XMLchar() );
+	if ( m_Modules.find(dnl->item(0)) == m_Modules.end() ) return NULL;
 	return ((ConcatSequence*) m_Modules.find(dnl->item(0))->second);
+
+}
+
+/***********************************************************/
+ContainerSequence*               SequenceTree::GetContainerSequence() {
+
+	DOMNodeList* dnl = m_dom_doc->getElementsByTagName( StrX("ContainerSequence").XMLchar() );
+	if ( m_Modules.find(dnl->item(0)) == m_Modules.end() ) return NULL;
+	return ((ContainerSequence*) m_Modules.find(dnl->item(0))->second);
 
 }
 
@@ -341,6 +356,7 @@ void          SequenceTree::SerializeModules(string xml_file){
 		module->AddAllDOMattributes();
 
 		if (module->GetType() == MOD_CONCAT) concats->appendChild(node);
+		if (module->GetType() == MOD_CONTAINER) concats->appendChild(node); //TMPTMP not good
 		if (module->GetType() == MOD_ATOM  )   atoms->appendChild(node);
 		if (module->GetType() == MOD_PULSE )  pulses->appendChild(node);
 		if (module->GetType() == MOD_VOID  ) topnode->appendChild(node);

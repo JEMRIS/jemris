@@ -301,6 +301,11 @@ void    Module::DumpTree (const string& file, Module* mod,int ichild, int level)
 		adcs=((Sequence*) mod)->GetNumOfADCs();
 	}
 
+	if (mod->GetType() == MOD_CONTAINER) {
+		type="CONTAIN";
+		adcs=((Sequence*) mod)->GetNumOfADCs();
+	}
+
 	if (mod->GetType() == MOD_PULSE) {
 		type="PULSE";
 		adcs=((Pulse*) mod)->GetNADC() ;

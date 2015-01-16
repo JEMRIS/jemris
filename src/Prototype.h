@@ -47,7 +47,7 @@ XERCES_CPP_NAMESPACE_USE
 
 
 enum PrepareMode{	PREP_INIT,	PREP_VERBOSE,	PREP_UPDATE					};
-enum Type		{	MOD_PULSE,		MOD_ATOM,	MOD_CONCAT,	MOD_VOID,	COIL};
+enum Type		{	MOD_PULSE,		MOD_ATOM,	MOD_CONCAT,	MOD_CONTAINER, MOD_VOID,	COIL};
 
 //parameter class declaration
 class Parameters;

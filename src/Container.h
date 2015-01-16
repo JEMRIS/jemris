@@ -27,7 +27,7 @@
 #ifndef CONTAINER_H_
 #define CONTAINER_H_
 
-#include "ConcatSequence.h"
+#include "Sequence.h"
 
 //declare ContainerSequence
 class ContainerSequence;
@@ -36,7 +36,7 @@ class ContainerSequence;
  * @brief Prototype of a Container
  */
 
-class Container : public ConcatSequence {
+class Container : public Sequence {
 
  public:
 
@@ -53,7 +53,7 @@ class Container : public ConcatSequence {
     /**
      * @brief Default destructor.
      */
-    ~Container () {};
+    ~Container ();
 
     /**
      *  See Module::clone
@@ -69,9 +69,40 @@ class Container : public ConcatSequence {
     virtual bool                 Prepare           (const PrepareMode mode);
 
     /**
+     * See Module::GetDuration
+     */
+    double          GetDuration    ();
+
+    /**
      * See Module::GetValue()
      */
-    virtual void                 GetValue          (double * dAllVal, double const time) {};
+    virtual void                 GetValue          (double * dAllVal, double const time);
+
+    /**
+     * @brief Get Number of TPOIs for this sequence.
+     * @return Number of TPOIs
+     */
+    virtual int     GetNumOfTPOIs ();
+
+    /**
+     * Get the number of ADCs for this sequence.
+     *
+     * @return The number of ADCs.
+     */
+    virtual long GetNumOfADCs ();
+
+    /**
+     * @brief Recursively collect sequence data (for plotting the sequence diagram)
+     */
+    virtual void CollectSeqData (NDData<double>& seqdata, double& t, long& offset);
+
+
+    /**
+     * Get the ContainerSequence for this Container.
+     *
+     * @return Pointer to the ContainerSequence.
+     */
+    ContainerSequence*	GetContainerSequence() {return m_container_seq; };
 
 
  protected:
@@ -84,8 +115,10 @@ class Container : public ConcatSequence {
 
  private:
 
-    string				m_container_name; /**< @brief name of the ContainerSequence */
-    ContainerSequence*	m_container_seq;  /**< @brief pointer to the ContainerSequence */
+    string				m_container_seq_name; /**< @brief name of the ContainerSequence */
+    ContainerSequence*	m_container_seq;      /**< @brief pointer to the ContainerSequence */
+    SequenceTree*	    m_container_seqtree;  /**< @brief pointer to the SequenceTree of the ContainerSequence */
+
 };
 
 

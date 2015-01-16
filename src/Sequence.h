@@ -51,7 +51,7 @@ public:
     /**
      * @brief Default copy constructor.
      */
-    Sequence (const Sequence&) {};
+    Sequence (const Sequence&) {m_aux1=0;m_aux2=0;m_aux3=0;};
 
     /**
      * See Module::GetValue
@@ -81,9 +81,9 @@ public:
     /**
      * Get the number of ADCs for this sequence.
      *
-     * @return The nmuber of ADCs.
+     * @return The number of ADCs.
      */
-    virtual long GetNumOfADCs ();
+    virtual long GetNumOfADCs () = 0;
 
 
  protected:
