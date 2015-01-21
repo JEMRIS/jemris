@@ -24,7 +24,7 @@ function [theStruct,Counter] = parseXMLseq(handles)
 %  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 %
 global MODULE_TYPE_COUNTER
-MODULE_TYPE_COUNTER=[0 0 0 0];
+MODULE_TYPE_COUNTER=[0 0 0 0 0];
 
 try
    tree = xmlread(fullfile(handles.seqdir,handles.seqfile));

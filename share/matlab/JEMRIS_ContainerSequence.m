@@ -1,12 +1,11 @@
-function varargout = JEMRIS_seq(varargin)
-%GUI for jemris sequence tree design
+function varargout = JEMRIS_ContainerSequence(varargin)
+%GUI for jemris ContainerSequence tree design
 
 %
-%  JEMRIS Copyright (C) 
-%                        2006-2014  Tony Stoecker
-%                        2007-2014  Kaveh Vahedipour
-%                        2009-2014  Daniel Pflugfelder
-%                                  
+%  JEMRIS Copyright (C)
+%                        2006-2013  Tony Stoecker
+%                        2007-2013  Kaveh Vahedipour
+%                        2009-2013  Daniel Pflugfelder
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -27,8 +26,8 @@ function varargout = JEMRIS_seq(varargin)
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @JEMRIS_seq_OpeningFcn, ...
-                   'gui_OutputFcn',  @JEMRIS_seq_OutputFcn, ...
+                   'gui_OpeningFcn', @JEMRIS_ContainerSequence_OpeningFcn, ...
+                   'gui_OutputFcn',  @JEMRIS_ContainerSequence_OutputFcn, ...
                    'gui_LayoutFcn',  [ ] , ...
                    'gui_Callback',   [ ]);
 if nargin && ischar(varargin{1})
@@ -44,7 +43,7 @@ end
 
 
 % --- Executes just before JEMRIS_seq is made visible.
-function JEMRIS_seq_OpeningFcn(hObject, eventdata, handles, varargin)
+function JEMRIS_ContainerSequence_OpeningFcn(hObject, eventdata, handles, varargin)
 colordef white
 
 % Choose default command line output for JEMRIS_seq
@@ -53,10 +52,10 @@ handles.seqfile = '';
 handles.seqdir  = pwd;
 handles.Seq=[ ];       % the sequence structure
 handles.SeqBackup=[ ]; % a backup
+save tmp handles
 handles.SO=struct('Attribute',cell(10,1),'Value',cell(10,1)); %sequence object properties
-hax{1}=handles.axes0; hax{2}=handles.axes1; hax{3}=handles.axes2; hax{4}=handles.axes3;
-hax{5}=handles.axes4; hax{6}=handles.axes5; hax{7}=handles.axes6; hax{8}=handles.axes7;
-for i=1:length(hax);set(hax{i},'color',[1 1 1],'visible','off');end
+hax=handles.axes0; 
+set(hax,'color',[1 1 1],'visible','off');
 handles.hax=hax;
 handles.plotSD=0;
 handles.dm=0;
@@ -73,15 +72,17 @@ if (handles.win)
     handles.JemrisShare=[''];
     handles.JemrisCall=[fullfile(handles.JemrisPath,'jemris.exe"')];
 else
-    handles.JemrisPath='@prefix@/bin';
-    handles.JemrisShare='@prefix@/share/jemris/matlab';
+    handles.JemrisPath='/Users/stoeckert/DZNE/workspace/jemris/src';
+    %handles.JemrisPath='/usr/local/bin';
+    handles.JemrisShare='/Users/stoeckert/Documents/MATLAB/jemris';
     [s,w]=system('setenv');
     if s==0 % a TCSH
         handles.JemrisCall=['setenv LD_LIBRARY_PATH ""; ',fullfile(handles.JemrisPath,'jemris')];
     else    % a BASH 
-        handles.JemrisCall=['LD_LIBRARY_PATH=""; ',fullfile(handles.JemrisPath,'jemris')];
+        handles.JemrisCall=['LD_LIBRARY_PATH=""; PATH=/usr/local/bin:$PATH;',fullfile(handles.JemrisPath,'jemris')];
     end
 end
+
 %get all modules + attributes which are currently supported by JEMRIS
 [Modules,Params]=getAllModules(handles.JemrisCall,handles.CWD);
 for i=1:length(Modules)
@@ -116,8 +117,6 @@ handles.Values=handles.Values(I);
 
 set(handles.HiddenAttr,'Visible','off');
 
-set(handles.addADCs,'Visible','off');
-set(handles.ContDraw,'Visible','off');
 for i=1:17
     eval(['set(handles.SOtag',num2str(i),',''Visible'',''off'');'])
     eval(['set(handles.SOEtag',num2str(i),',''Visible'',''off'');'])
@@ -125,7 +124,7 @@ end
 
 global INSERT_MODULE_NUMBER MODULE_TYPE_COUNTER
 INSERT_MODULE_NUMBER=0;
-MODULE_TYPE_COUNTER=[0 0 0 0 0];
+MODULE_TYPE_COUNTER=[0 0 0 0];
 
 %create the toolbar
 handles.icons=load(fullfile(handles.JemrisShare,'ModuleIcons'));
@@ -136,33 +135,11 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = JEMRIS_seq_OutputFcn(hObject, eventdata, handles) 
+function varargout = JEMRIS_ContainerSequence_OutputFcn(hObject, eventdata, handles) 
 varargout{1} = handles;
 
 % --- runs jemris on the current seqence. This is *not* an object of the GUI!
 function call_jemris(hObject,handles)
-if (handles.win)
- [status,dump]=system(sprintf('%s %s > .seq.out',handles.JemrisCall,fullfile(               handles.seqfile)));
-else
- [status,dump]=system(sprintf('%s %s > .seq.out',handles.JemrisCall,fullfile(handles.seqdir,handles.seqfile)));
-end
- if status==0
-  C={};
-  fid=fopen('.seq.out');
-  while 1
-    tline = fgetl(fid);
-    if ~ischar(tline), break, end
-    C{end+1}=tline;
-  end
-  fclose(fid);
- else
-     C{1}='Error occured:';
-     C{2}='';
-     C{3}=dump;
- end
- set(handles.seq_dump,'String',C);
- set(handles.seq_dump,'FontName','monospaced');
- set(handles.seq_dump,'FontSize',8)
  guidata(hObject, handles);
 
 % --- Executes on button press in update.
@@ -172,7 +149,7 @@ if (handles.win)
 else
     writeXMLseq(handles,handles.Seq,fullfile(handles.seqdir,handles.seqfile));
 end
-set(handles.SeqNameTag,'String',['Sequence: ',handles.seqfile])
+set(handles.SeqNameTag,'String',['ContainerSequence: ',handles.seqfile])
 handles.CWD=pwd;
 for i=1:length(handles.hpt);
     set(handles.hpt{i},'State','off'); 
@@ -283,90 +260,6 @@ end
 guidata(hObject, handles);
 
 
-% --- Executes on button press in ContDraw.
-function ContDraw_Callback(hObject, eventdata, handles)
-
-handles.cd=get(hObject,'Value');
-plotseq(handles,1,get(handles.kspace_flag,'Value')+get(handles.addADCs,'Value'));
-set(handles.zoomFlag,'Value',0);
-guidata(hObject, handles);
-
-
-% Hint: get(hObject,'Value') returns toggle state of ContDraw
-% --------------------------------------------------------------------
-function FileTag_Callback(hObject, eventdata, handles)
-
-% --------------------------------------------------------------------
-function OpenSeqTag_Callback(hObject, eventdata, handles)
-[FileName,PathName] = uigetfile('*.xml','Select the Sequence XML file');
-if FileName==0,return;end
-handles.seqfile=FileName;
-handles.seqdir=PathName;
-set(handles.SeqNameTag,'string',['Sequence: ',FileName]);
-handles.Seq=parseXMLseq(handles);
-handles.SeqBackup=handles.Seq;
-handles.dm=0;
-call_jemris(hObject,handles);
-handles.plotSD=0;
-[handles.Seq,handles.ax]=plotseq(handles,1,1+get(handles.addADCs,'Value'));
-guidata(hObject, handles);
-
-% --------------------------------------------------------------------
-function SaveSeqTag_Callback(hObject, eventdata, handles)
-[FileName,PathName] = uiputfile('*.xml');
-if FileName==0,return;end
-handles.seqfile=FileName;
-guidata(hObject, handles);
-update_Callback(hObject, eventdata, handles);
-
-
-% --------------------------------------------------------------------
-function NewSeqTag_Callback(hObject, eventdata, handles)
-[FileName,PathName] = uiputfile('*.xml');
-if FileName==0,return;end
-S.Name='Parameters'; S.Attributes.Name='Name';
-S.Attributes.Value='P'; S.Data='';
-P.Name='ConcatSequence'; P.Attributes(1).Name='Name'; P.Attributes(1).Value='C1';
-P.Data=[ ]; P.Children=[ ]; P.current=0;
-S.Children(1)=P;  S.current=1;
-handles.seqfile=FileName;
-handles.Seq=S;
-hax=handles.hax;for i=1:length(hax); cla(hax{i},'reset'); set(hax{i},'visible','off'); end
-guidata(hObject, handles);
-update_Callback(hObject, eventdata, handles);
-
-% --------------------------------------------------------------------
-function PlotTag_Callback(hObject, eventdata, handles)
-
-% --------------------------------------------------------------------
-function PlotGUITag_Callback(hObject, eventdata, handles)
- [FileName,PathName] = uiputfile('*.jpg');
- if FileName==0,return;end
- set(gcf,'PaperPositionMode','auto','InvertHardcopy','off')
- print('-djpeg90',FileName)
-
-% --------------------------------------------------------------------
-function PlotPDTag_Callback(hObject, eventdata, handles)
-if get(handles.kspace_flag,'Value')==0
-    h=figure('name','pulse diagramme','numbertitle','off');
-    p=[ 0.1300    0.7093    0.3347    0.2157;...
-        0.5703    0.7093    0.3347    0.2157;...
-        0.1300    0.4096    0.3347    0.2157;...
-        0.5703    0.4096    0.3347    0.2157;...
-        0.1300    0.1100    0.3347    0.2157;...
-        0.5703    0.1100    0.3347    0.2157];
-    I=[1 3 5 2 4 6];
-    for j=1:6
-         g(j)=copyobj(handles.hax{j},h);
-         set(g(j),'units','normalized','position',p(I(j),:))
-    end
-else
-    h=figure('name','k-space trajectory','numbertitle','off');
-    g=copyobj(handles.hax{8},h);
-    set(g,'units','normalized','position',[.1 .1 .8 .8])
-    grid on
-end
-set(h,'color',[1 1 1],'paperunits','centimeter','paperposition',[0 0 12 8])
     
 %this function is performed for all text-edit callbacks on the module card
 function common_SOEtags(hObject,handles)
@@ -547,7 +440,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 % --- Executes on selection change in HiddenAttr.
 function HiddenAttr_Callback(hObject, eventdata, handles)
 set(handles.HiddenAttr,'Value',1);
@@ -558,5 +450,3 @@ function HiddenAttr_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-

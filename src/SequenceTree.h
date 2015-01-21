@@ -44,6 +44,7 @@ class ContainerSequence;
 
 class SequenceTree {
 
+ friend class Container;
 
  public:
 

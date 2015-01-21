@@ -28,6 +28,7 @@
 #include "Parameters.h"
 #include "SequenceTree.h"
 #include "ConcatSequence.h"
+#include "Container.h"
 #include "Pulse.h"
 #include "XMLIO.h"
 
@@ -317,6 +318,11 @@ void    Module::DumpTree (const string& file, Module* mod,int ichild, int level)
 	cout << chform << "  | " << mod->GetInfo() << "\n";
 
     level++;
+
+    if (type=="CONTAIN") {
+    	ConcatSequence* CS = ((ConcatSequence*)  ((Container*) mod)->GetContainerSequence() );
+    	DumpTree(file, CS,1,level);
+    }
 
     for (unsigned int i=0; i<children.size() ; ++i)
         DumpTree(file, mod->GetChild(i),i+1,level);

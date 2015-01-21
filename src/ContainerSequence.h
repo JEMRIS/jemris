@@ -29,11 +29,15 @@
 
 #include "ConcatSequence.h"
 
+//forward declaration of Container class
+class Container;
 
 /**
  * @brief Prototype of a SequenceContainer
  */
 class ContainerSequence : public ConcatSequence {
+
+ friend class Container;
 
  public:
 
@@ -70,6 +74,21 @@ class ContainerSequence : public ConcatSequence {
      */
     //virtual void                 GetValue          (double * dAllVal, double const time) {};
 
+    /**
+     * Get the Container for this ContainerSequence.
+     *
+     * @return Pointer to the Container.
+     */
+    Container*  GetContainer() {return m_container; };
+
+
+    /**
+     * Set the Container for this ContaineSequencer.
+     *
+     * @param pC pointer to the Container.
+     */
+    void  SetContainer(Container* pC) { m_container=pC; };
+
 
  protected:
     /**
@@ -80,6 +99,10 @@ class ContainerSequence : public ConcatSequence {
     virtual string GetInfo () ;
 
  private:
+
+    Container*		m_container;		/**< @brief pointer to the Container */
+    double			m_import [5];		/**< @brief attributes to import */
+    double			m_export [5];		/**< @brief attributes to export */
 
 };
 

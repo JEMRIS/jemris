@@ -141,13 +141,14 @@ bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attri
             }
         return false;
 	}
+
     return true;
 }
 
 /***********************************************************/
 void Attribute::EvalExpression () {
   
-	if (m_formula.empty()) return;
+	if (m_formula.empty())  return;
 	
 	//strings: simply replace attribute symbol by its value
 	if (GetTypeID()==typeid(std::string*).name()) {

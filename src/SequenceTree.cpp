@@ -236,8 +236,7 @@ unsigned int SequenceTree::CreateModule(void* ptr,DOMNode* node){
 	Module* module   = ST->m_mpf->CloneModule(node);
 
 
-	if (!module)
-	    return 1;
+	if (!module) return 1;
 
 	ST->m_Modules.insert(pair<DOMNode*, Module*> (node, module));
 	module->SetSeqTree(ST);

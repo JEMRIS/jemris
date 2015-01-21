@@ -30,16 +30,18 @@ dy=.5; dx=.4; dr=.15; t=[0:.1:2*pi]; X=1.2*dr*cos(t); Y=1.2*dr*sin(t);
 if nargin<3 %the Parameters node
   if nargin==1,handles=[];end
   x=1;y=1.5;C=[1 .7 .4];set(gca,'visible','off','xlim',[-.1 .1],'ylim',[-.1 .1]);
-  MODULE_TYPE_COUNTER=[0 0 0 0];
+  MODULE_TYPE_COUNTER=[0 0 0 0 0];
 else
  if (x==1 && y==1),x=-1.5;y=1.5; end
  switch upper(S.Name)
     case 'CONCATSEQUENCE'
         C=[1 1 .4];  j=1;
+    case 'CONTAINER'
+        C=[1 .4 .4]; j=2;
     case 'ATOMICSEQUENCE'
-        C=[.6 .6 1]; j=2;
+        C=[.6 .6 1]; j=3;
     case'DELAYATOMICSEQUENCE'
-        C=[.4 1 .4]; j=3;
+        C=[.4 1 .4]; j=4;
     otherwise
         C=[1 1 1]; X=[-dr -dr dr dr]; Y=[-dr dr dr -dr]; j=4;
  end
@@ -60,7 +62,7 @@ S.hp=patch(a,b,C);
 S.hl=line(a,b,'color',[0 0 0],'linewidth',2);
 
 %overlay icon on pulseshapes
-if isempty([findstr('PARAMETER',upper(S.Name)) findstr('SEQUENCE',upper(S.Name))])
+if isempty([findstr('PARAMETER',upper(S.Name)) findstr('SEQUENCE',upper(S.Name)) findstr('CONTAINER',upper(S.Name))])
     try
      eval(['B=handles.icons.',upper(S.Name),';']);
     catch
@@ -104,12 +106,12 @@ if length(ANAME)>3 , ANAME=ANAME(1:3); end
 
 %draw a 'P' in Parameters 
 %if strcmp(upper(S.Name),'PARAMETERS')
-if isempty([findstr('PARAMETER',upper(S.Name)) findstr('SEQUENCE',upper(S.Name))])
-    xs=0.07; ys=0.11; FS=10;
+if isempty([findstr('PARAMETER',upper(S.Name)) findstr('SEQUENCE',upper(S.Name)) findstr('CONTAINER',upper(S.Name))])
+    xs=0.07; ys=0.11; FS=10; fontcolor=[.8 0 0];
 else
-    xs=-0.04-0.01*length(ANAME); ys=-0.02; FS=14;
+    xs=-0.04-0.01*length(ANAME); ys=-0.02; FS=14; fontcolor=[0 0 0];
 end
-S.ht=text(mean(a)+xs,mean(b)+ys,ANAME,'color',[.8 0 0],'fontsize',FS,'fontweight','bold');
+S.ht=text(mean(a)+xs,mean(b)+ys,ANAME,'color',fontcolor,'fontsize',FS,'fontweight','bold');
 
 %end
 

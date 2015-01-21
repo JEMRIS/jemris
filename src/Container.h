@@ -38,6 +38,8 @@ class ContainerSequence;
 
 class Container : public Sequence {
 
+ friend class ContainerSequence;
+
  public:
 
     /**
@@ -115,9 +117,11 @@ class Container : public Sequence {
 
  private:
 
-    string				m_container_seq_name; /**< @brief name of the ContainerSequence */
-    ContainerSequence*	m_container_seq;      /**< @brief pointer to the ContainerSequence */
-    SequenceTree*	    m_container_seqtree;  /**< @brief pointer to the SequenceTree of the ContainerSequence */
+    string				m_container_seq_name; 	/**< @brief name of the ContainerSequence */
+    ContainerSequence*	m_container_seq;      	/**< @brief pointer to the ContainerSequence */
+    SequenceTree*	    m_container_seqtree;  	/**< @brief pointer to the SequenceTree of the ContainerSequence */
+    double				m_import [5];			/**< @brief attributes to import */
+    double				m_export [5];			/**< @brief attributes to export */
 
 };
 
