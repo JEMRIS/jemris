@@ -40,12 +40,9 @@ function [modules,params]=getAllModules(Jcall,Jpath)
         [params.a,params.ha]=get_attributes(c.Attributes);
         continue;
     end
-    
+        
     for j=1:length(c.Children)
         cc=c.Children(j);
-        if strcmp(upper(cc.Name),'CONTAINERSEQUENCE')
-             continue;
-        end
         modules(end+1).name=cc.Name;
         [modules(end).attr,modules(end).hidden_attr]=get_attributes(cc.Attributes);
         modules(end).type=c.Name(1:end-1);

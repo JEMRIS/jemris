@@ -3,9 +3,9 @@ function varargout = JEMRIS_ContainerSequence(varargin)
 
 %
 %  JEMRIS Copyright (C)
-%                        2006-2013  Tony Stoecker
-%                        2007-2013  Kaveh Vahedipour
-%                        2009-2013  Daniel Pflugfelder
+%                        2006-2014  Tony Stoecker
+%                        2007-2014  Kaveh Vahedipour
+%                        2009-2014  Daniel Pflugfelder
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ function varargout = JEMRIS_ContainerSequence(varargin)
 %
 
 % Begin initialization code - DO NOT EDIT
-gui_Singleton = 1;
+gui_Singleton = 0;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
                    'gui_OpeningFcn', @JEMRIS_ContainerSequence_OpeningFcn, ...
@@ -48,16 +48,23 @@ colordef white
 
 % Choose default command line output for JEMRIS_seq
 handles.output = hObject;
-handles.seqfile = '';
+
+%ContainerSeq xml file
+global CONTAINERSEQFILE
+if length(CONTAINERSEQFILE)<1
+    warndlg('Specify filename of the ContainerSequence');
+    close(hObject)
+    return;
+end
+handles.seqfile = CONTAINERSEQFILE;
 handles.seqdir  = pwd;
 handles.Seq=[ ];       % the sequence structure
 handles.SeqBackup=[ ]; % a backup
-save tmp handles
+
 handles.SO=struct('Attribute',cell(10,1),'Value',cell(10,1)); %sequence object properties
-hax=handles.axes0; 
-set(hax,'color',[1 1 1],'visible','off');
+hax{7}=handles.axes0; 
+set(hax{7},'color',[1 1 1],'visible','off');
 handles.hax=hax;
-handles.plotSD=0;
 handles.dm=0;
 handles.cd=0;
 handles.ax=0;
@@ -73,7 +80,6 @@ if (handles.win)
     handles.JemrisCall=[fullfile(handles.JemrisPath,'jemris.exe"')];
 else
     handles.JemrisPath='/Users/stoeckert/DZNE/workspace/jemris/src';
-    %handles.JemrisPath='/usr/local/bin';
     handles.JemrisShare='/Users/stoeckert/Documents/MATLAB/jemris';
     [s,w]=system('setenv');
     if s==0 % a TCSH
@@ -124,12 +130,24 @@ end
 
 global INSERT_MODULE_NUMBER MODULE_TYPE_COUNTER
 INSERT_MODULE_NUMBER=0;
-MODULE_TYPE_COUNTER=[0 0 0 0];
+MODULE_TYPE_COUNTER=[0 0 0 0 0];
 
 %create the toolbar
 handles.icons=load(fullfile(handles.JemrisShare,'ModuleIcons'));
 handles.hpt=seqcad_uitoolbar(hObject,handles);
 
+%read and plot sequence tree
+set(handles.SeqNameTag,'String',['ContainerSequence: ',handles.seqfile])
+axes(hax{7}); cla(hax{7},'reset');
+if exist(handles.seqfile,'file')==2
+    handles.Seq=parseXMLseq(handles);
+else
+    S.Name='ContainerSequence'; S.Attributes.Name='Name';
+    S.Attributes.Value='CS'; S.Data=''; S.Children=[];  S.current=1;
+    handles.Seq=S;
+end
+
+handles.Seq=plotSeqTree(handles.Seq,handles);
 guidata(hObject, handles);
 
 
@@ -138,14 +156,11 @@ guidata(hObject, handles);
 function varargout = JEMRIS_ContainerSequence_OutputFcn(hObject, eventdata, handles) 
 varargout{1} = handles;
 
-% --- runs jemris on the current seqence. This is *not* an object of the GUI!
-function call_jemris(hObject,handles)
- guidata(hObject, handles);
 
 % --- Executes on button press in update.
 function update_Callback(hObject, eventdata, handles)
 if (handles.win)
-	  writeXMLseq(handles,handles.Seq,                        handles.seqfile);
+	  writeXMLseq(handles,handles.Seq, handles.seqfile);
 else
     writeXMLseq(handles,handles.Seq,fullfile(handles.seqdir,handles.seqfile));
 end
@@ -154,23 +169,10 @@ handles.CWD=pwd;
 for i=1:length(handles.hpt);
     set(handles.hpt{i},'State','off'); 
 end
-call_jemris(hObject,handles);
-if get(handles.DrawSD,'Value')==0
-    handles.Seq=plotseq(handles,1,1+get(handles.addADCs,'Value'));
-elseif get(handles.kspace_flag,'Value')
-    plotseq(handles,1,1+get(handles.addADCs,'Value'));
-else
-    [dummy,ax]=plotseq(handles,handles.dm);
-    set(handles.show_interval,'String',num2str(ax));
-end
-handles.SeqBackup=handles.Seq;
-set(handles.zoomFlag,'Value',0);
-guidata(hObject, handles);
 
-% --- Executes on button press in draw_moments.
-function draw_moments_Callback(hObject, eventdata, handles)
-handles.dm=get(hObject,'Value');
-plotseq(handles,handles.dm);
+handles.SeqBackup=handles.Seq;
+hax=handles.hax;axes(hax{7}); cla(hax{7},'reset');
+handles.Seq=plotSeqTree(handles.Seq,handles);
 guidata(hObject, handles);
 
 % --- Executes on button press in undo.
@@ -178,86 +180,7 @@ function undo_Callback(hObject, eventdata, handles)
 handles.Seq=parseXMLseq(handles);
 guidata(hObject, handles);
 update_Callback(hObject, eventdata, handles)
-if 0
- [a,b,c]=fileparts(handles.seqfile);
- D=dir([b,'*_seq*.pdf']);
 
- pdfname=sprintf('%s_seq%03d',b,length(D)+1);
- set(gcf,'PaperPositionMode','auto','InvertHardcopy','off')
- print('-dpdf',pdfname)
-end
-
-% --- Executes on setting the interval in show_interval
-function show_interval_Callback(hObject, eventdata, handles)
- handles.ax=str2num(get(hObject,'String'));
- if isempty(handles.ax),handles.ax=0;end
- [dummy,ax]=plotseq(handles,handles.dm);
- set(handles.show_interval,'String',num2str(ax));
- guidata(hObject, handles);
-
-% --- Executes during object creation, after setting all properties.
-function show_interval_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-% --- Executes on selection change in seq_dump.
-function seq_dump_Callback(hObject, eventdata, handles)
-
-% --- Executes during object creation, after setting all properties.
-function seq_dump_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-% --- Executes on button press in zoomFlag.
-function zoomFlag_Callback(hObject, eventdata, handles)
-if get(hObject,'Value')
-    zoom(gcf,'on')
-else
-    if get(handles.kspace_flag,'Value')
-        plotseq(handles,1,1+get(handles.addADCs,'Value'));
-    else
-        plotseq(handles,handles.dm);
-    end
-    zoom(gcf,'off')
-end
-
-% --- Executes on button press in DrawSD.
-function DrawSD_Callback(hObject, eventdata, handles)
-if get(hObject,'Value')
-    handles.plotSD=1;
-    [dummy,handles.ax]=plotseq(handles,handles.dm);
-    set(handles.show_interval,'String',num2str(handles.ax));
-else
-    handles.plotSD=0;
-    handles.Seq=plotseq(handles,1,1+get(handles.addADCs,'Value'));
-end
-guidata(hObject, handles);
-
-
-% --- Executes on button press in kspace_flag.
-function kspace_flag_Callback(hObject, eventdata, handles)
-handles.dm=0;
-if get(hObject,'Value')
-    plotseq(handles,1,1+get(handles.addADCs,'Value'));
-else
-    plotseq(handles,handles.dm);
-
-end
-guidata(hObject, handles);
-
-
-% --- Executes on button press in addADCs.
-function addADCs_Callback(hObject, eventdata, handles)
-if get(hObject,'Value')
-    plotseq(handles,1,2);
-    set(handles.zoomFlag,'Value',0);
-else
-    plotseq(handles,1,1);
-    set(handles.zoomFlag,'Value',0);
-end
-guidata(hObject, handles);
 
 
     
@@ -282,10 +205,8 @@ if strcmp(upper(eval(['get(handles.',S,',''String'')'])),'FILENAME')
   set(hObject,'TooltipString',s)
 end
 %redraw tree
-if handles.plotSD==0
- axes(handles.hax{7}); cla(handles.hax{7},'reset');
- handles.Seq=plotSeqTree(handles.Seq,handles);
-end
+axes(handles.hax{7}); cla(handles.hax{7},'reset');
+handles.Seq=plotSeqTree(handles.Seq,handles);
 guidata(hObject, handles);
 
 function SOEtag1_Callback(hObject, eventdata, handles)

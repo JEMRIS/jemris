@@ -32,7 +32,11 @@ if root && Seq.current
  NewChild=ChangeMe(Seq,handles);
  if isstruct(NewChild)
      Seq.current=0;
-     Seq.Children(end+1)=NewChild;
+     if isempty(Seq.Children)
+         Seq.Children=NewChild;
+     else
+         Seq.Children(end+1)=NewChild;
+     end
      reset_togglebuttons(handles);
  end
  return
@@ -105,7 +109,7 @@ function P=get_parent(M,S,root)
 
 %%%%
 function NewModule=ChangeMe(Seq,handles)
- global INSERT_MODULE_NUMBER MODULE1 MODULE2 MODULE_TYPE_COUNTER
+ global INSERT_MODULE_NUMBER MODULE1 MODULE2 MODULE_TYPE_COUNTER OPEN_CONTAINERSEQUENCE
  switch INSERT_MODULE_NUMBER
     case -1 %delete a node
         if ~isempty(Seq.Children)
@@ -177,7 +181,7 @@ end
       eval(['modname=''',handles.Modules{INSERT_MODULE_NUMBER},''';']);
       ispulse=strcmp(handles.ModType{INSERT_MODULE_NUMBER},'PULSE');
       isatom =strcmp(handles.ModType{INSERT_MODULE_NUMBER},'ATOM');
-      if  ( isatom  && strcmp('PARAMETERS',upper(Seq.Name)) )
+      if  ( isatom  && strcmpi('PARAMETERS',Seq.Name) )
           static_atom = 1;
           if numel(Seq.Children)>1
             NewModule=[];
@@ -185,8 +189,9 @@ end
             return;          
           end
 
-      elseif  ( ispulse && ~strcmp('ATOMICSEQUENCE',upper(Seq.Name)) ) || ...
-              (~ispulse && ~strcmp('CONCATSEQUENCE',upper(Seq.Name)) )      
+      elseif  (   ispulse &&  ~strcmpi('ATOMICSEQUENCE',Seq.Name) )    || ...
+                (~ispulse && (~strcmpi('CONCATSEQUENCE',Seq.Name)   &&    ...
+                              ~strcmpi('CONTAINERSEQUENCE',Seq.Name)  ) )      
           NewModule=[];
           warndlg(sprintf(['Insert of module %s into module \n',...
                            'of type %s is not possible!'],modname,Seq.Name))
@@ -211,11 +216,12 @@ end
       switch upper(handles.ModType{INSERT_MODULE_NUMBER})
               case 'CONCAT'
                   j=1; sNAME='C';
+                  if strcmp(upper(handles.Values{INSERT_MODULE_NUMBER}{1}),'CONTAINER'),j=2;end
               case 'ATOM'
-                  j=2; sNAME='A';
-                  if strcmp(upper(handles.Values{INSERT_MODULE_NUMBER}{1}(1:5)),'DELAY'),j=3;sNAME='D';end
+                  j=3; sNAME='A';
+                  if strcmp(upper(handles.Values{INSERT_MODULE_NUMBER}{1}(1:5)),'DELAY'),j=4;sNAME='D';end
               case 'PULSE'
-                  j=4; sNAME='P';
+                  j=5; sNAME='P';
               otherwise
                   disp(['unkown module: ',s])
       end
@@ -223,5 +229,6 @@ end
       sNAME=sprintf('%s%d',sNAME,MODULE_TYPE_COUNTER(j));
       if (static_atom), sNAME='SA';end
       NewModule.Attributes(1).Value=sNAME;
+      if j==2,OPEN_CONTAINERSEQUENCE=0;end
       NewModule.current=1;NewModule.hp=0;NewModule.hl=0;NewModule.hi=0;NewModule.ht=0;
  end

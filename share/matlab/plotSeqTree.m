@@ -23,13 +23,18 @@ function [S,x]=plotSeqTree(S,handles,x,y)
 %  along with this program; if not, write to the Free Software
 %  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 %
-global MODULE_TYPE_COUNTER
+global MODULE_TYPE_COUNTER 
 
 dy=.5; dx=.4; dr=.15; t=[0:.1:2*pi]; X=1.2*dr*cos(t); Y=1.2*dr*sin(t);
 
-if nargin<3 %the Parameters node
+if nargin<3 %the root node (Paramter or ContainerSequence)
   if nargin==1,handles=[];end
-  x=1;y=1.5;C=[1 .7 .4];set(gca,'visible','off','xlim',[-.1 .1],'ylim',[-.1 .1]);
+  if strcmpi(S.Name,'PARAMETERS')
+      x=1;y=1.5;C=[1 .7 .4];
+  else
+      x=0;y=1.5;C=[1 .4 .4];
+  end
+  set(gca,'visible','off','xlim',[-.1 .1],'ylim',[-.1 .1]);
   MODULE_TYPE_COUNTER=[0 0 0 0 0];
 else
  if (x==1 && y==1),x=-1.5;y=1.5; end
@@ -43,15 +48,15 @@ else
     case'DELAYATOMICSEQUENCE'
         C=[.4 1 .4]; j=4;
     otherwise
-        C=[1 1 1]; X=[-dr -dr dr dr]; Y=[-dr dr dr -dr]; j=4;
+        C=[1 1 1]; X=[-dr -dr dr dr]; Y=[-dr dr dr -dr]; j=5;
  end
  MODULE_TYPE_COUNTER(j)=MODULE_TYPE_COUNTER(j)+1;
 end
 
 % plot static atom to the right (second child of parameters)
-if numel(handles.Seq(1).Children)>1
+if numel(handles.Seq(1).Children)>1 && strcmpi(handles.Seq(1).Name,'PARAMETERS')
  if strcmp(S.Attributes(1).Value,handles.Seq(1).Children(2).Attributes(1).Value)
-    x=1.4;y=1.5;
+    x=1;y=1;
     C=[.5 .5 1];
  end
 end
@@ -178,19 +183,51 @@ function call_CurrentModule(S,handles)
 %%%%% button press functions %%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 %all ButtonDownFnc's call this routine
 function seqcad_common(src,eventdata,seq,handles) 
 if isempty(handles),return,end
+global CONTAINERSEQFILE OPEN_CONTAINERSEQUENCE
+persistent chk
+if isempty(chk)
+    chk = 1;
+    pause(0.5); %Add a delay to distinguish single click from a double click
+    if chk == 1
+        seqcad_common_single_click(src,eventdata,seq,handles)
+        chk = [];
+    end
+else
+    chk = [];
+    if strcmpi(seq.Name,'CONTAINER')
+        container_seq_file=''; 
+        for i=1:length(seq.Attributes)
+            if strcmpi(seq.Attributes(i).Name,'FILENAME')
+                container_seq_file = seq.Attributes(i).Value;
+            end
+        end
+        CONTAINERSEQFILE = container_seq_file;
+        if OPEN_CONTAINERSEQUENCE
+            JEMRIS_ContainerSequence;
+        else
+            seqcad_common_single_click(src,eventdata,seq,handles)
+        end
+    else
+        seqcad_common_single_click(src,eventdata,seq,handles)
+    end
+end
+
+
+function seqcad_common_single_click(src,eventdata,seq,handles) 
 handles.Seq=set_active(seq.hp,handles.Seq);
 guidata(handles.output, handles);
 h=findobj(gca,'Type','Line');
 for i=1:length(h), set(h,'color',[0 0 0],'linewidth',2), end
 set(seq.hl,'color',[1 0 0],'linewidth',3)
-
-global HANDLES;
+global HANDLES OPEN_CONTAINERSEQUENCE
+OPEN_CONTAINERSEQUENCE=1;
 HANDLES=handles;
 %show attributes
-if strcmp(upper(seq.Name),'PARAMETERS')
+if strcmp(upper(seq.Name),'PARAMETERS') 
     set(handles.SeqObjectPanel,'Title','Module: Parameters')
     A=handles.Parameter;
     HA=handles.ParameterHidden;

@@ -84,15 +84,16 @@ if nargin==2
     PC=parseChildNodes(theNode,handles);
     s = upper(char(theNode.getNodeName));
     for i=1:length(handles.Modules)
-         if strcmp(upper(handles.Modules{i}),s)
+         if strcmpi(handles.Modules{i},s)
              switch upper(handles.ModType{i})
                  case 'CONCAT'
                      j=1;
+                     if strcmpi(handles.Values{i}{1},'CONTAINER'),j=2;end
                  case 'ATOM'
-                     j=2;
-                     if strcmp(upper(handles.Values{i}{1}(1:5)),'DELAY'),j=3;end
+                     j=3;
+                     if strcmpi(handles.Values{i}{1}(1:5),'DELAY'),j=4;end
                  case 'PULSE'
-                     j=4;
+                     j=5;
                  otherwise
                      disp(['unkown module: ',s])
              end
