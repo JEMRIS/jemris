@@ -31,7 +31,7 @@
 ContainerSequence::ContainerSequence  (const ContainerSequence& as) {
 
 	m_container = NULL;
-	for (int i=0;i<5;i++)	{
+	for (int i=0;i<10;i++)	{
 		m_import[i]  = 0.0;
 		m_export[i]  = 0.0;
 	}
@@ -48,25 +48,16 @@ bool ContainerSequence::Prepare (const PrepareMode mode) {
     m_counter = 0;
 
     //hidden attributes to link with import-attributes (Imp1, Imp2, ...) of the Container
-    for (int i=0;i<5;i++)	{
+    for (int i=0;i<8;i++)	{
 		stringstream a; a << "Imp" << i+1;
 	    HIDDEN_ATTRIBUTE(a.str(), m_import[i]);
+		stringstream b; b << "Info_Imp" << i+1;
+	    UNOBSERVABLE_ATTRIBUTE(b.str());
 	}
 
-    //the number of import-attributes, required by this ContainerSequence (only for validation)
-    UNOBSERVABLE_ATTRIBUTE("NumImpAttribs");
-    int num_import_attribs = 0;
- 	map<string,Attribute*>::iterator iter;
-	for(iter = m_attributes.begin(); iter != m_attributes.end(); iter++) {
-	    string     keyword   = iter->first;
-	    Attribute* attribute = iter->second;
-	    string val = GetDOMattribute(keyword);
-	    if (!val.empty()  && keyword == "NumImpAttribs")
-	    	num_import_attribs=atoi(val.c_str());
-	}
 
     // attributes for export (Exp1, Exp2, ...) into the Container
-	for (int i=0;i<5;i++)	{
+	for (int i=0;i<3;i++)	{
 		stringstream a; a << "Exp" << i+1;
 	    ATTRIBUTE(a.str(), m_export[i]);
 	}
@@ -74,6 +65,7 @@ bool ContainerSequence::Prepare (const PrepareMode mode) {
  	//observe the import-attributes (Imp1, Imp2, ...) of the Container
     if ( m_container != NULL ) {
     	unsigned counter=0;
+     	map<string,Attribute*>::iterator iter;
     	for(iter = m_container->m_attributes.begin(); iter != m_container->m_attributes.end(); iter++) {
     	    string     keyword   = iter->first;
     	    Attribute* attribute = iter->second;
@@ -97,11 +89,6 @@ bool ContainerSequence::Prepare (const PrepareMode mode) {
     	    		b = ( imp->second->SetMember(formula.str(), m_obs_attribs, mode == PREP_VERBOSE) && b);
     	    	}
     	    }
-    	}
-    	if (counter != num_import_attribs && mode == PREP_VERBOSE ) {
-    		b = false;
-    		cout << "Warning in " << GetName() << ": Number of expected ("<< num_import_attribs
-    			 << ") and actual (" << counter << ") import attributes differ" << endl;
     	}
     }
 

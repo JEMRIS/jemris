@@ -33,7 +33,7 @@ Container::Container  (const Container& as) {
 	m_container_seq_name = "";
 	m_container_seq = NULL;
 	m_container_seqtree = NULL;
-	for (int i=0;i<5;i++)	{
+	for (int i=0;i<10;i++)	{
 		m_import[i]  = 0.0;
 		m_export[i]  = 0.0;
 	}
@@ -53,27 +53,17 @@ bool Container::Prepare (const PrepareMode mode) {
     ATTRIBUTE("Filename", m_container_seq_name);
 
     // attributes for import (Imp1, Imp2, ...) into the ContainerSequence
-	for (int i=0;i<5;i++)	{
+	for (int i=0;i<8;i++)	{
 		stringstream a; a << "Imp" << i+1;
 	    ATTRIBUTE(a.str(), m_import[i]);
 	}
 
     //hidden attributes to link with export-attributes (Exp1, Exp2, ...) of the ContainerSequence
-    for (int i=0;i<5;i++)	{
+    for (int i=0;i<3;i++)	{
 		stringstream a; a << "Exp" << i+1;
 	    HIDDEN_ATTRIBUTE(a.str(), m_export[i]);
-	}
-
-    //the number of export-attributes provided by the ContainerSequence (only for validation)
-    UNOBSERVABLE_ATTRIBUTE("NumExpAttribs");
-    int num_export_attribs = 0;
- 	map<string,Attribute*>::iterator iter;
-	for(iter = m_attributes.begin(); iter != m_attributes.end(); iter++) {
-	    string     keyword   = iter->first;
-	    Attribute* attribute = iter->second;
-	    string val = GetDOMattribute(keyword);
-	    if (!val.empty()  && keyword == "NumExpAttribs")
-	    	num_export_attribs=atoi(val.c_str());
+		stringstream b; b << "Info_Exp" << i+1;
+	    UNOBSERVABLE_ATTRIBUTE(b.str());
 	}
 
     //read ContainerSequence and build up its sequence tree
@@ -83,8 +73,8 @@ bool Container::Prepare (const PrepareMode mode) {
     	m_container_seqtree->Populate();
     	m_container_seq = m_container_seqtree->GetContainerSequence();
     	m_container_seq->SetContainer(this);
-    	cout << "Info: Container '" << GetName() << "' inserted ContainerSequence '"
-    		 << m_container_seq->GetName() << "' from file " << m_container_seq_name << endl << endl;
+    	//cout << "Info: Container '" << GetName() << "' inserted ContainerSequence '"
+    	//	 << m_container_seq->GetName() << "' from file " << m_container_seq_name << endl << endl;
     }
 
     if (m_container_seq!=NULL) {
@@ -92,6 +82,7 @@ bool Container::Prepare (const PrepareMode mode) {
 
     	//observe the export-attributes (Exp1, Exp2, ...) of the ContainerSequence
     	unsigned counter=0;
+     	map<string,Attribute*>::iterator iter;
     	for(iter = m_container_seq->m_attributes.begin(); iter != m_container_seq->m_attributes.end(); iter++) {
     	    string     keyword   = iter->first;
     	    Attribute* attribute = iter->second;
@@ -114,12 +105,6 @@ bool Container::Prepare (const PrepareMode mode) {
     	    	}
     	    }
     	}
-    	if (counter != num_export_attribs && mode == PREP_VERBOSE ) {
-    		b = false;
-    		cout << "Warning in " << GetName() << ": Number of expected ("<< num_export_attribs
-    			 << ") and actual (" << counter << ") export attributes differ" << endl;
-    	}
-
     }
 
     b = ( Sequence::Prepare(mode) && b);

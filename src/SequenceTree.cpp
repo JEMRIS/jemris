@@ -59,7 +59,7 @@ SequenceTree::~SequenceTree() {
 	for (iter = m_Modules.begin(); iter != m_Modules.end(); iter++ )
 		delete iter->second;
 
-	delete m_mpf;
+	//delete m_mpf; //TMPTMP deleting the mpf causes trouble in some cases (?)
 
 }
 

@@ -101,8 +101,9 @@ class ContainerSequence : public ConcatSequence {
  private:
 
     Container*		m_container;		/**< @brief pointer to the Container */
-    double			m_import [5];		/**< @brief attributes to import */
-    double			m_export [5];		/**< @brief attributes to export */
+    double			m_import [10];		/**< @brief attributes to import */
+    double			m_export [10];		/**< @brief attributes to export */
+    vector<string>	m_impexpdoc;		/**< @brief attributes to export */
 
 };
 

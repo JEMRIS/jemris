@@ -98,14 +98,11 @@ contains global attributes such as field of view \f$ FOV_{x/y/z} \f$,
 the size of the image matrix, the gradient slew rate etc.
 
 \subsection ug_JEMRIS_seq_intro_seqmod Sequence Modules
-So far, there exist three different modules which are of type sequence:
+So far, there exist five modules which are of type sequence:
 <ul>
-    <li> The <b> ConcatSequence </b> module (yellow circle) represents
-         a loop which can be controlled by its attribute "repetitions"
-         (default value is 1). It may contain other ConcatSequences,
-         AtomicSequences or DelayAtomicSequences, but no pulses.  A
-         ConcatSequence also has \ref ug_JEMRIS_seq_ginac_hidden,
-         which are not set by the user but in runtime:
+    <li> The <b> ConcatSequence </b> module (yellow circle) represents a loop which can be controlled by its attribute "repetitions"
+         (default value is 1). It may contain other ConcatSequences, AtomicSequences or DelayAtomicSequences, but no pulses.  A
+         ConcatSequence also has \ref ug_JEMRIS_seq_ginac_hidden, which are not set by the user but in runtime:
 	 <ol>
 		<li> "Counter" is the loop counter through which other modules get information of the current value of the loop counter.
 		<li> "Duration" specifies the duration of the ConcatSequence, which of course depends on the duration of its children.
@@ -136,8 +133,38 @@ So far, there exist three different modules which are of type sequence:
 	 </ol>
          \image html pics/ug_TE_delay.jpg
          \image latex pics/ug_TE_delay.eps
+
 </ul>
 
+
+  \li    The <b> Container </b> (red circles) is a specialised module to include pre-defined building blocks, which are defined
+         by the ContainerSequence module (see below). Thus, the Container module itself does not define sequence events. It only
+         defines the ContainerSequence and it is responsible for I/O of attributes between the main sequence and the building block.
+         For that, the Container may observe several other modules (see section \ref ug_JEMRIS_seq_ginac) in the sequence tree which are then
+	 atuomatically passed to the ContainerSequence - this is concept of importing attributes to the ContainerSequence. Further, it is possible
+         to observe attributes of other modules within the ContainerSequence - this is the concept of exporting attributes from the ContainerSequence.
+         The attribute \c "Filename" specifies the xml-file of the ContainerSequence. Further, the Container has the following additional attributes:
+	 <ol>
+         	<li> \c "Imp1,...,Imp8" Eight attributes which can be used to import information into the ContainerSequence.
+         	<li> \c "Exp1,Exp2,Exp3" Three hidden attributes for export. They are defined by the ContainerSequence (see below) and passed to the Container.
+         	<li> \c "Info_Exp1,Info_Exp2,Info_Exp3" Three (unobservable) attributes with no specific purpose, but may be used to provide
+                         information about any possible usage of the export attributes elsewhere in the main sequence.
+	 </ol>
+	 <b>Note:</b> A double-click on the Container node in the GUI opens a new Sequence-GUI for editing the ContainerSequence.
+
+  \li    The <b> ContainerSequence </b> (red circles) is the root sequence of an encapsulated building block. It can not be inserted as a module
+         into the sequence tree (this is done by the Container, see above). The ContainerSequence has similar functionality to a ConcatSequence
+	 (with the difference that it is not loopable) i.e. it is possible to insert other sequence modules as child-modules.
+         The ContainerSequence has the following additional attributes:
+	 <ol>
+         	<li> \c "Exp1,Exp2,Imp3" Three attributes which can be used for export from the ContainerSequence. 
+         	<li> \c "Imp1,...,Imp8" Eight hidden attributes for import. They are defined by the Container (see above) and passed to the ContainerSequence.
+         	<li> \c "Info_Imp1,...,Info_Imp8" Eight (unobservable) attributes with no specific purpose, but may be used to provide
+                         information about any possible usage of the import attributes elsewhere in the ContainerSequence.
+	 </ol>
+	 <b>Note:</b> See the JEMRIS example directory (typically \c "/usr/local/share/jemris/example") for the sample sequence \c "epi_modular.xml" utlizing
+                      the Container and ContainerSequence.
+        
 \n 
 
 \subsection ug_JEMRIS_seq_intro_pulse Pulse Shape Modules

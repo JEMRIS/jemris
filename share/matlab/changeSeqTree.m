@@ -113,8 +113,13 @@ function NewModule=ChangeMe(Seq,handles)
  switch INSERT_MODULE_NUMBER
     case -1 %delete a node
         if ~isempty(Seq.Children)
-            if strcmp(upper(Seq.Name),'PARAMETERS')
+            if strcmpi(Seq.Name,'PARAMETERS')
                 errordlg('Delete of Parameter node is not possible!');
+                NewModule=[];
+                return;
+            end
+            if strcmpi(Seq.Name,'CONTAINERSEQUENCE')
+                errordlg('Delete of ContainerSequence node is not possible!');
                 NewModule=[];
                 return;
             end
@@ -153,12 +158,18 @@ function NewModule=ChangeMe(Seq,handles)
      case -3 %copy module
         if isstruct(MODULE1)
             
+            if strcmpi(MODULE1.Name,'CONTAINERSEQUENCE')
+                errordlg('Copying of ContainerSequence node is not possible!');
+                NewModule=[];
+                return;
+            end
+
             ispulse=~isempty(findstr('PULSE',upper(MODULE1.Name)));
-            if  ( ispulse && ~strcmp('ATOMICSEQUENCE',upper(Seq.Name) ) ) || ...
-                (~ispulse && ~strcmp('CONCATSEQUENCE',upper(Seq.Name) ) )
+            if  ( ispulse && ~strcmpi('ATOMICSEQUENCE',Seq.Name ) ) || ...
+                (~ispulse && ~strcmpi('CONCATSEQUENCE',Seq.Name ) )
                 NewModule=[];
                 warndlg(sprintf(['Copy of module %s into module \n',...
-                                 'of type %s is not possible!'],modname,Seq.Name))
+                                 'of type %s is not possible!'],MODULE1.Name,Seq.Name))
                 return;
             end
             if ~isempty(MODULE1.Children)
@@ -216,10 +227,10 @@ end
       switch upper(handles.ModType{INSERT_MODULE_NUMBER})
               case 'CONCAT'
                   j=1; sNAME='C';
-                  if strcmp(upper(handles.Values{INSERT_MODULE_NUMBER}{1}),'CONTAINER'),j=2;end
+                  if strcmpi(handles.Values{INSERT_MODULE_NUMBER}{1},'CONTAINER'),j=2;end
               case 'ATOM'
                   j=3; sNAME='A';
-                  if strcmp(upper(handles.Values{INSERT_MODULE_NUMBER}{1}(1:5)),'DELAY'),j=4;sNAME='D';end
+                  if strcmpi(handles.Values{INSERT_MODULE_NUMBER}{1}(1:5),'DELAY'),j=4;sNAME='D';end
               case 'PULSE'
                   j=5; sNAME='P';
               otherwise

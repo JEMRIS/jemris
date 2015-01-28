@@ -160,15 +160,16 @@ bool CheckSeqs(string path, vector<string> seq){
 	cout << endl << "Test Case 1: producing tree-dumps and sequence diagrams" << endl;
 	cout << "======================================================="<< endl << endl;
 
+
 	for (unsigned int i=0;i<seq.size();i++) {
 
-		SequenceTree* seqTree = new SequenceTree;
-		seqTree->Initialize(path+seq[i]);
+		SequenceTree seqTree;
+		seqTree.Initialize(path+seq[i]);
 
-		if (seqTree->GetStatus()) {
+		if (seqTree.GetStatus()) {
 
-			seqTree->Populate();
-			ConcatSequence* CS = seqTree->GetRootConcatSequence();
+			seqTree.Populate();
+			ConcatSequence* CS = seqTree.GetRootConcatSequence();
 			printf("%02d. %15s | ",i+1,seq[i].c_str());
 
 			//sequence-diagram
@@ -209,8 +210,8 @@ bool CheckSeqs(string path, vector<string> seq){
 				cout << "is NOT ok " << endl;
 			}
 		}
-		delete seqTree;
 	}
+
 	return status;
 
 }
@@ -337,6 +338,7 @@ int main (int argc, char *argv[]) {
 	seq.push_back("radial.xml");
 	seq.push_back("sli_sel.xml");
 	seq.push_back("extpulses.xml");
+	seq.push_back("epi_modular.xml");
 
 	//coils to test
 	vector<string> coils;

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContainerSequence Doc_Imp1=" Slice Loop Counter  for Frequency  of P1" Doc_Imp2="Slice Thickness for Freqency of P1" Doc_Imp3=" FlatTopArea of  P2" Exp1="a1/2" Name="SLS" NumImpAttribs="4" Observe="P2,Area">
+   <ATOMICSEQUENCE Aux1="a1-a2/2" Name="A1" Observe="SLS,Imp1/SLS,Imp2">
+      <SINCRFPULSE ADCs="-100" Apodization="0.5" Bandwidth="3" FlipAngle="90" Frequency="a1*a2*a3" InitialDelay="a4" Name="P1" Observe="SLS,Imp1/SLS,Imp2/P2,Amplitude/P2,RampUpTime" Zeros="2.5"/>
+      <TRAPGRADPULSE Axis="GZ" FlatTopArea="4*a2*a3" FlatTopTime="a1" Name="P2" Observe="P1,Duration/P1,Bandwidth/SLS,Imp3"/>
+   </ATOMICSEQUENCE>
+</ContainerSequence>

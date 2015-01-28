@@ -200,6 +200,13 @@ class Module : public Prototype {
      */
       void  DumpTree (const string& file="", Module* mod=NULL, int ichild = 0, int level = 0) ;
 
+      /**
+       * @brief Return tree depth from this module (including depth of Containers)
+       *
+       * @param depth  the depth so far
+       */
+        int  GetDepth (int depth = 0) ;
+
     /**
      * @brief Rewrite XML-tree where all expressions are evaluated (for IDEA)
      *
