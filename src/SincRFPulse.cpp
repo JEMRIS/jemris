@@ -75,7 +75,7 @@ double    SincRFPulse::GetMagnitude  (double time ){
 inline void  SincRFPulse::SetTPOIs () {
 
 	//Reset and take care for ADCs
-	Pulse::SetTPOIs();
+	RFPulse::SetTPOIs();
 
 	//add equidistantly TPOIs at 8 times the numer of zeros
 	for (unsigned int i = 1; i < 8*m_zeros; i++)

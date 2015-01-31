@@ -3,7 +3,7 @@ dump of sequence tree
                         ----------------------------------------------------------------- |  ---------------
 sequence-root------>   CONCAT       CONCATSEQUENCE       C1     6.869       22       300  |  Repetitions = 2
   |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     2.780        5       140  | 
-    |_ child 1   -->    PULSE          SINCRFPULSE       P1     2.667     -100       133  |  Axis = RF  , InitDelay = 0.0565487 , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,3,0,0.5)  , (Zero-crossings,Apodization) = (4,0.5)
+    |_ child 1   -->    PULSE          SINCRFPULSE       P1     2.667     -100       134  |  Axis = RF  , InitDelay = 0.0565487 , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,3,0,0.5)  , (Zero-crossings,Apodization) = (4,0.5)
     |_ child 2   -->    PULSE        TRAPGRADPULSE       P2     2.780        5         9  |  Axis = GX  , Area = 1.53994 , FlatTop: (Area,time)= (1.50796,2.66667)
   |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A2     0.555        5         7  | 
     |_ child 1   -->    PULSE        TRAPGRADPULSE       P3     0.555        5         9  |  Axis = GX  , Area = -0.769971

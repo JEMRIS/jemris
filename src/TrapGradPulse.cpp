@@ -112,8 +112,8 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 	//2nd: call SetShape() to compute the trapezoid
 	bool btag = (GradPulse::Prepare(mode) && SetShape(mode == PREP_VERBOSE) );
 
-        if (!btag && mode == PREP_VERBOSE)
-                cout << "\n warning in Prepare(1) of TRAPGRADPULSE " << GetName() << endl;
+    if (!btag && mode == PREP_VERBOSE)
+             cout << "\n warning in Prepare(1) of TRAPGRADPULSE " << GetName() << endl;
 	return btag;
 }
 
@@ -234,24 +234,25 @@ inline double  TrapGradPulse::GetGradient  (double const time){
 /***********************************************************/
 inline void  TrapGradPulse::SetTPOIs () {
 
-	if ( m_has_flat_top_time && GetNADC()>0 )	//set ADCs over total duration (standard)
+	if ( m_has_flat_top_time && GetNADC()>0 )	//add ADCs  only on the flat top
 	{
 		m_tpoi.Reset();
     		m_tpoi + TPOI::set(TIME_ERR_TOL              , -1.0);
     		m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
-		//add ADCs  only on the flat top
+
     		for (int i = 0; i < GetNADC(); i++)
     			m_tpoi + TPOI::set(m_ramp_up_time + (i+1)*m_flat_top_time/(GetNADC()+1),
 					   (m_phase_lock?World::instance()->PhaseLock:0.0)                 );
 	}
-	else {
+	else { 		//set ADCs over total duration (standard)
 		Pulse::SetTPOIs();
 	}
 
 
 	//add TPOIs at nonlinear points of the trapezoid
     	m_tpoi + TPOI::set(m_ramp_up_time	          , -1.0);
-    	m_tpoi + TPOI::set(m_ramp_up_time+m_flat_top_time , -1.0);
+ 		m_tpoi + TPOI::set(m_ramp_up_time+m_flat_top_time , -1.0);
+
 
 }
 

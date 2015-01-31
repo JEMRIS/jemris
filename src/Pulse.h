@@ -81,7 +81,7 @@ class Pulse :public Module {
     /**
      * See Module::GetDuration
      */
-    double          GetDuration    () {return m_duration;};
+    double          GetDuration    () { Notify(m_duration); return m_duration; };
 
     /**
      * @brief Set the Axis of propagation of this pulse.
