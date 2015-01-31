@@ -65,7 +65,7 @@ double    SechRFPulse::GetMagnitude  (double time ){
 inline void  SechRFPulse::SetTPOIs () {
 
 	//Reset and take care for ADCs
-	Pulse::SetTPOIs();
+	RFPulse::SetTPOIs();
 
 	//add equidistantly 10 TPOIs
 	for (unsigned int i = 1; i < 20; i++)

@@ -129,8 +129,10 @@ void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r)
-		for (unsigned int j=0; j<children.size() ; ++j)
+		for (unsigned int j=0; j<children.size() ; ++j) {
+			((Sequence*) children[j])->GetDuration(); // triggers duration notification
 			((Sequence*) children[j])->CollectSeqData(seqdata, t, offset);
+		}
 
 }
 
