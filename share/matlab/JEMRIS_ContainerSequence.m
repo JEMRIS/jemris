@@ -52,7 +52,7 @@ handles.output = hObject;
 %ContainerSeq xml file
 global CONTAINERSEQFILE
 if length(CONTAINERSEQFILE)<1
-    warndlg('Specify filename of the ContainerSequence');
+    warndlg('Specify filename of the ContainerSequence in global variable CONTAINERSEQFILE');
     close(hObject)
     return;
 end
@@ -70,24 +70,8 @@ handles.cd=0;
 handles.ax=0;
 handles.CWD=pwd;
 handles.win = (strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
-if (handles.win)
-    if (strcmp(computer,'PCWIN64'))
-        handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\Research Centre Juelich\jemris', 'Path')];
-    else
-        handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Research Centre Juelich\jemris', 'Path')];
-    end
-    handles.JemrisShare=[''];
-    handles.JemrisCall=[fullfile(handles.JemrisPath,'jemris.exe"')];
-else
-    handles.JemrisPath='/Users/stoeckert/DZNE/workspace/jemris/src';
-    handles.JemrisShare='/Users/stoeckert/Documents/MATLAB/jemris';
-    [s,w]=system('setenv');
-    if s==0 % a TCSH
-        handles.JemrisCall=['setenv LD_LIBRARY_PATH ""; ',fullfile(handles.JemrisPath,'jemris')];
-    else    % a BASH 
-        handles.JemrisCall=['LD_LIBRARY_PATH=""; PATH=/usr/local/bin:$PATH;',fullfile(handles.JemrisPath,'jemris')];
-    end
-end
+handles.JemrisCall=[];
+handles.JemrisShare='/usr/local/share/jemris/matlab';
 
 %get all modules + attributes which are currently supported by JEMRIS
 [Modules,Params]=getAllModules(handles.JemrisCall,handles.CWD);

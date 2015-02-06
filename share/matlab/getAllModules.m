@@ -26,7 +26,9 @@ function [modules,params]=getAllModules(Jcall,Jpath)
 %  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 %
 
+if ~isempty(Jcall)
  [status,dump]=system(sprintf('%s modlist ; mv mod.xml %s',Jcall,Jpath));
+end
  h.seqfile = 'mod.xml';
  h.seqdir  = Jpath;
  S=parseXMLseq(h);
