@@ -68,6 +68,8 @@ void Sequence::SeqDiag (const string& fname ) {
 	BinaryContext bc (fname, IO::OUT);
 	if (bc.Status() != IO::OK) return;
 
+	Prepare(PREP_INIT);
+
 	NDData<double>      di (GetNumOfTPOIs() + 1);
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);

@@ -69,6 +69,7 @@ void Attribute::AttachSubject (Attribute* attrib){
 /***********************************************************/
 void Attribute::UpdatePrototype (Prototype* prot){
 	prot->Prepare(PREP_UPDATE);
+	//cout << "DEBUG " << GetPrototype()->GetName() << " notified " << prot->GetName() << " : ";
 	if (prot->GetType() == MOD_PULSE) ((AtomicSequence*) prot->GetParent())->CollectTPOIs();
 }
 

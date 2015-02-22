@@ -30,7 +30,7 @@
 /***********************************************************/
 ConcatSequence::ConcatSequence  (const ConcatSequence& cs ) {
     m_repetitions = 1;
-    m_counter = 0;
+    m_counter = -1;
 }
 
 /***********************************************************/
@@ -40,12 +40,14 @@ bool    ConcatSequence::Prepare (const PrepareMode mode){
 
 	ATTRIBUTE("Repetitions", m_repetitions);
 	HIDDEN_ATTRIBUTE("Counter", m_counter);
-	if (mode != PREP_UPDATE) GetDuration();
 
-	if (mode != PREP_UPDATE)
-		SetRepCounter( 0);
+	if (mode != PREP_UPDATE) {
+		GetDuration();
+		GetNumOfTPOIs();
+		GetNumOfADCs();
+	}
 
-	    return Sequence::Prepare(mode);
+	return Sequence::Prepare(mode);
 }
 
 /***********************************************************/

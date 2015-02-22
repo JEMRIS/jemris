@@ -294,6 +294,16 @@ class Attribute {
     int		GetCurrentFunctionPointer  (){ 	return m_cur_fp; };
 
     /**
+     * @brief Return the observers.
+     */
+    std::vector<Attribute*>		GetObservers  (){ 	return m_observers; };
+
+    /**
+     * @brief Return the observers.
+     */
+    std::vector<Attribute*>		GetSubjects  (){ 	return m_subjects; };
+
+    /**
      * @brief Return the number of observers.
      */
     int		GetNumObservers  (){ 	return m_observers.size(); };
@@ -335,7 +345,7 @@ class Attribute {
 
         	m_observers.at(i)->EvalExpression();
             UpdatePrototype( m_observers.at(i)->GetPrototype() );
-            //cout << "DEBUG " << GetName() << " notified " << m_observers.at(i)->GetName() << endl;
+            //cout << m_observers.at(i)->GetName() << " was notified by " << GetName() << " with value = " << val << endl;
         }
 
     	return true;
