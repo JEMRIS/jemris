@@ -27,7 +27,8 @@ global MODULE_TYPE_COUNTER
 MODULE_TYPE_COUNTER=[0 0 0 0 0];
 
 try
-   tree = xmlread(fullfile(handles.seqdir,handles.seqfile));
+   filename=fullfile(handles.seqdir,handles.seqfile);
+   tree = xmlread(filename);
 
 catch
    error('Failed to read XML file %s.',filename);
