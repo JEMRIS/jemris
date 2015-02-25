@@ -101,12 +101,18 @@ class TrapGradPulse : public GradPulse {
 
     double  m_flat_top_area; /**< Area beyond the Flat Top set from XML*/
     double  m_flat_top_time; /**< Duration of the Flat Top set from XML*/
-    double  m_asym_sr;      /**< Factor for asymetric slew rate set from XML. Should be in [-1,1]*/
+    double  m_asym_sr;      /**< Factor for asymmetric slew rate set from XML. Should be in [-1,1]*/
 
-    bool    m_has_flat_top_time;    /**< true, if corresponding doulbe attribute was set in XML*/
-    bool    m_has_flat_top_area;    /**< true, if corresponding doulbe attribute was set in XML*/
-    bool    m_has_duration;       /**< true, if corresponding doulbe attribute was set in XML*/
+    bool    m_has_flat_top_time;    /**< true, if corresponding double attribute was set in XML*/
+    bool    m_has_flat_top_area;    /**< true, if corresponding double attribute was set in XML*/
+    bool    m_has_duration;       	/**< true, if corresponding double attribute was set in XML*/
+    bool    m_has_area;    			/**< true, if corresponding double attribute was set in XML*/
  
+    double  m_ft;       /**< internal flat_top time */
+    double  m_fa;       /**< internal flat_top area */
+    double  m_du;       /**< internal duration      */
+    double  m_ar;       /**< internal area          */
+
     double  m_amplitude;       /**< My amplitude      */
     double  m_ramp_up_time;    /**< My ramp up time   */
     double  m_ramp_dn_time;    /**< My ramp down time */

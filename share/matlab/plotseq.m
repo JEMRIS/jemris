@@ -88,7 +88,7 @@ Rec_Phs=RXP(Iadc)*180/pi;
 
 if length(ax)==1;ax=[min(t) max(t)];end
 
-DO_2D = isempty(find(A(:,5),1)); 
+DO_2D = ( max(diff(KZ(Iadc)))<1e-8 );
 [~,i1]=min(abs(t-ax(1)));
 [~,i2]=min(abs(t-ax(2)));
 
