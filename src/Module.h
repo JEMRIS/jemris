@@ -200,6 +200,13 @@ class Module : public Prototype {
      */
       void  DumpTree (const string& file="", Module* mod=NULL, int ichild = 0, int level = 0) ;
 
+      /**
+       * @brief Return tree depth from this module (including depth of Containers)
+       *
+       * @param depth  the depth so far
+       */
+        int  GetDepth (int depth = 0) ;
+
     /**
      * @brief Rewrite XML-tree where all expressions are evaluated (for IDEA)
      *
@@ -219,6 +226,11 @@ class Module : public Prototype {
      */
      bool StaticDOM(DOMDocument* doc, DOMNode* node, bool append = true);
 
+
+     void			  	SetSeqTree (SequenceTree* pST)	{ m_seq_tree= pST;	};
+     SequenceTree*  	GetSeqTree (				 )	{ return m_seq_tree;};
+
+
  protected:
 
     /**
@@ -228,7 +240,7 @@ class Module : public Prototype {
      */
     virtual string GetInfo () { return ""; };
 
-    SequenceTree*  m_seq_tree;    /**< @brief Reference to single instance of the sequence tree. */
+    SequenceTree*  m_seq_tree;    /**< @brief Reference to the sequence tree. */
     Parameters*    m_parameters;  /**< @brief Pointer to the sole instance of the Parameters*/
     TPOI           m_tpoi;        /**< @brief Time points of interest are stored the referred repository.*/
 

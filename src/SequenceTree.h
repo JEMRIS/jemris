@@ -38,18 +38,18 @@ using std::string;
 // Class declarations to avoid including Module.h and thus a rereferenciation.
 class Module;
 class ConcatSequence;
+class ContainerSequence;
 
-//! Singelton implementation of the lfo-tree representation of the whole sequence
+//! Tree representation of the sequence
 
 class SequenceTree {
 
+ friend class Container;
 
  public:
 
-	 /**
-     * Get the sole instance of the Sequence tree
-     */
-    static SequenceTree*  instance      ();
+    SequenceTree();			/**< default constructor */
+   ~SequenceTree();			/**< public virtual default destructor */
 
     /**
      * Initialize the sole instance
@@ -158,6 +158,13 @@ class SequenceTree {
 	ConcatSequence*      GetRootConcatSequence    ();
 
     /**
+     * Get the ContainerSequence module.
+     *
+     * @return The ContainerSequence module.
+     */
+	ContainerSequence*      GetContainerSequence    ();
+
+    /**
      * Get first module in the tree, which has a matching
      * attribute (name,value) pair in its DOMNode.
      *
@@ -220,14 +227,10 @@ class SequenceTree {
      bool GetStatus           () { return m_state; }
 
 
-    ~SequenceTree();	/**< public virtual default destructor */
-
 
  private:
     bool                 m_state;          /**< My status                       */
     int                  m_depth;          /**< The depth of the tree           */
-    SequenceTree();			    /**< private default constructor */
-    static SequenceTree*    m_instance;     /**< Pointer to the sole instance of this implementation */
     Parameters*      		m_parameters;   /**< Pointer to the sole instance of the Parameter Module */
     ConcatSequence*      	m_root_seq;   /**< Pointer to the root ConcatSequence */
     DOMDocument*     		m_dom_doc;   /**< The DOM document containing the whole sequence      */

@@ -216,8 +216,9 @@ class Simulator {
 	DOMDocument*             m_dom_doc;           /**< @brief Simulation file             */
 	Sample*                  m_sample;            /**< @brief Sample                      */
 	World*                   m_world;             /**< @brief World to be simulated       */
-	Model*                   m_model;
-	ConcatSequence*          m_sequence;          /**< @brief Sequece to be simulated     */
+	Model*                   m_model;			  /**< @brief Model to be simulated       */
+	ConcatSequence*          m_sequence;          /**< @brief Sequence to be simulated    */
+	SequenceTree*            m_seqtree;           /**< @brief SequenceTree to be simulated*/
 	XMLIO*                   m_xio;               /**< @brief XML file handler            */
 	CoilArray*               m_tx_coil_array;     /**< @brief Transmit coil array         */
 	CoilArray*               m_rx_coil_array;     /**< @brief Receive coil array          */

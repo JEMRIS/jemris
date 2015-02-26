@@ -139,6 +139,12 @@ class ConcatSequence : public Sequence {
      */
     //virtual bool StaticDOM(DOMDocument* doc, DOMNode* node);
 
+    /**
+     * Get the number of ADCs for this sequence.
+     *
+     * @return The nmuber of ADCs.
+     */
+    virtual long GetNumOfADCs ();
 
     /**
      * @brief Recursively collect sequence data (for plotting the sequence diagram)

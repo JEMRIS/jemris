@@ -70,6 +70,7 @@ void Attribute::AttachSubject (Attribute* attrib){
 void Attribute::UpdatePrototype (){
 	Prototype* prot = GetPrototype();
 	prot->Prepare(PREP_UPDATE);
+	//cout << "DEBUG " << GetPrototype()->GetName() << " notified " << prot->GetName() << " : ";
 	if (prot->GetType() == MOD_PULSE) ((AtomicSequence*) prot->GetParent())->CollectTPOIs();
 	//Notify observers after (!) update of prototype
 	if (GetTypeID()==typeid(  double*).name()) { Notify( GetMember  <double>() ); return; }
@@ -149,13 +150,14 @@ bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attri
             }
         return false;
 	}
+
     return true;
 }
 
 /***********************************************************/
 void Attribute::EvalExpression () {
   
-	if (m_formula.empty()) return;
+	if (m_formula.empty())  return;
 	
 	//strings: simply replace attribute symbol by its value
 	if (GetTypeID()==typeid(std::string*).name()) {

@@ -69,6 +69,8 @@ void Sequence::SeqDiag (const string& fname ) {
 	if (bc.Status() != IO::OK) return;
 	if ( GetNumOfTPOIs()==0  ) return;
 
+	Prepare(PREP_INIT);
+
 	NDData<double>      di (GetNumOfTPOIs() + 1);
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
@@ -119,17 +121,3 @@ void Sequence::SeqDiag (const string& fname ) {
 
 }
 
-/***********************************************************/
-long  Sequence::GetNumOfADCs () {
-
-	long lADC = 0;
-	vector<Module*> children = GetChildren();
-	ConcatSequence* pSeq     = ((ConcatSequence*) this);
-
-	for (RepIter r=pSeq->begin(); r<pSeq->end(); ++r)
-		for (size_t j=0; j<children.size() ; ++j)
-			lADC += ((Sequence*) children[j])->GetNumOfADCs();
-
-	return lADC;
-
-}

@@ -34,6 +34,8 @@
 #include "Module.h"
 #include "AtomicSequence.h"
 #include "ConcatSequence.h"
+#include "Container.h"
+#include "ContainerSequence.h"
 
 using namespace std;
 

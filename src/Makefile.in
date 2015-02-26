@@ -107,13 +107,14 @@ am__objects_1 = AnalyticCoil.$(OBJEXT) AnalyticGradPulse.$(OBJEXT) \
 	BiotSavartLoop.$(OBJEXT) Bloch_McConnell_CV_Model.$(OBJEXT) \
 	Bloch_CV_Model.$(OBJEXT) Coil.$(OBJEXT) CoilArray.$(OBJEXT) \
 	CoilPrototypeFactory.$(OBJEXT) ConcatSequence.$(OBJEXT) \
-	ConstantGradPulse.$(OBJEXT) DOMTreeErrorReporter.$(OBJEXT) \
-	DelayAtomicSequence.$(OBJEXT) DynamicVariables.$(OBJEXT) \
-	EddyPulse.$(OBJEXT) EmptyPulse.$(OBJEXT) \
-	ExternalCoil.$(OBJEXT) ExternalPulseData.$(OBJEXT) \
-	ExternalGradPulse.$(OBJEXT) ExternalRFPulse.$(OBJEXT) \
-	GaussianRFPulse.$(OBJEXT) GradPulse.$(OBJEXT) \
-	HardRFPulse.$(OBJEXT) HDF5IO.$(OBJEXT) IdealCoil.$(OBJEXT) \
+	ConstantGradPulse.$(OBJEXT) ContainerSequence.$(OBJEXT) \
+	DOMTreeErrorReporter.$(OBJEXT) DelayAtomicSequence.$(OBJEXT) \
+	DynamicVariables.$(OBJEXT) EddyPulse.$(OBJEXT) \
+	EmptyPulse.$(OBJEXT) ExternalCoil.$(OBJEXT) \
+	ExternalPulseData.$(OBJEXT) ExternalGradPulse.$(OBJEXT) \
+	ExternalRFPulse.$(OBJEXT) GaussianRFPulse.$(OBJEXT) \
+	GradPulse.$(OBJEXT) HardRFPulse.$(OBJEXT) HDF5IO.$(OBJEXT) \
+	IdealCoil.$(OBJEXT) Container.$(OBJEXT) \
 	Microstructure.$(OBJEXT) MicrostructureBoxes.$(OBJEXT) \
 	MicrostructureCrossingFiber.$(OBJEXT) \
 	MicrostructureKissingFiber.$(OBJEXT) \
@@ -534,6 +535,7 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	CoilArray.cpp CoilArray.h CoilPrototypeFactory.cpp \
 	CoilPrototypeFactory.h ConcatSequence.cpp ConcatSequence.h \
 	ConstantGradPulse.cpp ConstantGradPulse.h \
+	ContainerSequence.cpp ContainerSequence.h \
 	DOMTreeErrorReporter.cpp DOMTreeErrorReporter.h Debug.h \
 	Declarations.h DelayAtomicSequence.cpp DelayAtomicSequence.h \
 	DynamicVariables.cpp DynamicVariables.h EddyPulse.cpp \
@@ -542,14 +544,15 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	ExternalGradPulse.cpp ExternalGradPulse.h ExternalRFPulse.cpp \
 	ExternalRFPulse.h GaussianRFPulse.cpp GaussianRFPulse.h \
 	GradPulse.cpp GradPulse.h HardRFPulse.cpp HardRFPulse.h \
-	HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h KSpace.h \
-	Microstructure.cpp Microstructure.h MicrostructureBoxes.cpp \
-	MicrostructureBoxes.h MicrostructureCrossingFiber.cpp \
-	MicrostructureCrossingFiber.h MicrostructureKissingFiber.cpp \
-	MicrostructureKissingFiber.h MicrostructureSingleFiber.cpp \
-	MicrostructureSingleFiber.h Model.cpp Model.h Module.cpp \
-	Module.h ModulePrototypeFactory.cpp ModulePrototypeFactory.h \
-	NDData.h Parameters.cpp Parameters.h Prototype.cpp Prototype.h \
+	HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h Container.cpp \
+	Container.h KSpace.h Microstructure.cpp Microstructure.h \
+	MicrostructureBoxes.cpp MicrostructureBoxes.h \
+	MicrostructureCrossingFiber.cpp MicrostructureCrossingFiber.h \
+	MicrostructureKissingFiber.cpp MicrostructureKissingFiber.h \
+	MicrostructureSingleFiber.cpp MicrostructureSingleFiber.h \
+	Model.cpp Model.h Module.cpp Module.h \
+	ModulePrototypeFactory.cpp ModulePrototypeFactory.h NDData.h \
+	Parameters.cpp Parameters.h Prototype.cpp Prototype.h \
 	PrototypeFactory.cpp PrototypeFactory.h Pulse.cpp Pulse.h \
 	RFPulse.cpp RFPulse.h RepIter.cpp RepIter.h \
 	MultiPoolSample.cpp MultiPoolSample.h Sample.cpp Sample.h \
@@ -704,6 +707,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CoilPrototypeFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ConcatSequence.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ConstantGradPulse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Container.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ContainerSequence.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DOMTreeErrorReporter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DelayAtomicSequence.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DynamicVariables.Po@am__quote@

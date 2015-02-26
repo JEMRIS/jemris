@@ -74,4 +74,7 @@ share/examples/tse_signal.h5
 share/examples/extpulses.h5
 share/examples/extpulses.out
 share/examples/extpulses_signal.h5
+share/examples/epi_modular.h5
+share/examples/epi_modular.out
+share/examples/epi_modular_signal.h5
 

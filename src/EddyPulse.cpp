@@ -141,10 +141,11 @@ bool  EddyPulse::Insert (PrepareMode mode) {
 	if (m_prepared || mode==PREP_UPDATE) return true;
 
 	//insert DOM-node in parent
-	DOMElement* node = SequenceTree::instance()->GetDOMDocument()->createElement(StrX("EDDYCURRENT").XMLchar());
+	DOMElement* node = m_parent->GetSeqTree()->GetDOMDocument()->createElement(StrX("EDDYCURRENT").XMLchar());
 	if (node==NULL) return false;
 	m_parent->GetNode()->appendChild (node);
-	SequenceTree::instance()->GetModuleMap()->insert(pair<DOMNode*, Module*> (node, this));
+	m_parent->GetSeqTree()->GetModuleMap()->insert(pair<DOMNode*, Module*> (node, this));
+	SetSeqTree(m_parent->GetSeqTree());
 	Initialize(node);
 	m_prepared = true;
 	return true;

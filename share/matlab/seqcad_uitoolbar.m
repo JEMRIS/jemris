@@ -53,8 +53,10 @@ for i=1:NM
     end
     %make background white for pulse icons
     if findstr(Modules{i},'PULSE'); B(find(isnan(B)))=1; end
-    %draw button
     handles.hpt{i} = uitoggletool(ht,'CData',B,'TooltipString',['Insert ',ModuleToolTip{i}],'Separator',bsep);
+    if strcmp(handles.Modules{i},'CONTAINERSEQUENCE')
+        set(handles.hpt{i},'visible','off');
+    end
 end
 
 %draw buttons for ERASE, COPY, SWAP modules
