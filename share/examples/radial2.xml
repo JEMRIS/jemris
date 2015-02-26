@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters FOVx="200" FOVy="200" FOVz="1" GradMaxAmpl="8" GradSlewRate="45" Name="P" Nx="32" Ny="32" Nz="1" TE="6.3" TR="20">
+   <ConcatSequence Name="C" Observe="P,Ny" Repetitions="a1">
+      <ATOMICSEQUENCE Azimut="0" Inclination="0" Name="Aslice" RotAngle="0">
+         <GAUSSIANRFPULSE Bandwidth="6.2832" Duration="4" FlipAngle="90" Frequency="0" Name="RF" Symmetry="0.5"/>
+         <TRAPGRADPULSE Area="8.2801" Axis="GZ" Duration="4" Name="GSS"/>
+      </ATOMICSEQUENCE>
+      <DELAYATOMICSEQUENCE Delay="a1" DelayType="C2C" Name="DTE" Observe="P,TE" StartSeq="Aslice" StopSeq="Aro"/>
+      <ATOMICSEQUENCE Azimut="0" Inclination="0" Name="Apre" Observe="C,Counter/C,Repetitions" RotAngle="0">
+         <TRAPGRADPULSE Area="-a1/2" Axis="GX" Duration="1" Name="preX" Observe="roX,Area/C,Counter/P,DKx/C,Repetitions"/>
+         <TRAPGRADPULSE Area="-a1/2" Axis="GZ" Duration="1" Name="rphZ" Observe="GSS,Area"/>
+         <TRAPGRADPULSE Area="-a1/2" Axis="GY" Duration="1" Name="preY" Observe="roY,Area/C,Counter/P,DKx/C,Repetitions"/>
+      </ATOMICSEQUENCE>
+      <ATOMICSEQUENCE Azimut="0" Inclination="0" Name="Aro" Observe="C,Counter/C,Repetitions" RotAngle="0">
+         <TRAPGRADPULSE ADCs="a4" Area="2*a1*cos(Pi*a2/a3)" Axis="GX" Duration="6.4" Frequency="0" InitialPhase="0*a3" Name="roX" Observe="P,KMAXx/C,Counter/C,Repetitions/P,Nx"/>
+         <TRAPGRADPULSE Area="2*a1*sin(Pi*a3/a4)" Axis="GY" Duration="6.4" Frequency="0" InitialPhase="0*a3" Name="roY" Observe="P,KMAXx/P,Nx/C,Counter/C,Repetitions"/>
+      </ATOMICSEQUENCE>
+      <ATOMICSEQUENCE Azimut="0" Inclination="0" Name="Arfc" Observe="C,Counter/C,Repetitions" RotAngle="0">
+         <TRAPGRADPULSE Area="a1" Axis="GX" Duration="1" Name="rphX" Observe="preX,Area"/>
+         <TRAPGRADPULSE Area="a1" Axis="GY" Duration="1" Name="rphY" Observe="preY,Area"/>
+      </ATOMICSEQUENCE>
+      <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="DTR" Observe="P,TR" StartSeq="Aslice"/>
+   </ConcatSequence>
+</Parameters>
