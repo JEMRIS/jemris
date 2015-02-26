@@ -51,8 +51,9 @@ class DelayAtomicSequence : public AtomicSequence {
      * @brief Default constructor
      */
     DelayAtomicSequence() :
-    	m_mod_start(0), m_mod_stop(0), m_adc(0), m_delay_time(0),
-    	m_phase_lock(0), m_dt(DELAY_B2E), m_await_time(0) {};
+    	m_adc(0), m_delay_time(0),
+    	m_phase_lock(0), m_dt(DELAY_B2E), m_await_time(0),
+    	m_iMYpos(0), m_iS1pos(10000), m_iS2pos(-1) {};
 
     /**
      * @brief Copy constructor
@@ -83,11 +84,14 @@ class DelayAtomicSequence : public AtomicSequence {
     virtual void                 GetValue          (double * dAllVal, double const time) {};
 
     /**
-     * @brief Search start and stop sequences
+     * @brief  Prepare the delay atomic sequence.
+     * - Search start and stop sequences and their positions on this level of the tree
+     * - Observe timing of modules between start and stop
      *
+     * @param mode Sets the preparation mode, one of enum PrepareMode {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
      * @return Success
      */
-    bool  SearchStartStopSeq   ();
+    bool  PrepareDelay   (const PrepareMode mode);
 
 
  protected:
@@ -101,10 +105,9 @@ class DelayAtomicSequence : public AtomicSequence {
     /**
      * @brief Get delay length
      *
-	 * @param  mode Prepare mode.
-     * @return      Success
+     * @return  delay in ms
      */
-    double  GetDelay(const PrepareMode mode);
+    double  GetDelay();
 
  private:
 
@@ -115,10 +118,11 @@ class DelayAtomicSequence : public AtomicSequence {
     double    m_await_time;    /**< @brief Rest time. Real length of Delay in ms. Is calculated during runtime. */
     double    m_delay_time;    /**< @brief Declared length of Delay.                                            */
 
-    double	  m_durations[20]; /**< @brief Durations of other modules which have to be observed                  */
+    int		  m_iMYpos;
+    int		  m_iS1pos;
+    int		  m_iS2pos;
 
-    Module*   m_mod_start;     /**< @brief Module after which the delay shall starts.                           */
-    Module*   m_mod_stop;      /**< @brief Module from after which the delay shall starts.                      */
+    vector<Sequence*> m_seqs;  /**< @brief Durations of other modules which have to be observed                  */
 
     DelayType m_dt;            /**< @brief Type of this delay.                                                  */
 

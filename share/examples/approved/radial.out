@@ -10,5 +10,5 @@ sequence-root------>   CONCAT       CONCATSEQUENCE        C   640.000     1024  
     |_ child 1   -->    PULSE        TRAPGRADPULSE       P3     9.571       32        36  |  Axis = GX  , Area = 6.90004 , FlatTop: (Area,time)= (6.28319,8)
   |_ child 4   ---->     ATOM       ATOMICSEQUENCE       A4     4.450        0         4  |  RotMtx(alpha,theta,phi) = (174.375,0,0)
     |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     4.450        0         4  |  Axis = GX  , Area = -3.45002
-  |_ child 5   ---->     ATOM  DELAYATOMICSEQUENCE       D1     1.429        0         2  |  DelayType = B2E  , StartSeq = A1
+  |_ child 5   ---->     ATOM  DELAYATOMICSEQUENCE       D1     1.429        0         2  |  DelayType = B2E  , StartSeq = A1 , Delay = 20
     |_ child 1   -->    PULSE           EMPTYPULSE    eP_D1     1.429        0         2  |  Axis = none 

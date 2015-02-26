@@ -10,7 +10,6 @@
       <DELAYATOMICSEQUENCE ADCs="(a1+1)" Delay="10*(a1+1)" DelayType="B2E" Name="D1" Observe="C1,Counter" StartSeq="A1" StopSeq="A3"/>
       <ATOMICSEQUENCE Name="A3">
          <TRAPGRADPULSE Area="-a1" Name="P3" Observe="P2,Area"/>
-         <EMPTYPULSE ADCs="5" Axis="NONE" Duration="a1" Name="P4" Observe="P3,Duration" Shape="sqrt(T+0.1)"/>
       </ATOMICSEQUENCE>
    </ConcatSequence>
 </Parameters>
