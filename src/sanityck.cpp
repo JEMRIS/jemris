@@ -154,21 +154,22 @@ double compare_hdf5_fields(string file1, string file2, string field){
 /****************************************************/
 bool CheckSeqs(string path, vector<string> seq){
 
-	SequenceTree* seqTree;
 	bool status=true;
 
 	cout << endl << "Test directory: " << path << endl;
 	cout << endl << "Test Case 1: producing tree-dumps and sequence diagrams" << endl;
 	cout << "======================================================="<< endl << endl;
 
+
 	for (unsigned int i=0;i<seq.size();i++) {
-		seqTree = SequenceTree::instance();
-		seqTree->Initialize(path+seq[i]);
 
-		if (seqTree->GetStatus()) {
+		SequenceTree seqTree;
+		seqTree.Initialize(path+seq[i]);
 
-			seqTree->Populate();
-			ConcatSequence* CS = seqTree->GetRootConcatSequence();
+		if (seqTree.GetStatus()) {
+
+			seqTree.Populate();
+			ConcatSequence* CS = seqTree.GetRootConcatSequence();
 			printf("%02d. %15s | ",i+1,seq[i].c_str());
 
 			//sequence-diagram
@@ -208,10 +209,9 @@ bool CheckSeqs(string path, vector<string> seq){
 				status = false;
 				cout << "is NOT ok " << endl;
 			}
-
-			delete seqTree;
 		}
 	}
+
 	return status;
 
 }
@@ -228,25 +228,23 @@ bool CheckSigs(string path, vector<string> seq){
 
 	for (unsigned int i=0;i<seq.size();i++) {
 
-		Simulator* sim = new Simulator(  path+"/approved/simu.xml",path+"/approved/sample.h5",
-			                             path+"/approved/uniform.xml",path+"/approved/uniform.xml",
-			                             path+seq[0],"CVODE");
+		Simulator sim(  path+"/approved/simu.xml",path+"/approved/sample.h5",
+			            path+"/approved/uniform.xml",path+"/approved/uniform.xml",
+			            path+seq[0],"CVODE");
 
-		if (!sim->GetStatus()) {
+		if (!sim.GetStatus()) {
 			cout << "can not initialize Simulator. exit.\n";
 			return false;
 		}
 		printf("%02d. %15s | ",i+1,seq[i].c_str());
 
-		delete SequenceTree::instance();
-		sim->SetSequence(path+seq[i]);
+		sim.SetSequence(path+seq[i]);
 		string binfile = seq[i];
 		binfile.replace(binfile.find(".xml",0),4,"");
 		binfile +="_signal";
-		sim->GetRxCoilArray()->SetSignalPrefix(path+binfile);
-		sim->GetModel()->SetDumpProgress(false);
-		sim->Simulate();
-		delete sim;
+		sim.GetRxCoilArray()->SetSignalPrefix(path+binfile);
+		sim.GetModel()->SetDumpProgress(false);
+		sim.Simulate();
 
 		printf("%18s (sig-simu)",binfile.c_str());
 
@@ -280,20 +278,20 @@ bool CheckSens(string path, vector<string> coils){
 
 	for (unsigned int i=0;i<coils.size();i++) {
 
-		CoilArray* ca = new CoilArray();
-		ca->Initialize(path+coils[i]);
+		CoilArray ca;
+		ca.Initialize(path+coils[i]);
 		string binfile = coils[i];
 		binfile.replace(binfile.find(".xml",0),4,"");
-		ca->SetSenMaplPrefix(path+binfile);
-		int out = ca->Populate();
+		ca.SetSenMaplPrefix(path+binfile);
+		int out = ca.Populate();
 		status = ( (out==0) && status );
-		out = ca->DumpSensMaps(false);
+		out = ca.DumpSensMaps(false);
 		status = ( (out==0) && status) ;
 
 		printf("%02d. %15s | %18s (sens-dump) ",i+1,coils[i].c_str(),binfile.c_str());
 
 		double d = 0.0;
-		for (unsigned int j=0; j<ca->GetSize(); j++) {
+		for (unsigned int j=0; j<ca.GetSize(); j++) {
 			stringstream sstr;
 			sstr << setw(2) << setfill('0') << j;
 			double m = compare_hdf5_fields(	path+binfile+".h5",
@@ -309,8 +307,6 @@ bool CheckSens(string path, vector<string> coils){
 			}
 			d += m+p;
 		}
-
-		delete ca;
 
 		if (d > 0.1 ) {
 			status = false;
@@ -344,6 +340,7 @@ int main (int argc, char *argv[]) {
 	seq.push_back("sli_sel.xml");
 	seq.push_back("var_dur.xml");
 	seq.push_back("extpulses.xml");
+	seq.push_back("epi_modular.xml");
 
 	//coils to test
 	vector<string> coils;

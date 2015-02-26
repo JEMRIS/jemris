@@ -30,7 +30,7 @@
 /***********************************************************/
 ConcatSequence::ConcatSequence  (const ConcatSequence& cs ) {
     m_repetitions = 1;
-    m_counter = 0;
+    m_counter = -1;
 }
 
 /***********************************************************/
@@ -40,12 +40,14 @@ bool    ConcatSequence::Prepare (const PrepareMode mode){
 
 	ATTRIBUTE("Repetitions", m_repetitions);
 	HIDDEN_ATTRIBUTE("Counter", m_counter);
-	if (mode != PREP_UPDATE) GetDuration();
 
-	if (mode != PREP_UPDATE)
-		SetRepCounter( 0);
+	if (mode != PREP_UPDATE) {
+		GetDuration();
+		GetNumOfTPOIs();
+		GetNumOfADCs();
+	}
 
-	    return Sequence::Prepare(mode);
+	return Sequence::Prepare(mode);
 }
 
 /***********************************************************/
@@ -113,6 +115,20 @@ void  ConcatSequence::GetValue (double * dAllVal, double const time) {
 	}
 
 	cout << "???" << endl; //this should never happen !!!
+
+}
+
+/***********************************************************/
+long  ConcatSequence::GetNumOfADCs () {
+
+	long lADC = 0;
+	vector<Module*> children = GetChildren();
+
+	for (RepIter r=begin(); r<end(); ++r)
+		for (size_t j=0; j<children.size() ; ++j)
+			lADC += ((Sequence*) children[j])->GetNumOfADCs();
+
+	return lADC;
 
 }
 

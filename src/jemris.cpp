@@ -83,41 +83,51 @@ int main (int argc, char *argv[]) {
 
 	//CASE 1: Dump list of modules in xml file
 	if (input == "modlist")  {
-		SequenceTree* seqTree = SequenceTree::instance();
-		seqTree->SerializeModules("mod.xml");
-		//delete seqTree;
+		SequenceTree seqTree;
+		seqTree.SerializeModules("mod.xml");
 		return 0;
 	}
 
 	//CASE 2: try Dump of seq-diagram from Sequence xml-file
-	SequenceTree* seqTree = SequenceTree::instance();
-	seqTree->Initialize(input);
-	if (seqTree->GetStatus()) {
-		seqTree->Populate();
-		ConcatSequence* seq = seqTree->GetRootConcatSequence();
-		seq->SeqDiag("seq.h5");
-		seq->DumpTree();
-		if (argc==3) seq->WriteStaticXML("jemris_seq.xml");
-		//delete seqTree;
-		return 0;
+	try {
+		SequenceTree seqTree;
+		seqTree.Initialize(input);
+		if (seqTree.GetStatus()) {
+			seqTree.Populate();
+			ConcatSequence* seq = seqTree.GetRootConcatSequence();
+			seq->SeqDiag("seq.h5");
+			seq->DumpTree();
+			if (argc==3) seq->WriteStaticXML("jemris_seq.xml");
+			return 0;
+		}
+	} catch (...) {
+
 	}
 
-	//CASE 3: try simulation from Simulator xml-file
-	Simulator sim (input);
-	if (sim.GetStatus()) {
-		static clock_t runtime = clock();
-		do_simu(&sim);
-		runtime = clock() - runtime;
-		printf ("Actual simulation took %.2f seconds.\n", runtime / 1000000.0);
-		return 0;
+	//CASE 3: try Dump of sensitivities from CoilArray xml-file
+	try {
+		CoilArray ca;
+		ca.Initialize(input);
+		if (ca.Populate() == OK) {
+			ca.DumpSensMaps(true);
+			return 0;
+		}
+	} catch (...) {
+
 	}
 
-	//CASE 4: try Dump of sensitivities from CoilArray xml-file
-	CoilArray* coils = new CoilArray();
-	coils->Initialize(input);
-	if (coils->Populate() == OK) {
-		coils->DumpSensMaps(true);
-		return 0;
+	//CASE 4: try simulation from Simulator xml-file
+	try {
+		Simulator sim (input);
+		if (sim.GetStatus()) {
+			static clock_t runtime = clock();
+			do_simu(&sim);
+			runtime = clock() - runtime;
+			printf ("Actual simulation took %.2f seconds.\n", runtime / 1000000.0);
+			return 0;
+		}
+	} catch (...) {
+
 	}
 
 	//OTHERWISE: not a valid input

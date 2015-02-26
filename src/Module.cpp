@@ -28,6 +28,7 @@
 #include "Parameters.h"
 #include "SequenceTree.h"
 #include "ConcatSequence.h"
+#include "Container.h"
 #include "Pulse.h"
 #include "XMLIO.h"
 
@@ -52,11 +53,12 @@ void            Module::Initialize (DOMNode* node) {
     //set the module name to the node name as well
 	SetName( StrX(node->getNodeName()).std_str() );
 
-	//set the instances of this node and the sequence tree
-	m_node       = node;
-	m_seq_tree   = SequenceTree::instance();
-	m_parameters = m_seq_tree->GetParameters();
+	//set the instances of the DOMNnode, SequenceTree, and Parameters
+	m_node = node;
 
+	if (m_seq_tree != NULL) 	m_parameters = m_seq_tree->GetParameters();
+
+	if (m_seq_tree == NULL)  cout << "Warning: Module " << GetName() << " has no SequenceTree.\n";
 }
 
 /***********************************************************/
@@ -119,6 +121,7 @@ bool            Module::InsertChild (const string& name){
 
 	GetNode()->appendChild (node);
 	m_seq_tree->GetModuleMap()->insert(pair<DOMNode*, Module*> (node, mod));
+	mod->SetSeqTree(m_seq_tree);
 	mod->Initialize(node);
 
 	return true;
@@ -241,24 +244,42 @@ void           Module::AddAllDOMattributes (bool show_hidden){
 }
 
 /***********************************************************/
+int    Module::GetDepth (int depth) {
+
+	vector<Module*> children = GetChildren();
+	depth++;
+	int cdepth=depth, mdepth=depth;
+
+	for (unsigned int i=0; i<children.size() ; ++i) {
+		cdepth = children[i]->GetDepth(depth);
+		mdepth = (mdepth>cdepth?mdepth:cdepth);
+	}
+
+	if (GetType() == MOD_CONTAINER) {
+		Module* mod = this;
+		depth--;
+		ConcatSequence* CS = ((ConcatSequence*)  ((Container*) mod)->GetContainerSequence() );
+		if (CS!=NULL) cdepth = CS->GetDepth(depth);
+		mdepth = (mdepth>cdepth?mdepth:cdepth);
+	}
+
+	return mdepth;
+}
+
+/***********************************************************/
 void    Module::DumpTree (const string& file, Module* mod,int ichild, int level) {
 
 	//root node redirects output buffer, if filename is given
 	streambuf* sobuf = 0;
 	std::ofstream* pfout = 0;
+
 	if (mod ==NULL) {
-
 	    mod=this;
-
 		if (!file.empty()) {
-
 			sobuf = cout.rdbuf();			// Save the original stdout buffer.
 			pfout = new ofstream(file.c_str());
-
 			if (*pfout) cout.rdbuf(pfout->rdbuf()); // Redirect cout output to the opened file.
-
 		}
-
 	}
 
 	//Dump info on this module
@@ -266,21 +287,7 @@ void    Module::DumpTree (const string& file, Module* mod,int ichild, int level)
 	stringstream spaces_bef;
 	for (int j=0;j<level;++j) spaces_bef << "  ";
 	stringstream spaces_aft;
-	for (int j=level; j<m_seq_tree->GetDepth(); ++j) spaces_aft << "  ";
-
-	if (ichild<0) {
-		cout << endl << " Static Events-------> ";
-	}
-	else {
-		if (ichild)	cout	<< spaces_bef.str() << "|_ child " << ichild << "   ";
-		else		cout	<< "dump of sequence tree\n"
-				<< spaces_aft.str() << "                  TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific\n"
-				<< spaces_aft.str() << "                  ----------------------------------------------------------------- |  ---------------\n"
-				<< "sequence-root";
-
- 		for (int j=level; j<m_seq_tree->GetDepth(); ++j) cout << "--";
-		cout << "> ";
-	}
+	for (int j=level; j<m_seq_tree->GetRootConcatSequence()->GetDepth(); ++j) spaces_aft << "  ";
 
 	string class_type = mod->GetClassType();
 	string name       = mod->GetName();
@@ -299,15 +306,54 @@ void    Module::DumpTree (const string& file, Module* mod,int ichild, int level)
 		adcs=((Sequence*) mod)->GetNumOfADCs();
 	}
 
+	if (mod->GetType() == MOD_CONTAINER) {
+		type="CONTAIN";
+		adcs=((Sequence*) mod)->GetNumOfADCs();
+	}
+
 	if (mod->GetType() == MOD_PULSE) {
 		type="PULSE";
 		adcs=((Pulse*) mod)->GetNADC() ;
 	}
 
 	int    tpois = mod->GetNumOfTPOIs();
+
+	//print module info
+	if (ichild<0) {
+		cout << endl << " Static Events-------> ";
+	}
+	else {
+		if (ichild)	{
+			if (class_type=="CONTAINERSEQUENCE")
+				cout	<< spaces_bef.str() << "|_ CSroot " << "   ";
+			else
+				cout	<< spaces_bef.str() << "|_ child " << ichild << "   ";
+		}
+		else {
+			cout	<< "dump of sequence tree\n"
+					<< spaces_aft.str() << "                  TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific\n"
+					<< spaces_aft.str() << "                  ----------------------------------------------------------------- |  ---------------\n"
+					<< "sequence-root";
+		}
+
+ 		for (int j=level; j<m_seq_tree->GetRootConcatSequence()->GetDepth(); ++j) cout << "--";
+		cout << "> ";
+	}
+
 	char chform[70];
 	sprintf(chform,"%8s %20s %8s %9.3f  %7d  %8d",type.c_str(),class_type.c_str(),name.c_str(),mod->GetDuration(),adcs,tpois);
 	cout << chform << "  | " << mod->GetInfo() << "\n";
+
+
+	//a Container module calls its ContainerSequence
+    if (type=="CONTAIN") {
+    	ConcatSequence* CS = ((ConcatSequence*)  ((Container*) mod)->GetContainerSequence() );
+ 		for (int j=0; j<m_seq_tree->GetRootConcatSequence()->GetDepth(); ++j) cout << ">>";
+ 		cout << endl; //cout << ">>>---------------------------------------------------------------------------------------------------\n";
+    	DumpTree(file, CS,1,level);
+ 		for (int j=0; j<m_seq_tree->GetRootConcatSequence()->GetDepth(); ++j) cout << "<<";
+ 		cout << endl; //cout << "<<<---------------------------------------------------------------------------------------------------\n";
+    }
 
     level++;
 

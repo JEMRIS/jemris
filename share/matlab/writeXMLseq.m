@@ -31,7 +31,7 @@ global MODULE_TYPE_COUNTER;
 
 % Create DOM root node
 if nargin==3
- MODULE_TYPE_COUNTER=[0 0 0 0];
+ MODULE_TYPE_COUNTER=[0 0 0 0 0];
  [p,n,x]=fileparts(dnode);
  if isempty(p),p=pwd;end
  xmlFileName = [p,'/',n,'.xml'];

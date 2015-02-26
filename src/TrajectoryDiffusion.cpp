@@ -439,7 +439,7 @@ void TrajectoryDiffusion::GenerateDiffusionTrajectory() {
 	m_pos.push_back(trialpos);
 
 
-	SequenceTree* pSeqTree = SequenceTree::instance();
+	SequenceTree* pSeqTree = World::instance()->pSeqTree;
 	double seqDuration = pSeqTree->GetRootConcatSequence()->GetDuration();
 
 	long steps = (int) ((seqDuration+0.01)/m_timestep)+2;

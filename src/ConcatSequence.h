@@ -82,7 +82,8 @@ class ConcatSequence : public Sequence {
     double          GetDuration    ();
 
     /**
-     * @brief Default destructor.
+     * @brief Get Number of TPOIs
+     * @return Number of TPOIs
      */
     virtual int     GetNumOfTPOIs ();
 
@@ -120,7 +121,7 @@ class ConcatSequence : public Sequence {
      *
      * @return The first repetition iterator.
      */
-    inline RepIter begin() {m_counter=-1; NewState(m_counter); SetRepCounter(0); return RepIter(this,0);}
+    inline RepIter begin() { SetRepCounter(999999); SetRepCounter(0); return RepIter(this,0);}
 
     /**
      * Get the final iterator for counting repetitions.
@@ -139,6 +140,12 @@ class ConcatSequence : public Sequence {
      */
     //virtual bool StaticDOM(DOMDocument* doc, DOMNode* node);
 
+    /**
+     * Get the number of ADCs for this sequence.
+     *
+     * @return The nmuber of ADCs.
+     */
+    virtual long GetNumOfADCs ();
 
     /**
      * @brief Recursively collect sequence data (for plotting the sequence diagram)

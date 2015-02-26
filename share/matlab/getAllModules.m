@@ -26,7 +26,9 @@ function [modules,params]=getAllModules(Jcall,Jpath)
 %  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 %
 
+if ~isempty(Jcall)
  [status,dump]=system(sprintf('%s modlist ; mv mod.xml %s',Jcall,Jpath));
+end
  h.seqfile = 'mod.xml';
  h.seqdir  = Jpath;
  S=parseXMLseq(h);
@@ -35,11 +37,12 @@ function [modules,params]=getAllModules(Jcall,Jpath)
  for i=1:length(S.Children)
     c=S.Children(i);
     
+        
     if strcmp(upper(c.Name),'PARAMETERS')
         [params.a,params.ha]=get_attributes(c.Attributes);
         continue;
     end
-    
+        
     for j=1:length(c.Children)
         cc=c.Children(j);
         modules(end+1).name=cc.Name;

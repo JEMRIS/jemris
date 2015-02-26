@@ -216,10 +216,10 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 	CollectTPOIs();
 
 	for (int i=0; i < GetNumOfTPOIs(); ++i) {
-		//cout << GetName() << " " << t << " " << m_tpoi.GetTime(i)+t << endl;
 		seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
 		seqdata(1,offset+i+1) = m_tpoi.GetPhase(i);
 		GetValue(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
+		//cout << GetName() << " " << setw(9) << setfill(' ') << m_tpoi.GetTime(i)+t << setw(9) << setfill(' ') << " " << seqdata(5,offset+i+1) << endl;
 		if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( &seqdata(2,offset+i+1), m_tpoi.GetTime(i) + t );
         GetValueLingeringEddyCurrents(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
 		seqdata(7,offset+i+1) = m_tpoi.GetMask(i);

@@ -41,6 +41,8 @@
 #include "SpiralGradPulse.h"
 #include "ExternalGradPulse.h"
 #include "ConcatSequence.h"
+#include "ContainerSequence.h"
+#include "Container.h"
 #include "AtomicSequence.h"
 #include "DelayAtomicSequence.h"
 
@@ -50,7 +52,8 @@
 ModulePrototypeFactory::~ModulePrototypeFactory() {
 	map<string,Module*>::iterator it;
 	for( it = m_Clonables.begin(); it != m_Clonables.end(); it++ )
-		delete it->second ;
+		if ( it->first != "PARAMETERS" ) // SeqTree deletes the Parameters singleton!
+			delete it->second ;
 }
 
 /***********************************************************/
@@ -71,6 +74,8 @@ ModulePrototypeFactory::ModulePrototypeFactory () {
 	m_Clonables.insert( pair<string,Module*>( "SPIRALGRADPULSE",     new SpiralGradPulse     () ));
 	m_Clonables.insert( pair<string,Module*>( "EXTERNALGRADPULSE",   new ExternalGradPulse   () ));
 	m_Clonables.insert( pair<string,Module*>( "CONCATSEQUENCE",      new ConcatSequence      () ));
+	m_Clonables.insert( pair<string,Module*>( "CONTAINERSEQUENCE",   new ContainerSequence   () ));
+	m_Clonables.insert( pair<string,Module*>( "CONTAINER",           new Container           () ));
 	m_Clonables.insert( pair<string,Module*>( "ATOMICSEQUENCE",      new AtomicSequence      () ));
 	m_Clonables.insert( pair<string,Module*>( "DELAYATOMICSEQUENCE", new DelayAtomicSequence () ));
 
