@@ -67,7 +67,7 @@ void Sequence::SeqDiag (const string& fname ) {
 	//prepare H5 file structure
 	BinaryContext bc (fname, IO::OUT);
 	if (bc.Status() != IO::OK) return;
-	//if ( GetNumOfTPOIs()==0  ) return;
+	if ( GetNumOfTPOIs()==0  ) return;
 
 	NDData<double>      di (GetNumOfTPOIs() + 1);
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
