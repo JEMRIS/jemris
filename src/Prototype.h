@@ -214,6 +214,14 @@ class Prototype {
     Attribute*	GetAttribute(string name);
 
     /**
+     * @brief Copy observers from one attribute to another
+     *
+     * @param a1       source attribute (copy from here)
+     * @param a1       target attribute (copy to here)
+     */
+    void	CopyObservers(Attribute* a1, Attribute* a2);
+
+    /**
      * @brief Check if an attribute exist.
      *
      * @param name       The name of the attribute

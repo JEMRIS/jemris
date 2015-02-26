@@ -67,9 +67,17 @@ void Attribute::AttachSubject (Attribute* attrib){
 
 
 /***********************************************************/
-void Attribute::UpdatePrototype (Prototype* prot){
+void Attribute::UpdatePrototype (){
+	Prototype* prot = GetPrototype();
 	prot->Prepare(PREP_UPDATE);
 	if (prot->GetType() == MOD_PULSE) ((AtomicSequence*) prot->GetParent())->CollectTPOIs();
+	//Notify observers after (!) update of prototype
+	if (GetTypeID()==typeid(  double*).name()) { Notify( GetMember  <double>() ); return; }
+	if (GetTypeID()==typeid(     int*).name()) { Notify( GetMember     <int>() ); return; }
+	if (GetTypeID()==typeid(    long*).name()) { Notify( GetMember    <long>() ); return; }
+	if (GetTypeID()==typeid(unsigned*).name()) { Notify( GetMember<unsigned>() ); return; }
+	if (GetTypeID()==typeid(    bool*).name()) { Notify( GetMember    <bool>() ); return; }
+	//cout << " DEBUG Attribute::UpdatePrototype()  " << GetName() << endl;
 }
 
 /***********************************************************/
