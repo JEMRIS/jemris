@@ -239,6 +239,16 @@ class Attribute {
     void EvalExpression ();
 
     /**
+     * @brief Return the observers.
+     */
+    std::vector<Attribute*>             GetObservers  (){       return m_observers; };
+
+    /**
+     * @brief Return the subjects.
+     */
+    std::vector<Attribute*>             GetSubjects  (){        return m_subjects; };
+
+    /**
      * @brief Evaluate the compiled GiNaC expression of this attribute
      *
      * At first call, performs runtime compilation of the GiNaC expression.
@@ -315,10 +325,9 @@ class Attribute {
         	if (m_observers.at(i)->GetNumberFunctionPointers()>0) {
         		m_observers.at(i)->StepCurrentFunctionPointer(  );
         	}
-
-        	m_observers.at(i)->EvalExpression();
-            UpdatePrototype( m_observers.at(i)->GetPrototype() );
             //cout << "DEBUG " << GetName() << " notified " << m_observers.at(i)->GetName() << endl;
+        	m_observers.at(i)->EvalExpression();
+        	m_observers.at(i)->UpdatePrototype();
         }
 
     	return true;
@@ -358,7 +367,7 @@ class Attribute {
      *
      * @param prot the Prototype to update
      */
-    void UpdatePrototype (Prototype* prot);
+    void UpdatePrototype ();
 
 
     /* pure template Functions need header implementation */
@@ -370,7 +379,7 @@ class Attribute {
      */
     template <typename T> void WriteMember (const T& val) {
     	*((T*) m_address) = val;
-    	Notify(val);
+    	//Notify(val);
     }
 
     /**

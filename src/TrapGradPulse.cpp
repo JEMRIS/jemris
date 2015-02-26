@@ -95,12 +95,12 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
     	m_has_flat_top_area = HasDOMattribute("FlatTopArea"); // also during PREP_UPDATE, therefore
     	m_has_duration      = HasDOMattribute("Duration");    // local boolean are defined
     	m_has_area          = HasDOMattribute("Area");        // to increase speed
-/*
+
     	if (m_has_flat_top_area && !m_has_area )
     		CopyObservers(GetAttribute("Area"),GetAttribute("FlatTopArea"));
     	if (!m_has_flat_top_area && m_has_area )
     		CopyObservers(GetAttribute("FlatTopArea"),GetAttribute("Area"));
-*/
+
 		if ( m_has_duration && m_has_flat_top_time )
 		{
 			if ( mode == PREP_VERBOSE)

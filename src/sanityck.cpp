@@ -340,7 +340,9 @@ int main (int argc, char *argv[]) {
 	seq.push_back("tse.xml");
 	seq.push_back("analytic.xml");
 	seq.push_back("radial.xml");
+	seq.push_back("radial2.xml");
 	seq.push_back("sli_sel.xml");
+	seq.push_back("var_dur.xml");
 	seq.push_back("extpulses.xml");
 
 	//coils to test

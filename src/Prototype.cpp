@@ -84,6 +84,18 @@ Attribute*	Prototype::GetAttribute(string name){
 }
 
 /***********************************************************/
+void	Prototype::CopyObservers(Attribute* a1, Attribute* a2){
+
+	if (a1 == NULL || a2 == NULL) return;
+
+	std::vector<Attribute*> o1 = a1->GetObservers();
+	std::vector<Attribute*> o2 = a2->GetObservers();
+
+	for (unsigned int i=0; i<o1.size(); i++)
+   			a2->AttachObserver(o1[i]);
+}
+
+/***********************************************************/
 void           Prototype::HideAttribute (string attrib, bool observable){
 
 	Attribute* a  = GetAttribute(attrib);

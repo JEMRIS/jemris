@@ -165,7 +165,7 @@ The most simple pulse-shape module is the
 				    has a single EmptyPulse as a child.) The EmptyPulse has one new attribute
 	 <ol>
          	<li> \c "Shape" An analytic expression to specify non-equidistant ADC sampling during the pulse length.
-			See \ref ug_JEMRIS_seq_spec for explanation.
+			See \ref ug_JEMRIS_seq_spec for explanation. The analytic expression is automatically scaled over the total length of the pulse.
 	 </ol>
 </ul> 
 

@@ -25,6 +25,7 @@
  */
 
 #include "DelayAtomicSequence.h"
+#include "ConcatSequence.h"
 #include "SequenceTree.h"
 #include "EmptyPulse.h"
 
@@ -39,8 +40,9 @@ DelayAtomicSequence::DelayAtomicSequence  (const DelayAtomicSequence& as) {
 	m_dt         = DELAY_B2E;
 	m_start      = "";
 	m_stop       = "";
-	m_mod_start  = NULL;
-	m_mod_stop   = NULL;
+	m_iMYpos	 = 0;
+	m_iS1pos	 = 10000;
+	m_iS2pos	 = -1;
 
 }
 
@@ -58,100 +60,98 @@ bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
     ATTRIBUTE("DelayType", m_delay_type);
 
     //insert pulse and module-attributes for observation only once
-    if (mode == PREP_INIT) {
+    if (mode == PREP_INIT && GetNumberOfChildren()==0)	b =InsertChild("EmptyPulse");
 
-		//insert empty pulse
-        if (GetNumberOfChildren()==0)
-			b =InsertChild("EmptyPulse");
+   	Pulse* ep  = ((Pulse*) GetChild(0));
 
-		//add attributes to link with durations of other modules
-		for (int i=0;i<20;i++) {
-			char modules[10];
-			sprintf( modules, "Module%02d", i ) ;
-			HIDDEN_ATTRIBUTE(modules, m_durations[i] );
-		}
-    }
+   	//prepare delay calculation
+   	if (mode != PREP_UPDATE)	{
+   		ep->SetName("eP_"+GetName());
+   		b  = ( PrepareDelay(mode) && b);
+   	}
 
-    //set delaytype for a quick later check in PREP_UPDATE
-    if (mode != PREP_UPDATE) {
-		if (m_delay_type == "B2E") m_dt = DELAY_B2E;
-		if (m_delay_type == "C2E") m_dt = DELAY_C2E;
-		if (m_delay_type == "B2C") m_dt = DELAY_B2C;
-		if (m_delay_type == "C2C") m_dt = DELAY_C2C;
-    }
+   	//calculate delay and pass info to the EmptyPulse
+   	delay = GetDelay();
+   	ep->SetNADC(m_adc);
+   	ep->SetPhaseLock(m_phase_lock);
+   	ep->SetDuration(delay);
 
-    b     = ( SearchStartStopSeq() && b);
-    delay = GetDelay(mode);
-    //std::cout << b << "+" << delay << "-" << std::endl;
-    b     = (delay >= 0.0 && b);
-
-    if (GetNumberOfChildren()>0) {
-		((Pulse*) GetChild(0))->SetNADC(m_adc);  //pass my ADCs to the EmptyPulse
-		((Pulse*) GetChild(0))->SetPhaseLock(m_phase_lock);
-		((Pulse*) GetChild(0))->SetDuration(delay);
-		if (mode != PREP_UPDATE)
-			((Pulse*) GetChild(0))->SetName("eP_"+GetName());
-    }
-
-    b = ( AtomicSequence::Prepare(mode) && b);
+	//call Prepare of base class
+    b = ( AtomicSequence::Prepare(mode) && (delay >= 0.0) && b);
 
     // Hide XML attributes which were set by AtomicSequence::Prepare()
     // delay atoms don't need a rot-matrix.
     if (mode != PREP_UPDATE) {
 		HideAttribute("RotAngle",false);
 		HideAttribute("Inclination",false);
-		HideAttribute("Azimut",false);
+		HideAttribute("Azimuth",false);
     }
 
     if (!b && mode == PREP_VERBOSE)
-		cout << "Preparation of DelayAtomicSequence '" << GetName() << "' not succesful. Delay = " << delay << " ms" << endl;
+		cout << "Preparation of DelayAtomicSequence '" << GetName() << "' not successful. Delay = " << delay << " ms" << endl;
 
     return b;
 
 }
 
 /***********************************************************/
-double DelayAtomicSequence::GetDelay(const PrepareMode mode) {
+bool DelayAtomicSequence::PrepareDelay (const PrepareMode mode) {
 
-	double dDelayTime = m_await_time;
+    //set delay-type for a quick later check in PREP_UPDATE
+	if (m_delay_type == "B2E") m_dt = DELAY_B2E;
+	if (m_delay_type == "C2E") m_dt = DELAY_C2E;
+	if (m_delay_type == "B2C") m_dt = DELAY_B2C;
+	if (m_delay_type == "C2C") m_dt = DELAY_C2C;
 
-	//if (m_mod_start==NULL && m_mod_stop==NULL) return dDelayTime;
+    Module* pMod = GetParent();
+    if (pMod == NULL) return false;
 
-	Module* pMod =  GetParent();
-	if (pMod == NULL) return -1.0;
+    int i1 = 0, i2 = pMod->GetNumberOfChildren();
 
-	//find other sequences between pModStart, myself, and pModStop
-	int iMYpos=0, iS1pos=10000, iS2pos=-1;
-	for (int i=0;i<pMod->GetNumberOfChildren();++i) {
-		if(       this == pMod->GetChild(i)) iMYpos=i;
-		if(m_mod_start == pMod->GetChild(i)) iS1pos=i;
-		if(m_mod_stop  == pMod->GetChild(i)) iS2pos=i;
+    //find positions of start and stop sequence
+	m_iMYpos = 0; m_iS1pos = 10000; m_iS2pos = -1;
+
+    for (int i=0;i<pMod->GetNumberOfChildren();++i) {
+        if( m_start == pMod->GetChild(i)->GetName()	)	m_iS1pos=i;
+        if( m_stop  == pMod->GetChild(i)->GetName()	)	m_iS2pos=i;
+		if( this    == pMod->GetChild(i)			)	m_iMYpos=i;
+    }
+
+	m_iS1pos = (m_iMYpos<m_iS1pos)?m_iMYpos:m_iS1pos;
+	m_iS2pos = (m_iMYpos>m_iS2pos)?m_iMYpos:m_iS2pos;
+
+	if (m_iS1pos>m_iS2pos) return false;
+
+
+    //get all sequences from start-sequence to stop-sequence
+    int j=0; m_seqs.clear();
+	for (int i=m_iS1pos;i<=m_iS2pos;++i) {
+		if (i==m_iMYpos) continue;
+		m_seqs.push_back( (Sequence* ) pMod->GetChild(i));
+		Observe(GetAttribute("Duration"), pMod->GetChild(i)->GetName(),"Duration", mode == PREP_VERBOSE );
 	}
-	iS1pos = (iMYpos<iS1pos)?iMYpos:iS1pos;
-	iS2pos = (iMYpos>iS2pos)?iMYpos:iS2pos;
 
-	//Observe these sequences
-	int j = 0;
-	for (int i=iS1pos;i<=iS2pos;++i)
-		if (i!=iMYpos && mode == PREP_VERBOSE) {
-			char modules[10];
-			sprintf( modules, "Module%02d", j ) ;
-			Observe( GetAttribute(modules), pMod->GetChild(i)->GetName(),"Duration", mode == PREP_VERBOSE );
+	return true;
+
+}
+
+/***********************************************************/
+double DelayAtomicSequence::GetDelay() {
+
+	double delay = m_await_time;
+	int j=0;
+
+	for (int i=m_iS1pos;i<=m_iS2pos;++i) {
+		double dfact = ( ( i==m_iS2pos && (m_dt==DELAY_B2C || m_dt==DELAY_C2C) ) ||
+						 ( i==m_iS1pos && (m_dt==DELAY_C2E || m_dt==DELAY_C2C) )   ) ? 0.5:1.0;
+		if (i!=m_iMYpos) {
+			//cout << " >> " << m_seqs[j]-> GetName() << " : " << dfact*m_seqs[j]->GetDuration() << endl;
+			delay -= dfact * m_seqs[j]->GetDuration();
 			j++;
 		}
-
-	//subtract duration of other sequences between pModStart, myself, and pModStop
-	//do this twice, since cross-dependencies may hinder success in first attempt
-	for (int j=0;j<2;j++) {
-		dDelayTime = m_await_time;
-		for (int i=iS1pos;i<=iS2pos;++i) {
-			double dfact = ( ( i==iS2pos && (m_dt==DELAY_B2C || m_dt==DELAY_C2C) ) ||
-							 ( i==iS1pos && (m_dt==DELAY_C2E || m_dt==DELAY_C2C) )   ) ? 0.5:1.0;
-			if (i!=iMYpos)
-				dDelayTime -= dfact * pMod->GetChild(i)->GetDuration();
-
-		}
 	}
+	//cout << " delay = " << delay << endl << endl;
+
 
 
 #ifdef DEBUG
@@ -161,36 +161,7 @@ double DelayAtomicSequence::GetDelay(const PrepareMode mode) {
 #endif
 
 
-	return dDelayTime;
-
-}
-
-/***********************************************************/
-bool DelayAtomicSequence::SearchStartStopSeq () {
-
-    m_mod_start = NULL;
-    m_mod_stop  = NULL;
-
-    Module* pMod = GetParent();
-    if (pMod == NULL) return false;
-
-    int i1 = 0, i2 = pMod->GetNumberOfChildren();
-
-    for (int i=0;i<pMod->GetNumberOfChildren();++i) {
-        if(!m_start.compare(pMod->GetChild(i)->GetName())) {
-        	m_mod_start = pMod->GetChild(i);
-        	i1=i;
-        }
-
-        if(!m_stop.compare(pMod->GetChild(i)->GetName())) {
-        	m_mod_stop  = pMod->GetChild(i);
-        	i2=i;
-        }
-    }
-
-
-
-    return (i1<i2);
+	return delay;
 
 }
 
@@ -209,6 +180,10 @@ string          DelayAtomicSequence::GetInfo () {
 
 	if (!m_start.empty()) ret = ret+" , StartSeq = "+m_start;
 	if (!m_stop.empty() ) ret = ret+" , StopSeq = "+m_stop;
+
+	stringstream s;
+	s << " , Delay = " << m_await_time;
+	ret = ret + s.str();
 
 	return ret;
 
