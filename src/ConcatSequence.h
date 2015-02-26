@@ -82,8 +82,7 @@ class ConcatSequence : public Sequence {
     double          GetDuration    ();
 
     /**
-     * @brief Get Number of TPOIs
-     * @return Number of TPOIs
+     * @brief Default destructor.
      */
     virtual int     GetNumOfTPOIs ();
 
@@ -121,7 +120,7 @@ class ConcatSequence : public Sequence {
      *
      * @return The first repetition iterator.
      */
-    inline RepIter begin() { SetRepCounter(999999); SetRepCounter(0); return RepIter(this,0);}
+    inline RepIter begin() {m_counter=-1; NewState(m_counter); SetRepCounter(0); return RepIter(this,0);}
 
     /**
      * Get the final iterator for counting repetitions.
