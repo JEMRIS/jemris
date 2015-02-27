@@ -3,8 +3,10 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 2007-2008  Tony Stoecker, Kaveh Vahedipour
- *                                  Forschungszentrum Joelich, Germany
+ *  JEMRIS Copyright (C)
+ *                        2006-2015  Tony Stoecker
+ *                        2007-2015  Kaveh Vahedipour
+ *                        2009-2015  Daniel Pflugfelder
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

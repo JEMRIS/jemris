@@ -1,6 +1,12 @@
+/** @file BinaryIO.h
+ *  @brief Implementation of binary I/O
+ */
+
 /*
- *  JEMRIS Copyright (C) 2007-2010  Tony Stoecker, Kaveh Vahedipour
- *                                  Forschungszentrum Juelich, Germany
+ * JEMRIS Copyright (C)
+ *                        2006-2015  Tony Stoecker
+ *                        2007-2015  Kaveh Vahedipour
+ *                        2009-2015  Daniel Pflugfelder
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,6 +22,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 
 #ifndef BINARY_IO_H_
 #define BINARY_IO_H_

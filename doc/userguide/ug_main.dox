@@ -150,8 +150,8 @@ Use e.g. <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/share/jemris/matlab<
  \page ug_about About JEMRIS
 \section ug_version Version
 
-JEMRIS Version 2.7\n
-Copyright (C) 2006-2014  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
+JEMRIS Version 2.8\n
+Copyright (C) 2006-2015  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
