@@ -77,4 +77,10 @@ share/examples/extpulses_signal.h5
 share/examples/epi_modular.h5
 share/examples/epi_modular.out
 share/examples/epi_modular_signal.h5
+share/examples/radial2.h5
+share/examples/radial2.out
+share/examples/radial2_signal.h5
+share/examples/var_dur.h5
+share/examples/var_dur.out
+share/examples/var_dur_signal.h5
 

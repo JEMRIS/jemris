@@ -44,7 +44,7 @@ class ContainerSequence : public ConcatSequence {
     /**
      * @brief Default constructor
      */
-    ContainerSequence() {};
+    ContainerSequence() : m_container(0) {};
 
     /**
      * @brief Copy constructor

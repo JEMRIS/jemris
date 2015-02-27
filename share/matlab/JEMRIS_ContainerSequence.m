@@ -71,7 +71,8 @@ handles.ax=0;
 handles.CWD=pwd;
 handles.win = (strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
 handles.JemrisCall=[];
-handles.JemrisShare='/usr/local/share/jemris/matlab';
+
+handles.JemrisShare='/usr/local/share/jemris/matlab'; 
 
 %get all modules + attributes which are currently supported by JEMRIS
 [Modules,Params]=getAllModules(handles.JemrisCall,handles.CWD);

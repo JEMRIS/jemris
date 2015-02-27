@@ -7,7 +7,8 @@ list (APPEND CORE_SRC AnalyticCoil.cpp AnalyticCoil.h
   Bloch_McConnell_CV_Model.h Bloch_CV_Model.cpp Bloch_CV_Model.h
   Coil.cpp Coil.h CoilArray.cpp CoilArray.h CoilPrototypeFactory.cpp
   CoilPrototypeFactory.h ConcatSequence.cpp ConcatSequence.h
-  ConstantGradPulse.cpp ConstantGradPulse.h DOMTreeErrorReporter.cpp
+  ConstantGradPulse.cpp ConstantGradPulse.h Container.cpp Container.h 
+  ContainerSequence.cpp ContainerSequence.h DOMTreeErrorReporter.cpp
   DOMTreeErrorReporter.h Debug.h Declarations.h DelayAtomicSequence.cpp
   DelayAtomicSequence.h DynamicVariables.cpp DynamicVariables.h
   EddyPulse.cpp EddyPulse.h EmptyPulse.cpp EmptyPulse.h ExternalCoil.cpp

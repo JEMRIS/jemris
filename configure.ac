@@ -479,6 +479,6 @@ if test x$mpi = xtrue; then
   CXX=$MPICXX
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/JEMRIS_ContainerSequence.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile])
 
 AC_OUTPUT

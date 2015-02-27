@@ -2974,10 +2974,10 @@ fi
 
 
 
-$as_echo "#define GIT_COMMIT \"ba91a806\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"638a0073\"" >>confdefs.h
 
 
-$as_echo "#define GIT_COMMIT_DATE \"\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT_DATE \"Fri Feb 27 08:37:47 2015 +0100\"" >>confdefs.h
 
 
 # copyright notice
@@ -7194,7 +7194,7 @@ rm -f conftest.*
   CXX=$MPICXX
 fi
 
-ac_config_files="$ac_config_files Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/JEMRIS_ContainerSequence.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -7957,6 +7957,7 @@ do
     "share/matlab/JEMRIS_sim.m") CONFIG_FILES="$CONFIG_FILES share/matlab/JEMRIS_sim.m" ;;
     "share/matlab/JEMRIS_seq.m") CONFIG_FILES="$CONFIG_FILES share/matlab/JEMRIS_seq.m" ;;
     "share/matlab/JEMRIS_txrx.m") CONFIG_FILES="$CONFIG_FILES share/matlab/JEMRIS_txrx.m" ;;
+    "share/matlab/JEMRIS_ContainerSequence.m") CONFIG_FILES="$CONFIG_FILES share/matlab/JEMRIS_ContainerSequence.m" ;;
     "share/matlab/pbs_script.sh") CONFIG_FILES="$CONFIG_FILES share/matlab/pbs_script.sh" ;;
     "doc/doxy.conf") CONFIG_FILES="$CONFIG_FILES doc/doxy.conf" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;

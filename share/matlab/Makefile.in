@@ -81,7 +81,9 @@ host_triplet = @host@
 subdir = share/matlab
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/JEMRIS_sim.m.in $(srcdir)/JEMRIS_seq.m.in \
-	$(srcdir)/JEMRIS_txrx.m.in $(srcdir)/pbs_script.sh.in
+	$(srcdir)/JEMRIS_txrx.m.in \
+	$(srcdir)/JEMRIS_ContainerSequence.m.in \
+	$(srcdir)/pbs_script.sh.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_compile_flag.m4 \
 	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
@@ -93,7 +95,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/src/config.h
 CONFIG_CLEAN_FILES = JEMRIS_sim.m JEMRIS_seq.m JEMRIS_txrx.m \
-	pbs_script.sh
+	JEMRIS_ContainerSequence.m pbs_script.sh
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -292,6 +294,8 @@ JEMRIS_sim.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_sim.m.in
 JEMRIS_seq.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_seq.m.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 JEMRIS_txrx.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_txrx.m.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+JEMRIS_ContainerSequence.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_ContainerSequence.m.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 pbs_script.sh: $(top_builddir)/config.status $(srcdir)/pbs_script.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
