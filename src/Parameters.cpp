@@ -115,6 +115,7 @@ bool    Parameters::Prepare(const PrepareMode mode) {
 	//hide XML attributes which were set by Module::Prepare()
 	HideAttribute("Observe", false);
 	HideAttribute("Vector",  false);
+	HideAttribute("Duration",false);
 
 	return m_prepared;
 
