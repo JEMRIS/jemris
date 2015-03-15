@@ -32,14 +32,17 @@ AC_HEADER_STDC
 # Check for the host type
 AC_CANONICAL_HOST
 
+
 # SIMD capabilities
-#case $host in
-#     *x86_64*)
-	AX_EXT
-	CXXFLAGS="${CXXFLAGS} ${SIMD_FLAGS}"
-#     ;;
-#esac
-#CXXFLAGS="${CXXFLAGS} -Wno-psabi"
+case $target in
+    *mingw*)
+        ;;
+    *)
+	    AX_EXT
+	    CXXFLAGS="${CXXFLAGS} ${SIMD_FLAGS}"
+        ;;
+esac
+CXXFLAGS="${CXXFLAGS} -Wno-psabi"
 
 AC_ARG_ENABLE([documentation],
      [  --enable-documentation          turn on documentation C++ library support (default: yes)],
