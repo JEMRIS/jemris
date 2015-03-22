@@ -80,7 +80,13 @@ class AnalyticPulseShape {
      */
     bool     PrepareAnalytic(bool verbose);
 
-    double  GetAnalyticIntegral(bool verbose);
+    /**
+     * @brief analytic GiNaC calculation of the integral of this pulse shape
+     *
+     * @param verbose if true, dump warning/error messages
+     * @return value of the analytic integral
+     */
+    double  GetAnalyticIntegral(bool verbose) { return m_analytic_integral; };
 
     /**
      * @see Pulse::SetTPOIs
