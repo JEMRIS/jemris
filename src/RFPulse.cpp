@@ -80,8 +80,9 @@ void RFPulse::insertGetPhaseFunction (double (*FGetPhase)(Module*, double)) {
 }
 
 void RFPulse::SetTPOIs() {
+	size_t bitmask = (m_refocusing) ? BIT(REFOCUS_T) : BIT(EXCITE_T);
 	Pulse::SetTPOIs();
-    m_tpoi + TPOI::set (m_symmetry * GetDuration(), -1., (m_refocusing) ? 8 : 4);
+	m_tpoi + TPOI::set (m_symmetry * GetDuration(), -1., bitmask);
 }
 
 /*****************************************************************/
