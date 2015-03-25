@@ -153,6 +153,11 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 /***********************************************************/
 inline bool    TrapGradPulse::SetShape  (bool verbose){
 
+	//predefined rise time
+	if (m_rise_time>0.0) {
+		m_slew_rate=m_max_ampl/m_rise_time;
+	}
+
 	//predefined area definition for the flat top
 	if ( m_has_flat_top_area ) {
 	       double dC = 2.0/fabs(2.0*m_slew_rate);
@@ -174,21 +179,30 @@ inline bool    TrapGradPulse::SetShape  (bool verbose){
 		}
 		//change system limits (m_max_ampl) so that .Prepare in shortest time"
 		//yields exactly the requested time
-        double dGmax = m_max_ampl, dC = 0.0;
+		double dGmax = m_max_ampl, dC = 0.0;
 		if (m_has_duration)
 		{
-        		dC = 1.0/fabs(2.0*m_slope_up) + 1.0/fabs(2.0*m_slope_dn);
-        		m_max_ampl = ( requested - sqrt(requested*requested - 4*fabs(m_area)*dC) )/(2.0*dC);
-        		m_ar = m_area;
+			if (m_rise_time>0.0) {
+				m_max_ampl = fabs(m_area)/(requested-m_rise_time);
+				m_slew_rate = m_max_ampl/m_rise_time;
+				m_ar = m_area;
+			} else {
+				dC = 1.0/fabs(2.0*m_slope_up) + 1.0/fabs(2.0*m_slope_dn);
+				m_max_ampl = ( requested - sqrt(requested*requested - 4*fabs(m_area)*dC) )/(2.0*dC);
+				m_ar = m_area;
+			}
 		}
 		else
 		{
 			m_max_ampl = fabs(m_flat_top_area/requested);
-	        dC = 2.0/fabs(2.0*m_slew_rate);
-	        if (m_flat_top_area != 0.0)
-	        	m_ar = m_flat_top_area *( 1.0 + m_max_ampl*m_max_ampl*dC / fabs(m_flat_top_area) );
-	        else
-	        	m_ar = 0.0;
+			if (m_rise_time>0.0) {
+				m_slew_rate=m_max_ampl/m_rise_time;
+			}
+			dC = 2.0/fabs(2.0*m_slew_rate);
+			if (m_flat_top_area != 0.0)
+				m_ar = m_flat_top_area *( 1.0 + m_max_ampl*m_max_ampl*dC / fabs(m_flat_top_area) );
+			else
+				m_ar = 0.0;
 		}
 		SetTrapezoid();     //Calculate the gradient shape
 

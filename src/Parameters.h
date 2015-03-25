@@ -109,6 +109,7 @@ public:
     //Scanner hardware parameters
     double m_grad_slew_rate; /**< @brief Overall maximum gradient slewrate */
     double m_grad_max_ampl;  /**< @brief Overall maximum gradient amplitude */
+    double m_grad_rise_time; /**< @brief Constant rise time for all trapezoids */
 
 
  private:

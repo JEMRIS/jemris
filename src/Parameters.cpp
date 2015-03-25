@@ -61,6 +61,7 @@ void Parameters::SetDefaults() {
 	//hardware parameters have some useful values:
 	m_grad_slew_rate = 1;
 	m_grad_max_ampl  = 1;
+	m_grad_rise_time = 0.0;
 
 }
 
@@ -86,6 +87,7 @@ bool    Parameters::Prepare(const PrepareMode mode) {
 
 	ATTRIBUTE("GradSlewRate", m_grad_slew_rate);
 	ATTRIBUTE("GradMaxAmpl" , m_grad_max_ampl);
+	ATTRIBUTE("GradRiseTime" , m_grad_rise_time);
 
 	//Parameters, intended for reference from other modules only
 	m_delta_x = m_fov_x/m_iNx;
@@ -108,6 +110,14 @@ bool    Parameters::Prepare(const PrepareMode mode) {
 	HIDDEN_ATTRIBUTE("DKx"    ,m_delta_kx);
 	HIDDEN_ATTRIBUTE("DKy"    ,m_delta_ky);
 	HIDDEN_ATTRIBUTE("DKz"    ,m_delta_kz);
+
+	if (HasDOMattribute("GradSlewRate") && HasDOMattribute("GradRiseTime"))
+	{
+		if ( mode == PREP_VERBOSE)
+			cout	<< GetName() << "::Prepare() error: set only one of "
+				<< "'GradRiseTime' and 'GradSlewRate' for Parameters\n";
+		m_prepared = false;
+	}
 
     // Prepare up the chain
 	Module::Prepare(mode);

@@ -122,6 +122,7 @@ class GradPulse : public Pulse {
 
    double m_slew_rate;       /**< @brief The slewrate of this gradient pulse */
    double m_max_ampl;        /**< @brief The maximum amplitude of this gradient pulse */
+   double m_rise_time;       /**< @brief The constant rise time of this gradient pulse */
    double m_area;            /**< @brief The area of the gradient pulse*/
 
    bool   m_non_lin_grad;    /**< @brief A flag for nonlinear gradients */
