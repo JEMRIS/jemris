@@ -155,9 +155,9 @@ double DelayAtomicSequence::GetDelay() {
 
 
 #ifdef DEBUG
-	cout	<< "  DELAYTOMICSEQUENCE: " << GetName() << " mode = " << mode << " , m_await_time = " << m_await_time
-			<< " , (iS1pos, iMYpos, iS2pos) = (" << iS1pos << "," << iMYpos << "," << iS2pos << ")"
-			<< "  =>  delay = " << dDelayTime << endl;
+	cout	<< "  DELAYTOMICSEQUENCE: " << GetName() << " , m_await_time = " << m_await_time
+			<< " , (iS1pos, iMYpos, iS2pos) = (" << m_iS1pos << "," << m_iMYpos << "," << m_iS2pos << ")"
+			<< "  =>  delay = " << delay << endl;
 #endif
 
 
