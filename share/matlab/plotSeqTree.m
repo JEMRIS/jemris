@@ -242,7 +242,7 @@ if isempty(seq.Attributes)
     seq.Attributes.Value=seq.Name;
 end
 
-for i=1:17
+for i=1:20
     if i>length(A)
         bvis='''off''';
     else

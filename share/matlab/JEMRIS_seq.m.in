@@ -118,7 +118,7 @@ set(handles.HiddenAttr,'Visible','off');
 
 set(handles.addADCs,'Visible','off');
 set(handles.ContDraw,'Visible','off');
-for i=1:17
+for i=1:20
     eval(['set(handles.SOtag',num2str(i),',''Visible'',''off'');'])
     eval(['set(handles.SOEtag',num2str(i),',''Visible'',''off'');'])
 end
@@ -547,6 +547,32 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function SOEtag18_Callback(hObject, eventdata, handles)
+common_SOEtags(hObject,handles)
+
+% --- Executes during object creation, after setting all properties.
+function SOEtag18_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function SOEtag19_Callback(hObject, eventdata, handles)
+common_SOEtags(hObject,handles)
+
+% --- Executes during object creation, after setting all properties.
+function SOEtag19_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function SOEtag20_Callback(hObject, eventdata, handles)
+common_SOEtags(hObject,handles)
+
+% --- Executes during object creation, after setting all properties.
+function SOEtag20_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 % --- Executes on selection change in HiddenAttr.
 function HiddenAttr_Callback(hObject, eventdata, handles)
