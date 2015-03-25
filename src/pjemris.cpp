@@ -35,6 +35,10 @@ using namespace std;
 #include "config.h"
 #include "Mpi2Evolution.h"
 
+#include <unistd.h>
+#include <sys/stat.h>
+#include <cerrno>
+
 int main (int argc, char *argv[]) {
   
 	//init MPI
@@ -52,10 +56,50 @@ int main (int argc, char *argv[]) {
 	int master=0, tag=42;
 	double t1 = MPI_Wtime();
 
+  string output_dir("");
+  string filename("");
+
+  opterr = 0;
+  int status;
+
+  int c;
+  while((c = getopt (argc, argv, "f:o:")) != -1)
+  {
+    switch (c)
+    {
+      case 'o':
+        output_dir = optarg;
+        output_dir += "/";
+        status = mkdir(output_dir.c_str(), 0777);
+        if(status && errno != EEXIST)
+        {
+          cerr << "mkdir failed: Could not create output directory: "
+               << output_dir << endl;
+          return 1;
+        }
+        break;
+      case 'f':
+        filename = optarg;
+        break;
+      case '?':
+        if (optopt == 'o')
+          cerr << "Option '-o' requires an argument." << endl;
+        if (optopt == 'f')
+          cerr << "Option '-f' requires an argument." << endl;
+        else if (isprint(optopt))
+          cerr << "Unkown option '-" << (char)optopt << "'." << endl;
+        else
+          cerr << "Unkown option character '-" << (char)optopt << "'." << endl;
+        return 1;
+      default:
+        abort();
+    }
+  }
+
 	// read simulator settings. Slaves do not read the sample !!!
 	string input="simu.xml";
 	if (argc>1) {
-		input = string(argv[1]);
+		input = string(argv[optind]);
 		// erase all " characters in string (ASCII code 34). xcerces sometimes has problems with it...
 		for (int i=input.size(); i>=0; i--) {
 			if (input[i] == 34 ) input.erase(i,1);
@@ -92,6 +136,11 @@ int main (int argc, char *argv[]) {
 		Mpi2Evolution::OpenFiles((int) psim->GetSample()->IsRestart());
 		// returns when last spin is simulated; collects signals:
 		mpi_devide_and_send_sample( psim->GetSample(), psim->GetRxCoilArray() );
+		// set output directory
+		RxCA->SetSignalOutputDir(output_dir);
+		if (filename != "")
+			// set output name
+			RxCA->SetSignalPrefix(filename);
 		RxCA->DumpSignals();
 		psim->DeleteTmpFiles();
 	}
