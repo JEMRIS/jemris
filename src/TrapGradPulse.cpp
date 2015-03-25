@@ -81,6 +81,9 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 	ATTRIBUTE("FlatTopArea"         , m_flat_top_area   );
 	ATTRIBUTE("FlatTopTime"         , m_flat_top_time   );
 	ATTRIBUTE("Asymmetric"          , m_asym_sr         );
+	ATTRIBUTE("Frequency"           , m_frequency       );
+	ATTRIBUTE("InitialPhase"        , m_initial_phase   );
+
 	HIDDEN_ATTRIBUTE("Amplitude"    , m_amplitude       );
 	HIDDEN_ATTRIBUTE("RampUpTime"   , m_ramp_up_time    );
 	HIDDEN_ATTRIBUTE("RampDnTime"   , m_ramp_dn_time    );
@@ -269,29 +272,47 @@ inline double  TrapGradPulse::GetGradient  (double const time){
 /***********************************************************/
 inline void  TrapGradPulse::SetTPOIs () {
 
+	m_tpoi.Reset();
+	m_tpoi + TPOI::set(TIME_ERR_TOL              , -1.0);
+	m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
+
+	int N = abs(GetNADC());
+	double p0 = (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
+	p0 += GetInitialPhase();
+
+	if ( GetNADC() < 0 ) p0 = -1.0;
+
 	if ( m_has_flat_top_time && GetNADC()>0 )	//add ADCs  only on the flat top
 	{
-		m_tpoi.Reset();
-    		m_tpoi + TPOI::set(TIME_ERR_TOL              , -1.0);
-    		m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
-
 		// add flat top time, if erased due to zero area
 		if ( m_ar==0.0 ) m_ft = m_flat_top_time;
+		
+		//add ADCs only on the flat top
+		for (int i = 0; i < N; i++) {
+			// Calculate phase due to frequency offset
+			double time = (i+1)*m_ft/(GetNADC()+1);
+			double p = p0 + GetFrequency()*(time - m_flat_top_time/2);
+			p = fmod( p, TWOPI );
+			p = p<0.0 ? p+TWOPI : p;
 
-    		for (int i = 0; i < GetNADC(); i++)
-    			m_tpoi + TPOI::set(m_ramp_up_time + (i+1)*m_ft/(GetNADC()+1),
-					   (m_phase_lock?World::instance()->PhaseLock:0.0)                 );
+			m_tpoi + TPOI::set(m_ramp_up_time + time, p, BIT(ADC_T) );
+		}
 	}
 	else { 		//set ADCs over total duration (standard)
-		Pulse::SetTPOIs();
-	}
+		for (int i = 0; i < N; i++) {
+			// Calculate phase due to frequency offset
+			double time = (i+1)*GetDuration()/(N+1);
+			double p = p0 + GetFrequency()*(time - GetDuration()/2);
+			p = fmod( p, TWOPI );
+			p = p<0.0 ? p+TWOPI : p;
 
+			m_tpoi + TPOI::set(time, p, BIT(ADC_T));
+		}
+	}
 
 	//add TPOIs at nonlinear points of the trapezoid
     	m_tpoi + TPOI::set(m_ramp_up_time	   , -1.0);
  		m_tpoi + TPOI::set(m_ramp_up_time+m_ft , -1.0);
-
-
 }
 
 /***********************************************************/
