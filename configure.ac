@@ -32,13 +32,16 @@ AC_HEADER_STDC
 # Check for the host type
 AC_CANONICAL_HOST
 
+
 # SIMD capabilities
-#case $host in
-#     *x86_64*)
-	AX_EXT
-	CXXFLAGS="${CXXFLAGS} ${SIMD_FLAGS}"
-#     ;;
-#esac
+case $target in
+    *mingw*)
+        ;;
+    *)
+	    AX_EXT
+	    CXXFLAGS="${CXXFLAGS} ${SIMD_FLAGS}"
+        ;;
+esac
 #CXXFLAGS="${CXXFLAGS} -Wno-psabi"
 
 AC_ARG_ENABLE([documentation],

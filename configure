@@ -2974,10 +2974,10 @@ fi
 
 
 
-$as_echo "#define GIT_COMMIT \"638a0073\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"d55bf728\"" >>confdefs.h
 
 
-$as_echo "#define GIT_COMMIT_DATE \"Fri Feb 27 08:37:47 2015 +0100\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT_DATE \"\"" >>confdefs.h
 
 
 # copyright notice
@@ -4928,9 +4928,12 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
+
 # SIMD capabilities
-#case $host in
-#     *x86_64*)
+case $target in
+    *mingw*)
+        ;;
+    *)
 
 
 ac_ext=c
@@ -5503,9 +5506,9 @@ fi
 
 
 
-	CXXFLAGS="${CXXFLAGS} ${SIMD_FLAGS}"
-#     ;;
-#esac
+	    CXXFLAGS="${CXXFLAGS} ${SIMD_FLAGS}"
+        ;;
+esac
 #CXXFLAGS="${CXXFLAGS} -Wno-psabi"
 
 # Check whether --enable-documentation was given.
