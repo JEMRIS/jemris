@@ -341,6 +341,7 @@ int main (int argc, char *argv[]) {
 	seq.push_back("var_dur.xml");
 	seq.push_back("extpulses.xml");
 	seq.push_back("epi_modular.xml");
+	seq.push_back("trapezoid.xml");
 
 	//coils to test
 	vector<string> coils;

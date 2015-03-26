@@ -202,6 +202,15 @@ class Simulator {
 	 */
 	void      SetParameter   ();
 
+	/**
+	 * @brief Set output directory
+	 */
+	void      SetOutputDir(string output_dir);
+
+	/**
+	 * @brief Set signal prefix
+	 */
+	void      SetSignalPrefix(string prefix);
 
  private:
 
@@ -224,6 +233,8 @@ class Simulator {
 	CoilArray*               m_rx_coil_array;     /**< @brief Receive coil array          */
 	DOMTreeErrorReporter*    m_domtree_error_rep; /**< @brief DOM tree error reporter     */
 	KSpace<double,4>*        m_kspace;            /**< @brief K-Space                     */
+	string                   m_output_dir;        /**< @brief Output directory            */
+	string                   m_signal_prefix;     /**< @brief Signal prefix               */
 
 };
 

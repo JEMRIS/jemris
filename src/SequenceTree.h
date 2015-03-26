@@ -212,6 +212,13 @@ class SequenceTree {
      int  GetDepth(){return m_depth;};
 
      /**
+      * Get the directory of the sequence file
+      *
+      * @return the directory
+      */
+     string  GetSequenceDirectory();
+
+     /**
       * Write xml file containing all modules of the sequence framework.
       */
      void          SerializeModules(string xml_file);
@@ -237,6 +244,7 @@ class SequenceTree {
     ModulePrototypeFactory* m_mpf;
     XMLIO*                  m_xio;
     map<DOMNode*, Module*>  m_Modules;
+    string                  m_seq_file;  /**< path of sequence file  */
 
 };
 

@@ -133,6 +133,24 @@ class CoilArray  {
     string GetSenMaplPrefix      () {return m_senmap_prefix;};
 
     /**
+     * @brief Set SensMap output directory
+     * Directory the SensMap is saved to
+     * @param dir the directory (it is assumed that it exists)
+     */
+    void SetSenMapOutputDir(string dir) { m_senmap_output_dir = dir; };
+
+    string GetSenMapOutputDir      () {return m_senmap_output_dir;};
+
+    /**
+     * @brief Set signals output directory
+     * Directory the SensMap is saved to
+     * @param dir the directory (it is assumed that it exists)
+     */
+    void SetSignalOutputDir(string dir) { m_signal_output_dir = dir; };
+
+    string GetSignalOutputDir      () {return m_signal_output_dir;};
+
+    /**
      * @brief Get a particular coil
      *
      * @param  channel The number of the particular channel.
@@ -164,8 +182,10 @@ class CoilArray  {
     vector<Coil*>         m_coils;         /**< @brief My coils         */
     double                m_radius;        /**< @brief My radius        */
     unsigned short        m_mode;          /**< @brief My mode (RX/TX)  */
-    string	          m_signal_prefix; /**< @brief prefix string to signal binary filenames */
-    string	          m_senmap_prefix; /**< @brief prefix string to sensitivity map filenames */
+    string	              m_signal_prefix; /**< @brief prefix string to signal binary filenames */
+    string	              m_senmap_prefix; /**< @brief prefix string to sensitivity map filenames */
+    string	              m_signal_output_dir;  /**< @brief string to signal directory            */
+    string	              m_senmap_output_dir;  /**< @brief string to sensitivity map directory   */
 
     CoilPrototypeFactory* m_cpf;           /**< @brief Coil factory    */
     DOMDocument*          m_dom_doc;       /**< @brief DOM document containing configuration */

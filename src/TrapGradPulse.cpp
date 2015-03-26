@@ -81,6 +81,9 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 	ATTRIBUTE("FlatTopArea"         , m_flat_top_area   );
 	ATTRIBUTE("FlatTopTime"         , m_flat_top_time   );
 	ATTRIBUTE("Asymmetric"          , m_asym_sr         );
+	ATTRIBUTE("Frequency"           , m_frequency       );
+	ATTRIBUTE("InitialPhase"        , m_initial_phase   );
+
 	HIDDEN_ATTRIBUTE("Amplitude"    , m_amplitude       );
 	HIDDEN_ATTRIBUTE("RampUpTime"   , m_ramp_up_time    );
 	HIDDEN_ATTRIBUTE("RampDnTime"   , m_ramp_dn_time    );
@@ -150,6 +153,11 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 /***********************************************************/
 inline bool    TrapGradPulse::SetShape  (bool verbose){
 
+	//predefined rise time
+	if (m_rise_time>0.0) {
+		m_slew_rate=m_max_ampl/m_rise_time;
+	}
+
 	//predefined area definition for the flat top
 	if ( m_has_flat_top_area ) {
 	       double dC = 2.0/fabs(2.0*m_slew_rate);
@@ -171,21 +179,30 @@ inline bool    TrapGradPulse::SetShape  (bool verbose){
 		}
 		//change system limits (m_max_ampl) so that .Prepare in shortest time"
 		//yields exactly the requested time
-        double dGmax = m_max_ampl, dC = 0.0;
+		double dGmax = m_max_ampl, dC = 0.0;
 		if (m_has_duration)
 		{
-        		dC = 1.0/fabs(2.0*m_slope_up) + 1.0/fabs(2.0*m_slope_dn);
-        		m_max_ampl = ( requested - sqrt(requested*requested - 4*fabs(m_area)*dC) )/(2.0*dC);
-        		m_ar = m_area;
+			if (m_rise_time>0.0) {
+				m_max_ampl = fabs(m_area)/(requested-m_rise_time);
+				m_slew_rate = m_max_ampl/m_rise_time;
+				m_ar = m_area;
+			} else {
+				dC = 1.0/fabs(2.0*m_slope_up) + 1.0/fabs(2.0*m_slope_dn);
+				m_max_ampl = ( requested - sqrt(requested*requested - 4*fabs(m_area)*dC) )/(2.0*dC);
+				m_ar = m_area;
+			}
 		}
 		else
 		{
 			m_max_ampl = fabs(m_flat_top_area/requested);
-	        dC = 2.0/fabs(2.0*m_slew_rate);
-	        if (m_flat_top_area != 0.0)
-	        	m_ar = m_flat_top_area *( 1.0 + m_max_ampl*m_max_ampl*dC / fabs(m_flat_top_area) );
-	        else
-	        	m_ar = 0.0;
+			if (m_rise_time>0.0) {
+				m_slew_rate=m_max_ampl/m_rise_time;
+			}
+			dC = 2.0/fabs(2.0*m_slew_rate);
+			if (m_flat_top_area != 0.0)
+				m_ar = m_flat_top_area *( 1.0 + m_max_ampl*m_max_ampl*dC / fabs(m_flat_top_area) );
+			else
+				m_ar = 0.0;
 		}
 		SetTrapezoid();     //Calculate the gradient shape
 
@@ -269,29 +286,47 @@ inline double  TrapGradPulse::GetGradient  (double const time){
 /***********************************************************/
 inline void  TrapGradPulse::SetTPOIs () {
 
+	m_tpoi.Reset();
+	m_tpoi + TPOI::set(TIME_ERR_TOL              , -1.0);
+	m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
+
+	int N = abs(GetNADC());
+	double p0 = (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
+	p0 += GetInitialPhase();
+
+	if ( GetNADC() < 0 ) p0 = -1.0;
+
 	if ( m_has_flat_top_time && GetNADC()>0 )	//add ADCs  only on the flat top
 	{
-		m_tpoi.Reset();
-    		m_tpoi + TPOI::set(TIME_ERR_TOL              , -1.0);
-    		m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
-
 		// add flat top time, if erased due to zero area
 		if ( m_ar==0.0 ) m_ft = m_flat_top_time;
+		
+		//add ADCs only on the flat top
+		for (int i = 0; i < N; i++) {
+			// Calculate phase due to frequency offset
+			double time = (i+1)*m_ft/(GetNADC()+1);
+			double p = p0 + GetFrequency()*(time - m_flat_top_time/2);
+			p = fmod( p, TWOPI );
+			p = p<0.0 ? p+TWOPI : p;
 
-    		for (int i = 0; i < GetNADC(); i++)
-    			m_tpoi + TPOI::set(m_ramp_up_time + (i+1)*m_ft/(GetNADC()+1),
-					   (m_phase_lock?World::instance()->PhaseLock:0.0)                 );
+			m_tpoi + TPOI::set(m_ramp_up_time + time, p, BIT(ADC_T) );
+		}
 	}
 	else { 		//set ADCs over total duration (standard)
-		Pulse::SetTPOIs();
-	}
+		for (int i = 0; i < N; i++) {
+			// Calculate phase due to frequency offset
+			double time = (i+1)*GetDuration()/(N+1);
+			double p = p0 + GetFrequency()*(time - GetDuration()/2);
+			p = fmod( p, TWOPI );
+			p = p<0.0 ? p+TWOPI : p;
 
+			m_tpoi + TPOI::set(time, p, BIT(ADC_T));
+		}
+	}
 
 	//add TPOIs at nonlinear points of the trapezoid
     	m_tpoi + TPOI::set(m_ramp_up_time	   , -1.0);
  		m_tpoi + TPOI::set(m_ramp_up_time+m_ft , -1.0);
-
-
 }
 
 /***********************************************************/

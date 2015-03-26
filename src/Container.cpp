@@ -68,8 +68,9 @@ bool Container::Prepare (const PrepareMode mode) {
 
     //read ContainerSequence and build up its sequence tree
     if (m_container_seq==NULL && !m_container_seq_name.empty() ) {
+    	string seq_directory = m_seq_tree->GetSequenceDirectory();
     	m_container_seqtree = new SequenceTree;
-    	m_container_seqtree->Initialize(m_container_seq_name);
+    	m_container_seqtree->Initialize(seq_directory + m_container_seq_name);
     	m_container_seqtree->Populate();
     	m_container_seq = m_container_seqtree->GetContainerSequence();
     	m_container_seq->SetContainer(this);

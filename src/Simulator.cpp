@@ -40,7 +40,7 @@
 Simulator::Simulator() :
 	m_rx_coil_array (0), m_xio(0), m_domtree_error_rep (0), m_dom_doc(0), m_evol(0),
 	m_world (World::instance()), m_model(0), m_tx_coil_array(0), m_sample(0),
-	m_seqtree(0), m_sequence(0), m_state(0) {
+	m_seqtree(0), m_sequence(0), m_state(0), m_signal_prefix("signals"), m_output_dir("") {
 	Simulator ("simu.xml");
 }
 
@@ -48,7 +48,7 @@ Simulator::Simulator() :
 Simulator::Simulator ( const string& fname, const string& fsample, const string& frxarray,
 		const string& ftxarray, const string& fsequence, const string& fmodel) :
 	m_rx_coil_array (0), m_evol(0),	m_world (World::instance()), m_model(0), m_tx_coil_array(0),
-	m_seqtree(0), m_sample(0), m_sequence(0) {
+	m_seqtree(0), m_sample(0), m_sequence(0), m_signal_prefix("signals"), m_output_dir("") {
 
 	m_domtree_error_rep = new DOMTreeErrorReporter;
 	m_xio               = new XMLIO();
@@ -287,10 +287,28 @@ void Simulator::Simulate          (bool bDumpSignal) {
 
 	if (bDumpSignal) {
 		m_rx_coil_array->DumpSignals();
-		m_kspace->Write(m_rx_coil_array->GetSignalPrefix()+".h5", "kspace", "/");
+		m_kspace->Write(m_rx_coil_array->GetSignalOutputDir() + m_rx_coil_array->GetSignalPrefix() + ".h5", "kspace", "/");
 		DeleteTmpFiles();
 	}
 
+}
+
+/**********************************************************/
+void Simulator::SetSignalPrefix(string prefix) {
+
+	m_signal_prefix = prefix;
+	if (!m_rx_coil_array) {
+		m_rx_coil_array->SetSignalPrefix(m_signal_prefix);
+	}
+}
+
+/**********************************************************/
+void Simulator::SetOutputDir(string output_dir) {
+
+	m_output_dir = output_dir;
+	if (!m_rx_coil_array) {
+		m_rx_coil_array->SetSignalOutputDir(m_output_dir);
+	}
 }
 
 /**********************************************************/

@@ -69,6 +69,7 @@ void SequenceTree::Initialize(string seqFile) {
 
     //initialize
 	m_state   = false;
+	m_seq_file = seqFile;
    	m_dom_doc = m_xio->Parse(seqFile);
 
 	DOMNodeList* dnl = m_dom_doc->getElementsByTagName( StrX("AtomicSequence").XMLchar() );
@@ -80,6 +81,11 @@ void SequenceTree::Initialize(string seqFile) {
 
 	m_state   = ( StrX(topnode->getNodeName()).std_str() == "Parameters");
 
+}
+
+/***********************************************************/
+string  SequenceTree::GetSequenceDirectory() {
+	return m_seq_file.substr(0, m_seq_file.find_last_of("\\/")+1);
 }
 
 /***********************************************************/

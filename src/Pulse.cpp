@@ -64,10 +64,11 @@ inline void  Pulse::SetTPOIs () {
     double p = (m_phase_lock?World::instance()->PhaseLock:0.0);
 
     int N = abs(GetNADC());
-    if ( GetNADC() < 0 ) p = -1.0;
+    size_t bitmask = BIT(ADC_T);
+    if ( GetNADC() < 0 ) { p = -1.0; bitmask = 0; }
 
     for (int i = 0; i < N; i++)
-    	m_tpoi + TPOI::set((i+1)*GetDuration()/(N+1), p );
+    	m_tpoi + TPOI::set((i+1)*GetDuration()/(N+1), p, bitmask );
 
 }
 

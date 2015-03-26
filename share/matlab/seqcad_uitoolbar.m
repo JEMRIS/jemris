@@ -61,8 +61,7 @@ end
 
 %draw buttons for ERASE, COPY, SWAP modules
 handles.hpt{NM+1} = uitoggletool(ht,'CData',ic.ERASEMODULE,'TooltipString','erase a module','Separator','on');
-COPYMODULE=permute(ic.SWAPMODULES,[2 1 3]);
-handles.hpt{NM+2} = uitoggletool(ht,'CData',COPYMODULE,'TooltipString','copy a module','Separator','on');
+handles.hpt{NM+2} = uitoggletool(ht,'CData',ic.COPYMODULE,'TooltipString','copy a module','Separator','on');
 handles.hpt{NM+3} = uitoggletool(ht,'CData',ic.SWAPMODULES,'TooltipString','swap two modules','Separator','on');
 
 %define callbacks

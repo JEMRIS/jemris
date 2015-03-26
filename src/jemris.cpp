@@ -30,6 +30,10 @@
 #include <iomanip>
 #include <typeinfo>
 
+#include <unistd.h>
+#include <sys/stat.h>
+#include <cerrno>
+
 #include "Simulator.h"
 #include "SequenceTree.h"
 #include "ConcatSequence.h"
@@ -49,6 +53,9 @@ void usage () {
 	cout   << "     or c) the sensitivity maps are dumped, respectively." << endl << endl;
 	cout   << "  2. jemris modlist           " << endl;
 	cout   << "     Writes the file mod.xml containing a list of all available modules." << endl << endl;
+	cout   << "  Parameters:" << endl;
+	cout   << "     -o <output_dir>: Output directory" << endl;
+	cout   << "     -f <filename>:   Output filename (without extension)"  << endl;
 }
 
 void do_simu (Simulator* sim) {
@@ -79,10 +86,54 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	string input (argv[1]);
+	string output_dir("");
+	string filename("");
+
+	opterr = 0;
+	int status;
+
+	int c;
+	while((c = getopt (argc, argv, "f:o:")) != -1)
+	{
+		switch (c)
+		{
+		case 'o':
+			output_dir = optarg;
+			output_dir += "/";
+			status = mkdir(output_dir.c_str(), 0777);
+			if(status && errno != EEXIST)
+			{
+				cerr << "mkdir failed: Could not create output directory: "
+						<< output_dir << endl;
+				return 1;
+			}
+			break;
+		case 'f':
+			filename = optarg;
+			break;
+		case '?':
+			if (optopt == 'o')
+				cerr << "Option '-o' requires an argument." << endl;
+			if (optopt == 'f')
+				cerr << "Option '-f' requires an argument." << endl;
+			else if (isprint(optopt))
+				cerr << "Unkown option '-" << (char)optopt << "'." << endl;
+			else
+				cerr << "Unkown option character '-" << (char)optopt << "'." << endl;
+			return 1;
+		default:
+			abort();
+		}
+	}
+
+	string input (argv[optind]);
 
 	//CASE 1: Dump list of modules in xml file
 	if (input == "modlist")  {
+		if(filename == "")
+			filename = "mod.xml";
+		else
+			filename += ".xml";
 		SequenceTree seqTree;
 		seqTree.SerializeModules("mod.xml");
 		return 0;
@@ -93,11 +144,15 @@ int main (int argc, char *argv[]) {
 		SequenceTree seqTree;
 		seqTree.Initialize(input);
 		if (seqTree.GetStatus()) {
+			if(filename == "")
+				filename = "seq.h5";
+			else
+				filename += ".h5";
 			seqTree.Populate();
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
-			seq->SeqDiag("seq.h5");
+			seq->SeqDiag(output_dir + filename);
 			seq->DumpTree();
-			if (argc==3) seq->WriteStaticXML("jemris_seq.xml");
+			if (argc==3) seq->WriteStaticXML(output_dir + "jemris_seq.xml");
 			return 0;
 		}
 	} catch (...) {
@@ -107,6 +162,10 @@ int main (int argc, char *argv[]) {
 	//CASE 3: try Dump of sensitivities from CoilArray xml-file
 	try {
 		CoilArray ca;
+		if(filename != "")
+			ca.SetSenMaplPrefix(filename);
+		ca.SetSenMapOutputDir(output_dir);
+
 		ca.Initialize(input);
 		if (ca.Populate() == OK) {
 			ca.DumpSensMaps(true);
@@ -120,6 +179,9 @@ int main (int argc, char *argv[]) {
 	try {
 		Simulator sim (input);
 		if (sim.GetStatus()) {
+			sim.SetOutputDir(output_dir);
+			if(filename != "")
+				sim.SetSignalPrefix(filename);
 			static clock_t runtime = clock();
 			do_simu(&sim);
 			runtime = clock() - runtime;
@@ -129,6 +191,7 @@ int main (int argc, char *argv[]) {
 	} catch (...) {
 
 	}
+
 
 	//OTHERWISE: not a valid input
 	cout << input << " is not a valid input.\n";

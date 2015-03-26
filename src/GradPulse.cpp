@@ -40,6 +40,8 @@ GradPulse::GradPulse  () {
 	m_nlg_py	= 0.0;
 	m_nlg_pz	= 0.0;
 	m_nlg_val	= 0.0;
+	m_rise_time	= 0.0;
+	m_slew_rate = 0.0;
 
 	//SetExceptionalAttrib("NLG_field");
 
@@ -49,6 +51,7 @@ GradPulse::GradPulse  () {
 	{
 		m_slew_rate = *((double*) P->GetAttribute("GradSlewRate")->GetAddress());
 		m_max_ampl  = *((double*) P->GetAttribute("GradMaxAmpl")->GetAddress());
+		m_rise_time = *((double*) P->GetAttribute("GradRiseTime")->GetAddress());
 	}
 
 	m_eddy_pulse	= NULL;

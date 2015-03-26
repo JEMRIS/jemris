@@ -188,16 +188,10 @@ function call_CurrentModule(S,handles)
 function seqcad_common(src,eventdata,seq,handles) 
 if isempty(handles),return,end
 global CONTAINERSEQFILE OPEN_CONTAINERSEQUENCE
-persistent chk
-if isempty(chk)
-    chk = 1;
-    pause(0.5); %Add a delay to distinguish single click from a double click
-    if chk == 1
-        seqcad_common_single_click(src,eventdata,seq,handles)
-        chk = [];
-    end
+
+if ~strcmp(get(handles.figure1,'SelectionType'),'open')
+    seqcad_common_single_click(src,eventdata,seq,handles)
 else
-    chk = [];
     if strcmpi(seq.Name,'CONTAINER')
         container_seq_file=''; 
         for i=1:length(seq.Attributes)
@@ -242,7 +236,7 @@ if isempty(seq.Attributes)
     seq.Attributes.Value=seq.Name;
 end
 
-for i=1:17
+for i=1:20
     if i>length(A)
         bvis='''off''';
     else
