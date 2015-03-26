@@ -42,7 +42,7 @@ case $target in
 	    CXXFLAGS="${CXXFLAGS} ${SIMD_FLAGS}"
         ;;
 esac
-CXXFLAGS="${CXXFLAGS} -Wno-psabi"
+#CXXFLAGS="${CXXFLAGS} -Wno-psabi"
 
 AC_ARG_ENABLE([documentation],
      [  --enable-documentation          turn on documentation C++ library support (default: yes)],

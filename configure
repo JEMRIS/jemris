@@ -2950,7 +2950,6 @@ END
   fi
 fi
 
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 $as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
     # Check whether --enable-maintainer-mode was given.
@@ -2975,10 +2974,10 @@ fi
 
 
 
-$as_echo "#define GIT_COMMIT \"a7af9a78\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"d55bf728\"" >>confdefs.h
 
 
-$as_echo "#define GIT_COMMIT_DATE \"Fri Feb 27 23:37:42 2015 +0100\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT_DATE \"\"" >>confdefs.h
 
 
 # copyright notice
@@ -5510,7 +5509,7 @@ fi
 	    CXXFLAGS="${CXXFLAGS} ${SIMD_FLAGS}"
         ;;
 esac
-CXXFLAGS="${CXXFLAGS} -Wno-psabi"
+#CXXFLAGS="${CXXFLAGS} -Wno-psabi"
 
 # Check whether --enable-documentation was given.
 if test "${enable_documentation+set}" = set; then :
