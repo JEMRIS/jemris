@@ -337,5 +337,11 @@ string          TrapGradPulse::GetInfo() {
 	if ( m_has_flat_top_time )
 		s << " , FlatTop: (Area,time)= (" << m_flat_top_area << "," << m_flat_top_time << ")";
 
+	if ( GetInitialPhase() != 0.0 )
+		s << " , InitialPhase=" << GetInitialPhase();
+
+	if ( GetFrequency() != 0.0 )
+		s << " , Frequency=" << GetFrequency();
+
 	return s.str();
 }

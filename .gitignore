@@ -14,6 +14,7 @@
 /share/matlab/JEMRIS_seq.m
 /share/matlab/JEMRIS_sim.m
 /share/matlab/JEMRIS_txrx.m
+/share/matlab/JEMRIS_ContainerSequence.m
 /share/matlab/pbs_script.sh
 /src/test*.sh
 /signals.h5
@@ -83,4 +84,6 @@ share/examples/radial2_signal.h5
 share/examples/var_dur.h5
 share/examples/var_dur.out
 share/examples/var_dur_signal.h5
-
+share/examples/trapezoid.h5
+share/examples/trapezoid.out
+share/examples/trapezoid_signal.h5

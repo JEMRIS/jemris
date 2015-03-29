@@ -39,6 +39,13 @@ using namespace std;
 #include <sys/stat.h>
 #include <cerrno>
 
+#ifdef WIN32
+ #define MKDIR(S,M)    mkdir(S)
+#else
+ #define MKDIR(S,M)    mkdir(S,M)
+#endif
+
+
 int main (int argc, char *argv[]) {
   
 	//init MPI
@@ -70,7 +77,7 @@ int main (int argc, char *argv[]) {
       case 'o':
         output_dir = optarg;
         output_dir += "/";
-        status = mkdir(output_dir.c_str(), 0777);
+        status = MKDIR(output_dir.c_str(), 0777);
         if(status && errno != EEXIST)
         {
           cerr << "mkdir failed: Could not create output directory: "

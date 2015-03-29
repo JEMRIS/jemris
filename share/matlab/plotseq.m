@@ -74,7 +74,7 @@ KX =h5read('seq.h5','/seqdiag/KX');
 KY =h5read('seq.h5','/seqdiag/KY');
 KZ =h5read('seq.h5','/seqdiag/KZ');
 B  =h5read('seq.h5','/seqdiag/META'); 
-J=find(B>1);
+J=find(B>2);
 
 A=[TXM TXP GX GY GZ KX KY KZ]; A(:,2)=A(:,2)*180/pi;
 %t=t(1:end-2); A=A(1:end-2,:);RXP=RXP(1:end-2);
@@ -167,7 +167,7 @@ if i2<length(t),i2=i2+1;end
 I=i1:i2;
 
 YL={'ADC','|RF|','RF{\phi}','GX','GY','GZ'};
-cla(hax{1},'reset');axes(hax{1}),plot(Tadc,Rec_Phs,'.r'),set(gca,'ytick',[],'xticklabel',[])
+cla(hax{1},'reset');axes(hax{1}),plot(Tadc,Rec_Phs,'.r'),set(gca,'xticklabel',[])
 set(gca,'xlim',[ax(1) ax(2)],'ylim',[-180 180]),grid
 ylabel(YL{1},'fontsize',14,'fontweight','bold')
 
