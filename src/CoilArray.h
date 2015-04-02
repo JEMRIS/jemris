@@ -143,7 +143,7 @@ class CoilArray  {
 
     /**
      * @brief Set signals output directory
-     * Directory the SensMap is saved to
+     * Directory the signal binary is saved to
      * @param dir the directory (it is assumed that it exists)
      */
     void SetSignalOutputDir(string dir) { m_signal_output_dir = dir; };

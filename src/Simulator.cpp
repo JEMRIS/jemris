@@ -297,7 +297,7 @@ void Simulator::Simulate          (bool bDumpSignal) {
 void Simulator::SetSignalPrefix(string prefix) {
 
 	m_signal_prefix = prefix;
-	if (!m_rx_coil_array) {
+	if (m_rx_coil_array != NULL) {
 		m_rx_coil_array->SetSignalPrefix(m_signal_prefix);
 	}
 }
@@ -306,7 +306,7 @@ void Simulator::SetSignalPrefix(string prefix) {
 void Simulator::SetOutputDir(string output_dir) {
 
 	m_output_dir = output_dir;
-	if (!m_rx_coil_array) {
+	if (m_rx_coil_array != NULL) {
 		m_rx_coil_array->SetSignalOutputDir(m_output_dir);
 	}
 }
