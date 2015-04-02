@@ -292,7 +292,7 @@ inline void  TrapGradPulse::SetTPOIs () {
 
 	int N = abs(GetNADC());
 	double p0 = (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
-	p0 += GetInitialPhase();
+	p0 += GetInitialPhase()*PI/180.0;
 
 	if ( GetNADC() < 0 ) p0 = -1.0;
 

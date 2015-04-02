@@ -7,4 +7,4 @@ sequence-root------>   CONCAT       CONCATSEQUENCE       C1     5.430       64  
   |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A2     1.130        0         4  | 
     |_ child 1   -->    PULSE        TRAPGRADPULSE      pre     1.130        0         4  |  Axis = GX  , Area = -1.03044
   |_ child 3   ---->     ATOM       ATOMICSEQUENCE       A3     4.200       64        68  | 
-    |_ child 1   -->    PULSE        TRAPGRADPULSE       ro     4.200       64        68  |  Axis = GX  , Area = 2.06088 , FlatTop: (Area,time)= (2.01062,4) , InitialPhase=3.14159 , Frequency=3.14159
+    |_ child 1   -->    PULSE        TRAPGRADPULSE       ro     4.200       64        68  |  Axis = GX  , Area = 2.06088 , FlatTop: (Area,time)= (2.01062,4) , InitialPhase=180 , Frequency=3.14159

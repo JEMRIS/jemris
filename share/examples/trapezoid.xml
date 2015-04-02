@@ -8,7 +8,7 @@
          <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="pre" Observe="ro,Area"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="A3">
-         <TRAPGRADPULSE ADCs="a1" Axis="GX" FlatTopArea="2*a2" FlatTopTime="4" Frequency="Pi" InitialPhase="Pi" Name="ro" Observe="P,Nx/P,KMAXx"/>
+         <TRAPGRADPULSE ADCs="a1" Axis="GX" FlatTopArea="2*a2" FlatTopTime="4" Frequency="Pi" InitialPhase="180" Name="ro" Observe="P,Nx/P,KMAXx"/>
       </ATOMICSEQUENCE>
    </ConcatSequence>
 </Parameters>
