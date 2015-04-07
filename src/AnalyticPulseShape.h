@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2014  Tony Stoecker
- *                        2007-2014  Kaveh Vahedipour
- *                        2009-2014  Daniel Pflugfelder
+ *                        2006-2015  Tony Stoecker
+ *                        2007-2015  Kaveh Vahedipour
+ *                        2009-2015  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,13 @@ class AnalyticPulseShape {
      */
     bool     PrepareAnalytic(bool verbose);
 
-    double  GetAnalyticIntegral(bool verbose);
+    /**
+     * @brief analytic GiNaC calculation of the integral of this pulse shape
+     *
+     * @param verbose if true, dump warning/error messages
+     * @return value of the analytic integral
+     */
+    double  GetAnalyticIntegral(bool verbose) { return m_analytic_integral; };
 
     /**
      * @see Pulse::SetTPOIs

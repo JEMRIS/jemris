@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2014  Tony Stoecker
- *                        2007-2014  Kaveh Vahedipour
- *                        2009-2014  Daniel Pflugfelder
+ *                        2006-2015  Tony Stoecker
+ *                        2007-2015  Kaveh Vahedipour
+ *                        2009-2015  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -109,19 +109,16 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
   
 	m_pulse->GetAttribute("Shape")->SetObservable(true);
 
-	//add "Shape" attribute observations only once
-	if (!m_prepared) {
-
-		//1. "Shape" observes "AnalyticTime": replace "T" with the appropriate attribute counter "a{i}"
+	//1. "Shape" observes "AnalyticTime": replace "T" with the appropriate attribute counter "a{i}"
 		if (m_pulse->m_attributes.find("AnalyticTime")==m_pulse->m_attributes.end() )
-			m_pulse->m_attributes.insert(pair<string,Attribute*>("AnalyticTime",new Attribute("AnalyticTime",m_pulse, false, true, m_analytic_time)));  
+			m_pulse->m_attributes.insert(pair<string,Attribute*>("AnalyticTime",new Attribute("AnalyticTime",m_pulse, false, true, m_analytic_time)));
 		string val = m_pulse->GetDOMattribute("Shape");
 		if (val.empty()) return true;
 		m_pulse->Observe(m_pulse->GetAttribute("Shape"),m_pulse->GetName(),"AnalyticTime", verbose);
 		stringstream a;	a << "a" << m_pulse->m_obs_attribs.size();
 		m_pulse->ReplaceString(val,"T",a.str());
 
-		//2. "Shape" observes "Constants": replace "c{i}" with the appropriate attribute counter "a{i}"
+	//2. "Shape" observes "Constants": replace "c{i}" with the appropriate attribute counter "a{i}"
 		if (m_pulse->HasDOMattribute("Constants")) {
 			string constants = m_pulse->GetDOMattribute("Constants");
 			vector<string> vp = m_pulse->Tokenize(constants,",");
@@ -137,65 +134,30 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
 				m_pulse->ReplaceString(val,c.str(),a.str());
 			}
 		}
-		
-		//analytic differentiation. calculate analytic integral, if dif==1 (for gradients only)
-		if (m_pulse->HasDOMattribute("Diff")){
+
+	//3. analytic derivative and calculation of the integral
+		if (m_pulse->HasDOMattribute("Diff")) {
 			m_pulse->GetAttribute("Shape")->SetDiff(0);
-			m_prepared = m_pulse->GetAttribute("Shape")->SetMember(val, m_pulse->m_obs_attribs, verbose);
+			m_pulse->GetAttribute("Shape")->SetMember(val, m_pulse->m_obs_attribs, verbose);
 			string sdiff =  m_pulse->GetDOMattribute("Diff");
 			int dif = atoi(sdiff.c_str());
-			if (dif == 1) {
-				try {
-					 m_analytic_time      =  m_pulse->GetDuration();
-					 m_pulse->GetAttribute("Shape")->EvalExpression();
-					 m_analytic_integral  =  m_analytic_value;
-					 m_analytic_time      = 0.0;
-					 m_pulse->GetAttribute("Shape")->EvalExpression();
-					 m_analytic_integral -=  m_analytic_value;
-				} catch (exception &p) {
-				    if( verbose ) cout << "Error evaluating integral\n";
-				}
-				 m_pulse->GetAttribute("Shape")->SetDiff(dif,m_pulse->GetAttribute("AnalyticTime")->GetSymbol() );
+			if (dif==1) {
+				m_analytic_time      =  m_pulse->GetDuration();
+				m_pulse->GetAttribute("Shape")->EvalExpression();
+				m_analytic_integral  =  m_analytic_value;
+				m_analytic_time      = 0.0;
+				m_pulse->GetAttribute("Shape")->EvalExpression();
+				m_analytic_integral -=  m_analytic_value;
 			}
+			m_pulse->GetAttribute("Shape")->SetDiff(dif,m_pulse->GetAttribute("AnalyticTime")->GetSymbol() );
 		}
-		
-		//prepare GiNaC evaluation of the "Shape" attribute
+
+	//4. prepare GiNaC evaluation of the "Shape" attribute
 		m_prepared =  m_pulse->GetAttribute("Shape")->SetMember(val,  m_pulse->m_obs_attribs, verbose);
-	}
-	
 	
 	return m_prepared;
     
 };
 
 
-/***********************************************************/
-double  AnalyticPulseShape::GetAnalyticIntegral (bool verbose) {
-
-	//analytic differentiation. calculate analytic integral, if dif==1 (for gradients only)
-	if (m_pulse->HasDOMattribute("Diff")){
-		string sdiff =  m_pulse->GetDOMattribute("Diff");
-		int dif = atoi(sdiff.c_str());
-		if (dif == 1) {
-			try {
-				m_pulse->GetAttribute("Shape")->SetDiff(0);
-				m_analytic_time      =  m_pulse->GetDuration();
-				m_pulse->GetAttribute("Shape")->EvalExpression();
-				m_analytic_integral  =  m_analytic_value;
-			cout << m_pulse->GetName() << " : " << m_analytic_time << " " << m_analytic_value ;
-				m_analytic_time      = 0.0;
-				m_pulse->GetAttribute("Shape")->EvalExpression();
-				m_analytic_integral -=  m_analytic_value;
-			cout << " : " << m_analytic_time << " " << m_analytic_value;
-			cout << " : " << GetShape ( m_pulse->GetDuration() ) << " " << GetShape (0.0)  << endl;
-		 		m_pulse->GetAttribute("Shape")->SetDiff(dif,m_pulse->GetAttribute("AnalyticTime")->GetSymbol() );
-			} catch (exception &p) {
-			    if( verbose ) cout << "Error evaluating integral\n";
-			}
-		}
-	}
-
-	return m_analytic_integral; 
-
-};
 
