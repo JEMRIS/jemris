@@ -74,4 +74,9 @@ share/examples/tse_signal.h5
 share/examples/extpulses.h5
 share/examples/extpulses.out
 share/examples/extpulses_signal.h5
-
+share/examples/radial2.h5
+share/examples/radial2.out
+share/examples/radial2_signal.h5
+share/examples/var_dur.h5
+share/examples/var_dur.out
+share/examples/var_dur_signal.h5

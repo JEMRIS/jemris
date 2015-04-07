@@ -28,39 +28,39 @@ The manual intends to give a brief hands-on introduction. \n
 We have two small favours to ask:\n
 \n
 Please, let us know that you are downloading jemris by sending an E-Mail to
-<a href="mailto:k.vahedipour@fz-juelich.de?subject=jemris download">Kaveh Vahedipour</a>.
+<a href="mailto:tony.stoecker@dzne.de?subject=jemris download">Tony Stoecker</a>.
 In return, we will keep you up to date of updates and bug fixes. 
 \n
 And please, help us with improving the software by announcing bugs.
 <ul>
 	<li> <b> Sources </b>
 	     <ul>
-		<li> <a href="http://www.jemris.org/get/jemris-2.7.tar.bz2">jemris-2.7.tar.bz2</a>
-		<li> md5sum: 00691af264cbc50b9095eab8da316816
-		<li> shasum: 0f41bd198273c1f2b0a0f4b230c2620bff663bc0
+		<li> <a href="../get/jemris-2.7.2-src.tar.gz">jemris-2.7.2-src.tar.gz</a>
+		<li> md5sum: e4ac96de6ff97b5927d4dc76ff913739
+		<li> shasum: 1bdf0bcbd2ef8d362e19031f191d17dad3288ab8
 	     </ul>
 
 	<li> <b> Ubuntu Binary (14.10 64bit) </b>
 	     <ul>
-		<li> <a href="http://www.jemris.org/get/utopic/jemris_2.7-1_amd64.deb.bz2">jemris_2.7-1_amd64.deb.bz2</a>
-		<li> md5sum: c68bf125f56545f9783555fa99a93f4e
-		<li> shasum: 34a6eb588a8e804421f222996685bc0413ea0a7a
+		<li> <a href="../get/jemris-2.7.2-Linux.deb">jemris_2.7.2-Linux.deb</a>
+		<li> md5sum: d1cba8f4378a3d26bdab16711fe3ef35
+		<li> shasum: 80649bec4042ae207f76afa30049b8ba7757b6d4
 	     </ul>
 
 	<li> <b> Mac Binary Mac </b>
 	     <ul>
-		<li> <a href="http://www.jemris.org/get/osx/jemris-2.7.mpkg.zip">jemris-2.7.mpkg.zip</a>
-		<li> md5sum: 9c0e6113c871a37da9c744204bd15afc
-		<li> shasum: 315d3c1b51b54abf5ca21682288855e4ec075a50  
+		<li> <a href="../get/jemris-2.7.2.mpkg.zip">jemris-2.7.2.mpkg.zip</a>
+		<li> md5sum: 504e1d62ff890758ddd0762fda284ea2
+		<li> shasum: c2772285b1a04989642c8c01406c92e61075ef82  
 	     </ul>
 
 	<li> <b> Windows Binary </b>
 	     <ul>
-		<li> <a href="http://www.jemris.org/get/win/jemris-2.7.zip">jemris-2.7.zip</a>
+		<li> <a href="../get/jemris-2.7.2.msi">jemris-2.7.2.msi</a>
         <br/> Parallel jemris requires <a href="http://www.mcs.anl.gov/research/projects/mpich2/downloads/tarballs/1.4.1p1/mpich2-1.4.1p1-win-ia32.msi">MPICH2 IA32 1.4.1p1</a>.<br/>
              <a href="ug_mpiwin.html">Install guide</a> for Windows Vista, 7 &amp; 8.
-		<li> md5sum: 98570d906b8c39c39d3bd88fe7888a7d
-		<li> shasum: fc823884cf6f5e91dd560bc1485508ac2f9a77fb
+		<li> md5sum: f178c6c161f5adfa1a2800b2fe3bd831
+		<li> shasum: cf995cc47b488e7acffdefda63d888d0efe6ae6d
 	     </ul>
 </ul>
 
@@ -150,8 +150,8 @@ Use e.g. <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/share/jemris/matlab<
  \page ug_about About JEMRIS
 \section ug_version Version
 
-JEMRIS Version 2.7\n
-Copyright (C) 2006-2014  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
+JEMRIS Version 2.7.2\n
+Copyright (C) 2006-2015  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -175,7 +175,7 @@ JEMRIS is developed and maintained by ...
 Tony Stöcker, project founder (tony.stoecker(at)dzne.de) \n
 Framework design, sequence and solver implementation. \n
 \n
-Kaveh Vahedipour (k.vahedipour(at)fz-juelich.de) \n
+Kaveh Vahedipour (kaveh (at) codeare.org) \n
 Framework design, parallel TX/RX, package maintenance, supercomputer implementation. \n
 \n
 Dr. Daniel Pflugfelder (d.pflugfelder(at)fz-juelich.de) \n
