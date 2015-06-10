@@ -1,10 +1,29 @@
+
+jemris (2.8-1) stable; urgency=low
+  * Major added ContainerSequence to encapsulate xml sub-trees for reusability
+  * Minor added constant ramp time option for trapezoid gradients 
+  * Minor added Frequency/Phase of Readout to shift the FOV
+  * Minor command-line argments to specify output directory and filename
+  * Minor updated documentation, added more tests
+
+ -- Tony Stoecker <tony.stoecker@dzne.de>  Sat, 11 Oct 2015 11:56:45 +0200
+
+jemris (2.7.2-1) stable; urgency=low
+  * Minor bug fix in TrapGradPulse (avoid rounding errors)
+  * Minor bug fix in observer notification : correct order of notify / prepare
+  * Minor cmake support for cross compilation
+  * Minor bug fix in sequence diagram dump
+  * Minor updated documentation, added more tests
+
+ -- Tony Stoecker <tony.stoecker@dzne.de>  Fri, 10 Oct 2015 12:24:17 +0200
+
 jemris (2.7-1) stable; urgency=low
   * Major Eddy currents introduced
   * Major HDF5 file format replaces proprietry
   * Major Framework clean and speed up
   * Major ND-Data from codeare for higher dimensional objects
   * Major Replacement of C++ by C interface in MPI
-  * Major Exciting and Refosing notions for RF pulses in order to have a K-Space
+  * Major Exciting and Refocusing notions for RF pulses in order to have a K-Space
 
  -- Kaveh Vahedipour <k.vahedipour@fz-juelich.de>  Wed, 29 Oct 2013 16:02:25 +0200
 

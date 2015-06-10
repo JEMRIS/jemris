@@ -1,15 +1,16 @@
 
-JEMRIS - Juelich Extensible MRI Simulator
-This software package contains a general MRI simulator.
+JEMRIS - This software package contains a general MRI simulator.
 
 Prerequisites
 -------------
 
-CVODE 2.5         http://www.llnl.gov/casc/sundials
-CLN 1.2.X         http://ginac.de/CLN
-GiNaC 1.4.X       http://ginac.de
-Xerces C++ 2.8.0  http://xerces.apache.org/xerces-c
-VarArray 1.0      http://www.fz-juelich.de/jsc/cv/tools/VarArray  
+
+ - CVODE	variable time stepping ODE solver >=2.5		http://www.llnl.gov/casc/sundials
+ - Xerces-C++	XML parser >=2.8				http://xerces.apache.org/xerces-c
+ - HDF5		library for storing and managing data >=1.8	http://www.hdfgroup.org/HDF5
+ - CLN		library for Numbers version >=1.2.X		http://ginac.de/CLN
+ - GiNaC	library for symbolic mathematics >=1.4.X	http://ginac.de
+
 
 Please provide all the above packages. 
 
@@ -18,10 +19,13 @@ Optional
 
 If provided with an MPI implementation with C++ bindings, a parallel version of
 JEMRIS is built. Indicate the location of mpi.h with the appropriate configure 
-flags.
+flags. Currently JEMRIS is tested with the MPICH implementation of MPI:
 
-If povided with the boost C++ libraries, a loop coil obeying to the Biot-Savart 
-law will be built.
+- MPICH		library for parallelization >= 3.0.1		http://www.mpich.org/
+
+If povided with the boost C++ libraries, a loop coil obeying to the Biot-Savart law will be built.
+
+- boost		the boost c++ library >= 1.50			http://www.boost.org/
 
 Installation
 ------------
@@ -31,6 +35,14 @@ Run the following commands:
 # ./configure
 # make 
 # make check
+# make install
+
+Alternatively, use cmake:
+
+# mkdir build ; cd build
+# cmake ..
+# make
+# ctest -V
 # make install
 
 Documentation

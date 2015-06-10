@@ -1,8 +1,7 @@
 General Information
 ===================
 
-JEMRIS, which stands for "Juelich Extensible MRI Simulator", is 
-a general MRI simulator.
+JEMRIS is a general MRI simulation framework.
 
 The general process of simulation consists of preparation by choice or
 implementation of sequence, sample and coil setup and the invocation
