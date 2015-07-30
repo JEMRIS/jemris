@@ -39,6 +39,7 @@ list (APPEND CORE_SRC AnalyticCoil.cpp AnalyticCoil.h
   World.cpp World.h XMLIO.cpp XMLIO.h config.h ginac_functions.h list.h
   list_c.h rng.cpp rng.h) 
 
+# Those directories do not exist, right?
 include_directories (${PROJECT_SOURCE_DIR}/src/core
   ${PROJECT_SOURCE_DIR}/src/matrix/io) 
 
@@ -46,8 +47,8 @@ if (LINUX)
   list (APPEND COMMON_LIBS dl)
 endif()
 
-list (APPEND COMMON_LIBS hdf5 hdf5_cpp xerces-c ${GINAC_LIBRARIES} 
-  ${SUNDIALS_LIBRARIES} cln sundials_cvode sundials_nvecserial)
+list (APPEND COMMON_LIBS ${HDF5_CXX_LIBRARIES} ${XERCESC_LIBRARY} ${GINAC_LIBRARIES} 
+  ${SUNDIALS_LIBRARIES} ${GINAC_LIBRARIES} ${SUNDIALS_LIBRARIES})
 
 add_library (core ${CORE_SRC})
 

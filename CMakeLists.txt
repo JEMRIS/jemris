@@ -6,6 +6,8 @@ set (jemris_VERSION_MINOR 8)
 set (jemris_VERSION_PATCH 0)
 set (jemris_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 
+set(CMAKE_BUILD_TYPE "Release")
+
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 macro(set_config_option VARNAME STRING)
@@ -44,7 +46,7 @@ include (OptimizeForArchitecture)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi -DTIXML_USE_STL -fPIC -O3") 
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DTIXML_USE_STL -O3 -Itr1")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DTIXML_USE_STL -O3 -Itr1 --stdlib=libstdc++")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DTIXML_USE_STL /EHsc /Ox
   /nologo /MT /wd4267 /wd4244 /wd4190 /wd4996 /LD /MD /DEXP_STL") 
@@ -74,6 +76,7 @@ if(Boost_FOUND)
 endif()
 
 find_package(Xerces 1.3.0 REQUIRED)
+include_directories (${Xerces_INCLUDE_DIRS})
 
 find_package(GiNaC REQUIRED)
 include_directories (${GINAC_INCLUDE_DIRS})
@@ -88,16 +91,24 @@ if(MPI_C_FOUND)
 endif()
 
 find_package(HDF5 COMPONENTS CXX REQUIRED)
-include_directories (${HDF5_INCLUDE_DIRS})
-link_directories (${HDF5_LIBRARY_DIRS})
+
+if (NOT DEFINED HDF5_CXX_LIBRARIES)
+   MESSAGE(STATUS "HDF5 CXX Libraries not set... using alternative!")
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_hdf5_cpp_LIBRARIES})
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_hdf5_LIBRARIES})
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_z_LIBRARIES})
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_sz_LIBRARIES})
+endif(NOT DEFINED HDF5_CXX_LIBRARIES)
+
+include_directories (${HDF5_CXX_INCLUDE_DIR})
+
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} hdf5.lib hdf5_cpp.lib")
   set(ZLIB_LIBRARY "${HDF5_DIR}/../../lib/zlib.lib")
   set(ZLIB_INCLUDE_DIR "${HDF5_DIR}/../../include")
   set(ZLIB_FOUND "1")
-else()
-  set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -lhdf5 -lhdf5_cpp")
 endif()
+
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/cmake/config.h.in"
