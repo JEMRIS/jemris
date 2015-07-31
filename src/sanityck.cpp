@@ -38,10 +38,11 @@ using namespace std;
 
 /****************************************************/
 void usage () {
-  cout << endl << "sanityck usage " << endl << endl;
+	cout << endl << "sanityck usage " << endl << endl;
 	cout   << "  sanityck <path_to_example_data> 1 : creates tree-dumps and seq-diagrams for some sequences" << endl;
-	cout   << "  sanityck <path_to_example_data> 2 : performs simulation on a small sample for all these sequences " << endl;
-	cout   << "  sanityck <path_to_example_data> 3 : creates sensitivity maps" << endl << endl;
+	cout   << "  sanityck <path_to_example_data> 2 : performs simulation on a small sample for all these sequences" << endl;
+	cout   << "  sanityck <path_to_example_data> 3 : creates sensitivity maps" << endl;
+	cout   << "  sanityck <path_to_example_data> 4 : exports some sequences in pulseq format for scanner execution" << endl << endl;
 }
 
 /****************************************************/
@@ -320,6 +321,48 @@ bool CheckSens(string path, vector<string> coils){
 }
 
 /****************************************************/
+bool CheckOutput(string path, vector<string> seq){
+
+	bool status=true;
+
+	cout << endl << "Test directory: " << path << endl;
+	cout << endl << "Test Case 4: output sequence for hardware execution" << endl;
+	cout << "======================================================="<< endl << endl;
+
+
+	for (unsigned int i=0;i<seq.size();i++) {
+
+		SequenceTree seqTree;
+		seqTree.Initialize(path+seq[i]);
+
+		if (seqTree.GetStatus()) {
+
+			seqTree.Populate();
+			ConcatSequence* CS = seqTree.GetRootConcatSequence();
+			printf("%02d. %15s | ",i+1,seq[i].c_str());
+
+			//sequence-diagram
+			string seqfile = seq[i];
+			seqfile.replace(seqfile.find("xml",0),3,"seq");
+			map<string,string> defs;
+			CS->OutputSeqData (defs, path, seqfile);
+
+			printf("%15s (seq-output) ",seqfile.c_str());
+
+			if (compare_text_files(path+seqfile,path+"approved/"+seqfile))
+				cout << "is ok " << endl;
+			else {
+				status = false;
+				cout << "is NOT ok " << endl;
+			}
+		}
+	}
+
+	return status;
+
+}
+
+/****************************************************/
 int main (int argc, char *argv[]) {
 
 	if (argc<3) { usage();  return 0; };
@@ -343,6 +386,13 @@ int main (int argc, char *argv[]) {
 	seq.push_back("epi_modular.xml");
 	seq.push_back("trapezoid.xml");
 
+	//sequences to output for scanner execution
+	vector<string> outseq;
+	outseq.push_back("gre.xml");
+	outseq.push_back("epi.xml");
+	outseq.push_back("trapezoid.xml");
+	outseq.push_back("sli_sel.xml");
+
 	//coils to test
 	vector<string> coils;
 	coils.push_back("8chheadcyl.xml");
@@ -354,6 +404,7 @@ int main (int argc, char *argv[]) {
 	case(1): status = CheckSeqs(path,seq); break;	//test sequence diagrams for all sequences
 	case(2): status = CheckSigs(path,seq); break;	//test signal simulations for all sequences
 	case(3): status = CheckSens(path,coils); break;	//test sensitivity maps for all coils
+	case(4): status = CheckOutput(path,outseq); break;  //test sequence output for execution
 	default: cout << "\nsanityck: unknown input\n\n"; break;
 	}
 
