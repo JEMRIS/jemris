@@ -40,28 +40,27 @@ list (APPEND CORE_SRC AnalyticCoil.cpp AnalyticCoil.h
   list_c.h rng.cpp rng.h) 
 
 # Those directories do not exist, right?
-include_directories (${PROJECT_SOURCE_DIR}/src/core
-  ${PROJECT_SOURCE_DIR}/src/matrix/io) 
+#include_directories (${PROJECT_SOURCE_DIR}/src/core
+#  ${PROJECT_SOURCE_DIR}/src/matrix/io) 
 
 if (LINUX)
   list (APPEND COMMON_LIBS dl)
 endif()
 
-list (APPEND COMMON_LIBS ${HDF5_CXX_LIBRARIES} ${XERCESC_LIBRARY} ${GINAC_LIBRARIES} 
-  ${SUNDIALS_LIBRARIES} ${GINAC_LIBRARIES} ${SUNDIALS_LIBRARIES})
+list (APPEND COMMON_LIBS ${HDF5_CXX_LIBRARIES} ${Xerces_LIBRARY} ${GINAC_LIBRARIES} ${SUNDIALS_LIBRARIES})
 
 add_library (core ${CORE_SRC})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  target_link_libraries (core ${COMMON_LIBS})
+  target_link_libraries (core ${COMMON_LIBS} )
 endif()
 add_executable (jemris Model.h Model.cpp jemris.cpp)
-target_link_libraries (jemris core ${COMMON_LIBS}) 
+target_link_libraries (jemris ${COMMON_LIBS} core) 
 install (TARGETS jemris DESTINATION "bin")
 
 
 add_executable (sanityck Model.h Model.cpp sanityck.cpp)
-target_link_libraries (sanityck core ${COMMON_LIBS}) 
+target_link_libraries (sanityck ${COMMON_LIBS} core) 
 
 if (MPI_C_FOUND)
   add_executable (pjemris Mpi2Evolution.h
