@@ -30,6 +30,7 @@
 #include "Module.h"
 #include "Parameters.h"
 #include "TxRxPhase.h"
+#include "Event.h"
 
 class AtomicSequence;
 class AnalyticPulseShape;
@@ -108,6 +109,16 @@ class Pulse :public Module {
      * time the PulseShape changes its timing!!!
      */
     virtual void  SetTPOIs ();
+
+    /**
+     * @brief Generate an event to run on scanner hardware
+     *
+     * Must be overloaded by pulse shapes. New events are allocated on the heap
+     * and pointers are stored in the events vector.
+     *
+     * @param events vector to store new events
+     */
+    virtual void  GenerateEvents (std::vector<Event*> &events) {};
 
     /**
      * @return Get number of ADCs

@@ -93,6 +93,10 @@ class DelayAtomicSequence : public AtomicSequence {
      */
     bool  PrepareDelay   (const PrepareMode mode);
 
+    /**
+     * @brief Collect sequence data (for running on the scanner)
+     */
+    virtual void CollectSeqData	(OutputSequenceData *seqdata);
 
  protected:
     /**

@@ -13,7 +13,7 @@ list (APPEND CORE_SRC AnalyticCoil.cpp AnalyticCoil.h
   DelayAtomicSequence.h DynamicVariables.cpp DynamicVariables.h
   EddyPulse.cpp EddyPulse.h EmptyPulse.cpp EmptyPulse.h ExternalCoil.cpp
   ExternalCoil.h ExternalGradPulse.cpp ExternalGradPulse.h
-  ExternalRFPulse.cpp ExternalRFPulse.h ExternalPulseData GaussianRFPulse.cpp
+  ExternalRFPulse.cpp ExternalRFPulse.h ExternalPulseData Event.h GaussianRFPulse.cpp
   GaussianRFPulse.h GradPulse.cpp GradPulse.h HardRFPulse.cpp
   HardRFPulse.h HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h KSpace.h
   Microstructure.cpp Microstructure.h MicrostructureBoxes.cpp
@@ -22,7 +22,8 @@ list (APPEND CORE_SRC AnalyticCoil.cpp AnalyticCoil.h
   MicrostructureKissingFiber.h MicrostructureSingleFiber.cpp
   MicrostructureSingleFiber.h Module.cpp Module.h
   ModulePrototypeFactory.cpp ModulePrototypeFactory.h NDData.h
-  Parameters.cpp Parameters.h Prototype.cpp Prototype.h
+  OutputSequenceData.h OutputSequenceData.cpp Parameters.cpp Parameters.h 
+  Prototype.cpp Prototype.h
   PrototypeFactory.cpp PrototypeFactory.h Pulse.cpp Pulse.h RFPulse.cpp
   RFPulse.h RepIter.cpp RepIter.h MultiPoolSample.cpp MultiPoolSample.h
   Sample.cpp Sample.h SampleReorderShuffle.cpp SampleReorderShuffle.h

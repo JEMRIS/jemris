@@ -34,6 +34,8 @@
 #define TWOPI 6.283185307179586476925286766559005768394338798750211641949889185
 const double TIME_ERR_TOL = 2.5e-6; // Avoid CVODE warnings. Doesn't affect physics.
 
+//#define SLAVE_GRADS
+
 /**
  * number of spin properties:
  */
@@ -43,17 +45,17 @@ const double TIME_ERR_TOL = 2.5e-6; // Avoid CVODE warnings. Doesn't affect phys
  * Spin fields
  */
 enum fields {
-    XC=0,               /**< @brief X location                */
-    YC,                 /**< @brief Y location                */
-    ZC,                 /**< @brief Z location                */
-    M0,                 /**< @brief Equilibrium magnetisation */
-    R1,                 /**< @brief Relaxation rate 1: 1/T1   */
-    R2,                 /**< @brief Relaxation rate 2: 1/T2   */
-    R2S,                /**< @brief Relaxation rate 2: 1/T2S   */
-    DB,                 /**< @brief Delta B (e.g. chemical-shift + susceptiblity-induced, ...) */
-    ID,				    /**< @brief Index of spin			  */
-    NO_SPIN_PROPERTIES  /**< @brief counts number of entries to enum fields. must stay 
-						            last element, other entries to 'fields' may not be assigned 
+	XC=0,               /**< @brief X location                */
+	YC,                 /**< @brief Y location                */
+	ZC,                 /**< @brief Z location                */
+	M0,                 /**< @brief Equilibrium magnetisation */
+	R1,                 /**< @brief Relaxation rate 1: 1/T1   */
+	R2,                 /**< @brief Relaxation rate 2: 1/T2   */
+	R2S,                /**< @brief Relaxation rate 2: 1/T2S  */
+	DB,                 /**< @brief Delta B (e.g. chemical-shift + susceptiblity-induced, ...) */
+	ID,                 /**< @brief Index of spin             */
+	NO_SPIN_PROPERTIES  /**< @brief counts number of entries to enum fields. must stay
+									last element, other entries to 'fields' may not be assigned
 									to a value!*/
 };
 
@@ -63,7 +65,7 @@ enum fields {
 enum cylinder {
 	RC = 3,             /**< @brief Radius  *///!< RC
 	RT,                 /**< @brief Heading *///!< RT
-	RZ					/**< @brief Azimuth */             //!< RZ
+	RZ                  /**< @brief Azimuth */             //!< RZ
 };
 
 /**
@@ -80,15 +82,19 @@ enum polar {
  * the sequence.
  */
 enum seqval {
-	RF_AMP,             /**< @brief Amplitude */
-	RF_PHS,             /**< @brief Phase     */
-    GRAD_X,             /**< @brief Readout   */
-    GRAD_Y,             /**< @brief Phase     */
-    GRAD_Z              /**< @brief Slice     */
+	RF_AMP,                             /**< @brief Amplitude */
+	RF_PHS,                             /**< @brief Phase     */
+	GRAD_X,                             /**< @brief Readout   */
+	GRAD_Y,                             /**< @brief Phase     */
+	GRAD_Z,                             /**< @brief Slice     */
 };
 
+const seqval MAX_SEQ_VAL = GRAD_Z;
 
-enum PulseAxis {AXIS_RF, AXIS_GX, AXIS_GY, AXIS_GZ, AXIS_VOID};
+
+enum PulseAxis {AXIS_RF, AXIS_GX, AXIS_GY, AXIS_GZ,
+	AXIS_VOID
+};
 
 /**
  * Coil sensitivity methods

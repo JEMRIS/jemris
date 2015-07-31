@@ -112,7 +112,12 @@ class GradPulse : public Pulse {
      */
     bool          HasNonLinGrad(){return m_non_lin_grad; };
 
- protected:
+    /**
+     * @see Pulse::GenerateEvents()
+     */
+    virtual void GenerateEvents(std::vector<Event*> &events);
+
+  protected:
     /**
      * Get informations on this Gradient
      *

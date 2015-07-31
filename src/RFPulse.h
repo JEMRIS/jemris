@@ -154,8 +154,15 @@ class RFPulse : public Pulse, public TxRxPhase {
      */
     CoilArray*     GetCoilArray () {return m_coil_array;};
 
+    /**
+	 * @see Pulse::SetTPOIs()
+	 */
     virtual void SetTPOIs ();
 
+    /**
+     * @see Pulse::GenerateEvents()
+     */
+    virtual void GenerateEvents(std::vector<Event*> &events);
 
  protected:
 

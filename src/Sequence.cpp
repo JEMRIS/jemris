@@ -74,21 +74,22 @@ void Sequence::SeqDiag (const string& fname ) {
 	NDData<double>      di (GetNumOfTPOIs() + 1);
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
-	int numaxes = 7;
+	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
 	// Start with 0 and track excitations and refocusing
-	NDData<double> seqdata(numaxes+1,GetNumOfTPOIs()+1);
+	NDData<double> seqdata(numaxes+1,GetNumOfTPOIs()+1);	/** Extra axis for META */
 	
 	// HDF5 dataset names
 	vector<string> seqaxis;
-	seqaxis.push_back("T");		//Time
-	seqaxis.push_back("RXP");	//receiver phase
-	seqaxis.push_back("TXM");	//transmitter magnitude
-	seqaxis.push_back("TXP");	//transmitter phase
-	seqaxis.push_back("GX");	//X gradient
-	seqaxis.push_back("GY");	//Y gradient
-	seqaxis.push_back("GZ");	//Z gradient
-	seqaxis.push_back("META");	//Z gradient
+	seqaxis.push_back("T");							//Time
+	seqaxis.push_back("RXP");						//receiver phase
+	seqaxis.push_back("TXM");						//transmitter magnitude
+	seqaxis.push_back("TXP");						//transmitter phase
+	std::string gradSuffixes = "XYZ";
+	for (int i=0; i<gradSuffixes.length(); i++)
+		seqaxis.push_back(std::string("G") + gradSuffixes[i]);	//Patloc and Linear gradients
+	seqaxis.push_back("META");						//Meta - used to adjust k-space for excite/refocusing
+	
 
 	//turn off nonlinear gradients in static events for sequence diagram calculation
 	World* pW = World::instance();
@@ -104,20 +105,31 @@ void Sequence::SeqDiag (const string& fname ) {
 	seqdata = transpose(seqdata);
 	std::copy (&seqdata[0], &seqdata[0]+di.Size(), t.begin());
 	for (size_t i = 1; i < meta.size(); ++i)
-		meta[i] = seqdata(i,7);
+		meta[i] = seqdata(i,numaxes);
 
-	//write columns to HDF5 file
-	for (size_t i=0; i<numaxes+1; i++) {
-		std::string URN (seqaxis[i]);
-			memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
-			bc.Write(di, URN, "/seqdiag");
-		if (i == 4)
-			bc.Write (cumtrapz(di,t,meta), "KX", "/seqdiag");
-		if (i == 5)
-			bc.Write (cumtrapz(di,t,meta), "KY", "/seqdiag");
-		if (i == 6)
-			bc.Write (cumtrapz(di,t,meta), "KZ", "/seqdiag");
+	// Write columns to HDF5 file
+	std::string URN;
+	for (size_t i=0; i<4+gradSuffixes.length(); i++) {
+		URN = seqaxis[i];
+		memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
+		bc.Write(di, URN, "/seqdiag");
+		if (i >= 4 )			/* Gradient channels*/
+			bc.Write (cumtrapz(di,t,meta), std::string("K") + gradSuffixes[i-4], "/seqdiag");
 	}
 
+
+	// Write meta data to HDF5 file
+	URN = seqaxis[seqaxis.size()-1];
+	memcpy (&di[0], &seqdata[(numaxes)*di.Size()], di.Size() * sizeof(double));
+	bc.Write(di, URN, "/seqdiag");
 }
 
+/***********************************************************/
+void Sequence::OutputSeqData (map<string,string> &scanDefs, const string& outDir, const string& outFile ) {
+
+	OutputSequenceData seqdata;
+	CollectSeqData (&seqdata);
+	seqdata.SetDefinitions(scanDefs);
+	seqdata.WriteFiles(outDir,outFile);
+
+}

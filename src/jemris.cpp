@@ -62,6 +62,8 @@ void usage () {
 	cout   << "  Parameters:" << endl;
 	cout   << "     -o <output_dir>: Output directory" << endl;
 	cout   << "     -f <filename>:   Output filename (without extension)"  << endl;
+	cout   << "     -x: Output sequence file for execution"  << endl;
+	cout   << "     -d <def>=<val>:  Define custom sequence variable"  << endl;
 }
 
 void do_simu (Simulator* sim) {
@@ -94,12 +96,15 @@ int main (int argc, char *argv[]) {
 
 	string output_dir("");
 	string filename("");
-
+	string definition, def_name, def_val;
+	std::size_t pos;
+	map<string,string> scan_defs;
+	bool export_seq=false;
 	opterr = 0;
 	int status;
 
 	int c;
-	while((c = getopt (argc, argv, "f:o:")) != -1)
+	while((c = getopt (argc, argv, "f:o:d:x")) != -1)
 	{
 		switch (c)
 		{
@@ -117,15 +122,31 @@ int main (int argc, char *argv[]) {
 		case 'f':
 			filename = optarg;
 			break;
+		case 'x':
+			export_seq=true;
+			break;
+		case 'd':
+			definition = optarg;
+			pos = definition.find("=");
+			if (pos==std::string::npos) {
+				cerr << "error: Custom scan definitions must be in format: -d <name>=<val>" << endl;
+				return 1;
+			}
+			def_name = definition.substr(0,pos);
+			def_val = definition.substr(pos+1);
+			scan_defs[def_name] = def_val;
+			break;
 		case '?':
 			if (optopt == 'o')
 				cerr << "Option '-o' requires an argument." << endl;
 			if (optopt == 'f')
 				cerr << "Option '-f' requires an argument." << endl;
+			if (optopt == 's')
+				cerr << "Option '-d' requires an argument." << endl;
 			else if (isprint(optopt))
-				cerr << "Unkown option '-" << (char)optopt << "'." << endl;
+				cerr << "Unknown option '-" << (char)optopt << "'." << endl;
 			else
-				cerr << "Unkown option character '-" << (char)optopt << "'." << endl;
+				cerr << "Unknown option character '-" << (char)optopt << "'." << endl;
 			return 1;
 		default:
 			abort();
@@ -150,6 +171,7 @@ int main (int argc, char *argv[]) {
 		SequenceTree seqTree;
 		seqTree.Initialize(input);
 		if (seqTree.GetStatus()) {
+			string baseFilename(filename);
 			if(filename == "")
 				filename = "seq.h5";
 			else
@@ -158,6 +180,15 @@ int main (int argc, char *argv[]) {
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
 			seq->SeqDiag(output_dir + filename);
 			seq->DumpTree();
+
+			filename = baseFilename;
+			if (export_seq) {
+				if (filename == "")
+					filename = "external.seq";
+				else
+					filename += ".seq";
+				seq->OutputSeqData(scan_defs, output_dir, filename);
+			}
 			if (argc==3) seq->WriteStaticXML(output_dir + "jemris_seq.xml");
 			return 0;
 		}
