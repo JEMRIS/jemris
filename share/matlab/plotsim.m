@@ -99,6 +99,7 @@ if WHAT==2
   for i=1:length(I)-1
    J=[I(i)+1:I(i+1)];
    plot(t(J),M(J,:),'linewidth',2)
+   if ~verLessThan('matlab', '8.4'),set(gca, 'ColorOrderIndex', 1),end %correct line colors in new Matlab (R2015)
   end
  hold off
  set(gca,'xlim',[min(t) max(t)],'box','on')
