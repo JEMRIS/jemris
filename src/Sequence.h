@@ -30,7 +30,7 @@
 #include "Module.h"
 #include "Parameters.h"
 #include "NDData.h"
-
+#include "OutputSequenceData.h"
 
 //! Super class for all sequence (non-pulse) modules
 
@@ -77,6 +77,18 @@ public:
      * @brief Recursively collect sequence data (for plotting the sequence diagram)
      */
     virtual void CollectSeqData          (NDData<double>& seqdata, double& t, long& offset) = 0;
+
+    /**
+     * Sequence output
+     *
+     * @param fname output filename
+     */
+    void OutputSeqData (map<string,string> &scanDefinitions, const string& outputDir="", const string& outFile="external.seq");
+
+    /**
+     * @brief Recursively collect sequence data (for running on the scanner)
+     */
+    virtual void CollectSeqData	(OutputSequenceData *seqdata) = 0;
 
     /**
      * Get the number of ADCs for this sequence.

@@ -151,6 +151,11 @@ class ConcatSequence : public Sequence {
      */
     virtual void CollectSeqData (NDData<double>& seqdata, double& t, long& offset);
 
+    /**
+     * @brief Recursively collect sequence data (for running on the scanner)
+     */
+    virtual void CollectSeqData	(OutputSequenceData *seqdata);
+
  protected:
 
 

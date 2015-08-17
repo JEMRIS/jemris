@@ -172,6 +172,12 @@ void Container::CollectSeqData(NDData<double>& seqdata, double& t, long& offset)
 }
 
 /***********************************************************/
+void Container::CollectSeqData(OutputSequenceData *seqdata) {
+
+	m_container_seq->CollectSeqData(seqdata);
+}
+
+/***********************************************************/
 string          Container::GetInfo () {
 
 	string ret = "ContainerSequence filename: " + m_container_seq_name;

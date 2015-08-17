@@ -27,6 +27,7 @@
 #include "RFPulse.h"
 #include "Coil.h"
 
+#include <limits>
 /*****************************************************************/
 RFPulse::RFPulse  () : m_refocusing(0), m_coil_array(0),
 	m_channel(0), m_flip_angle(0.), m_bw(0.), m_symmetry(.5) {
@@ -39,7 +40,7 @@ RFPulse::RFPulse  () : m_refocusing(0), m_coil_array(0),
 /*****************************************************************/
 bool RFPulse::Prepare  (const PrepareMode mode) {
 
-	//every RFPulse might have FlipAngle, InitialPhase, Bandwidth, and Frequncy offset
+	//every RFPulse might have FlipAngle, InitialPhase, Bandwidth, and Frequency offset
 	ATTRIBUTE("FlipAngle"    , m_flip_angle   );
 	ATTRIBUTE("InitialPhase" , m_initial_phase);
 	ATTRIBUTE("Bandwidth"    , m_bw           );
@@ -60,7 +61,7 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
     }
 
     if (b && (m_symmetry <= 0. || m_symmetry > 1.)) {
-    	cout << "Preparation of DelayAtomicSequence '" << GetName() << "' not succesful. Symmtry = "
+    	cout << "Preparation of DelayAtomicSequence '" << GetName() << "' not successful. Symmetry = "
     			<< m_symmetry << ". Must be (0.,1.]." << endl;
     	b = false;
     }
@@ -84,6 +85,67 @@ void RFPulse::SetTPOIs() {
 	Pulse::SetTPOIs();
 	m_tpoi + TPOI::set (m_symmetry * GetDuration(), -1., bitmask);
 }
+/*****************************************************************/
+inline void RFPulse::GenerateEvents(std::vector<Event*> &events) {
+	RFEvent *rf = new RFEvent();
+	rf->m_freq_offset = GetFrequency();
+	rf->m_phase_offset = GetInitialPhase()*PI/180.0;
+
+	// Fill the initial delay period with zeros
+	int num_initial_samples = round(GetInitialDelay()*1.0e3);
+	rf->m_magnitude.insert (rf->m_magnitude.begin(),num_initial_samples,0.0);
+	rf->m_phase.insert (rf->m_phase.begin(),num_initial_samples,0.0);
+
+	double max_magnitude = std::numeric_limits<double>::min();
+	double magn, mag1, mag2;
+	double phase = 0.0;
+
+	// Linear interpolation allows courser sampling of the RF waveform.
+	// Although the generated waveform remains sampled at 1us, the linear
+	// segments allow compression when output for scanner hardware.
+	int interpFactor=10;	// Linear segments of 10us (interpolate if factor > 1)
+
+	// Calculate samples
+	for (double time=0.5e-3; time<GetDuration(); )
+	{
+		// Linear interpolation between time points to reduce the size of the RF shape
+		mag1 = GetMagnitude(time);
+		mag2 = GetMagnitude(time + interpFactor*1.0e-3);
+		for (int i=0; i<interpFactor && time<GetDuration(); i++, time+=1.0e-3)
+		{
+			magn  = ((interpFactor-i)*mag1 + i*mag2)/interpFactor;
+
+			// Add additional phase from pulse shape, but not from linear phase due to frequency offset
+			for (unsigned int i=0; i<m_GetPhaseFunPtrs.size(); ++i) {
+				if (m_GetPhaseFunPtrs[i]!=&TxRxPhase::getLinearPhase)
+					phase += m_GetPhaseFunPtrs[i](this,time)*PI/180.0;
+			}
+
+			// Check if magnitude is negative
+			if (magn<0) {
+				phase += PI;
+				magn=-magn;
+			}
+			phase = fmod( phase, 2*PI );
+			phase = (phase<0.0?phase+2*PI:phase);
+			phase /= (2*PI);
+
+			if (magn>max_magnitude)
+				max_magnitude=magn;
+
+			// Append samples
+			rf->m_magnitude.push_back(magn);
+			rf->m_phase.push_back(phase);
+		}
+	}
+
+	// Normalize waveform to be in range [0,1]
+	transform( rf->m_magnitude.begin(), rf->m_magnitude.end(), rf->m_magnitude.begin(), bind2nd( divides<double>(), max_magnitude ) );
+	rf->m_amplitude = max_magnitude;
+
+	events.push_back(rf);
+}
+
 
 /*****************************************************************/
 void RFPulse::GetValue (double * dAllVal, double const time)  {
@@ -107,7 +169,7 @@ void RFPulse::GetValue (double * dAllVal, double const time)  {
 
 	}
 
-	// Get Magntidue and Phase of this RF pulse
+	// Get Magnitude and Phase of this RF pulse
 	magn  *= GetMagnitude(time);
 	phase += GetInitialPhase()*PI/180.0;
 

@@ -73,7 +73,7 @@ class TrapGradPulse : public GradPulse, public TxRxPhase {
      * @brief Set the shape of the trapezoidal gradient.
      *
      * The method checks for various inputs from XML
-     * and prepares the trapezoidal shape arcodingly by
+     * and prepares the trapezoidal shape accordingly by
      * calling TrapGradPulse::SetTrapezoid
      *
      * @param verbose Shout error in preparation, if true.
@@ -91,6 +91,11 @@ class TrapGradPulse : public GradPulse, public TxRxPhase {
      */
     virtual void    SetTPOIs      ();
 
+    /**
+     * @see Pulse::GenerateEvents()
+     */
+    virtual void	GenerateEvents(std::vector<Event*> &events);
+
  protected:
     /**
      * Get informations on this trapezoidal gradient
@@ -105,8 +110,9 @@ class TrapGradPulse : public GradPulse, public TxRxPhase {
 
     bool    m_has_flat_top_time;    /**< true, if corresponding double attribute was set in XML*/
     bool    m_has_flat_top_area;    /**< true, if corresponding double attribute was set in XML*/
-    bool    m_has_duration;       	/**< true, if corresponding double attribute was set in XML*/
-    bool    m_has_area;    			/**< true, if corresponding double attribute was set in XML*/
+    bool    m_has_duration;         /**< true, if corresponding double attribute was set in XML*/
+    bool    m_has_area;             /**< true, if corresponding double attribute was set in XML*/
+    bool    m_has_rise_time;        /**< true, if corresponding double attribute was set in XML*/
  
     double  m_ft;       /**< internal flat_top time */
     double  m_fa;       /**< internal flat_top area */

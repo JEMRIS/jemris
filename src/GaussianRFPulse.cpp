@@ -52,10 +52,12 @@ inline void  GaussianRFPulse::SetTPOIs () {
 	//Reset and take care for ADCs
 	RFPulse::SetTPOIs();
 
-	//add equidistantly 10 TPOIs
-	for (unsigned int i = 1; i < 20; i++)
-		m_tpoi + TPOI::set(i*GetDuration()/20, -1.0);
-
+	//Add equidistant TPOIs
+	//TODO: choose number of points dynamically (based on BW and duration)
+	//      to ensure accurate shape but save computation where possible
+	const unsigned int nPoints = 50;
+	for (unsigned int i = 1; i < nPoints; i++)
+		m_tpoi + TPOI::set(i*GetDuration()/nPoints, -1.0);
 }
 
 

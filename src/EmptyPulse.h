@@ -71,6 +71,11 @@ class EmptyPulse : public Pulse {
      */
     virtual void    SetTPOIs  ();
 
+    /**
+     * @see Pulse::GenerateEvents()
+     */
+    virtual void GenerateEvents(std::vector<Event*> &events);
+
  protected:
    
     /**

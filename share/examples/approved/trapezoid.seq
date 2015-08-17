@@ -1,0 +1,50 @@
+# Pulseq sequence format
+# Created by JEMRIS 2.8
+
+[DEFINITIONS]
+Num_Blocks 3
+
+# Format of blocks:
+##  D RF  GX  GY  GZ ADC
+[BLOCKS]
+1  0  1   0   0   0  0
+2  0  0   1   0   0  0
+3  0  0   2   0   0  1
+
+# Format of RF events:
+# id amplitude mag_id phase_id freq phase
+# ..        Hz   ....     ....   Hz   rad
+[RF]
+1         2500 1 2 0 0
+
+# Format of trapezoid gradients:
+# id amplitude rise flat fall
+# ..      Hz/m   us   us   us
+[TRAP]
+ 1     -157692.3 100  940 100
+ 2         80000 100 4000 100
+
+# Format of ADC events:
+# id num dwell delay freq phase
+# ..  ..    ns    us   Hz   rad
+[ADC]
+ 1  64  62500 100 500 3.141593
+
+# Sequence Shapes
+
+[SHAPES]
+
+shape_id 1
+num_samples 100
+1
+0
+0
+97
+
+shape_id 2
+num_samples 100
+0
+0
+98
+
+

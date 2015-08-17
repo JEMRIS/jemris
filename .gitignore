@@ -11,12 +11,12 @@
 /src/pjemris
 /src/sanityck
 /src/config.h
+/src/testmpi.sh
 /share/matlab/JEMRIS_seq.m
 /share/matlab/JEMRIS_sim.m
 /share/matlab/JEMRIS_txrx.m
 /share/matlab/JEMRIS_ContainerSequence.m
 /share/matlab/pbs_script.sh
-/src/test*.sh
 /signals.h5
 /src/stamp-h1
 /doc/doxy.conf
@@ -49,6 +49,7 @@ sensmaps.h5
 mod.xml
 mpirun.out
 
+share/examples/*.seq
 share/examples/1chext.h5
 share/examples/8chheadcyl.h5
 share/examples/ThreePulses.h5

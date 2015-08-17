@@ -38,7 +38,7 @@ bool    AtomicSequence::Prepare(const PrepareMode mode) {
 
 	ATTRIBUTE("RotAngle"       , m_alpha );
 	ATTRIBUTE("Inclination"    , m_theta );
-	ATTRIBUTE("Azimut"         , m_phi   );
+	ATTRIBUTE("Azimuth"        , m_phi   );
 
 	if (mode != PREP_UPDATE) m_type = MOD_ATOM;
 	if (mode != PREP_UPDATE) GetDuration();
@@ -222,7 +222,7 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 		//cout << GetName() << " " << setw(9) << setfill(' ') << m_tpoi.GetTime(i)+t << setw(9) << setfill(' ') << " " << seqdata(5,offset+i+1) << endl;
 		if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( &seqdata(2,offset+i+1), m_tpoi.GetTime(i) + t );
         GetValueLingeringEddyCurrents(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
-		seqdata(7,offset+i+1) = m_tpoi.GetMask(i);
+		seqdata(MAX_SEQ_VAL+1+2,offset+i+1) = m_tpoi.GetMask(i);
 	}
 
     this->UpdateEddyCurrents();
@@ -234,6 +234,31 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 
 }
 
+/***********************************************************/
+void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
+
+	vector<Module*> children = GetChildren();
+	Pulse* p;
+	double d;
+
+	vector<Event*> events;
+
+	for (size_t j = 0; j < children.size(); ++j) {
+
+		p = ((Pulse*)children[j]);
+		d = p->GetInitialDelay();
+
+		p->GenerateEvents(events);
+
+	}
+	seqdata->AddEvents(events, GetDuration());
+	if (m_alpha!=0 || m_theta!=0 || m_phi!=0)
+		seqdata->SetRotationMatrix(m_alpha,m_theta,m_phi);
+
+	for(int i = 0; i < events.size(); ++i)
+	   delete events[i];
+
+}
 
 /***********************************************************/
 long  AtomicSequence::GetNumOfADCs () {
@@ -265,14 +290,15 @@ void    AtomicSequence::GetValueLingeringEddyCurrents (double * dAllVal, double 
     	    continue;
     	}
 
-		double d[7] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+		double d[MAX_SEQ_VAL+3] = {0.0};	/* Extra two values (time, rx phase) */
+
 		iter->first->GetValue(d,    iter->first->GetParentDuration()
 										+ iter->first->GetLingerTime()
 										- iter->second
 										+ time );
 
-		iter->first->GetParentAtom()->Rotation(&d[2]);
-		for (int i=2;i<5;++i) dAllVal[i] += d[i];
+		iter->first->GetParentAtom()->Rotation(&d[GRAD_X]);
+		for (int i=GRAD_X;i<=MAX_SEQ_VAL;++i) dAllVal[i] += d[i];
 	}
 
 

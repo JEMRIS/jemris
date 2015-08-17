@@ -1,5 +1,5 @@
 bin_PROGRAMS = jemris sanityck
-TESTS      = testsequences.sh testsignals.sh testcoils.sh
+TESTS      = testsequences.sh testsignals.sh testcoils.sh testoutput.sh
 if MPI
   bin_PROGRAMS += pjemris
   TESTS += testmpi.sh

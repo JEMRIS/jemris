@@ -120,14 +120,15 @@ am__objects_1 = AnalyticCoil.$(OBJEXT) AnalyticGradPulse.$(OBJEXT) \
 	MicrostructureKissingFiber.$(OBJEXT) \
 	MicrostructureSingleFiber.$(OBJEXT) Model.$(OBJEXT) \
 	Module.$(OBJEXT) ModulePrototypeFactory.$(OBJEXT) \
+	OutputSequenceData.$(OBJEXT) \
 	Parameters.$(OBJEXT) Prototype.$(OBJEXT) \
 	PrototypeFactory.$(OBJEXT) Pulse.$(OBJEXT) RFPulse.$(OBJEXT) \
 	RepIter.$(OBJEXT) MultiPoolSample.$(OBJEXT) Sample.$(OBJEXT) \
 	SampleReorderShuffle.$(OBJEXT) SechRFPulse.$(OBJEXT) \
 	Sequence.$(OBJEXT) SequenceTree.$(OBJEXT) Signal.$(OBJEXT) \
 	SimpleIO.$(OBJEXT) Simulator.$(OBJEXT) SincRFPulse.$(OBJEXT) \
-	SpiralGradPulse.$(OBJEXT) StrX.$(OBJEXT) TPOI.$(OBJEXT) \
-	Trajectory.$(OBJEXT) Trajectory1D.$(OBJEXT) \
+	SpiralGradPulse.$(OBJEXT) StrX.$(OBJEXT)  \
+	TPOI.$(OBJEXT) Trajectory.$(OBJEXT) Trajectory1D.$(OBJEXT) \
 	TrajectoryDiffusion.$(OBJEXT) TrajectoryInterface.$(OBJEXT) \
 	TrajectoryMotion.$(OBJEXT) TrajectoryT2s.$(OBJEXT) \
 	TrapGradPulse.$(OBJEXT) TriangleGradPulse.$(OBJEXT) \
@@ -522,7 +523,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-TESTS = testsequences.sh testsignals.sh testcoils.sh $(am__append_2)
+TESTS = testsequences.sh testsignals.sh testcoils.sh testoutput.sh $(am__append_2)
 AM_CXXFLAGS = $(OPENMP_CXXFLAGS)
 SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	AnalyticGradPulse.h AnalyticPulseShape.cpp \
@@ -542,7 +543,7 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	EddyPulse.h EmptyPulse.cpp EmptyPulse.h ExternalCoil.cpp \
 	ExternalCoil.h ExternalPulseData.cpp ExternalPulseData.h \
 	ExternalGradPulse.cpp ExternalGradPulse.h ExternalRFPulse.cpp \
-	ExternalRFPulse.h GaussianRFPulse.cpp GaussianRFPulse.h \
+	ExternalRFPulse.h Event.h GaussianRFPulse.cpp GaussianRFPulse.h \
 	GradPulse.cpp GradPulse.h HardRFPulse.cpp HardRFPulse.h \
 	HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h Container.cpp \
 	Container.h KSpace.h Microstructure.cpp Microstructure.h \
@@ -552,6 +553,7 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	MicrostructureSingleFiber.cpp MicrostructureSingleFiber.h \
 	Model.cpp Model.h Module.cpp Module.h \
 	ModulePrototypeFactory.cpp ModulePrototypeFactory.h NDData.h \
+	OutputSequenceData.cpp OutputSequenceData.h \
 	Parameters.cpp Parameters.h Prototype.cpp Prototype.h \
 	PrototypeFactory.cpp PrototypeFactory.h Pulse.cpp Pulse.h \
 	RFPulse.cpp RFPulse.h RepIter.cpp RepIter.h \
@@ -561,7 +563,8 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	Sequence.cpp Sequence.h SequenceTree.cpp SequenceTree.h \
 	Signal.cpp Signal.h SimpleIO.h SimpleIO.cpp Simulator.cpp \
 	Simulator.h SincRFPulse.cpp SincRFPulse.h SpiralGradPulse.cpp \
-	SpiralGradPulse.h StrX.cpp StrX.h TPOI.cpp TPOI.h \
+	SpiralGradPulse.h StrX.cpp StrX.h   \
+	TPOI.cpp TPOI.h \
 	Trajectory.cpp Trajectory.h Trajectory1D.cpp Trajectory1D.h \
 	TrajectoryDiffusion.cpp TrajectoryDiffusion.h \
 	TrajectoryEmpty.h TrajectoryInterface.cpp \
@@ -733,6 +736,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModulePrototypeFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Mpi2Evolution.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MultiPoolSample.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OutputSequenceData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Parameters.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Prototype.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PrototypeFactory.Po@am__quote@
@@ -991,6 +995,13 @@ testsignals.sh.log: testsignals.sh
 testcoils.sh.log: testcoils.sh
 	@p='testcoils.sh'; \
 	b='testcoils.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+testoutput.sh.log: testoutput.sh
+	@p='testoutput.sh'; \
+	b='testoutput.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

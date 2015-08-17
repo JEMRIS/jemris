@@ -27,7 +27,7 @@
 #include "GradPulse.h"
 #include "AtomicSequence.h"
 #include "EddyPulse.h"
-
+#include <limits>
 
 GradPulse::GradPulse  () {
 
@@ -164,9 +164,10 @@ bool     GradPulse::PrepareEddyCurrents  (PrepareMode mode, int steps) {
 /***********************************************************/
 bool GradPulse::Prepare  (PrepareMode mode) {
 
-	bool btag = (m_axis == AXIS_GX || m_axis == AXIS_GY ||  m_axis == AXIS_GZ) ;
-        if (!btag && mode == PREP_VERBOSE)
-		cout << GetName() << ": error in GradPulse::Prepare(). Wrong Axis for this gradient pulse." << endl;
+	bool btag = (m_axis >= AXIS_GX && m_axis <= AXIS_GZ);
+
+  if (!btag && mode == PREP_VERBOSE)
+		cout << GetName() << ": error in GradPulse::Prepare(). Wrong Axis for this gradient pulse:" << m_axis << endl;
 
 	ATTRIBUTE("SlewRate"       , m_slew_rate);
 	ATTRIBUTE("MaxAmpl"        , m_max_ampl);
@@ -209,6 +210,42 @@ void GradPulse::GetValue (double * dAllVal, double const time) {
 
 	dAllVal[1+m_axis] += GetGradient(time);
 	return;
+}
+
+/*****************************************************************/
+inline void GradPulse::GenerateEvents(std::vector<Event*> &events) {
+	GradEvent *grad = new GradEvent();
+	double max_amplitude = std::numeric_limits<double>::min();
+
+	for (double time=5.0e-3; time<GetDuration(); time+=10.0e-3)
+	{
+		double amp = GetGradient(time);
+
+		if (amp>max_amplitude)
+			max_amplitude=amp;
+
+		grad->m_samples.push_back(amp);
+	}
+	transform( grad->m_samples.begin(), grad->m_samples.end(), grad->m_samples.begin(), bind2nd( divides<double>(), max_amplitude ) );
+
+	grad->m_amplitude = max_amplitude;
+	grad->m_channel = (int)(m_axis-AXIS_GX);
+
+	events.push_back(grad);
+
+	// Add ADCs (if any)
+	int N = GetNADC();
+	if (N>0) {
+		ADCEvent *adc = new ADCEvent();
+		adc->m_num_samples = N;
+		adc->m_dwell_time = 1e6*GetDuration()/N;
+		adc->m_delay = 0;
+
+		adc->m_phase_offset = 0;
+		adc->m_freq_offset = 0;
+
+		events.push_back(adc);
+	}
 }
 
 /***********************************************************/

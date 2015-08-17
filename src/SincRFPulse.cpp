@@ -77,7 +77,7 @@ inline void  SincRFPulse::SetTPOIs () {
 	//Reset and take care for ADCs
 	RFPulse::SetTPOIs();
 
-	//add equidistantly TPOIs at 8 times the numer of zeros
+	//add equidistant TPOIs at 8 times the number of zeros
 	for (unsigned int i = 1; i < 8*m_zeros; i++)
 		m_tpoi + TPOI::set(i*GetDuration()/(8*m_zeros), -1.0);
 

@@ -152,15 +152,16 @@ double DelayAtomicSequence::GetDelay() {
 	}
 	//cout << " delay = " << delay << endl << endl;
 
-
+	// Round delay time up to nearest 10us
+	double delayRounded = round(100.0*fabs(delay))/100.0;
+	delay = delay<0.0 ? -delayRounded : delayRounded;
 
 #ifdef DEBUG
 	cout	<< "  DELAYTOMICSEQUENCE: " << GetName() << " , m_await_time = " << m_await_time
 			<< " , (iS1pos, iMYpos, iS2pos) = (" << m_iS1pos << "," << m_iMYpos << "," << m_iS2pos << ")"
 			<< "  =>  delay = " << delay << endl;
 #endif
-
-
+	
 	return delay;
 
 }
@@ -189,3 +190,14 @@ string          DelayAtomicSequence::GetInfo () {
 
 }
 
+/***********************************************************/
+void DelayAtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
+
+	vector<Event*> events;
+	DelayEvent *delay = new DelayEvent();
+	delay->m_delay = (long)(GetDuration()*1e3);
+	events.push_back(delay);
+	seqdata->AddEvents(events, GetDuration());
+	delete delay;
+
+}
