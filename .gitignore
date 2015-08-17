@@ -11,12 +11,12 @@
 /src/pjemris
 /src/sanityck
 /src/config.h
+/src/testmpi.sh
 /share/matlab/JEMRIS_seq.m
 /share/matlab/JEMRIS_sim.m
 /share/matlab/JEMRIS_txrx.m
 /share/matlab/JEMRIS_ContainerSequence.m
 /share/matlab/pbs_script.sh
-/src/test*.sh
 /signals.h5
 /src/stamp-h1
 /doc/doxy.conf
