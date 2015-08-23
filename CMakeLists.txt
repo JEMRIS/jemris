@@ -32,7 +32,7 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # Architecture ------------------------------------------------------------------
-include (VcMacros)
+# include (VcMacros) DB: not needed, right?
 include (OptimizeForArchitecture)
 #find_package (OpenMP)
 #if(OPENMP_FOUND)
@@ -43,6 +43,8 @@ include (OptimizeForArchitecture)
 #endif()
 
 # C++ flags ---------------------------------------------------------------------
+# THis should be highly discouraged as it directly sets the compiler flags - this should be handled by cmake to allow
+# proper RELEASE, DEBUG, ... builds
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi -DTIXML_USE_STL -fPIC -O3") 
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -125,28 +127,12 @@ endif()
 SET(prefix "${CMAKE_INSTALL_PREFIX}")
 
 configure_file (
-  "${PROJECT_SOURCE_DIR}/cmake/config.h.in"
+        "cmake/config.h.in"
   "${PROJECT_SOURCE_DIR}/src/config.h"
         @ONLY
   )
 
-configure_file (
-        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_sim.m.in"
-        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_sim.m"
-        @ONLY
-)
 
-configure_file (
-        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_seq.m.in"
-        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_seq.m"
-        @ONLY
-)
-
-configure_file (
-        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_txrx.m.in"
-        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_txrx.m"
-        @ONLY
-)
 
 add_subdirectory (src) 
 add_subdirectory (share) 
