@@ -56,8 +56,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 endif()
 add_executable (jemris Model.h Model.cpp jemris.cpp)
 target_link_libraries (jemris ${COMMON_LIBS} core) 
-install (TARGETS jemris DESTINATION "bin")
 
+# Install the binary to bin
+install (TARGETS jemris DESTINATION "bin")
 
 add_executable (sanityck Model.h Model.cpp sanityck.cpp)
 target_link_libraries (sanityck ${COMMON_LIBS} core) 
@@ -81,6 +82,9 @@ if (MPI_C_FOUND)
   endif()
   install (TARGETS pjemris DESTINATION "bin")
 endif()
+
+# Install the examples and matlab GUIs
+install (TARGETS jemris DESTINATION "bin")
 
 add_test (
   NAME sequences

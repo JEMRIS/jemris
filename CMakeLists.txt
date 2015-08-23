@@ -95,7 +95,10 @@ find_package(MPI)
 if(MPI_C_FOUND)
   include_directories (${MPI_INCLUDE_PATH})
   set (HAVE_MPI_THREADS ON CACHE BOOL "Found MPI with threads")
+elseif(MPI_C_FOUND)
+    set(MPIRUN "MPIRUN-UNAVAILABLE")
 endif()
+
 
 find_package(HDF5 COMPONENTS C CXX REQUIRED)
 
@@ -111,6 +114,7 @@ endif(NOT DEFINED HDF5_CXX_LIBRARIES)
 
 include_directories (${HDF5_CXX_INCLUDE_DIR})
 
+# Is this here really necessary?
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} hdf5.lib hdf5_cpp.lib")
   set(ZLIB_LIBRARY "${HDF5_DIR}/../../lib/zlib.lib")
@@ -118,12 +122,31 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(ZLIB_FOUND "1")
 endif()
 
+SET(prefix "${CMAKE_INSTALL_PREFIX}")
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/cmake/config.h.in"
   "${PROJECT_SOURCE_DIR}/src/config.h"
         @ONLY
   )
+
+configure_file (
+        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_sim.m.in"
+        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_sim.m"
+        @ONLY
+)
+
+configure_file (
+        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_seq.m.in"
+        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_seq.m"
+        @ONLY
+)
+
+configure_file (
+        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_txrx.m.in"
+        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_txrx.m"
+        @ONLY
+)
 
 add_subdirectory (src) 
 add_subdirectory (share) 
