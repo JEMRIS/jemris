@@ -6,6 +6,8 @@ set (jemris_VERSION_MINOR 8)
 set (jemris_VERSION_PATCH 0)
 set (jemris_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 
+set(CMAKE_BUILD_TYPE "Release")
+
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 macro(set_config_option VARNAME STRING)
@@ -30,7 +32,7 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # Architecture ------------------------------------------------------------------
-include (VcMacros)
+# include (VcMacros) DB: not needed, right?
 include (OptimizeForArchitecture)
 #find_package (OpenMP)
 #if(OPENMP_FOUND)
@@ -41,6 +43,8 @@ include (OptimizeForArchitecture)
 #endif()
 
 # C++ flags ---------------------------------------------------------------------
+# THis should be highly discouraged as it directly sets the compiler flags - this should be handled by cmake to allow
+# proper RELEASE, DEBUG, ... builds
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi -DTIXML_USE_STL -fPIC -O3") 
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -74,35 +78,61 @@ if(Boost_FOUND)
 endif()
 
 find_package(Xerces 1.3.0 REQUIRED)
+include_directories (${Xerces_INCLUDE_DIRS})
 
 find_package(GiNaC REQUIRED)
 include_directories (${GINAC_INCLUDE_DIRS})
 
-find_package(Sundials COMPONENTS CVODE REQUIRED)
+# Hmm does not support componetns...
+find_package(Sundials REQUIRED)
 include_directories (${SUNDIALS_INCLUDE_DIR})
+# Handle Nvector sutff... here we need to deal with the actual version
+if (SUNDIALS_FOUND)
+   add_definitions(-DCVODE26 )
+   add_definitions(-DHAVE_CVODE_CVODE_H)
+   add_definitions(-DHAVE_NVECTOR_NVECTOR_SERIAL_H)
+endif(SUNDIALS_FOUND)
 
 find_package(MPI)
 if(MPI_C_FOUND)
   include_directories (${MPI_INCLUDE_PATH})
   set (HAVE_MPI_THREADS ON CACHE BOOL "Found MPI with threads")
+elseif(MPI_C_FOUND)
+    set(MPIRUN "MPIRUN-UNAVAILABLE")
 endif()
 
-find_package(HDF5 COMPONENTS CXX REQUIRED)
-include_directories (${HDF5_INCLUDE_DIRS})
-link_directories (${HDF5_LIBRARY_DIRS})
+
+find_package(HDF5 COMPONENTS C CXX REQUIRED)
+
+if (NOT DEFINED HDF5_CXX_LIBRARIES)
+   MESSAGE(STATUS "HDF5 CXX Libraries not set but library present... using alternative! Probably everything is fine!")
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_hdf5_cpp_LIBRARY})
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_hdf5_LIBRARY})
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_z_LIBRARY})
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_sz_LIBRARY})
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_m_LIBRARY})
+   LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_hdf5_hl_LIBRARY})
+endif(NOT DEFINED HDF5_CXX_LIBRARIES)
+
+include_directories (${HDF5_CXX_INCLUDE_DIR})
+
+# Is this here really necessary?
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} hdf5.lib hdf5_cpp.lib")
   set(ZLIB_LIBRARY "${HDF5_DIR}/../../lib/zlib.lib")
   set(ZLIB_INCLUDE_DIR "${HDF5_DIR}/../../include")
   set(ZLIB_FOUND "1")
-else()
-  set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -lhdf5 -lhdf5_cpp")
 endif()
 
+SET(prefix "${CMAKE_INSTALL_PREFIX}")
+
 configure_file (
-  "${PROJECT_SOURCE_DIR}/cmake/config.h.in"
+        "cmake/config.h.in"
   "${PROJECT_SOURCE_DIR}/src/config.h"
+        @ONLY
   )
+
+
 
 add_subdirectory (src) 
 add_subdirectory (share) 

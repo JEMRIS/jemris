@@ -38,9 +38,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 get_filename_component(_currentDir "${CMAKE_CURRENT_LIST_FILE}" PATH)
-include ("${_currentDir}/UserWarning.cmake")
-include ("${_currentDir}/AddCompilerFlag.cmake")
-include ("${_currentDir}/OptimizeForArchitecture.cmake")
+include (UserWarning)
+include (AddCompilerFlags)
+include (OptimizeForArchitecture)
 
 macro(vc_determine_compiler)
    if(NOT DEFINED Vc_COMPILER_IS_INTEL)

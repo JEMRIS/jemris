@@ -30,7 +30,7 @@
 #=============================================================================
 
 get_filename_component(_currentDir "${CMAKE_CURRENT_LIST_FILE}" PATH)
-include("${_currentDir}/AddCompilerFlag.cmake")
+include(AddCompilerFlags)
 include(CheckIncludeFile)
 
 macro(_my_find _list _value _ret)

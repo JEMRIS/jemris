@@ -40,28 +40,29 @@ list (APPEND CORE_SRC AnalyticCoil.cpp AnalyticCoil.h
   World.cpp World.h XMLIO.cpp XMLIO.h config.h ginac_functions.h list.h
   list_c.h rng.cpp rng.h) 
 
-include_directories (${PROJECT_SOURCE_DIR}/src/core
-  ${PROJECT_SOURCE_DIR}/src/matrix/io) 
+# Those directories do not exist, right?
+#include_directories (${PROJECT_SOURCE_DIR}/src/core
+#  ${PROJECT_SOURCE_DIR}/src/matrix/io) 
 
 if (LINUX)
   list (APPEND COMMON_LIBS dl)
 endif()
 
-list (APPEND COMMON_LIBS hdf5 hdf5_cpp xerces-c ${GINAC_LIBRARIES} 
-  ${SUNDIALS_LIBRARIES} cln sundials_cvode sundials_nvecserial)
+list (APPEND COMMON_LIBS ${HDF5_CXX_LIBRARIES} ${Xerces_LIBRARY} ${GINAC_LIBRARIES} ${SUNDIALS_LIBRARIES})
 
 add_library (core ${CORE_SRC})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  target_link_libraries (core ${COMMON_LIBS})
+  target_link_libraries (core ${COMMON_LIBS} )
 endif()
 add_executable (jemris Model.h Model.cpp jemris.cpp)
-target_link_libraries (jemris core ${COMMON_LIBS}) 
+target_link_libraries (jemris ${COMMON_LIBS} core) 
+
+# Install the binary to bin
 install (TARGETS jemris DESTINATION "bin")
 
-
 add_executable (sanityck Model.h Model.cpp sanityck.cpp)
-target_link_libraries (sanityck core ${COMMON_LIBS}) 
+target_link_libraries (sanityck ${COMMON_LIBS} core) 
 
 if (MPI_C_FOUND)
   add_executable (pjemris Mpi2Evolution.h
@@ -82,6 +83,9 @@ if (MPI_C_FOUND)
   endif()
   install (TARGETS pjemris DESTINATION "bin")
 endif()
+
+# Install the examples and matlab GUIs
+install (TARGETS jemris DESTINATION "bin")
 
 add_test (
   NAME sequences
