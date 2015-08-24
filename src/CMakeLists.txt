@@ -99,6 +99,10 @@ add_test (
   NAME coils 
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/share/examples
   COMMAND sanityck . 3)
+add_test (
+  NAME pulseq_output 
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/share/examples
+  COMMAND sanityck . 4)
 
 if (MPI_FOUND)
    add_test(

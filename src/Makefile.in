@@ -120,15 +120,15 @@ am__objects_1 = AnalyticCoil.$(OBJEXT) AnalyticGradPulse.$(OBJEXT) \
 	MicrostructureKissingFiber.$(OBJEXT) \
 	MicrostructureSingleFiber.$(OBJEXT) Model.$(OBJEXT) \
 	Module.$(OBJEXT) ModulePrototypeFactory.$(OBJEXT) \
-	OutputSequenceData.$(OBJEXT) \
-	Parameters.$(OBJEXT) Prototype.$(OBJEXT) \
-	PrototypeFactory.$(OBJEXT) Pulse.$(OBJEXT) RFPulse.$(OBJEXT) \
-	RepIter.$(OBJEXT) MultiPoolSample.$(OBJEXT) Sample.$(OBJEXT) \
-	SampleReorderShuffle.$(OBJEXT) SechRFPulse.$(OBJEXT) \
-	Sequence.$(OBJEXT) SequenceTree.$(OBJEXT) Signal.$(OBJEXT) \
-	SimpleIO.$(OBJEXT) Simulator.$(OBJEXT) SincRFPulse.$(OBJEXT) \
-	SpiralGradPulse.$(OBJEXT) StrX.$(OBJEXT)  \
-	TPOI.$(OBJEXT) Trajectory.$(OBJEXT) Trajectory1D.$(OBJEXT) \
+	OutputSequenceData.$(OBJEXT) Parameters.$(OBJEXT) \
+	Prototype.$(OBJEXT) PrototypeFactory.$(OBJEXT) Pulse.$(OBJEXT) \
+	RFPulse.$(OBJEXT) RepIter.$(OBJEXT) MultiPoolSample.$(OBJEXT) \
+	Sample.$(OBJEXT) SampleReorderShuffle.$(OBJEXT) \
+	SechRFPulse.$(OBJEXT) Sequence.$(OBJEXT) \
+	SequenceTree.$(OBJEXT) Signal.$(OBJEXT) SimpleIO.$(OBJEXT) \
+	Simulator.$(OBJEXT) SincRFPulse.$(OBJEXT) \
+	SpiralGradPulse.$(OBJEXT) StrX.$(OBJEXT) TPOI.$(OBJEXT) \
+	Trajectory.$(OBJEXT) Trajectory1D.$(OBJEXT) \
 	TrajectoryDiffusion.$(OBJEXT) TrajectoryInterface.$(OBJEXT) \
 	TrajectoryMotion.$(OBJEXT) TrajectoryT2s.$(OBJEXT) \
 	TrapGradPulse.$(OBJEXT) TriangleGradPulse.$(OBJEXT) \
@@ -523,7 +523,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-TESTS = testsequences.sh testsignals.sh testcoils.sh testoutput.sh $(am__append_2)
+TESTS = testsequences.sh testsignals.sh testcoils.sh testoutput.sh \
+	$(am__append_2)
 AM_CXXFLAGS = $(OPENMP_CXXFLAGS)
 SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	AnalyticGradPulse.h AnalyticPulseShape.cpp \
@@ -543,7 +544,7 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	EddyPulse.h EmptyPulse.cpp EmptyPulse.h ExternalCoil.cpp \
 	ExternalCoil.h ExternalPulseData.cpp ExternalPulseData.h \
 	ExternalGradPulse.cpp ExternalGradPulse.h ExternalRFPulse.cpp \
-	ExternalRFPulse.h Event.h GaussianRFPulse.cpp GaussianRFPulse.h \
+	ExternalRFPulse.h GaussianRFPulse.cpp GaussianRFPulse.h \
 	GradPulse.cpp GradPulse.h HardRFPulse.cpp HardRFPulse.h \
 	HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h Container.cpp \
 	Container.h KSpace.h Microstructure.cpp Microstructure.h \
@@ -553,26 +554,25 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	MicrostructureSingleFiber.cpp MicrostructureSingleFiber.h \
 	Model.cpp Model.h Module.cpp Module.h \
 	ModulePrototypeFactory.cpp ModulePrototypeFactory.h NDData.h \
-	OutputSequenceData.cpp OutputSequenceData.h \
-	Parameters.cpp Parameters.h Prototype.cpp Prototype.h \
-	PrototypeFactory.cpp PrototypeFactory.h Pulse.cpp Pulse.h \
-	RFPulse.cpp RFPulse.h RepIter.cpp RepIter.h \
-	MultiPoolSample.cpp MultiPoolSample.h Sample.cpp Sample.h \
-	SampleReorderShuffle.cpp SampleReorderShuffle.h \
-	SampleReorderStrategyInterface.h SechRFPulse.cpp SechRFPulse.h \
-	Sequence.cpp Sequence.h SequenceTree.cpp SequenceTree.h \
-	Signal.cpp Signal.h SimpleIO.h SimpleIO.cpp Simulator.cpp \
-	Simulator.h SincRFPulse.cpp SincRFPulse.h SpiralGradPulse.cpp \
-	SpiralGradPulse.h StrX.cpp StrX.h   \
-	TPOI.cpp TPOI.h \
-	Trajectory.cpp Trajectory.h Trajectory1D.cpp Trajectory1D.h \
-	TrajectoryDiffusion.cpp TrajectoryDiffusion.h \
-	TrajectoryEmpty.h TrajectoryInterface.cpp \
-	TrajectoryInterface.h TrajectoryMotion.cpp TrajectoryMotion.h \
-	TrajectoryT2s.cpp TrajectoryT2s.h TrapGradPulse.cpp \
-	TrapGradPulse.h TriangleGradPulse.cpp TriangleGradPulse.h \
-	TxRxPhase.cpp TxRxPhase.h World.cpp World.h XMLIO.cpp XMLIO.h \
-	config.h ginac_functions.h list.h list_c.h rng.cpp rng.h
+	OutputSequenceData.cpp OutputSequenceData.h Parameters.cpp \
+	Parameters.h Prototype.cpp Prototype.h PrototypeFactory.cpp \
+	PrototypeFactory.h Pulse.cpp Pulse.h RFPulse.cpp RFPulse.h \
+	RepIter.cpp RepIter.h MultiPoolSample.cpp MultiPoolSample.h \
+	Sample.cpp Sample.h SampleReorderShuffle.cpp \
+	SampleReorderShuffle.h SampleReorderStrategyInterface.h \
+	SechRFPulse.cpp SechRFPulse.h Sequence.cpp Sequence.h \
+	SequenceTree.cpp SequenceTree.h Signal.cpp Signal.h SimpleIO.h \
+	SimpleIO.cpp Simulator.cpp Simulator.h SincRFPulse.cpp \
+	SincRFPulse.h SpiralGradPulse.cpp SpiralGradPulse.h StrX.cpp \
+	StrX.h TPOI.cpp TPOI.h Trajectory.cpp Trajectory.h \
+	Trajectory1D.cpp Trajectory1D.h TrajectoryDiffusion.cpp \
+	TrajectoryDiffusion.h TrajectoryEmpty.h \
+	TrajectoryInterface.cpp TrajectoryInterface.h \
+	TrajectoryMotion.cpp TrajectoryMotion.h TrajectoryT2s.cpp \
+	TrajectoryT2s.h TrapGradPulse.cpp TrapGradPulse.h \
+	TriangleGradPulse.cpp TriangleGradPulse.h TxRxPhase.cpp \
+	TxRxPhase.h World.cpp World.h XMLIO.cpp XMLIO.h config.h \
+	ginac_functions.h list.h list_c.h rng.cpp rng.h
 
 #SampleReorderShuffle.cpp SampleReorderShuffle.h
 jemris_SOURCES = $(SOURCES) jemris.cpp

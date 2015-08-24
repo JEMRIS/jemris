@@ -154,7 +154,7 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 
 	// Header
 	outfile << "# Pulseq sequence format" << endl;
-	outfile << "# Created by JEMRIS " << PACKAGE_VERSION << endl << endl;
+	outfile << "# Created by JEMRIS " << VERSION << endl << endl;
 
 	// Determine if rotation matrix is not identity
 	double distanceFromIdentity = 0.0;
