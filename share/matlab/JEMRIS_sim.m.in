@@ -181,7 +181,7 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
      cwd=pwd; sd=handles.seqdir; td=handles.txadir; rd=handles.rxadir;
  end
  %
- if (handles.win); sd=''; cwd=''; end
+ if (handles.win); sd=''; td=''; rd=''; cwd=''; end
  sample=handles.sample; sim=handles.sim; rxca=handles.rxca; txca=handles.txca;
  %sample item
  SAMP.Name='sample'     ; SAMP.Data=''; SAMP.Children=[]; 
