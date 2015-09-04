@@ -199,7 +199,7 @@ else
                 container_seq_file = seq.Attributes(i).Value;
             end
         end
-        CONTAINERSEQFILE = container_seq_file;
+        CONTAINERSEQFILE = fullfile(handles.seqdir,container_seq_file);
         if OPEN_CONTAINERSEQUENCE
             JEMRIS_ContainerSequence;
         else
@@ -224,15 +224,31 @@ HANDLES=handles;
 if strcmp(upper(seq.Name),'PARAMETERS') 
     set(handles.SeqObjectPanel,'Title','Module: Parameters')
     A=handles.Parameter;
+    Adisp=A;
     HA=handles.ParameterHidden;
 else
     set(handles.SeqObjectPanel,'Title',['Module: ',seq.Name])
     A=handles.Attributes{find(strcmp(handles.Modules,upper(seq.Name)))};
+    Adisp=A;
     HA=handles.HiddenAttributes{find(strcmp(handles.Modules,upper(seq.Name)))};
+    % Replace strings with display names
+    for i=1:length(A)
+        idx=strcmpi(A{i},{seq.Attributes.Name});
+        if any(idx)
+            Adisp{i}=seq.Attributes(idx).DispName;
+        end
+    end
+    for i=1:length(HA)
+        idx=strcmpi(HA{i},{seq.Attributes.Name});
+        if any(idx)
+            HA{i}=seq.Attributes(idx).DispName;
+        end
+    end
 end
 
 if isempty(seq.Attributes)
     seq.Attributes.Name='Name';
+    seq.Attributes.DispName=seq.Attributes.Name;
     seq.Attributes.Value=seq.Name;
 end
 
@@ -240,7 +256,8 @@ for i=1:20
     if i>length(A)
         bvis='''off''';
     else
-        eval(['set(handles.SOtag',num2str(i),',''String'',''',A{i},''');'])
+        set(handles.(['SOtag',num2str(i)]),'String',Adisp{i});
+        set(handles.(['SOEtag',num2str(i)]),'UserData',A{i});   % Store actual name in for edit callback
         s=struct2cell(seq.Attributes);
         n=find(strcmp(A{i},squeeze(s(1,:,:))));
         if isempty(n)

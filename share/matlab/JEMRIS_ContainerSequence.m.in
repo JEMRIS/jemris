@@ -56,8 +56,9 @@ if length(CONTAINERSEQFILE)<1
     close(hObject)
     return;
 end
-handles.seqfile = CONTAINERSEQFILE;
-handles.seqdir  = pwd;
+[seqdir,seqfile,ext]=fileparts(CONTAINERSEQFILE);
+handles.seqfile = [seqfile ext];
+handles.seqdir  = seqdir;
 handles.Seq=[ ];       % the sequence structure
 handles.SeqBackup=[ ]; % a backup
 
@@ -75,7 +76,7 @@ handles.JemrisCall=[];
 if (handles.win)
         handles.JemrisShare='';
 else
-        handles.JemrisShare='/usr/local/share/jemris/matlab';
+        handles.JemrisShare='@prefix@/share/jemris/matlab';
 end
 
 %get all modules + attributes which are currently supported by JEMRIS
@@ -128,10 +129,11 @@ handles.hpt=seqcad_uitoolbar(hObject,handles);
 %read and plot sequence tree
 set(handles.SeqNameTag,'String',['ContainerSequence: ',handles.seqfile])
 axes(hax{7}); cla(hax{7},'reset');
-if exist(handles.seqfile,'file')==2
+if exist(fullfile(handles.seqdir,handles.seqfile),'file')==2
     handles.Seq=parseXMLseq(handles);
 else
     S.Name='ContainerSequence'; S.Attributes.Name='Name';
+    S.Attributes.DispName=S.Attributes.Name;
     S.Attributes.Value='CS'; S.Data=''; S.Children=[];  S.current=1;
     handles.Seq=S;
 end
