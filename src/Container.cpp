@@ -53,7 +53,7 @@ bool Container::Prepare (const PrepareMode mode) {
     ATTRIBUTE("Filename", m_container_seq_name);
 
     // attributes for import (Imp1, Imp2, ...) into the ContainerSequence
-	for (int i=0;i<8;i++)	{
+	for (int i=0;i<9;i++)	{
 		stringstream a; a << "Imp" << i+1;
 	    ATTRIBUTE(a.str(), m_import[i]);
 	}
@@ -62,8 +62,6 @@ bool Container::Prepare (const PrepareMode mode) {
     for (int i=0;i<3;i++)	{
 		stringstream a; a << "Exp" << i+1;
 	    HIDDEN_ATTRIBUTE(a.str(), m_export[i]);
-		stringstream b; b << "Info_Exp" << i+1;
-	    UNOBSERVABLE_ATTRIBUTE(b.str());
 	}
 
     //read ContainerSequence and build up its sequence tree
@@ -185,4 +183,3 @@ string          Container::GetInfo () {
 	return ret;
 
 }
-
