@@ -189,7 +189,6 @@ int main (int argc, char *argv[]) {
 					filename += ".seq";
 				seq->OutputSeqData(scan_defs, output_dir, filename);
 			}
-			if (argc==3) seq->WriteStaticXML(output_dir + "jemris_seq.xml");
 			return 0;
 		}
 	} catch (...) {
