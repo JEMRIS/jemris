@@ -65,8 +65,6 @@ void OutputSequenceData::AddEvents(vector<Event*> &events, double duration)
 		// Add RF events
 		RFEvent *rf = dynamic_cast<RFEvent*>(event);
 		if (rf!=NULL) {
-			//cout << "RF event" << " " << rf->amplitude << " points: " << rf->m_magnitude.size() << endl;
-
 			// Search library of basic shapes
 			CompressShape(rf->m_magnitude, &compressed);
 			idx = SearchLibrary(m_shape_library,compressed);
@@ -173,7 +171,6 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 		        << m_rot_matrix[1][0] << " " << m_rot_matrix[1][1] << " " << m_rot_matrix[1][2] << " "
 		        << m_rot_matrix[2][0] << " " << m_rot_matrix[2][1] << " " << m_rot_matrix[2][2] << endl;
 	}
-
 	outfile << endl;
 
 	// Determine width of block ID fields for right align
@@ -323,6 +320,8 @@ void OutputSequenceData::CompressShape(vector<double> &shape, CompressedShape *o
 	diff[0]=shape[0];
 	for (int i=1; i<shape.size(); i++) {
 		diff[i]=shape[i]-shape[i-1];
+		if (abs(diff[i])<1e-12)
+			diff[i]=0.0;
 	}
 
 	int idx=0;
