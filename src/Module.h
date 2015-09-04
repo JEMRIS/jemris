@@ -3,11 +3,11 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2015  Tony Stoecker
  *                        2007-2015  Kaveh Vahedipour
  *                        2009-2015  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -208,6 +208,26 @@ class Module : public Prototype {
         int  GetDepth (int depth = 0) ;
 
     /**
+     * @brief Return the hardware mode of this module
+     *
+     * The hardware mode defines whether the module is included in simulation
+     * and/or hardware instructions. Valid modes are:
+     *   -1: simulation only
+     *   1: hardare only
+     *   0: both simulation and hardware
+     *
+     * A module will be included in the output files as follows:
+     *   Mode | In seq.h5 | In external.seq
+     *   ---- | --------- | ---------------
+     *   -1   | Yes       | No
+     *    0   | Yes       | Yes
+     *    1   | No        | Yes
+     *
+     * @return      hardware mode (-1, 0 or 1)
+     */
+     int GetHardwareMode () { return m_hardware_mode; }
+
+    /**
      * @brief Rewrite XML-tree where all expressions are evaluated (for IDEA)
      *
      * @param xml_file name of XML file
@@ -244,9 +264,11 @@ class Module : public Prototype {
     Parameters*    m_parameters;  /**< @brief Pointer to the sole instance of the Parameters*/
     TPOI           m_tpoi;        /**< @brief Time points of interest are stored the referred repository.*/
 
-    string         m_info;        /**< @brief Information string for this module */
-    double         m_duration;    /**< @brief The duration of this module*/
-    int            m_calls;       /**< @brief Number of calls of this module*/
+    string         m_info;           /**< @brief Information string for this module */
+    double         m_duration;       /**< @brief The duration of this module*/
+    int            m_calls;          /**< @brief Number of calls of this module*/
+    int            m_hardware_mode;  /**< @brief Hardware mode (-1: simulation only; 0: both; 1: hardware only) */
+
  private:
 
 

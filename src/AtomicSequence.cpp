@@ -3,11 +3,11 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2015  Tony Stoecker
  *                        2007-2015  Kaveh Vahedipour
  *                        2009-2015  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -55,8 +55,14 @@ double AtomicSequence::GetDuration () {
 	vector<Module*> children = GetChildren();
 	double duration = 0.;
 
-	for (unsigned int j=0; j<children.size() ; ++j)
-		duration = fmax( duration, children[j]->GetDuration()+((Pulse*) children[j])->GetInitialDelay() );
+	for (unsigned int j=0; j<children.size() ; ++j) {
+		if (children[j]->GetHardwareMode()<=0) {
+			duration = fmax( duration, children[j]->GetDuration()+((Pulse*) children[j])->GetInitialDelay() );
+		}
+	}
+
+	if (GetHardwareMode()>0)
+		duration = 0;
 
 	DEBUG_PRINT("  AtomicSequence::GetDuration() of " << GetName() <<
 		    " calculates duration = " << dDuration << endl;)
@@ -172,19 +178,21 @@ void AtomicSequence::CollectTPOIs() {
 	for (size_t j = 0; j < children.size(); ++j) {
 
 		p = ((Pulse*)children[j]);
-		d = p->GetInitialDelay();
-		p->SetTPOIs();
+		if (p->GetHardwareMode()<=0) {
+			d = p->GetInitialDelay();
+			p->SetTPOIs();
 
 
-		for (size_t i = 0; i < p->GetNumOfTPOIs(); ++i)  {
+			for (size_t i = 0; i < p->GetNumOfTPOIs(); ++i)  {
 
-			m_tpoi	+ TPOI::set(d + p->GetTPOIs()->GetTime(i),
-					p->GetTPOIs()->GetPhase(i), p->GetTPOIs()->GetMask(i));
+				m_tpoi	+ TPOI::set(d + p->GetTPOIs()->GetTime(i),
+						p->GetTPOIs()->GetPhase(i), p->GetTPOIs()->GetMask(i));
 
-			//one TPOI prior to the pulse in case of intial delay phase == -2.0 -> ReInit CVode
-			if (d>TIME_ERR_TOL)
-				m_tpoi + TPOI::set(d-TIME_ERR_TOL/2, -2.0, 0);
+				//one TPOI prior to the pulse in case of intial delay phase == -2.0 -> ReInit CVode
+				if (d>TIME_ERR_TOL)
+					m_tpoi + TPOI::set(d-TIME_ERR_TOL/2, -2.0, 0);
 
+			}
 		}
 
 	}
@@ -247,8 +255,8 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 
 		p = ((Pulse*)children[j]);
 		d = p->GetInitialDelay();
-
-		p->GenerateEvents(events);
+		if (p->GetHardwareMode()>=0)
+			p->GenerateEvents(events);
 
 	}
 	seqdata->AddEvents(events, GetDuration());
@@ -372,5 +380,3 @@ void AtomicSequence::PrepareEddyCurrents() {
 	}
 
 }
-
-
