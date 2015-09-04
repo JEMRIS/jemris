@@ -67,6 +67,11 @@ for i=1:length(Seq.Children)
             reset_togglebuttons(handles);
             MODULE1=S; MODULE2='swapped';
             break
+        elseif NewChild==-4  % 4. move module
+            S=move_module(MODULE1,MODULE2,handles.Seq);
+            reset_togglebuttons(handles);
+            MODULE1=S; MODULE2='swapped';
+            break
         end
     end
 end
@@ -83,6 +88,30 @@ function reset_togglebuttons(handles)
     set(handles.hpt{i},'State','off'); 
  end
 
+%%%%
+function S=move_module(M1,M2,S)
+idxOrig=[];
+if ~isempty(S.Children)
+    idxOrig = find(M1.hp == [S.Children.hp]);
+end
+if ~isempty(idxOrig) 
+    C=S.Children(idxOrig);
+    S.Children(idxOrig)=[];
+    idxDest = find(M2.hp == [S.Children.hp]);
+    if ~isempty(idxDest)
+        if idxDest<idxOrig
+            S.Children = cat(2,S.Children(1:idxDest-1),C,S.Children(idxDest:end));
+        else
+            S.Children = cat(2,S.Children(1:idxDest),C,S.Children(idxDest+1:end));
+        end
+    end
+    return
+end
+ for i=1:length(S.Children)
+     S.Children(i)=move_module(M1,M2,S.Children(i));
+     
+ end
+ 
 %%%%
 function S=swap_modules(M1,M2,S)
  for i=1:length(S.Children)
@@ -184,6 +213,26 @@ function NewModule=ChangeMe(Seq,handles)
         if ~isstruct(MODULE1),MODULE1=Seq; end           %select the module to copy
         NewModule=[];
         return
+     case -4 %move module
+        if isstruct(MODULE1) && ~isstruct(MODULE2),MODULE2=Seq; end %select the second module
+        if ~isstruct(MODULE1),MODULE1=Seq; MODULE2=0; end           %select the first module
+        if isstruct(MODULE1) && isstruct(MODULE2)                   %perform move            
+        if length([findstr('SEQUENCE',upper(MODULE1.Name)) findstr('SEQUENCE',upper(MODULE2.Name))])==2 || ...
+            length([findstr('SEQUENCE',upper(MODULE1.Name)) findstr('CONTAINER',upper(MODULE2.Name))])==2 || ...
+            length([findstr('SEQUENCE',upper(MODULE2.Name)) findstr('CONTAINER',upper(MODULE1.Name))])==2
+        
+            P1=get_parent(MODULE1,handles.Seq,1);
+            P2=get_parent(MODULE2,handles.Seq,1);
+            if isstruct(P1) && isstruct(P2) && P1.hp == P2.hp && MODULE1.hp~=MODULE2.hp
+              NewModule = -4;
+              return;
+            end
+        end
+        errordlg(sprintf(['Can only move different Sequence modules with the same parent.']))
+        MODULE1=0; MODULE2=0;
+        end
+        NewModule=[];
+        return
 end
  
  %insert a module
@@ -219,6 +268,7 @@ end
       for i=1:length(A)
           if ( ~strcmp(V{i},'0') && ~strcmp(A{i},'SlewRate') && ~strcmp(A{i},'MaxAmpl') )
               eval(['NewModule.Attributes(i).Name=''',A{i},''';'])
+              eval(['NewModule.Attributes(i).DispName=''',A{i},''';'])
               NewModule.Attributes(i).Value=V{i};
           end
       end
