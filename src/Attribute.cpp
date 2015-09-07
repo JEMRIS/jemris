@@ -82,7 +82,7 @@ void Attribute::UpdatePrototype (){
 }
 
 /***********************************************************/
-bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attribs, bool verbose){
+bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attribs, const vector<string>& obs_attrib_keyword, bool verbose){
 
 	//set my own symbol
 	m_symbol_name = m_prototype->GetName()+"x"+m_name;
@@ -108,18 +108,17 @@ bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attri
 	//GiNaC::symbol d(m_sym_diff);
     //loop over all possibly observed subjects
 	for (unsigned int i=0; i<obs_attribs.size() ; i++) {
-		//convert string "a1","a2", ... to the matching symbol name
+		//convert user-defined keywords to the matching symbol name
 		Attribute* subject_attrib = obs_attribs.at(i);
 		std::string  SymbolName = subject_attrib->GetPrototype()->GetName() + "x" + subject_attrib->GetName();
-        stringstream key; key << "a" << i+1;
-        if (!Prototype::ReplaceString(expr,key.str(),SymbolName)) continue;
+        if (!Prototype::ReplaceString(expr,obs_attrib_keyword.at(i),SymbolName)) continue;
         //still here? the attribute was in the expression, so it is an observed subject
         AttachSubject( subject_attrib );
         m_symlist.append( get_symbol(SymbolName) );
 	}
 
-	//cout << "!!! " << GetPrototype()->GetName() << " : " << expr << " , " << m_symlist << endl;
-	m_formula = expr;
+
+    m_formula = expr;
 
 	//stop for strings
 	if (GetTypeID()==typeid(std::string*).name()) {

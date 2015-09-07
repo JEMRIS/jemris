@@ -115,8 +115,7 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
 		string val = m_pulse->GetDOMattribute("Shape");
 		if (val.empty()) return true;
 		m_pulse->Observe(m_pulse->GetAttribute("Shape"),m_pulse->GetName(),"AnalyticTime", verbose);
-		stringstream a;	a << "a" << m_pulse->m_obs_attribs.size();
-		m_pulse->ReplaceString(val,"T",a.str());
+		m_pulse->ReplaceString(val,"T",m_pulse->GetName()+"_AnalyticTime");
 
 	//2. "Shape" observes "Constants": replace "c{i}" with the appropriate attribute counter "a{i}"
 		if (m_pulse->HasDOMattribute("Constants")) {
@@ -130,15 +129,14 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
 				    m_pulse->Observe(m_pulse->GetAttribute("Shape"),m_pulse->GetName(),C.str(), verbose);
 				}
 				stringstream c; c << "c" << i+1;
-				stringstream a; a << "a" << m_pulse->m_obs_attribs.size();
-				m_pulse->ReplaceString(val,c.str(),a.str());
+				m_pulse->ReplaceString(val,c.str(),m_pulse->GetName()+"_"+C.str());
 			}
 		}
 
 	//3. analytic derivative and calculation of the integral
 		if (m_pulse->HasDOMattribute("Diff")) {
 			m_pulse->GetAttribute("Shape")->SetDiff(0);
-			m_pulse->GetAttribute("Shape")->SetMember(val, m_pulse->m_obs_attribs, verbose);
+			m_pulse->GetAttribute("Shape")->SetMember(val, m_pulse->m_obs_attribs, m_pulse->m_obs_attrib_keyword, verbose);
 			string sdiff =  m_pulse->GetDOMattribute("Diff");
 			int dif = atoi(sdiff.c_str());
 			if (dif==1) {
@@ -153,7 +151,7 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
 		}
 
 	//4. prepare GiNaC evaluation of the "Shape" attribute
-		m_prepared =  m_pulse->GetAttribute("Shape")->SetMember(val,  m_pulse->m_obs_attribs, verbose);
+		m_prepared =  m_pulse->GetAttribute("Shape")->SetMember(val,  m_pulse->m_obs_attribs, m_pulse->m_obs_attrib_keyword, verbose);
 	
 	return m_prepared;
     

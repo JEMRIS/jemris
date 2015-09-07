@@ -78,15 +78,20 @@ bool ContainerSequence::Prepare (const PrepareMode mode) {
     	    	if (imp != m_attributes.end() ) {
     	    		counter++;
     	    		stringstream Imp; Imp << "Imp" << counter;
-    	    		if (Imp.str() != keyword && mode==PREP_VERBOSE) {
+    	    		if (Imp.str() != keyword ) { //&& mode==PREP_VERBOSE) {
     	    			cout << GetName() << " Warning: import attributes not in correct order." << endl;
     	    			b = false;
     	    		}
     	            for(unsigned int i = 0; i < m_obs_attribs.size(); i++)
     	                if ( m_obs_attribs.at(i) == attribute ) m_obs_attribs.erase(m_obs_attribs.begin()+i);
     	    		m_obs_attribs.push_back(attribute);
-    	    		stringstream formula; formula << "a" << m_obs_attribs.size();
-    	    		b = ( imp->second->SetMember(formula.str(), m_obs_attribs, mode == PREP_VERBOSE) && b);
+    	    		string formula=keyword;
+    	            for(unsigned int i = 0; i < m_obs_attrib_keyword.size(); i++)
+    	                if ( m_obs_attrib_keyword.at(i) == formula ) m_obs_attrib_keyword.erase(m_obs_attrib_keyword.begin()+i);
+    	            m_obs_attrib_keyword.push_back(formula);
+    	            if (m_obs_attribs.size() != m_obs_attrib_keyword.size())
+    	            cout << "!!! " << GetName() << ": " << m_obs_attribs.size() << " , " << m_obs_attrib_keyword.size() << endl;
+    	    		b = ( imp->second->SetMember(formula, m_obs_attribs, m_obs_attrib_keyword, mode == PREP_VERBOSE) && b);
     	    	}
     	    }
     	}
