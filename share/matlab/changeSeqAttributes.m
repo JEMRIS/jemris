@@ -30,7 +30,7 @@ if Seq.current
    pos=getPosition(AttrName,Seq,handles);
    %[pos length(Seq.Attributes)]
    if pos>0
-       if isempty(AttrVal)
+       if isempty(AttrVal) && ~isfield(Seq.Attributes(pos),'DispName') 
            Seq.Attributes(pos)=[];              %delete attribute
        else
            Seq.Attributes(pos).Value=AttrVal;   %overwrite old value
@@ -38,6 +38,7 @@ if Seq.current
    end
    if pos<0 && ~isempty(AttrVal) %add new name/value pair
        Seq.Attributes(end+1).Name=AttrName;
+       Seq.Attributes(end).DispName=AttrName;
        Seq.Attributes(end).Value=AttrVal;
    end
  

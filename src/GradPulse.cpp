@@ -216,10 +216,10 @@ void GradPulse::GetValue (double * dAllVal, double const time) {
 inline void GradPulse::GenerateEvents(std::vector<Event*> &events) {
 	GradEvent *grad = new GradEvent();
 	double max_amplitude = std::numeric_limits<double>::min();
-
-	for (double time=5.0e-3; time<GetDuration(); time+=10.0e-3)
+	int num_samples = round(GetDuration()/10.0e-3);
+	for (int i=0; i<num_samples; i++)
 	{
-		double amp = GetGradient(time);
+		double amp = GetGradient((i+1)*10.0e-3);
 
 		if (amp>max_amplitude)
 			max_amplitude=amp;

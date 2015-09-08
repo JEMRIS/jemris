@@ -51,6 +51,8 @@ colordef white
 handles.output = hObject;
 handles.seqfile = '';
 handles.seqdir  = pwd;
+handles.exportdir = pwd;
+handles.exportArgs='';
 handles.Seq=[ ];       % the sequence structure
 handles.SeqBackup=[ ]; % a backup
 handles.SO=struct('Attribute',cell(10,1),'Value',cell(10,1)); %sequence object properties
@@ -58,6 +60,7 @@ hax{1}=handles.axes0; hax{2}=handles.axes1; hax{3}=handles.axes2; hax{4}=handles
 hax{5}=handles.axes4; hax{6}=handles.axes5; hax{7}=handles.axes6; hax{8}=handles.axes7;
 for i=1:length(hax);set(hax{i},'color',[1 1 1],'visible','off');end
 handles.hax=hax;
+linkaxes([hax{1:6}],'x');
 handles.plotSD=0;
 handles.dm=0;
 handles.cd=0;
@@ -142,9 +145,9 @@ varargout{1} = handles;
 % --- runs jemris on the current seqence. This is *not* an object of the GUI!
 function call_jemris(hObject,handles)
 if (handles.win)
- [status,dump]=system(sprintf('%s %s > .seq.out',handles.JemrisCall,fullfile(               handles.seqfile)));
+ [status,dump]=system(sprintf('%s %s %s > .seq.out',handles.JemrisCall,handles.exportArgs,fullfile(               handles.seqfile)));
 else
- [status,dump]=system(sprintf('%s %s > .seq.out',handles.JemrisCall,fullfile(handles.seqdir,handles.seqfile)));
+ [status,dump]=system(sprintf('%s %s %s > .seq.out',handles.JemrisCall,handles.exportArgs,fullfile(handles.seqdir,handles.seqfile)));
 end
  if status==0
   C={};
@@ -319,6 +322,18 @@ handles.seqfile=FileName;
 guidata(hObject, handles);
 update_Callback(hObject, eventdata, handles);
 
+% --------------------------------------------------------------------
+function ExportSeqTag_Callback(hObject, eventdata, handles)
+[FileName,PathName] = uiputfile('*.seq',[],fullfile(handles.exportdir,'external.seq'));
+if FileName==0,return;end
+[~,BaseName,~]=fileparts(FileName);
+handles.exportArgs=['-x -o ' PathName ' -f ' BaseName];
+call_jemris(hObject,handles);
+handles.exportArgs='';
+handles.exportdir=PathName;
+guidata(hObject, handles);
+
+
 
 % --------------------------------------------------------------------
 function NewSeqTag_Callback(hObject, eventdata, handles)
@@ -370,21 +385,19 @@ set(h,'color',[1 1 1],'paperunits','centimeter','paperposition',[0 0 12 8])
     
 %this function is performed for all text-edit callbacks on the module card
 function common_SOEtags(hObject,handles)
-S=get(hObject,'Tag');S(3)=[ ];
+S=get(hObject,'UserData');  % attribute name
 set(hObject,'TooltipString','')
 %special case of adding a vector
-if strcmp(eval(['get(handles.',S,',''String'')']),'Vector')
+if strcmpi(S,'Vector')
   s=sprintf('any matlab expression which evaluates to a vector');
   set(hObject,'TooltipString',s)
   v = eval(['[',get(hObject,'String'),']']); v=(v(:))';
-  eval(['handles.Seq=changeSeqAttributes(get(handles.',S,...
-        ',''String''),num2str(v),handles.Seq,handles);']);
+  handles.Seq=changeAttributes(S,num2str(v),handles.Seq,handles);
 else
-  eval(['handles.Seq=changeSeqAttributes(get(handles.',S,...
-        ',''String''),get(hObject,''String''),handles.Seq,handles);']);
+  handles.Seq=changeSeqAttributes(S,get(hObject,'String'),handles.Seq,handles);
 end
 %special case of external pulseshapes
-if strcmp(upper(eval(['get(handles.',S,',''String'')'])),'FILENAME')
+if strcmpi(S,'FILENAME')
   s=sprintf('binary filename, or global variable\nfrom which the binary file is generated');
   set(hObject,'TooltipString',s)
 end

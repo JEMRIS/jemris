@@ -129,12 +129,53 @@ if theNode.hasAttributes
    numAttributes = theAttributes.getLength;
    allocCell = cell(1, numAttributes);
    attributes = struct('Name', allocCell, 'Value', ...
-                       allocCell);
+                       allocCell, 'DispName', allocCell);
 
    for count = 1:numAttributes
       attrib = theAttributes.item(count-1);
       attributes(count).Name = char(attrib.getName);
       attributes(count).Value = char(attrib.getValue);
+      attributes(count).DispName = char(attrib.getName);
    end
 end
 
+% Replace display names of container import and export attributes with
+% the corresponding "Info" attributes in the container xml file
+try 
+    if strcmpi(char(theNode.getNodeName),'CONTAINER')
+        idx=strcmpi({attributes.Name},'Filename');
+        if any(idx)
+            filename=attributes(idx).Value;
+            if ~isempty(filename)
+                seqURI = fileparts(char(theNode.getBaseURI));
+                instruct.seqdir = seqURI(max([1 strfind(seqURI,':')+1]):end);
+                instruct.seqfile = filename;
+                SeqContainer = parseXMLseq(instruct);
+                for i=1:10
+                    idxInfo=strcmpi({SeqContainer.Attributes.Name},['Info_Imp' num2str(i)]);
+                    idxAtt=strcmpi({attributes.Name},['Imp' num2str(i)]);
+                    if any(idxInfo) 
+                        if ~any(idxAtt)
+                            idxAtt=length(attributes)+1;
+                            attributes(idxAtt).Name = ['Imp' num2str(i)];
+                        end
+                        attributes(idxAtt).DispName = SeqContainer.Attributes(idxInfo).Value;
+
+                    end
+                end
+                for i=1:5
+                    idxInfo=strcmpi({SeqContainer.Attributes.Name},['Info_Exp' num2str(i)]);
+                    %idxAtt=strcmpi({attributes.Name},['Exp' num2str(i)]);
+                    if any(idxInfo)
+                        attributes(end+1).Name = ['Exp' num2str(i) 'HIDDEN'];
+                        attributes(end).DispName = ['Exp' num2str(i) ' >> ' SeqContainer.Attributes(idxInfo).Value];
+                        %attributes(idxAtt).DispName = ['Exp1 >> ' Stmp.Attributes(idxInfo).Value];
+                    end
+                end
+            end
+        end
+    end
+catch ex
+    warning('parseXMLseq:containerNames',['Failed to load import/export descriptions: ',ex.message])
+end
+        

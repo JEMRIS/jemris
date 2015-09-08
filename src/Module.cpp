@@ -39,6 +39,7 @@ Module::Module() : m_parameters (0) {
 	m_seq_tree      = NULL ;
 	m_duration      = 0.0  ;
 	m_calls         = 0    ;
+	m_hardware_mode = 0    ;
 
 }
 
@@ -65,6 +66,7 @@ void            Module::Initialize (DOMNode* node) {
 bool Module::Prepare  (const PrepareMode mode){
 
 	ATTRIBUTE("Duration", m_duration);
+	ATTRIBUTE("HardwareMode", m_hardware_mode);
 	//ATTRIBUTE("Observe" , NULL);		//special case of observing attributes
 
 	return Prototype::Prepare(mode);
