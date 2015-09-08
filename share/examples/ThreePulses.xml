@@ -4,14 +4,14 @@
       <AtomicSequence Name="A1">
          <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="60" Name="P1"/>
       </AtomicSequence>
-      <DelayAtomicSequence ADCs="100" Delay="TR" DelayType="B2E" Name="D1" Observe="P.TR=TR"/>
+      <DelayAtomicSequence ADCs="100" Delay="TR" DelayType="B2E" Name="D1" Observe="TR=P.TR"/>
       <AtomicSequence Name="A2">
          <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" Name="P2"/>
       </AtomicSequence>
-      <DelayAtomicSequence ADCs="200" Delay="1.5*TR" DelayType="B2E" Name="D2" Observe="P.TR=TR"/>
+      <DelayAtomicSequence ADCs="200" Delay="1.5*TR" DelayType="B2E" Name="D2" Observe="TR=P.TR"/>
       <AtomicSequence Name="A3">
          <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" Name="P3"/>
       </AtomicSequence>
-      <DelayAtomicSequence ADCs="400" Delay="3*TR" DelayType="B2E" Name="D3" Observe="P.TR=TR"/>
+      <DelayAtomicSequence ADCs="400" Delay="3*TR" DelayType="B2E" Name="D3" Observe="TR=P.TR"/>
    </ConcatSequence>
 </Parameters>

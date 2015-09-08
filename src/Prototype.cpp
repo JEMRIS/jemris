@@ -200,7 +200,7 @@ bool Prototype::Prepare  (PrepareMode mode){
 						vector<string> vsold = Tokenize(vpold[i],",");
 						if (vsold.size() == 2 && i==0 ) obsattriblist="";
 						stringstream attribkey; attribkey << "a" << i+1;
-						obsattriblist += (vsold[0]+"."+vsold[1]+"="+attribkey.str());
+						obsattriblist += (attribkey.str()+"="+vsold[0]+"."+vsold[1]);
 						if (i+1<vpold.size()) obsattriblist += ",";
 					}
 				}
@@ -212,21 +212,21 @@ bool Prototype::Prepare  (PrepareMode mode){
 				vector<string> vp = Tokenize(obsattriblist,",");
 				for (unsigned int i=0;i<vp.size();i++) {
 
-					vector<string> vs = Tokenize(vp[i],".");
+					vector<string> vs = Tokenize(vp[i],"=");
 					if (vs.size() != 2) {
 						if (mode == PREP_VERBOSE)	cout << GetName() << ": wrong syntax in Observe \n";
 						retval = false;
 						continue;
 					}
 
-					vector<string> va = Tokenize(vs[1],"=");
+					vector<string> va = Tokenize(vs[1],".");
 					if (va.size() != 2) {
 						if (mode == PREP_VERBOSE)	cout << GetName() << ": wrong syntax in Observe \n";
 						retval = false;
 						continue;
 					}
 
-					retval = Observe(attribute,vs[0],va[0],va[1],mode == PREP_VERBOSE);
+					retval = Observe(attribute,va[0],va[1],vs[0],mode == PREP_VERBOSE);
 					continue;
 				}
 				continue; //proceed with next attribute

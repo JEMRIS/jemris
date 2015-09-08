@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ContainerSequence Info_Imp1=" SliceCounter" Info_Imp2="SliceThickness" Info_Imp3=" GzFlatTopArea" Exp1="A/2" Info_Exp1="SliceRephArea" Name="SLS" NumImpAttribs="4" Observe="P2.Area=A">
+<ContainerSequence Info_Imp1=" SliceCounter" Info_Imp2="SliceThickness" Info_Imp3=" GzFlatTopArea" Exp1="A/2" Info_Exp1="SliceRephArea" Name="SLS" NumImpAttribs="4" Observe="A=P2.Area">
    <ATOMICSEQUENCE Name="A1">
-      <SINCRFPULSE ADCs="-100" Apodization="0.5" Bandwidth="3" FlipAngle="90" Frequency="SC*DZ*GA" InitialDelay="RUT" Name="P1" Observe="SLS.Imp1=SC, SLS.Imp2=DZ, P2.Amplitude=GA, P2.RampUpTime=RUT" Zeros="2.5"/>
-      <TRAPGRADPULSE Axis="GZ" FlatTopArea="4*BW*FTA" FlatTopTime="DUR" Name="P2" Observe="P1.Duration=DUR, P1.Bandwidth=BW, SLS.Imp3=FTA"/>
+      <SINCRFPULSE ADCs="-100" Apodization="0.5" Bandwidth="3" FlipAngle="90" Frequency="SC*DZ*GA" InitialDelay="RUT" Name="P1" Observe="SC=SLS.Imp1, DZ=SLS.Imp2, GA=P2.Amplitude, RUT=P2.RampUpTime" Zeros="2.5"/>
+      <TRAPGRADPULSE Axis="GZ" FlatTopArea="4*BW*FTA" FlatTopTime="DUR" Name="P2" Observe="DUR=P1.Duration, BW=P1.Bandwidth, FTA=SLS.Imp3"/>
    </ATOMICSEQUENCE>
 </ContainerSequence>

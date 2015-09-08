@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Parameters FOVx="50" Name="P" Nx="2">
-   <ConcatSequence Name="C1" Observe="P.Nx=NX" Repetitions="NX">
+   <ConcatSequence Name="C1" Observe="NX=P.Nx" Repetitions="NX">
       <ATOMICSEQUENCE Name="A1">
-         <SINCRFPULSE ADCs="-100" Apodization="0.5" Bandwidth="3" FlipAngle="90" Frequency="C*DX*A" InitialDelay="RUT" Name="P1" Observe="C1.Counter=C, P.Dx=DX, P2.Amplitude=A, P2.RampUpTime=RUT" Zeros="4"/>
-         <TRAPGRADPULSE ADCs="5" Axis="GX" FlatTopArea="4*BW*KMX" FlatTopTime="D" MaxAmpl="5" Name="P2" Observe="P1.Duration=D, P1.Bandwidth=BW, P.KMAXx=KMX" SlewRate="10"/>
+         <SINCRFPULSE ADCs="-100" Apodization="0.5" Bandwidth="3" FlipAngle="90" Frequency="C*DX*A" InitialDelay="RUT" Name="P1" Observe="C=C1.Counter, DX=P.Dx, A=P2.Amplitude, RUT=P2.RampUpTime" Zeros="4"/>
+         <TRAPGRADPULSE ADCs="5" Axis="GX" FlatTopArea="4*BW*KMX" FlatTopTime="D" MaxAmpl="5" Name="P2" Observe="D=P1.Duration, BW=P1.Bandwidth, KMX=P.KMAXx" SlewRate="10"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="A2">
-         <TRAPGRADPULSE ADCs="5" Area="-0.5*A" Axis="GX" MaxAmpl="5" Name="P3" Observe="P2.Area=A" SlewRate="10"/>
+         <TRAPGRADPULSE ADCs="5" Area="-0.5*A" Axis="GX" MaxAmpl="5" Name="P3" Observe="A=P2.Area" SlewRate="10"/>
       </ATOMICSEQUENCE>
       <DELAYATOMICSEQUENCE ADCs="1" Delay="0.1" DelayType="B2E" Name="D1"/>
    </ConcatSequence>
