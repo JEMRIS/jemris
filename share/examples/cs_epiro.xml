@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ContainerSequence Exp1="abs(A/2)" Info_Imp1="ADCs of P1 " Info_Imp2="Repetitions of C " Info_Imp3="FlatTopArea of P1 " Info_Imp4="Area of P2 " Info_Imp5="FlatTopTime of P1" Name="EPI" Observe="P1.Area=A">
+<ContainerSequence Exp1="abs(A/2)" Info_Imp1="NumADCs" Info_Imp2="NumReps" Info_Imp3="ReadFlatTopArea" Info_Imp4="BlipArea" Info_Imp5="ReadFlatTopTime" Info_Exp1="ReadDephArea" Name="EPI" Observe="P1.Area=A">
    <ConcatSequence Name="C" Observe="EPI.Imp2=R" Repetitions="R">
       <AtomicSequence Name="A1">
          <TrapGradPulse ADCs="NADC" Axis="GX" FlatTopArea="2*A*(-1)^C" FlatTopTime="TFT" Name="P1" Observe="EPI.Imp1=NADC, EPI.Imp3=A, C.Counter=C, EPI.Imp5=TFT"/>

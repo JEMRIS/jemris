@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Parameters FOVx="256" FOVy="256" FOVz="30" GradMaxAmpl="5" GradSlewRate="20" Name="P" Nx="64" Ny="64" Nz="3" TE="50" TR="100">
-   <ConcatSequence Name="EPI" Observe="P.Nz=Nz" Repetitions="Nz">
-      <Container Filename="cs_sls.xml" Imp1="counter" Imp2="Dz" Imp3="KMAXz" Info_Exp1="Area of P3" Name="SLS" Observe="EPI.Counter=counter,P.Dz=Dz,P.KMAXz=KMAXz"/>
+   <ConcatSequence Name="EPI" Observe="P.Nz=NZ" Repetitions="NZ">
+      <Container Filename="cs_sls.xml" Imp1="C" Imp2="DZ" Imp3="KMZ" Name="SLS" Observe="EPI.Counter=C,P.Dz=DZ,P.KMAXz=KMZ"/>
       <AtomicSequence Name="A1">
-         <TrapGradPulse Area="-abs(read_deph)" Axis="GX" Name="P1" Observe="ER.Exp1=read_deph"/>
-         <TrapGradPulse Area="KAMXy" Axis="GY" Name="P2" Observe="P.KMAXy=KAMXy"/>
-         <TRAPGRADPULSE Area="-slice_reph" Axis="GZ" MaxAmpl="5" Name="P3" Observe="SLS.Exp1=slice_reph"/>
+         <TrapGradPulse Area="-abs(A)" Axis="GX" Name="P1" Observe="ER.Exp1=A"/>
+         <TrapGradPulse Area="KMY" Axis="GY" Name="P2" Observe="P.KMAXy=KMY"/>
+         <TRAPGRADPULSE Area="-A" Axis="GZ" MaxAmpl="5" Name="P3" Observe="SLS.Exp1=A"/>
       </AtomicSequence>
       <DelayAtomicSequence Delay="TE" DelayType="C2C" Name="D1" Observe="P.TE=TE" StartSeq="A1" StopSeq="ER"/>
-      <Container Filename="cs_epiro.xml" Imp1="Nx" Imp2="Ny" Imp3="KMAXx" Imp4="DKy" Imp5="1" Info_Exp1="Area of P1" Name="ER" Observe="P.Nx=Nx,P.Ny=Ny,P.KMAXx=KMAXx,P.DKy=DKy"/>
+      <Container Filename="cs_epiro.xml" Imp1="NX" Imp2="NY" Imp3="KMX" Imp4="DKY" Imp5="1" Name="ER" Observe="P.Nx=NX, P.Ny=NY, P.KMAXx=KMX, P.DKy=DKY"/>
       <DelayAtomicSequence Delay="TR" DelayType="B2E" Name="D2" Observe="P.TR=TR" StartSeq="SLS"/>
    </ConcatSequence>
 </Parameters>
