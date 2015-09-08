@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Parameters FOVx="128" FOVy="128" FOVz="1" Name="P" Nx="32" Ny="32" Nz="1" TE="8" TR="50">
    <ConcatSequence Name="R">
-      <ConcatSequence Name="C" Observe="P,Ny" Repetitions="a1">
+      <ConcatSequence Name="C" Observe="P.Ny=NY" Repetitions="NY">
          <ATOMICSEQUENCE Name="A1">
-            <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="20" InitialPhase="a1*(a1+1)*50" Name="P1" Observe="C,Counter"/>
+            <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="20" InitialPhase="C*(C+1)*50" Name="P1" Observe="C.Counter=C"/>
          </ATOMICSEQUENCE>
-         <DELAYATOMICSEQUENCE Delay="a1" DelayType="C2C" Name="D1" Observe="P,TE" StartSeq="A1" StopSeq="A3"/>
+         <DELAYATOMICSEQUENCE Delay="TE" DelayType="C2C" Name="D1" Observe="P.TE=TE" StartSeq="A1" StopSeq="A3"/>
          <ATOMICSEQUENCE Name="A2">
-            <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P2" Observe="P4,Area"/>
-            <TRAPGRADPULSE Area="-a1+a2*a3" Axis="GY" Name="P3" Observe="P,KMAXy/C,Counter/P,DKy"/>
+            <TRAPGRADPULSE Area="-A/2" Axis="GX" Name="P2" Observe="P4.Area=A"/>
+            <TRAPGRADPULSE Area="-KMY+C*DKY" Axis="GY" Name="P3" Observe="P.KMAXy=KMY, C.Counter=C, P.DKy=DKY"/>
          </ATOMICSEQUENCE>
          <ATOMICSEQUENCE Name="A3">
-            <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="4" Name="P4" Observe="P,KMAXx/P,Nx" PhaseLock="1"/>
+            <TRAPGRADPULSE ADCs="NX" Axis="GX" FlatTopArea="2*KMX" FlatTopTime="4" Name="P4" Observe="P.KMAXx=KMX, P.Nx=NX" PhaseLock="1"/>
          </ATOMICSEQUENCE>
          <ATOMICSEQUENCE Name="A4">
-            <TRAPGRADPULSE Area="1.5*a1" Axis="GX" Name="P6" Observe="P4,Area"/>
-            <TRAPGRADPULSE Area="-a1" Axis="GY" EddyConvLength="100" Name="P7" Observe="P3,Area"/>
+            <TRAPGRADPULSE Area="1.5*A" Axis="GX" Name="P6" Observe="P4.Area=A"/>
+            <TRAPGRADPULSE Area="-A" Axis="GY" Name="P7" Observe="P3.Area=A"/>
          </ATOMICSEQUENCE>
-         <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>
+         <DELAYATOMICSEQUENCE Delay="TR" DelayType="B2E" Name="D2" Observe="P.TR=TR" StartSeq="A1"/>
       </ConcatSequence>
    </ConcatSequence>
 </Parameters>

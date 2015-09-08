@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Parameters FOVx="32" FOVy="32" FOVz="1" Name="P" Nx="32" Ny="32" Nz="1" TE="5" TR="20">
-   <ConcatSequence Name="C" Observe="P,Ny" Repetitions="a1">
+   <ConcatSequence Name="C" Observe="P.Ny=NY" Repetitions="NY">
       <ATOMICSEQUENCE Name="A1">
-         <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="50" Name="P1" Observe="C,Counter/C,Repetitions/P,FOVx"/>
+         <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="50" Name="P1" />
       </ATOMICSEQUENCE>
-      <ATOMICSEQUENCE Name="A2" Observe="C,Counter/C,Repetitions" RotAngle="180*a1/a2">
-         <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P2" Observe="P3,Area"/>
+      <ATOMICSEQUENCE Name="A2" Observe="C.Counter=C, C.Repetitions=R" RotAngle="180*C/R">
+         <TRAPGRADPULSE Area="-A/2" Axis="GX" Name="P2" Observe="P3.Area=A"/>
       </ATOMICSEQUENCE>
-      <ATOMICSEQUENCE Name="A3" Observe="C,Counter/C,Repetitions" RotAngle="180*a1/a2">
-         <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="8" Name="P3" Observe="P,KMAXx/P,Nx"/>
+      <ATOMICSEQUENCE Name="A3" Observe="C.Counter=C, C.Repetitions=R" RotAngle="180*C/R">
+         <TRAPGRADPULSE ADCs="NX" Axis="GX" FlatTopArea="2*KMX" FlatTopTime="8" Name="P3" Observe="P.KMAXx=KMX, P.Nx=NX"/>
       </ATOMICSEQUENCE>
-      <ATOMICSEQUENCE Name="A4" Observe="C,Counter/C,Repetitions" RotAngle="180*a1/a2">
-         <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P4" Observe="P3,Area" Vector="0.9706    0.9572    0.4854    0.8003    0.1419    0.4218"/>
+      <ATOMICSEQUENCE Name="A4" Observe="C.Counter=C, C.Repetitions=R" RotAngle="180*C/R">
+         <TRAPGRADPULSE Area="-A/2" Axis="GX" Name="P4" Observe="P3.Area=A"/>
       </ATOMICSEQUENCE>
-      <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D1" Observe="P,TR" StartSeq="A1"/>
+      <DELAYATOMICSEQUENCE Delay="TR" DelayType="B2E" Name="D1" Observe="P.TR=TR" StartSeq="A1"/>
    </ConcatSequence>
 </Parameters>

@@ -5,10 +5,10 @@
          <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" Name="P1"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="A2">
-         <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="pre" Observe="ro,Area"/>
+         <TRAPGRADPULSE Area="-A/2" Axis="GX" Name="pre" Observe="ro.Area=A"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="A3">
-         <TRAPGRADPULSE ADCs="a1" Axis="GX" FlatTopArea="2*a2" FlatTopTime="4" Frequency="Pi" InitialPhase="180" Name="ro" Observe="P,Nx/P,KMAXx"/>
+         <TRAPGRADPULSE ADCs="NX" Axis="GX" FlatTopArea="2*KMX" FlatTopTime="4" Frequency="Pi" InitialPhase="180" Name="ro" Observe="P.Nx=NX, P.KMAXx=KMX"/>
       </ATOMICSEQUENCE>
    </ConcatSequence>
 </Parameters>
