@@ -99,8 +99,11 @@ bool Container::Prepare (const PrepareMode mode) {
     	            for(unsigned int i = 0; i < m_obs_attribs.size(); i++)
     	                if ( m_obs_attribs.at(i) == attribute ) m_obs_attribs.erase(m_obs_attribs.begin()+i);
     	    		m_obs_attribs.push_back(attribute);
-    	    		stringstream formula; formula << "a" << m_obs_attribs.size();
-    	    		b = ( exp->second->SetMember(formula.str(), m_obs_attribs, mode == PREP_VERBOSE) && b);
+    	    		string formula=keyword;
+    	            for(unsigned int i = 0; i < m_obs_attrib_keyword.size(); i++)
+    	                if ( m_obs_attrib_keyword.at(i) == formula ) m_obs_attrib_keyword.erase(m_obs_attrib_keyword.begin()+i);
+    	            m_obs_attrib_keyword.push_back(formula);
+    	    		b = ( exp->second->SetMember(formula, m_obs_attribs, m_obs_attrib_keyword, mode == PREP_VERBOSE) && b);
     	    	}
     	    }
     	}

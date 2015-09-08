@@ -47,7 +47,7 @@
 void Attribute::AttachObserver (Attribute* attrib){
 
 	if ( !IsObservable() ) return;
-	m_symbol_name = m_prototype->GetName()+"x"+m_name;
+	m_symbol_name = strtolower(m_prototype->GetName()+"_"+m_name);
 	for (unsigned int i=0; i<m_observers.size(); i++) if ( attrib == m_observers.at(i) ) return;
 	m_observers.push_back(attrib);
 	attrib->AttachSubject(this);
@@ -82,13 +82,17 @@ void Attribute::UpdatePrototype (){
 }
 
 /***********************************************************/
-bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attribs, bool verbose){
+bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attribs, const vector<string>& obs_attrib_keyword, bool verbose){
 
 	//set my own symbol
-	m_symbol_name = m_prototype->GetName()+"x"+m_name;
+	m_symbol_name = strtolower(m_prototype->GetName()+"_"+m_name);
 	
 	//attribute represents a std::string
-	//if (GetTypeID()==typeid(std::string*).name()) { WriteMember(expr);  return true; }
+	if (GetTypeID()==typeid(std::string*).name()) {
+	  m_formula = expr;
+	  EvalExpression ();
+	  return true;
+	}
 
 	//attribute represents a PulseAxis
 	if (GetTypeID()==typeid(PulseAxis*).name()) {
@@ -108,25 +112,18 @@ bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attri
 	//GiNaC::symbol d(m_sym_diff);
     //loop over all possibly observed subjects
 	for (unsigned int i=0; i<obs_attribs.size() ; i++) {
-		//convert string "a1","a2", ... to the matching symbol name
+		//convert user-defined keywords to the matching symbol name
 		Attribute* subject_attrib = obs_attribs.at(i);
-		std::string  SymbolName = subject_attrib->GetPrototype()->GetName() + "x" + subject_attrib->GetName();
-        stringstream key; key << "a" << i+1;
-        if (!Prototype::ReplaceString(expr,key.str(),SymbolName)) continue;
+		std::string  SymbolName = strtolower( subject_attrib->GetPrototype()->GetName() + "_" + subject_attrib->GetName() );
+        if (!Prototype::ReplaceString(expr,obs_attrib_keyword.at(i),SymbolName)) continue;
         //still here? the attribute was in the expression, so it is an observed subject
         AttachSubject( subject_attrib );
         m_symlist.append( get_symbol(SymbolName) );
 	}
 
-	//cout << "!!! " << GetPrototype()->GetName() << " : " << expr << " , " << m_symlist << endl;
-	m_formula = expr;
 
-	//stop for strings
-	if (GetTypeID()==typeid(std::string*).name()) {
-	  EvalExpression ();
-	  return true;	  
-	}
-	
+    m_formula = expr;
+
 	//build GiNaC expression (maybe not successful at first call, if subjects still missing)
 	try {
 		m_expression = GiNaC::ex(m_formula,m_symlist);
@@ -159,22 +156,9 @@ void Attribute::EvalExpression () {
   
 	if (m_formula.empty())  return;
 	
-	//strings: simply replace attribute symbol by its value
+	//strings: xml value is stored in m_formula
 	if (GetTypeID()==typeid(std::string*).name()) {
-		std::string expr = m_formula;
-		for (unsigned int i=0; i<m_subjects.size() ; i++) {
-			Attribute* a = m_subjects.at(i);
-			stringstream key;
-			if (a->GetTypeID()==typeid(  double*).name()) key << a->GetMember  <double>() ; 
-			if (a->GetTypeID()==typeid(     int*).name()) key << a->GetMember     <int>() ; 
-			if (a->GetTypeID()==typeid(    long*).name()) key << a->GetMember    <long>() ; 
-			if (a->GetTypeID()==typeid(unsigned*).name()) key << a->GetMember<unsigned>() ; 
-			if (a->GetTypeID()==typeid(    bool*).name()) key << a->GetMember    <bool>() ; 
-			std::string  SymbolName = a->GetPrototype()->GetName() + "x" + a->GetName();
-			Prototype::ReplaceString(expr,SymbolName,key.str());
-		}
-		WriteMember(expr);
-		//if (GetName()=="Filename") cout << " Eval: " << expr <<  endl;
+		WriteMember(m_formula);
 		return;	  
 	}
 

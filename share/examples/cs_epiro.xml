@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ContainerSequence Exp1="abs(a1/2)" Info_Imp1="ADCs of P1 " Info_Imp2="Repetitions of C " Info_Imp3="FlatTopArea of P1 " Info_Imp4="Area of P2 " Info_Imp5="FlatTopTime of P1" Name="EPI" Observe="P1,Area">
-   <ConcatSequence Name="C" Observe="EPI,Imp2" Repetitions="a1">
+<ContainerSequence Exp1="abs(A/2)" Info_Imp1="ADCs of P1 " Info_Imp2="Repetitions of C " Info_Imp3="FlatTopArea of P1 " Info_Imp4="Area of P2 " Info_Imp5="FlatTopTime of P1" Name="EPI" Observe="P1.Area=A">
+   <ConcatSequence Name="C" Observe="EPI.Imp2=R" Repetitions="R">
       <AtomicSequence Name="A1">
-         <TrapGradPulse ADCs="a1" Axis="GX" FlatTopArea="2*a2*(-1)^a3" FlatTopTime="a4" Name="P1" Observe="EPI,Imp1/EPI,Imp3/C,Counter/EPI,Imp5"/>
+         <TrapGradPulse ADCs="NADC" Axis="GX" FlatTopArea="2*A*(-1)^C" FlatTopTime="TFT" Name="P1" Observe="EPI.Imp1=NADC, EPI.Imp3=A, C.Counter=C, EPI.Imp5=TFT"/>
       </AtomicSequence>
       <AtomicSequence Name="A2">
-         <TrapGradPulse Area="ite(1+a2,a3,0,-a1)" Axis="GY" Name="P2" Observe="EPI,Imp4/C,Counter/C,Repetitions"/>
+         <TrapGradPulse Area="ite(1+C,R,0,-A)" Axis="GY" Name="P2" Observe="EPI.Imp4=A, C.Counter=C, C.Repetitions=R"/>
       </AtomicSequence>
    </ConcatSequence>
 </ContainerSequence>

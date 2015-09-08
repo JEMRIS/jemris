@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Parameters FOVx="200" FOVy="200" FOVz="1" GradMaxAmpl="8" GradSlewRate="45" Name="P" Nx="32" Ny="32" Nz="1" TE="6.3" TR="20">
-   <ConcatSequence Name="C" Observe="P,Ny" Repetitions="a1">
+   <ConcatSequence Name="C" Observe="P.Ny=NY" Repetitions="NY">
       <ATOMICSEQUENCE Name="Aslice">
          <GAUSSIANRFPULSE Bandwidth="6.2832" Duration="4" FlipAngle="90" Frequency="0" Name="RF" Symmetry="0.5"/>
          <TRAPGRADPULSE Area="8.2801" Axis="GZ" Duration="4" Name="GSS"/>
       </ATOMICSEQUENCE>
-      <DELAYATOMICSEQUENCE Delay="a1" DelayType="C2C" Name="DTE" Observe="P,TE" StartSeq="Aslice" StopSeq="Aro"/>
+      <DELAYATOMICSEQUENCE Delay="TE" DelayType="C2C" Name="DTE" Observe="P.TE=TE" StartSeq="Aslice" StopSeq="Aro"/>
       <ATOMICSEQUENCE Name="Apre">
-         <TRAPGRADPULSE Area="-a1/2" Axis="GX" Duration="1" Name="preX" Observe="roX,Area"/>
-         <TRAPGRADPULSE Area="-a1/2" Axis="GY" Duration="1" Name="preY" Observe="roY,Area"/>
-         <TRAPGRADPULSE Area="-a1/2" Axis="GZ" Duration="1" Name="rphZ" Observe="GSS,Area"/>
+         <TRAPGRADPULSE Area="-A/2" Axis="GX" Duration="1" Name="preX" Observe="roX.Area=A"/>
+         <TRAPGRADPULSE Area="-A/2" Axis="GY" Duration="1" Name="preY" Observe="roY.Area=A"/>
+         <TRAPGRADPULSE Area="-A/2" Axis="GZ" Duration="1" Name="rphZ" Observe="GSS.Area=A"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="Aro">
-         <TRAPGRADPULSE ADCs="a4" Axis="GX" FlatTopArea="2*a1*cos(Pi*a2/a3)" FlatTopTime="6.4" Frequency="0" InitialPhase="0*a3" Name="roX" Observe="P,KMAXx/C,Counter/C,Repetitions/P,Nx"/>
-         <TRAPGRADPULSE Axis="GY" FlatTopArea="2*a1*sin(Pi*a2/a3)" FlatTopTime="6.4" Frequency="0" InitialPhase="0*a3" Name="roY" Observe="P,KMAXy/C,Counter/C,Repetitions/P,Ny"/>
+         <TRAPGRADPULSE ADCs="NX" Axis="GX" FlatTopArea="2*KMX*cos(Pi*C/R)" FlatTopTime="6.4" Name="roX" Observe="P.KMAXx=KMX, C.Counter=C, C.Repetitions=R, P.Nx=NX"/>
+         <TRAPGRADPULSE Axis="GY" FlatTopArea="2*KMY*sin(Pi*C/R)" FlatTopTime="6.4" Name="roY" Observe="P.KMAXy=KMY, C.Counter=C, C.Repetitions=R, P.Ny=NY"/>
       </ATOMICSEQUENCE>
-      <ATOMICSEQUENCE Name="Arfc" Observe="C,Counter/C,Repetitions" RotAngle="0">
-         <TRAPGRADPULSE Area="a1" Axis="GX" Duration="1" Name="rphX" Observe="preX,Area"/>
-         <TRAPGRADPULSE Area="a1" Axis="GY" Duration="1" Name="rphY" Observe="preY,Area"/>
+      <ATOMICSEQUENCE Name="Arfc" >
+         <TRAPGRADPULSE Area="A" Axis="GX" Duration="1" Name="rphX" Observe="preX.Area=A"/>
+         <TRAPGRADPULSE Area="A" Axis="GY" Duration="1" Name="rphY" Observe="preY.Area=A"/>
       </ATOMICSEQUENCE>
-      <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="DTR" Observe="P,TR" StartSeq="Aslice"/>
+      <DELAYATOMICSEQUENCE Delay="TR" DelayType="B2E" Name="DTR" Observe="P.TR=TR" StartSeq="Aslice"/>
    </ConcatSequence>
 </Parameters>

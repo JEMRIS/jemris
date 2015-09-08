@@ -79,22 +79,18 @@ bool GradPulse::PrepareNLGfield  (PrepareMode mode) {
 		//attributes for the current spin positions, and the gradient value
 		HIDDEN_ATTRIBUTE("NLG_posX", m_nlg_px  );
 		Observe(GetAttribute("NLG_field"),GetName(),"NLG_posX", mode == PREP_VERBOSE);
-		stringstream sX; sX << "a" << m_obs_attribs.size();
-		ReplaceString(val,"X",sX.str());
+		ReplaceString(val,"X",GetName()+"_NLG_posX");
 		HIDDEN_ATTRIBUTE("NLG_posY", m_nlg_py  );
 		Observe(GetAttribute("NLG_field"),GetName(),"NLG_posY", mode == PREP_VERBOSE);
-		stringstream sY; sY << "a" << m_obs_attribs.size();
-		ReplaceString(val,"Y",sY.str());
+		ReplaceString(val,"Y",GetName()+"_NLG_posY");
 		HIDDEN_ATTRIBUTE("NLG_posZ", m_nlg_pz  );
 		Observe(GetAttribute("NLG_field"),GetName(),"NLG_posZ", mode == PREP_VERBOSE);
-		stringstream sZ; sZ << "a" << m_obs_attribs.size();
-		ReplaceString(val,"Z",sZ.str());
+		ReplaceString(val,"Z",GetName()+"_NLG_posZ");
 		HIDDEN_ATTRIBUTE("NLG_value",m_nlg_val );
 		Observe(GetAttribute("NLG_field"),GetName(),"NLG_value", mode == PREP_VERBOSE);
-		stringstream sG; sG << "a" << m_obs_attribs.size();
-		ReplaceString(val,"G",sG.str());
+		ReplaceString(val,"G",GetName()+"_NLG_value");
 		//set the GiNaC expression and mark this gradient as nonlinear
-		m_non_lin_grad = GetAttribute("NLG_field")->SetMember(val, m_obs_attribs, mode == PREP_VERBOSE);
+		m_non_lin_grad = GetAttribute("NLG_field")->SetMember(val, m_obs_attribs, m_obs_attrib_keyword, mode == PREP_VERBOSE);
 		//mark the parent AtomicSequence of this gradient as nonlinear
 		if (GetParent() != NULL ) ((AtomicSequence*) GetParent())->SetNonLinGrad(m_non_lin_grad);
 	}
@@ -126,10 +122,9 @@ bool     GradPulse::PrepareEddyCurrents  (PrepareMode mode, int steps) {
 		HIDDEN_ATTRIBUTE("EddyTime", m_eddy_time  );
 		Observe(GetAttribute("EddyCurrents"),GetName(),"EddyTime", mode == PREP_VERBOSE);
 		// -> nonsense!! Observe(GetAttribute("EddyCurrents"),GetName(),"Area", mode == PREP_VERBOSE);
-		stringstream sEC; sEC << "a" << m_obs_attribs.size();
-		ReplaceString(val,"T",sEC.str());
+		ReplaceString(val,"T",GetName()+"_EddyTime");
 		//set the GiNaC expression and mark this gradient as nonlinear
-		m_eddy_currents = GetAttribute("EddyCurrents")->SetMember(val, m_obs_attribs, mode == PREP_VERBOSE);
+		m_eddy_currents = GetAttribute("EddyCurrents")->SetMember(val, m_obs_attribs, m_obs_attrib_keyword, mode == PREP_VERBOSE);
 	}
 
 

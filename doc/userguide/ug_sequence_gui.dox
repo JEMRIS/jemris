@@ -332,11 +332,23 @@ The following gradient pulse modules exist in JEMRIS:
 As mentioned above, instead of being numbers module attributes values can also be analytical expressions.
 For that variables are needed which contain the attribute values of other modules.
 Consider a gradient pulse with name "P1" which is dependent on the area of another gradient pulse "P2".
-To have access to this value, the pulse "P1" needs the special attribute \c "Observe=P2,Area".
-Now the area of pulse "P2" can be accessed in every attribute definition of "P1" with the variable \c "a1".
-For instance, "P1" sets its area to minus half the area of "P2" through \c "Area=-0.5*a1".
-Multiple attributes can be observed separated by a slash, e.g.: \c "Observe=P4,Area/P,Nx/P,Ny/C2,Repetitions" .
-The observed attributes are then accessed with \c "a1", \c "a2", \c "a3", \c "a4", etc.
+To have access to this value, the pulse "P1" needs the special attribute \c Observe="P2.Area=A".
+Now the area of pulse "P2" can be accessed in every attribute definition of "P1" with the variable \c "A".
+For instance, "P1" sets its area to minus half the area of "P2" through \c Area="-0.5*A".
+Multiple attributes can be observed separated by commas, e.g.: \c Observe="P4.Area=A, P.Nx=NX, P.Ny=NY, C2.Repetitions=C" .
+Then, the observed attributes are accessed with the user-defined variables \c "A", \c "NX", \c "NY", \c "C", etc.
+The variable names can be freely chosen. It is recommended to use only uppercase letters to prevent undesired string replacements in formulas.
+Further the letters \c "I", and \c "P" should not be used as variables as this might conflict with other pre-defined epxressions (see below).
+(It is valid to use them within a variable name, e.g. \c Observe="C.Counter=INDEX" or \c Observe="P.FOVx=PFOVX")
+
+<b> Observer syntax in older versions of JEMRIS</b>
+\n
+As explained above, the current JEMRIS version requires an observer definition \c Observe="Module1.Attribute1=KEY1, Module2.Attribute2=KEY2, ..." ,
+then the user-defined keywords \c "KEY1", \c "KEY2" can be used in analytic formulas. Older JEMRIS versions (<2.8.1) used a different syntax:
+\c Observe="Module1,Attribute1/Module2,Attribute2/...", then the according variables were automatically named \c "a1", \c "a2", etc.
+This syntax has the disadvantage that the user has to keep track which variable (\c a1,a2,...) belongs to which observed attribute.
+Therefore, the new syntax with user-defined keywords was introduced. The old syntax is still supported. (And used in some examples in the documentation.)
+
 
 \subsection ug_JEMRIS_seq_ginac_hidden Hidden Attributes
 Each module can have so-called hidden attributes which cannot be edited. Instead, these attributes are calculated from
@@ -357,7 +369,7 @@ also dynamically change their values accordingly.)
 
 \subsection ug_JEMRIS_seq_expressions Expression syntax and predefined functions
 The symbolic expression syntax is similar to scalar computation syntax in Matlab. For instance, if a gradient observes three attributes,
-then a valid formula for its area would be \c "Area=0.5*sqrt(a1)*sin(2*Pi*a2)*(-1)^a3"
+e.g. \c Observe="P.KMAXx=KMX, P.KMAXy=KMY, C.Repetitions=C", then a valid formula for its area would be \c Area="sqrt(KMX^2+KMY^2)*(-1)^C"
 
 Several predefined mathematical expressions may be used:
 <TABLE>
@@ -405,7 +417,7 @@ does not work, i.e. these attributes can not be observed by other modules! These
 
 \li \c "Observe": Of course the Observe attribute itself can not be observed.
 
-\li \c "Vector": Every pulse has the attribute \c "Vector". It is a space-separated list of floating point values which can be accessed by another attribute of this pulse. The values can be addressed by observation of loop counters, for instance an RF pulse may set \c "Observe=C1,Counter" and \c "FlipAngle=Vector(a1)". Thus, the flip angle will loop through the vector as the loop-counter of the ConcatSequence increases. Note that in the Matlab GUI, \c "Vector" can also take any Matlab expression which results in a vector as input such as e.g. \c "rand(10,1)".
+\li \c "Vector": Every pulse has the attribute \c "Vector". It is a space-separated list of floating point values which can be accessed by another attribute of this pulse. The values can be addressed by observation of loop counters, for instance an RF pulse may set \c Observe="C1.Counter=C" and \c FlipAngle="Vector(C)". Thus, the flip angle will loop through the vector as the loop-counter of the ConcatSequence increases. Note that in the Matlab GUI, \c "Vector" can also take any Matlab expression which results in a vector as input such as e.g. \c "rand(10,1)".
 
 \li \c "Shape": For analytical RF / gradient pulses, this attribute defines the shape of the pulse using an analytical expression using the time variable \c "T". For RF-pulses, this expression can be complex to define the magnitude and phase of the RF-pulse. Use \c "I" as imaginary unit. The expression is again evaluated using GiNaC which is capable to perform derivatives. If here additionally the attribute \c "Diff=1" is set, the expression provided by the \c "Shape" attribute will be differentiated once, thus it is possible to directly provide the gradient moments.
 

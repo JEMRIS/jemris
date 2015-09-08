@@ -7,7 +7,7 @@
       <ATOMICSEQUENCE Name="A3">
          <ANALYTICGRADPULSE ADCs="-512" Axis="GX" Diff="1" Duration="30" Name="P3" Shape="T*cos(3*T)"/>
          <ANALYTICGRADPULSE Axis="GY" Diff="1" Duration="30" Name="P4" Shape="T*sin(3*T)"/>
-         <EMPTYPULSE ADCs="512" Axis="NONE" Duration="a1" Name="P5" Observe="P3,Duration" Shape="sqrt(T)"/>
+         <EMPTYPULSE ADCs="512" Axis="NONE" Duration="D" Name="P5" Observe="P3.Duration=D" Shape="sqrt(T)"/>
       </ATOMICSEQUENCE>
    </ConcatSequence>
 </Parameters>

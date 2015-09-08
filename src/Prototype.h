@@ -272,6 +272,7 @@ class Prototype {
      * @return success/failure of operation
      */
     bool Observe (Attribute* attrib, string prot_name, string attrib_name, bool verbose);
+    bool Observe (Attribute* attrib, string prot_name, string attrib_name, string attrib_keyword, bool verbose);
 
     /**
      * @brief Notify all observers of an attribute.
@@ -322,6 +323,7 @@ class Prototype {
     vector<double>              m_vector;      /**< @brief A vector which elements are accessible through loop counters.*/
     map<string,Attribute*>		m_attributes;  /**< @brief Map to connect a keyword with an Attribute*/
     vector<Attribute*>			m_obs_attribs; /**< @brief Vector of observed Attributes */
+    vector<string>				m_obs_attrib_keyword; /**< @brief Vector of user-defined Attribute names */
 
 };
 

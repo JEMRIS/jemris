@@ -39,20 +39,20 @@ This is an example of a 2D EPI sequence for 2D simulation (i.e. without slice se
          <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" Name="P1"/>
       </AtomicSequence>
       <AtomicSequence Name="A2">
-         <TrapGradPulse Area="0.5*a1" Axis="GX" Name="P2" Observe="P4,Area"/>
-         <TrapGradPulse Area="a1" Axis="GY" Name="P3" Observe="P,KMAXy"/>
+         <TrapGradPulse Area="-0.5*abs(A)" Axis="GX" Name="P2" Observe="P4.Area=A"/>
+         <TrapGradPulse Area="KMY" Axis="GY" Name="P3" Observe="P.KMAXy=KMY"/>
       </AtomicSequence>
-      <DelayAtomicSequence Delay="a1" DelayType="C2C" Name="D1" Observe="P,TE" StartSeq="A1" StopSeq="C2"/>
-      <ConcatSequence Name="C2" Observe="P,Ny" Repetitions="a1">
+      <DelayAtomicSequence Delay="TE" DelayType="C2C" Name="D1" Observe="P.TE=TE" StartSeq="A1" StopSeq="C2"/>
+      <ConcatSequence Name="C2" Observe="P.Ny=NY" Repetitions="NY">
          <AtomicSequence Name="A3">
-            <TrapGradPulse Name="P4" Axis="GX" FlatTopArea="2*a1*(-1)^a2" FlatTopTime="1"
-                           ADCs="a3" Observe="P,KMAXx/C2,Counter/P,Nx"/>
+            <TrapGradPulse ADCs="NX" Axis="GX" FlatTopArea="2*KMX*(-1)^C" FlatTopTime="1"
+                           Name="P4" Observe="P.KMAXx=KMX, C2.Counter=C, P.Nx=NX"/>
          </AtomicSequence>
          <AtomicSequence Name="A4">
-            <TrapGradPulse Area="-a1" Axis="GY" Name="P5" Observe="P,DKy/C2,Counter/C2,Repetitions"/>
+            <TrapGradPulse Area="ite(1+C,R,0,-DKY)" Axis="GY" Name="P5" Observe="P.DKy=DKY, C2.Counter=C, C2.Repetitions=R"/>
          </AtomicSequence>
       </ConcatSequence>
-      <DelayAtomicSequence Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>
+      <DelayAtomicSequence Delay="TR" DelayType="B2E" Name="D2" Observe="P.TR=TR" StartSeq="A1"/>
    </ConcatSequence>
 </Parameters>
 \endcode

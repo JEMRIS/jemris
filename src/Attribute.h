@@ -234,7 +234,7 @@ class Attribute {
      * @param verbose		if true, warnings will be dumped to stdout
      * @return				success/failure of operation
      */
-    bool SetMember (std::string expr, const std::vector<Attribute*>& obs_attribs, bool verbose = false);
+    bool SetMember (std::string expr, const std::vector<Attribute*>& obs_attribs, const std::vector<std::string>& obs_attrib_keyword, bool verbose = false);
 
     /**
      * @brief Evaluate the GiNaC expression of this attribute
