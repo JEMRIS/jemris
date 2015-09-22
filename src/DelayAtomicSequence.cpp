@@ -195,7 +195,7 @@ void DelayAtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 	if (GetHardwareMode()>=0) {
 		vector<Event*> events;
 		DelayEvent *delay = new DelayEvent();
-		delay->m_delay = (long)(GetDuration()*1e3);
+		delay->m_delay = (long) round(GetDuration()*1e3);
 		events.push_back(delay);
 		seqdata->AddEvents(events, GetDuration());
 		delete delay;

@@ -342,9 +342,7 @@ void    Module::DumpTree (const string& file, Module* mod,int ichild, int level)
 		cout << "> ";
 	}
 
-	char chform[70];
-	sprintf(chform,"%8s %20s %8s %9.3f  %7d  %8d",type.c_str(),class_type.c_str(),name.c_str(),mod->GetDuration(),adcs,tpois);
-	cout << chform << "  | " << mod->GetInfo() << "\n";
+	cout << setw(8) << type << setw(21) << class_type << setw(9) << name << fixed << setw(10) << setprecision(3) << mod->GetDuration() << setw(9) << adcs<< setw(10) << tpois << "  | " << mod->GetInfo() << "\n";
 
 
 	//a Container module calls its ContainerSequence
