@@ -88,8 +88,12 @@ void RFPulse::SetTPOIs() {
 /*****************************************************************/
 inline void RFPulse::GenerateEvents(std::vector<Event*> &events) {
 	RFEvent *rf = new RFEvent();
+	double p = GetInitialPhase()*PI/180.0;
+	p = fmod( p, 2*PI );
+	p = p<0.0 ? p+2*PI : p;
+	p = round(p*1.0e5)/1.0e5;
+	rf->m_phase_offset = p;
 	rf->m_freq_offset = GetFrequency();
-	rf->m_phase_offset = GetInitialPhase()*PI/180.0;
 
 	// Fill the initial delay period with zeros
 	int num_initial_samples = round(GetInitialDelay()*1.0e3);

@@ -408,7 +408,11 @@ inline void TrapGradPulse::GenerateEvents(std::vector<Event*> &events) {
 		adc->m_dwell_time = 1e6*m_flat_top_time/N;
 		adc->m_delay = m_ramp_up_time*1e3;
 
-		adc->m_phase_offset = GetInitialPhase()*PI/180.0;
+		double p = GetInitialPhase()*PI/180.0;
+		p = fmod( p, 2*PI );
+		p = p<0.0 ? p+2*PI : p;
+		p = round(p*1.0e5)/1.0e5;
+		adc->m_phase_offset = p;
 		adc->m_freq_offset = GetFrequency();
 
 		events.push_back(adc);

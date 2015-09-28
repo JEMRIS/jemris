@@ -87,7 +87,7 @@ void Sequence::SeqDiag (const string& fname ) {
 	seqaxis.push_back("TXP");						//transmitter phase
 	std::string gradSuffixes = "XYZ";
 	for (int i=0; i<gradSuffixes.length(); i++)
-		seqaxis.push_back(std::string("G") + gradSuffixes[i]);	//Patloc and Linear gradients
+		seqaxis.push_back(std::string("G") + gradSuffixes[i]);	// Gradients
 	seqaxis.push_back("META");						//Meta - used to adjust k-space for excite/refocusing
 	
 
