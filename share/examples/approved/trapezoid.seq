@@ -28,7 +28,7 @@ Num_Blocks 3
 # id num dwell delay freq phase
 # ..  ..    ns    us   Hz   rad
 [ADC]
- 1  64  62500 100 500 3.141593
+ 1  64  62500 100 500 3.14159
 
 # Sequence Shapes
 
