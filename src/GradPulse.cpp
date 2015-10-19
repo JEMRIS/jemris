@@ -79,16 +79,16 @@ bool GradPulse::PrepareNLGfield  (PrepareMode mode) {
 		//attributes for the current spin positions, and the gradient value
 		HIDDEN_ATTRIBUTE("NLG_posX", m_nlg_px  );
 		Observe(GetAttribute("NLG_field"),GetName(),"NLG_posX", mode == PREP_VERBOSE);
-		ReplaceString(val,"X",GetName()+"_NLG_posX");
+		ReplaceSymbolString(val,"X",GetName()+"_NLG_posX");
 		HIDDEN_ATTRIBUTE("NLG_posY", m_nlg_py  );
 		Observe(GetAttribute("NLG_field"),GetName(),"NLG_posY", mode == PREP_VERBOSE);
-		ReplaceString(val,"Y",GetName()+"_NLG_posY");
+		ReplaceSymbolString(val,"Y",GetName()+"_NLG_posY");
 		HIDDEN_ATTRIBUTE("NLG_posZ", m_nlg_pz  );
 		Observe(GetAttribute("NLG_field"),GetName(),"NLG_posZ", mode == PREP_VERBOSE);
-		ReplaceString(val,"Z",GetName()+"_NLG_posZ");
+		ReplaceSymbolString(val,"Z",GetName()+"_NLG_posZ");
 		HIDDEN_ATTRIBUTE("NLG_value",m_nlg_val );
 		Observe(GetAttribute("NLG_field"),GetName(),"NLG_value", mode == PREP_VERBOSE);
-		ReplaceString(val,"G",GetName()+"_NLG_value");
+		ReplaceSymbolString(val,"G",GetName()+"_NLG_value");
 		//set the GiNaC expression and mark this gradient as nonlinear
 		m_non_lin_grad = GetAttribute("NLG_field")->SetMember(val, m_obs_attribs, m_obs_attrib_keyword, mode == PREP_VERBOSE);
 		//mark the parent AtomicSequence of this gradient as nonlinear
@@ -122,7 +122,7 @@ bool     GradPulse::PrepareEddyCurrents  (PrepareMode mode, int steps) {
 		HIDDEN_ATTRIBUTE("EddyTime", m_eddy_time  );
 		Observe(GetAttribute("EddyCurrents"),GetName(),"EddyTime", mode == PREP_VERBOSE);
 		// -> nonsense!! Observe(GetAttribute("EddyCurrents"),GetName(),"Area", mode == PREP_VERBOSE);
-		ReplaceString(val,"T",GetName()+"_EddyTime");
+		ReplaceSymbolString(val,"T",GetName()+"_EddyTime");
 		//set the GiNaC expression and mark this gradient as nonlinear
 		m_eddy_currents = GetAttribute("EddyCurrents")->SetMember(val, m_obs_attribs, m_obs_attrib_keyword, mode == PREP_VERBOSE);
 	}

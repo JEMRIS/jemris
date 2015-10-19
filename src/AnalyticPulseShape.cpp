@@ -115,7 +115,7 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
 		string val = m_pulse->GetDOMattribute("Shape");
 		if (val.empty()) return true;
 		m_pulse->Observe(m_pulse->GetAttribute("Shape"),m_pulse->GetName(),"AnalyticTime", verbose);
-		m_pulse->ReplaceString(val,"T",m_pulse->GetName()+"_AnalyticTime");
+		m_pulse->ReplaceSymbolString(val,"T",m_pulse->GetName()+"_AnalyticTime");
 
 	//2. "Shape" observes "Constants": replace "c{i}" with the appropriate attribute counter "a{i}"
 		if (m_pulse->HasDOMattribute("Constants")) {
@@ -129,7 +129,7 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
 				    m_pulse->Observe(m_pulse->GetAttribute("Shape"),m_pulse->GetName(),C.str(), verbose);
 				}
 				stringstream c; c << "c" << i+1;
-				m_pulse->ReplaceString(val,c.str(),m_pulse->GetName()+"_"+C.str());
+				m_pulse->ReplaceSymbolString(val,c.str(),m_pulse->GetName()+"_"+C.str());
 			}
 		}
 

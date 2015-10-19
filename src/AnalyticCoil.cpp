@@ -52,13 +52,13 @@ bool AnalyticCoil::Prepare (const PrepareMode mode) {
         /* set the analytic formula for sensitivty evaluation */
         HIDDEN_ATTRIBUTE("posX", m_px  );
         Observe(psens,GetName(),"posX", mode == PREP_VERBOSE);
-        ReplaceString(val,"X",GetName()+"_posX");
+        ReplaceSymbolString(val,"X",GetName()+"_posX");
         HIDDEN_ATTRIBUTE("posY", m_py  );
         Observe(psens,GetName(),"posY", mode == PREP_VERBOSE);
-        ReplaceString(val,"Y",GetName()+"_posY");
+        ReplaceSymbolString(val,"Y",GetName()+"_posY");
         HIDDEN_ATTRIBUTE("posZ", m_pz  );
         Observe(psens,GetName(),"posZ", mode == PREP_VERBOSE);
-        ReplaceString(val,"Z",GetName()+"_posZ");
+        ReplaceSymbolString(val,"Z",GetName()+"_posZ");
         m_analytic=psens->SetMember(val, m_obs_attribs, m_obs_attrib_keyword, mode == PREP_VERBOSE);
     }
 

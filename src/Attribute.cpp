@@ -104,7 +104,7 @@ bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attri
 	}
 
 	//GiNaC expressions
-	Prototype::ReplaceString(expr,"step","csgn");
+	Prototype::ReplaceSymbolString(expr,"step","csgn");
 	if (expr.find("I", 0)!=std::string::npos) m_complex = true;
 
 	m_subjects.clear();
@@ -115,7 +115,7 @@ bool Attribute::SetMember (std::string expr, const vector<Attribute*>& obs_attri
 		//convert user-defined keywords to the matching symbol name
 		Attribute* subject_attrib = obs_attribs.at(i);
 		std::string  SymbolName = strtolower( subject_attrib->GetPrototype()->GetName() + "_" + subject_attrib->GetName() );
-        if (!Prototype::ReplaceString(expr,obs_attrib_keyword.at(i),SymbolName)) continue;
+        if (!Prototype::ReplaceSymbolString(expr,obs_attrib_keyword.at(i),SymbolName)) continue;
         //still here? the attribute was in the expression, so it is an observed subject
         AttachSubject( subject_attrib );
         m_symlist.append( get_symbol(SymbolName) );
@@ -238,7 +238,7 @@ double Attribute::EvalCompiledExpression (double const val, std::string const at
 				stringstream se; se << e; std::string formula = se.str();
 				std::string sym  = GetPrototype()->GetAttribute(attrib)->GetSymbol();
 				std::string asym = "abs(VarForEvalCompiledExpression)";
-				Prototype::ReplaceString(formula,sym,asym);
+				Prototype::ReplaceSymbolString(formula,sym,asym);
 				GiNaC::lst symlist;
 				symlist.append( get_symbol("VarForEvalCompiledExpression") );
 				GiNaC::ex ea = GiNaC::ex(formula,symlist);
@@ -247,14 +247,14 @@ double Attribute::EvalCompiledExpression (double const val, std::string const at
 
 				GiNaC::ex ear = ea.real_part();
 				stringstream ser;  ser << ear; formula = ser.str();
-				if ( Prototype::ReplaceString(formula,asym,sym) ) {
+				if ( Prototype::ReplaceSymbolString(formula,asym,sym) ) {
 					ear  = GiNaC::ex(formula,symlist);
 					compile_ex(ear, get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fp.at(m_num_fp));
 				}
 
 				GiNaC::ex eai = ea.imag_part();
 				stringstream sei;  sei << eai; formula = sei.str();
-				if ( Prototype::ReplaceString(formula,asym,sym) ) {
+				if ( Prototype::ReplaceSymbolString(formula,asym,sym) ) {
 					eai  = GiNaC::ex(formula,symlist);
 					compile_ex(eai, get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fpi.at(m_num_fp));
 				}

@@ -57,6 +57,38 @@ bool Prototype::ReplaceString(string& str, const string& s1, const string& s2) {
 }
 
 /***********************************************************/
+bool Prototype::ReplaceSymbolString(string& str, const string& s1, const string& s2) {
+
+	bool ret = false;
+	string::size_type loc = 0;
+	string::size_type len = s1.size();
+	string varchars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_";
+
+	for (;;) {
+        loc = str.find( s1 , loc );
+        //stop if string s1 is not in str
+		if (loc == string::npos ) break;
+		//don't replace if character before s1 belongs to a variable
+		if (loc > 0 && varchars.find(str.at(loc-1),0)!=string::npos ) {
+			loc+=s1.size();
+			continue;
+		}
+		//don't replace if character after s1 belongs to a variable
+		if (loc+len < str.size() && varchars.find(str.at(loc+len),0)!=string::npos ) {
+			loc+=s1.size();
+			continue;
+		}
+		str.replace(loc,s1.size(),s2) ;
+		loc += s2.size();
+		ret = true;
+
+	}
+
+	return ret;
+
+}
+
+/***********************************************************/
 vector<string>  Prototype::Tokenize(const string& str, const string& delimiters ) {
 
     vector<string> tokens;

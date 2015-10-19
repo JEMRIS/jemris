@@ -164,6 +164,12 @@ class Prototype {
      */
     static bool ReplaceString (string& str, const string& s1, const string& s2);
 
+
+    /**
+     * @brief A global sub-string replacer which replaces only complete symbol strings
+     */
+    static bool ReplaceSymbolString (string& str, const string& s1, const string& s2);
+
     /**
      * @brief A global string tokenizer.
      *
