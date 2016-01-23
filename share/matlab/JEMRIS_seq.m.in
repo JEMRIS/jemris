@@ -341,7 +341,7 @@ function NewSeqTag_Callback(hObject, eventdata, handles)
 if FileName==0,return;end
 S.Name='Parameters'; S.Attributes.Name='Name';
 S.Attributes.Value='P'; S.Data='';
-P.Name='ConcatSequence'; P.Attributes(1).Name='Name'; P.Attributes(1).Value='C1';
+P.Name='ConcatSequence'; P.Attributes(1).Name='Name'; P.Attributes(1).Value='C1';P.Attributes(1).DispName='C1';
 P.Data=[ ]; P.Children=[ ]; P.current=0;
 S.Children(1)=P;  S.current=1;
 handles.seqfile=FileName;
