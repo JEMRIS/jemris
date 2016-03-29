@@ -1,6 +1,6 @@
 /**
 ***************************************************
-* \page ug_JEMRIS_txrx Coil Array Layout GUI JEMRIS_txrx
+* \page ug_JEMRIS_txrx Coil array layout tool: JEMRIS_txrx
 The GUI for coil array configuration allows to construct receiver and/or transmitter arrays with dedicated spatial
 sensitivity patterns. A coil array consists of several coils in a specified order, the channel number. The order is just given
 by the order of creation of the coils. In case of a receive coil array, one signal file per coil is generated in

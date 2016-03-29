@@ -1,29 +1,18 @@
 <doxygenlayout version="1.0">
   <!-- Navigation index tabs for HTML output -->
   <navindex>
-   <tab type="mainpage" visible="yes" title="User Guide"/>
-  <!--
-   <tab type="usergroup" title="Userguide">
-   	<tab type="user" url="@ref ug_intro" title="Introduction" />
+   <tab type="mainpage" url="@ref ug_main" title="Home"/>
+   <tab type="usergroup" url="@ref ug_getit" title="Get it">
+    	<tab type="user" url="@ref ug_downl" title="Download" />
     	<tab type="user" url="@ref ug_install" title="Installation" />
-	<tab type="usergroup" title="User Interfaces">
-    		<tab type="user" url="@ref ug_JEMRIS_seq" title="Sequence GUI" />
-    		<tab type="user" url="@ref ug_JEMRIS_txrx" title="Coil GUI" />
-    		<tab type="user" url="@ref ug_command_line" title="Command Line" />
-        </tab>
-	<tab type="usergroup" title="Tutorials">
-    		<tab type="user" url="@ref ug_tutorial_epi_sim" title="Tutorial: Simulate EPI" />
-    		<tab type="user" url="@ref ug_tutorial_epi_seq" title="Tutorial: EPI" />
-    		<tab type="user" url="@ref ug_tutorial_selex1" title="Tutorial: Selective Excitation (Part I)" />
-    		<tab type="user" url="@ref ug_tutorial_selex2" title="Tutorial: Slective Excitation (Part II)" />
-        </tab>
-	<tab type="usergroup" title="Examples">
-    		<tab type="user" url="@ref ug_example_artifacts" title="Example: Artifacts" />
-    		<tab type="user" url="@ref ug_example_nlg" title="Example: Nonlinear Gradients" />
-    		<tab type="user" url="@ref ug_example_ktblast" title="Example: kt-blast" />
-    		<tab type="user" url="@ref ug_example_selex" title="Example: Selective Excitation" />
-        </tab>
+   </tab>
+   <tab type="usergroup" url="@ref ug_userguide" title="Documentation">
+   	<tab type="user" url="@ref ug_intro" title="Introduction" />
+	<tab type="user" url="@ref ug_uis" title="User Interfaces" />
+	<tab type="user" url="@ref ug_tutor" title="Tutorials" />
+	<tab type="user" url="@ref ug_ex" title="Examples" />
     </tab>
+  <!--
     -->
     <tab type="pages" visible="no" title="" intro=""/>
     <tab type="modules" visible="yes" title="" intro=""/>
@@ -46,7 +35,6 @@
     <tab type="examples" visible="no" title="" intro=""/>  
    </tab>
    <tab type="user" url="@ref ug_about" title="About" />
-   <tab type="user" url="@ref ug_imprint" title="Imprint" />
   </navindex>
 
   <!-- Layout definition for a class page -->

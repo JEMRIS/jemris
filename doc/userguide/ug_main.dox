@@ -1,29 +1,30 @@
 /**
-  \page ug_main User guide
-  \mainpage Welcome
-
-This is the automated doxygen documentation of the JEMRIS project.\n
-  \n
-The manual intends to give a brief hands-on introduction. \n
-  \n
-  \n
- \subpage ug_intro \n \n
- \subpage ug_downl \n \n
- \subpage ug_install \n \n
- \subpage ug_uis \n \n
- \subpage ug_tutor \n \n
- \subpage ug_ex \n \n
+ \page ug_main User guide
+ \mainpage Welcome to the the JEMRIS project
+ \n
+ \li JEMRIS is a versatile, open-source, multi-purpose MRI simulator. It is well-suited for education and research.\n
+ \n
+ \li Please read the \subpage ug_intro for more information.\n
+ \n
+ \li Here you can \subpage ug_downl the most recent JEMRIS version and learn how to work with the \subpage ug_uis.
+ \n \n \n \n \n
+ <CENTER> <b> Example Gallery </b> </CENTER>
+ \image html pics/jemris_website_misc.png  \n
   \n
   \n
   \n
-  \n
-  \n
-  \n
-  See also <a href="http://www.jemris.org">www.jemris.org</a>
 */
 
 /**
- \page ug_imprint  Imprint
+ \page ug_getit  Get it
+\n
+Get the latest version of JEMRIS:
+\n
+<table border="0">
+ <tr><td> \li \subpage ug_downl   <td> &emsp;&emsp; <td> sources or binary packages 
+ <tr><td> \li \subpage ug_install   <td> &emsp;&emsp; <td> instructions to build JEMRIS on your own
+</table>
+\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
 */
 
 /**
@@ -103,29 +104,43 @@ Should you want to connect multiple computers running Windows to perform HPC com
 */
 
 
+/**
+ \page ug_userguide  Documentation
+ \n
+ These pages introduce the basic concepts and functionality of JEMRIS. Please help improving the documentation!
+ \n
+<table border="0">
+ <tr><td> \li \subpage ug_intro   <td> &emsp;&emsp;&emsp;&emsp; <td> Summary of concepts and features 
+ <tr><td> \li \subpage ug_uis   <td> &emsp;&emsp;&emsp;&emsp; <td> <b> Detailed manual</b> of the main functionality
+ <tr><td> \li \subpage ug_tutor  <td> &emsp;&emsp;&emsp;&emsp; <td> Hands-on exercises for beginners
+ <tr><td> \li \subpage ug_ex <td> &emsp;&emsp;&emsp;&emsp; <td> Simulation results showing a few features  
+</table>
+ \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
+*/
+
 
 /**
  \page ug_uis User Interfaces
-JEMRIS was developed in C++ to achieve usability as well as performance.
-It can be used from the command line, where  the configuration of the MR-simulation is done via several XML files.
-
-Additionally, three Matlab GUIs were developed: one for interactively designing the MRI sequence,
-another for defining the coil configuration, and one for the set-up and execution of the main simulator, respectively. 
+JEMRIS was developed in C++ to achieve usability as well as performance. It can be used from the command line, where  the configuration of the MR-simulation is done via several XML files. Additionally, three Matlab GUIs were developed for interactively designing the MRI sequence, defining the coil configuration, and execution of
+the simulations, respectively. \n
+\n
 All Matlab GUIs follow the same procedure: construct a valid XML file from the user input, then call the external
 JEMRIS executables to compute the data, and finally read and visualise the result.
 
+<table border="0">
+ <tr><td> \li \subpage ug_JEMRIS_seq   <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for MRI sequence design 
+ <tr><td> \li \subpage ug_JEMRIS_sim   <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for execution of MRI simulations
+ <tr><td> \li \subpage ug_JEMRIS_txrx  <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for layout design of transmit and receive arrays
+ <tr><td> \li \subpage ug_command_line <td>  &emsp;&emsp;&emsp;&emsp; <td> Learn how to control jemris for batch submission etc. 
+</table>
+\n
 Before starting the Matlab GUIs, the directory in which the JEMRIS m-files are located has to be added to
-the Matlab search path.
-Use e.g. <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/share/jemris/matlab</I> in a standard linux installation.
+the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/share/jemris/matlab</I> in a standard linux installation.
 
- \subpage ug_JEMRIS_seq  \n 
- Comprehensive GUI for setup of sequences. \n\n
- \subpage ug_JEMRIS_sim  \n 
- User interface for control of the simulation parameters as sample, noise etc. \n\n
- \subpage ug_JEMRIS_txrx \n 
- User interface for setting up transmit and receive arrays. \n\n
- \subpage ug_command_line \n 
- The command line. Learn to control jemris for batch submission etc. \n\n
+\n
+\n
+\n
+\n
  */
 
 /**
@@ -154,8 +169,8 @@ Use e.g. <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/share/jemris/matlab<
  \page ug_about About JEMRIS
 \section ug_version Version
 
-JEMRIS Version 2.8\n
-Copyright (C) 2006-2015  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
+JEMRIS Version 2.8.1\n
+Copyright (C) 2006-2016  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
