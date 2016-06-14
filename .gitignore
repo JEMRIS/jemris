@@ -22,6 +22,10 @@
 /doc/doxy.conf
 /doc/site/nav.js
 /doc/userguide/doxy-jemris.conf
+/doc/userguide/ug_imp.dox
+/doc/doxy_website_with_footer.conf
+/doc/footer.html
+/doc/logo.png
 /autom4te.cache
 /build
 /doc/doxygen_sqlite3.db
