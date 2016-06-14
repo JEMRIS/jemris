@@ -1,6 +1,6 @@
 /**
 ***************************************************
-* \page ug_JEMRIS_sim MRI %Simulator GUI JEMRIS_sim
+* \page ug_JEMRIS_sim %MRI Simulation tool: JEMRIS_sim
 To start the simulator GUI, open \c "JEMRIS_sim" as before in the path where the sequence *.xml files are stored.
 In the following screenshot, the epi-sequence has been loaded into the GUI and was simulated for a brain phantom:
 

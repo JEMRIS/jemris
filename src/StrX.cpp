@@ -32,7 +32,7 @@
 StrX::StrX (const XMLCh* const toTranscode) {
     _xmlch = XMLString::replicate (toTranscode);
     _char = XMLString::transcode (toTranscode); 
-    _string = _char;
+    _string = std::string(_char);
 }
 
 /***********************************************************/
