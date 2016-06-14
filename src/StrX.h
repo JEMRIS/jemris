@@ -92,6 +92,7 @@ class StrX {
 private :
     
     XMLCh*  _xmlch;
+    char*	_char;
     std::string  _string;
     
 };

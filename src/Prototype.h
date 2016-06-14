@@ -46,8 +46,8 @@
 XERCES_CPP_NAMESPACE_USE
 
 
-enum PrepareMode{	PREP_INIT,	PREP_VERBOSE,	PREP_UPDATE					};
-enum Type		{	MOD_PULSE,		MOD_ATOM,	MOD_CONCAT,	MOD_CONTAINER, MOD_VOID,	COIL};
+enum PrepareMode{ PREP_INIT,	PREP_VERBOSE,	PREP_UPDATE };
+enum Type	{ MOD_PULSE,	MOD_ATOM,	MOD_CONCAT, MOD_CONTAINER, MOD_VOID, COIL};
 
 //parameter class declaration
 class Parameters;
@@ -82,9 +82,14 @@ class Prototype {
     /**
      * @brief Default destructor.
      *
-     * Default destrcutor
+     * Delete my attributes
      */
-    virtual ~Prototype () {};
+    virtual ~Prototype () {
+       map<string,Attribute*>::iterator	iter;
+       	for (iter = m_attributes.begin(); iter != m_attributes.end(); iter++ )
+		delete iter->second;
+
+    };
 
     /**
      * @brief Default copy constructor.

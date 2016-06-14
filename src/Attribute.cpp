@@ -35,11 +35,12 @@
 
 /***********************************************************/
  Attribute::~Attribute (){
-	if (m_datatype == typeid(  double*).name() ) delete ((  double*) m_backup);
-	if (m_datatype == typeid(     int*).name() ) delete ((     int*) m_backup);
-	if (m_datatype == typeid(    long*).name() ) delete ((    long*) m_backup);
-	if (m_datatype == typeid(unsigned*).name() ) delete ((unsigned*) m_backup);
-	if (m_datatype == typeid(    bool*).name() ) delete ((    bool*) m_backup);
+	if (m_datatype == typeid(   double*).name() ) delete ((   double*) m_backup);
+	if (m_datatype == typeid(      int*).name() ) delete ((      int*) m_backup);
+	if (m_datatype == typeid(     long*).name() ) delete ((     long*) m_backup);
+	if (m_datatype == typeid( unsigned*).name() ) delete (( unsigned*) m_backup);
+	if (m_datatype == typeid(     bool*).name() ) delete ((     bool*) m_backup);
+	if (m_datatype == typeid(PulseAxis*).name() ) delete ((PulseAxis*) m_backup);
 	if (m_datatype == typeid(  std::string*).name() ) delete ((  std::string*) m_backup);
 }
 

@@ -31,19 +31,22 @@
 /***********************************************************/
 StrX::StrX (const XMLCh* const toTranscode) {
     _xmlch = XMLString::replicate (toTranscode);
-    _string = XMLString::transcode (toTranscode); 
+    _char = XMLString::transcode (toTranscode); 
+    _string = _char;
 }
 
 /***********************************************************/
 StrX::StrX (const char* const toTranscode ) : 
     _string (toTranscode) {
     _xmlch = XMLString::transcode (toTranscode);
+    _char=NULL;
 }
 
 /***********************************************************/
 StrX::StrX (const std::string& toTranscode ) :
     _string (toTranscode) {
     _xmlch = XMLString::transcode (toTranscode.c_str());
+    _char=NULL;
 }
 
 StrX::StrX (const StrX& strx) {
@@ -61,6 +64,8 @@ StrX& StrX::operator= (const StrX& strx) {
 StrX::~StrX() {
     if (_xmlch)
         XMLString::release (&_xmlch);
+    if (_char)
+        XMLString::release (&_char);
 }
 
 /***********************************************************/
