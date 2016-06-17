@@ -230,35 +230,12 @@ double Attribute::EvalCompiledExpression (double const val, std::string const at
 		m_fpi.push_back(NULL);
 		//compile the GiNaC expression
 		try {
-			//fairly easy for real valued expressions
 			if (!m_complex) {
 				compile_ex(e, get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fp.at(m_num_fp));
 			}
-			//more work to do, since GiNaC::realsymbol does not behave as expected (and it is therefore not used at all)
 			else {
-				stringstream se; se << e; std::string formula = se.str();
-				std::string sym  = GetPrototype()->GetAttribute(attrib)->GetSymbol();
-				std::string asym = "abs(VarForEvalCompiledExpression)";
-				Prototype::ReplaceSymbolString(formula,sym,asym);
-				GiNaC::lst symlist;
-				symlist.append( get_symbol("VarForEvalCompiledExpression") );
-				GiNaC::ex ea = GiNaC::ex(formula,symlist);
-				symlist.remove_all();
-				symlist.append( get_symbol(sym) );
-
-				GiNaC::ex ear = ea.real_part();
-				stringstream ser;  ser << ear; formula = ser.str();
-				if ( Prototype::ReplaceSymbolString(formula,asym,sym) ) {
-					ear  = GiNaC::ex(formula,symlist);
-					compile_ex(ear, get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fp.at(m_num_fp));
-				}
-
-				GiNaC::ex eai = ea.imag_part();
-				stringstream sei;  sei << eai; formula = sei.str();
-				if ( Prototype::ReplaceSymbolString(formula,asym,sym) ) {
-					eai  = GiNaC::ex(formula,symlist);
-					compile_ex(eai, get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fpi.at(m_num_fp));
-				}
+				compile_ex(e.real_part(), get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fp.at(m_num_fp));
+				compile_ex(e.imag_part(), get_symbol(GetPrototype()->GetAttribute(attrib)->GetSymbol()), m_fpi.at(m_num_fp));
 			}
  			//cout << " compiling expression " << e << " of attribute " << GetName() << " in module " << GetPrototype()->GetName() << endl;
  		 	m_num_fp++;

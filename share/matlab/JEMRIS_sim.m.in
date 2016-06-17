@@ -74,9 +74,9 @@ if (handles.win)
         handles.MPICHCall = '';
     end
     if (strcmp(computer,'PCWIN64'))
-        handles.JemrisPath=[winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\Research Centre Juelich\jemris', 'Path')];
+        handles.JemrisPath=[winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\jemris', 'Path')];
     else
-        handles.JemrisPath=[winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Research Centre Juelich\jemris', 'Path')];
+        handles.JemrisPath=[winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\jemris', 'Path')];
     end
     handles.PJemrisCall   = ['start cmd /s /k "echo Do not close this window! Simulating ... && set PATH="" && "', handles.MPICHCall, '" -localonly 9 "', handles.JemrisPath, 'pjemris" simu.xml > .sim.out && exit"'];
     handles.JemrisCall    = ['start cmd /s /k "echo Do not close this window! Simulating ... && "', handles.JemrisPath,'jemris.exe" simu.xml > .sim.out && exit"'];

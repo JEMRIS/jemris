@@ -59,9 +59,9 @@ handles.win=(strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
 handles.CWD=pwd;
 if (handles.win)
     if (strcmp(computer,'PCWIN64'))
-        handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\Research Centre Juelich\jemris', 'Path')];
+        handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\jemris', 'Path')];
     else
-        handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Research Centre Juelich\jemris', 'Path')];
+        handles.JemrisPath=['"',winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\jemris', 'Path')];
     end
     handles.JemrisShare=[''];
     handles.JemrisCall=[fullfile(handles.JemrisPath,'jemris.exe"')];
