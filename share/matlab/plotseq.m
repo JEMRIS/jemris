@@ -145,8 +145,7 @@ if kspace_flag
         end
 
         if length(J)>2
-            colormap(C);h=colorbar;set(h,'ytick',[],'color',[0 0 0]);
-            axes(h);xlabel('early','color',[0 0 0]);title('late','color',[0 0 0])
+            colormap(C);colorbar('ticks',[0 1],'ticklabels',{'early','late'});%set(h,'ytick',[],'color',[0 0 0]);
         end
         return
 end
@@ -166,8 +165,9 @@ if i1>1,i1=i1-1;end
 if i2<length(t),i2=i2+1;end
 I=i1:i2;
 
-YL={'ADC','|RF|','RF{\phi}','GX','GY','GZ'};
-cla(hax{1},'reset');axes(hax{1}),plot(Tadc,Rec_Phs,'.r'),set(gca,'xticklabel',[])
+YL={'ADC{\phi}','|RF|','RF{\phi}','GX','GY','GZ'};
+RP=Rec_Phs;Irp=find(RP>180);RP(Irp)=RP(Irp)-360;
+cla(hax{1},'reset');axes(hax{1}),plot(Tadc,RP,'.r'),set(gca,'xticklabel',[])
 set(gca,'xlim',[ax(1) ax(2)],'ylim',[-180 180]),grid
 ylabel(YL{1},'fontsize',14,'fontweight','bold')
 

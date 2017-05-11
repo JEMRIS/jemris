@@ -52,7 +52,6 @@ installed.
 Now you may run the Matlab GUIs for sequence design and simulation
 (see \ref ug_JEMRIS_seq and \ref ug_JEMRIS_sim).
 
-Here, you may start by loading one of the example sequences in the directory \c <b>"app/xmpl"</b>.
 
 **************************************************
 */

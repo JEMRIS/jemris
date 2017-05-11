@@ -392,7 +392,7 @@ if strcmpi(S,'Vector')
   s=sprintf('any matlab expression which evaluates to a vector');
   set(hObject,'TooltipString',s)
   v = eval(['[',get(hObject,'String'),']']); v=(v(:))';
-  handles.Seq=changeAttributes(S,num2str(v),handles.Seq,handles);
+  handles.Seq=changeSeqAttributes(S,num2str(v),handles.Seq,handles);
 else
   handles.Seq=changeSeqAttributes(S,get(hObject,'String'),handles.Seq,handles);
 end
