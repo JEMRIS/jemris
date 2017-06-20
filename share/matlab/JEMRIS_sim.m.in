@@ -64,13 +64,13 @@ handles.CWD=pwd;
 handles.win=(strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
 if (handles.win)
     handles.JemrisShare = '';
-    try 
+    try
         if (strcmp(computer,'PCWIN64'))
             handles.MPICHCall = char([winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\Wow6432Node\MPICH2', 'Path'), 'bin\mpiexec.exe']);
         else
             handles.MPICHCall = char([winqueryreg('HKEY_LOCAL_MACHINE', 'SOFTWARE\MPICH2', 'Path'), 'bin\mpiexec.exe']);
         end
-    catch 
+    catch
         handles.MPICHCall = '';
     end
     if (strcmp(computer,'PCWIN64'))
@@ -81,13 +81,13 @@ if (handles.win)
     handles.PJemrisCall   = ['start cmd /s /k "echo Do not close this window! Simulating ... && set PATH="" && "', handles.MPICHCall, '" -localonly 9 "', handles.JemrisPath, 'pjemris" simu.xml > .sim.out && exit"'];
     handles.JemrisCall    = ['start cmd /s /k "echo Do not close this window! Simulating ... && "', handles.JemrisPath,'jemris.exe" simu.xml > .sim.out && exit"'];
 else
-    handles.JemrisPath='@prefix@/bin';                                      
-    handles.JemrisShare='@prefix@/share/jemris/matlab'; 
+    handles.JemrisPath='@prefix@/bin';
+    handles.JemrisShare='@prefix@/share/jemris/matlab';
     [s,w]=system('setenv');
   if s==0 % a TCSH
     handles.JemrisCall  = ['setenv LD_LIBRARY_PATH ""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
     handles.PJemrisCall = ['setenv LD_LIBRARY_PATH ""; @MPIRUN@  @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
-  else    % a BASH 
+  else    % a BASH
     handles.JemrisCall  = ['LD_LIBRARY_PATH=""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
     handles.PJemrisCall = ['LD_LIBRARY_PATH=""; @MPIRUN@  @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
   end
@@ -124,7 +124,7 @@ sample.R=50;sample.DxDy=1; sample.gamBo=63.87;
 handles.sample=sample;
 handles.UserSample=[];
 handles.maxM0=1;
-sim.CSF=0; sim.CF=0; sim.RN=0; sim.INC=0; 
+sim.CSF=0; sim.CF=0; sim.RN=0; sim.INC=0;
 handles.sim=sim;
 handles.img_num=1;
 %set(gcf,'color',[.88 .88 .88])
@@ -151,8 +151,8 @@ if (handles.win == false)
   set(handles.ChanSelString,'Visible','off');
 end
 set(handles.SusceptTag,'Value',0,'Visible','off');
-set(handles.gamBoTag,'Visible','off');    
-set(handles.gamBoText,'Visible','off');    
+set(handles.gamBoTag,'Visible','off');
+set(handles.gamBoText,'Visible','off');
 set(handles.TxText,'Visible','off');
 set(handles.RxText,'Visible','off');
 write_simu_xml(handles,1);
@@ -175,7 +175,7 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
      cwd=pwd            ; n=strfind(cwd,s(1:end-1)); cwd=['/srv/data/',cwd(n:end)];
      sd =handles.seqdir ; n=strfind(sd,s(1:end-1)) ; sd =['/srv/data/',sd(n:end)] ;
      td =handles.txadir ; n=strfind(td,s(1:end-1)) ; td =['/srv/data/',td(n:end)] ;
-     rd =handles.rxadir ; n=strfind(rd,s(1:end-1)) ; rd =['/srv/data/',rd(n:end)] ;    
+     rd =handles.rxadir ; n=strfind(rd,s(1:end-1)) ; rd =['/srv/data/',rd(n:end)] ;
  else
      jp=handles.JemrisShare;
      cwd=pwd; sd=handles.seqdir; td=handles.txadir; rd=handles.rxadir;
@@ -184,7 +184,7 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
  if (handles.win); sd=''; td=''; rd=''; cwd=''; end
  sample=handles.sample; sim=handles.sim; rxca=handles.rxca; txca=handles.txca;
  %sample item
- SAMP.Name='sample'     ; SAMP.Data=''; SAMP.Children=[]; 
+ SAMP.Name='sample'     ; SAMP.Data=''; SAMP.Children=[];
  SAMP.Attributes(1).Name='name'; SAMP.Attributes(1).Value=sample.name;
  SAMP.Attributes(2).Name='uri';  SAMP.Attributes(2).Value=fullfile(cwd,sample.file);
   if isfield(sample,'MotionFileName')
@@ -199,10 +199,10 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
        % do nothing
     else
        SAMP.Attributes(end+1).Name='Diffusionfile';SAMP.Attributes(end).Value=fullfile(cwd,sample.DiffusionFileName);
-    end     
+    end
  end
  if isfield(sample,'multiple')
-       SAMP.Attributes(end+1).Name='multiple';SAMP.Attributes(end).Value=num2str(sample.multiple);    
+       SAMP.Attributes(end+1).Name='multiple';SAMP.Attributes(end).Value=num2str(sample.multiple);
  end
 
 %write binary sample file
@@ -214,35 +214,35 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
  else
     handles.maxM0=writeSample(handles.UserSample);
  end
- 
+
  %RX coilarray
  RXCA.Name='RXcoilarray'; RXCA.Data=''; RXCA.Children=[]; RXCA.Attributes.Name='uri';
  if isempty(handles.rxafile)
     RXCA.Attributes.Value=fullfile(jp,'uniform.xml');
  else
-    RXCA.Attributes.Value=fullfile(rd,handles.rxafile); 
+    RXCA.Attributes.Value=fullfile(rd,handles.rxafile);
  end
  %TX coilarray
- TXCA.Name='TXcoilarray'; TXCA.Data=''; TXCA.Children=[]; TXCA.Attributes.Name='uri'; 
+ TXCA.Name='TXcoilarray'; TXCA.Data=''; TXCA.Children=[]; TXCA.Attributes.Name='uri';
  if isempty(handles.txafile)
     TXCA.Attributes.Value=fullfile(jp,'uniform.xml');
  else
-    TXCA.Attributes.Value=fullfile(td,handles.txafile); 
+    TXCA.Attributes.Value=fullfile(td,handles.txafile);
  end
  %sequence section
- SEQU.Name='sequence'   ; SEQU.Data=''; SEQU.Children=[]; 
+ SEQU.Name='sequence'   ; SEQU.Data=''; SEQU.Children=[];
  SEQU.Attributes(1).Name='name'; SEQU.Attributes(1).Value=handles.seqname;
  SEQU.Attributes(2).Name='uri';  SEQU.Attributes(2).Value=fullfile(sd,handles.seqfile);
  %model section
- MODE.Name='model'  ; MODE.Data=''; MODE.Children=[]; 
+ MODE.Name='model'  ; MODE.Data=''; MODE.Children=[];
  MODE.Attributes(1).Name='name'; MODE.Attributes(1).Value='Bloch';
  MODE.Attributes(2).Name='type'; MODE.Attributes(2).Value='CVODE';
  %parameter section
- PARA.Name='parameter'  ; PARA.Data=''; PARA.Children=[]; 
+ PARA.Name='parameter'  ; PARA.Data=''; PARA.Children=[];
  NAMES = {'EvolutionSteps','EvolutionPrefix','ConcomitantFields','RandomNoise'};
  VALUES= {num2str(sim.INC),'evol',num2str(sim.CF),num2str(sim.RN)};
  for i=1:length(NAMES); PARA.Attributes(i).Name=NAMES{i}; PARA.Attributes(i).Value=VALUES{i}; end
- %build simu-structure and write simu xml file 
+ %build simu-structure and write simu xml file
  SIMU.Name='simulate';  SIMU.Attributes(1).Name='name'; SIMU.Attributes(1).Value='JEMRIS'; SIMU.Data='';
  SIMU.Children(1)=SAMP; SIMU.Children(2)=RXCA; SIMU.Children(3)=TXCA;
  SIMU.Children(4)=PARA; SIMU.Children(5)=SEQU; SIMU.Children(6)=MODE;
@@ -264,7 +264,7 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = JEMRIS_sim_OutputFcn(hObject, eventdata, handles) 
+function varargout = JEMRIS_sim_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles;
 
 % --- Executes on selection change in Sample.
@@ -274,8 +274,8 @@ function Sample_Callback(hObject, eventdata, handles)
  handles.sample.name=C{Nsample};
  handles.UserSample=[];
  handles.sample.Suscept=0;
- set(handles.gamBoTag,'Visible','off');    
- set(handles.gamBoText,'Visible','off');    
+ set(handles.gamBoTag,'Visible','off');
+ set(handles.gamBoText,'Visible','off');
  set(handles.SusceptTag,'Value',0,'Visible','off');
 
  switch Nsample
@@ -309,12 +309,12 @@ function Sample_Callback(hObject, eventdata, handles)
  end
 
  set(handles.text10,'String',T1str,'Visible',bv2);
- set(handles.text11,'String',T2str,'Visible',bv2); 
- set(handles.textT2s,'String',T2Sstr,'Visible',bv2); 
- set(handles.text12,'String',M0str,'Visible',bv2); 
- set(handles.text13,'String',SSstr,'Visible',bv2); 
+ set(handles.text11,'String',T2str,'Visible',bv2);
+ set(handles.textT2s,'String',T2Sstr,'Visible',bv2);
+ set(handles.text12,'String',M0str,'Visible',bv2);
+ set(handles.text13,'String',SSstr,'Visible',bv2);
  set(handles.text16,'Visible',bv2);
- set(handles.text17,'String',CSstr,'Visible',bv2); 
+ set(handles.text17,'String',CSstr,'Visible',bv2);
  set(handles.setT1,'String',num2str(handles.sample.T1),'Visible',bv2);
  set(handles.setT2,'String',num2str(handles.sample.T2),'Visible',bv2);
  set(handles.setT2s,'String',num2str(handles.sample.T2S),'Visible',bv2);
@@ -322,17 +322,17 @@ function Sample_Callback(hObject, eventdata, handles)
  set(handles.setChemShift,'String',num2str(handles.sample.CS),'visible',bv2);
  set(handles.setRadius,'String',num2str(handles.sample.R),'Visible',bv2);
  set(handles.setGrid,'String',num2str(handles.sample.DxDy),'Visible',bv2);
- 
+
  %user defined sample
  if Nsample==5;
      [FileName,PathName] = uigetfile('*.mat','Select the Sample Mat file');
      if FileName==0,return;end
      handles.UserSample=load(FileName);
  end
- 
+
  %brain slice(s)
  if Nsample==4; handles.UserSample=brainSample(handles); end
- 
+
  %redraw sample
  handles=write_simu_xml(handles,1);
 guidata(hObject, handles);
@@ -369,7 +369,7 @@ function start_simu_Callback(hObject, eventdata, handles)
  h = waitbar(0,'Please wait...');
  j = 0;
  while 1
-    try 
+    try
         p=load('.jemris_progress.out','-ascii');
         waitbar(p/100)
         if p==100, break; end
@@ -561,8 +561,8 @@ else
  handles.UserSample=[];
 end
 if (handles.sample.Suscept==1),bvis='on';else, bvis='off';end
-set(handles.gamBoTag,'Visible',bvis);    
-set(handles.gamBoText,'Visible',bvis);    
+set(handles.gamBoTag,'Visible',bvis);
+set(handles.gamBoText,'Visible',bvis);
 write_simu_xml(handles,1);
 guidata(hObject, handles);
 
@@ -899,7 +899,7 @@ function saveMagEvolTag_Callback(hObject, eventdata, handles)
  if FileName==0,return;end
  [M,t]=readEvol(handles.sample.file,'evol',0);
  save(FileName,'t','M');
- 
+
 
 
 % --- Executes on selection change in ChannelSelection.
@@ -911,7 +911,7 @@ content=get(hObject,'String');
 chan   =get(hObject,'Value');
 if numel(content)==chan && get(handles.showRight,'Value')==4 % SOS image
         handles.channel=-numel(content)+1;
-else 
+else
     handles.channel=chan;
 end
 
@@ -939,20 +939,26 @@ MotionFileName='Motion.dat';
 if isempty(VarName)
     failed=true;
 else
-    if evalin('base',['exist(''',VarName,''',''var'')'])
-        MotionVar=evalin('base',VarName);
-        if isnumeric(MotionVar) && ndims(MotionVar)==2 && size(MotionVar,2)==7
-            RotOrigin=[0 0 0];
-            save(MotionFileName,'RotOrigin','MotionVar','-ASCII');
-            handles.sample.MotionFileName=MotionFileName;
+    if exist(VarName, 'file')
+        % this is not a variablename but the name of a file. also fine.
+        MotionFileName = VarName;
+        handles.sample.MotionFileName = MotionFileName;
+    else
+        if evalin('base',['exist(''',VarName,''',''var'')'])
+            MotionVar=evalin('base',VarName);
+            if isnumeric(MotionVar) && ndims(MotionVar)==2 && size(MotionVar,2)==7
+                RotOrigin=[0 0 0];
+                save(MotionFileName,'RotOrigin','MotionVar','-ASCII');
+                handles.sample.MotionFileName=MotionFileName;
+            else
+               failed=true;
+               display([' ''' VarName ''' has wrong format. MotionTrajectory needs to be a nx7 variable whereas the 7 entries are:'])
+               display('time [ms], Dx/Dy/Dz in [mm], rotation around x/y/z/ [degree]')
+            end
         else
            failed=true;
-           display([' ''' VarName ''' has wrong format. MotionTrajectory needs to be a nx7 variable whereas the 7 entries are:'])
-           display('time [ms], Dx/Dy/Dz in [mm], rotation around x/y/z/ [degree]')
+           display([' ''' VarName ''' does not exist in workspace!'])
         end
-    else
-       failed=true;
-       display([' ''' VarName ''' does not exist in workspace!'])
     end
 end
 if failed
@@ -985,7 +991,7 @@ function DiffusionFile_Callback(hObject, eventdata, handles)
 DiffusionFileName=get(hObject,'string');
 if exist(DiffusionFileName,'file')==2
    handles.sample.DiffusionFileName=DiffusionFileName;
-else 
+else
    display(['File: ''' DiffusionFileName ''' not found!'])
    set(hObject,'string','');
    handles.sample.DiffusionFileName='';
