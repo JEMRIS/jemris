@@ -46,6 +46,7 @@ Makefile
 *.la
 *.log
 *.trs
+*.gch
 .jemris_progress.out
 seq.h5
 signals.h5
