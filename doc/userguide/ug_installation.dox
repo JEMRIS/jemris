@@ -1,12 +1,12 @@
-/** 
-************************************************** 
-* \page ug_install Installation 
+/**
+**************************************************
+* \page ug_install Installation
 
 This section describes the installation procedures for building jemris from scratch.
 This is usually not necessary.
 Binary packages for Linux, Windows and Mac OS X, are available in the section \ref ug_downl.
 
-\section ug_install_pre Prerequisites 
+\section ug_install_pre Prerequisites
 
 <b>JEMRIS</b> relies on several libraries, which need to be downloaded and installed prior to its compilation:
 
@@ -16,13 +16,14 @@ Binary packages for Linux, Windows and Mac OS X, are available in the section \r
 \li <a href="http://www.ginac.de/CLN">CLN</a> library for Numbers version >=1.2.X
 \li <a href="http://www.ginac.de">GiNaC</a> library for symbolic mathematics >=1.4.X
 
-Some Linux distributions have the above packages prebuilt and included in their package management. 
+Some Linux distributions have the above packages prebuilt and included in their package management.
 
 \section ug_install_opt Optionals
 
 \subsection ug_install_mpi MPICH
 
-Should you want to exploit more than one CPU core, you will need an implementation of MPI. <b>JEMRIS</b> has been tested with <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2</a>. Mac OS X greater that 10.4 includes MPI with the <a href="http://developer.apple.com/technologies/xcode.html">XCode</a> package. But you might still want to look at <a href="http://hpc.sourceforge.net">HPC for Mac OS X</a>.
+Should you want to exploit more than one CPU core, you will need an implementation of MPI. <b>JEMRIS</b> has been tested with <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2</a>.
+<b>JEMRIS</b> on Mac OS X works well with the pre-compiled MPICH implementation available from <a href="https://brew.sh/">Homebrew</a>.   
 
 
 \subsection ug_install_boost Boost C++
@@ -33,7 +34,7 @@ The boost C++ libraries are used for the evaluation of elliptical integration te
 
 Note that all libraries above are mandatory for compiling JEMRIS (runtime and development versions need to be present)
 
-Download the JEMRIS source package from [http://www.jemris.org/download.html] and unpacke the tar ball. 
+Download the JEMRIS source package from [http://www.jemris.org/download.html] and unpacke the tar ball.
 
 JEMRIS is built in a similiar way as many open source software packages.
 
@@ -63,5 +64,3 @@ Here, you may start by loading one of the example sequences in the directory \c 
 
 **************************************************
 */
-
-

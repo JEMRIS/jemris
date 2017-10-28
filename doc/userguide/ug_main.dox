@@ -21,7 +21,7 @@
 Get the latest version of JEMRIS:
 \n
 <table border="0">
- <tr><td> \li \subpage ug_downl   <td> &emsp;&emsp; <td> sources or binary packages 
+ <tr><td> \li \subpage ug_downl   <td> &emsp;&emsp; <td> sources or binary packages
  <tr><td> \li \subpage ug_install   <td> &emsp;&emsp; <td> instructions to build JEMRIS on your own
 </table>
 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
@@ -34,7 +34,7 @@ We have two small favours to ask:\n
 \n
 Please, let us know that you are downloading jemris by sending an E-Mail to
 <a href="mailto:tony.stoecker@dzne.de?subject=jemris download">Tony Stoecker</a>.
-In return, we will keep you up to date of updates and bug fixes. 
+In return, we will keep you up to date of updates and bug fixes.
 \n
 And please, help us with improving the software by announcing bugs.
 <ul>
@@ -45,7 +45,7 @@ And please, help us with improving the software by announcing bugs.
                 <li> shasum: XXX
              </ul>
 
-        <li> <b> Ubuntu Binary (14.04 64bit) </b>
+        <li> <b> Ubuntu Binary </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z-Linux.deb">jemris-X.Y.Z-Linux.deb</a>
                 <li> md5sum: XXX
@@ -57,6 +57,8 @@ And please, help us with improving the software by announcing bugs.
                 <li> <a href="../get/jemris-X.Y.Z.mpkg.zip">jemris-X.Y.Z.mpkg.zip</a>
                 <li> md5sum: XXX
                 <li> shasum: XXX
+                 \n<b>Note:</b>\n
+                <li> Parallel jemris requires the MPICH library from <a href="https://brew.sh/">Homebrew</a>
              </ul>
 
         <li> <b> Windows Binary </b>
@@ -73,7 +75,7 @@ And please, help us with improving the software by announcing bugs.
 */
 
 /**
- \page ug_mpiwin MPICH2 for Windows 
+ \page ug_mpiwin MPICH2 for Windows
 Installing and running MPICH2 under Windows 64 >= Vista for a single computer with multiple cores
 \n
 <b>Installation</b>
@@ -111,10 +113,10 @@ Should you want to connect multiple computers running Windows to perform HPC com
  These pages introduce the basic concepts and functionality of JEMRIS. Please help improving the documentation!
  \n
 <table border="0">
- <tr><td> \li \subpage ug_intro   <td> &emsp;&emsp;&emsp;&emsp; <td> Summary of concepts and features 
+ <tr><td> \li \subpage ug_intro   <td> &emsp;&emsp;&emsp;&emsp; <td> Summary of concepts and features
  <tr><td> \li \subpage ug_uis   <td> &emsp;&emsp;&emsp;&emsp; <td> <b> Detailed manual</b> of the main functionality
  <tr><td> \li \subpage ug_tutor  <td> &emsp;&emsp;&emsp;&emsp; <td> Hands-on exercises for beginners
- <tr><td> \li \subpage ug_ex <td> &emsp;&emsp;&emsp;&emsp; <td> Simulation results showing a few features  
+ <tr><td> \li \subpage ug_ex <td> &emsp;&emsp;&emsp;&emsp; <td> Simulation results showing a few features
 </table>
  \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
 */
@@ -129,10 +131,10 @@ All Matlab GUIs follow the same procedure: construct a valid XML file from the u
 JEMRIS executables to compute the data, and finally read and visualise the result.
 
 <table border="0">
- <tr><td> \li \subpage ug_JEMRIS_seq   <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for MRI sequence design 
+ <tr><td> \li \subpage ug_JEMRIS_seq   <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for MRI sequence design
  <tr><td> \li \subpage ug_JEMRIS_sim   <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for execution of MRI simulations
  <tr><td> \li \subpage ug_JEMRIS_txrx  <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for layout design of transmit and receive arrays
- <tr><td> \li \subpage ug_command_line <td>  &emsp;&emsp;&emsp;&emsp; <td> Learn how to control jemris for batch submission etc. 
+ <tr><td> \li \subpage ug_command_line <td>  &emsp;&emsp;&emsp;&emsp; <td> Learn how to control jemris for batch submission etc.
 </table>
 \n
 Before starting the Matlab GUIs, the directory in which the JEMRIS m-files are located has to be added to
@@ -146,6 +148,8 @@ the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/
 
 /**
  \page ug_tutor Tutorials
+<b>Caution:</b> the tutorials are outdated and do not reflect the current functionality of JEMRIS. We hope to update the tutorials soon. Sorry for any inconvenience.
+
  \subpage ug_tutorial_epi_seq \n \n
  \subpage ug_tutorial_epi_sim \n \n
  \subpage ug_tutorial_selex1 \n \n
@@ -171,7 +175,7 @@ the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/
 \section ug_version Version
 
 JEMRIS Version 2.8.1\n
-Copyright (C) 2006-2016  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
+Copyright (C) 2006-2017  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -193,13 +197,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\n
 JEMRIS is developed and maintained by ...
 
 Tony Stöcker, project founder (tony.stoecker(at)dzne.de) \n
-Framework design, sequence and solver implementation. \n
+Framework design, sequence and solver implementation, package maintenance. \n
+\n
+Daniel Pflugfelder (d.pflugfelder(at)fz-juelich.de) \n
+MPI parallelization, performance debugging, code optimization, Temporal variations, Diffusion. \n
 \n
 Kaveh Vahedipour (kaveh (at) codeare.org) \n
-Framework design, parallel TX/RX, package maintenance, supercomputer implementation. \n
+Framework design, parallel TX/RX, supercomputer implementation. \n
 \n
-Dr. Daniel Pflugfelder (d.pflugfelder(at)fz-juelich.de) \n
-MPI parallelisation, performance debugging, code optimisation, Temporal variations, Diffusion. \n
+
+\section ug_contrib Contributors
+\li Over the years JEMRIS improved a lot through feedback and bug reports from the user community. Thanks a lot for your contributions!
+\n
+\n
+\li A major contribution to JEMRIS is the <a href="https://pulseq.github.io/"><b>Pulseq</b></a> integration, which allows you to run JEMRIS
+sequences on real MR scanners! Thanks a lot to the Pulseq developer team!!\n
+Check the section \ref ug_command_line_jemris_export to learn how to export Pulseq files from JEMRIS.
+
 \n
 
 \section ug_lit Reference
