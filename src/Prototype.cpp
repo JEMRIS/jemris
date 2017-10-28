@@ -3,11 +3,11 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2015  Tony Stoecker
  *                        2007-2015  Kaveh Vahedipour
  *                        2009-2015  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -238,7 +238,7 @@ bool Prototype::Prepare  (PrepareMode mode){
 				}
 
 				// new XML syntax (JEMRIS version >= 2.8.1)
-				// Observe="Module1.Attribute1=Keyword1,Module2.Attribute2=Keyword2,..."
+				// Observe="Keyword1=Module1.Attribute1, Keyword2=Module2.Attribute2,..."
 				m_obs_attribs.clear();
 				m_obs_attrib_keyword.clear();
 				vector<string> vp = Tokenize(obsattriblist,",");
@@ -276,4 +276,3 @@ bool Prototype::Prepare  (PrepareMode mode){
 	return retval;
 
 }
-
