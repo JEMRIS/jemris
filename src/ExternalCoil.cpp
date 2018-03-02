@@ -46,7 +46,7 @@ double ExternalCoil::GetSensitivity(const double* position) {
 /***********************************************************/
 double ExternalCoil::GetPhase(const double* position) {
 
-    return InterpolateSensitivity (position,false);
+	return InterpolateSensitivity (position,false);
 
 }
 
@@ -57,7 +57,6 @@ bool ExternalCoil::Prepare (const PrepareMode mode) {
 
     Coil::Prepare(mode);
 	IO::Status ios     = LoadMap();
-
 	return (ios == IO::OK) ? true : false; 
 
 }
@@ -83,6 +82,8 @@ IO::Status ExternalCoil::LoadMap () {
 		return bc.Status();
 
 	memcpy (m_senspha.Ptr(), &tmpdat[0], size * sizeof(double));
+
+	m_complex=true;
 
 	return IO::OK;
 
