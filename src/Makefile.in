@@ -129,6 +129,7 @@ am__objects_1 = AnalyticCoil.$(OBJEXT) AnalyticGradPulse.$(OBJEXT) \
 	Trajectory.$(OBJEXT) Trajectory1D.$(OBJEXT) \
 	TrajectoryDiffusion.$(OBJEXT) TrajectoryInterface.$(OBJEXT) \
 	TrajectoryMotion.$(OBJEXT) TrajectoryT2s.$(OBJEXT) \
+	TrajectoryFlow.$(OBJEXT) \
 	TrapGradPulse.$(OBJEXT) TriangleGradPulse.$(OBJEXT) \
 	TxRxPhase.$(OBJEXT) World.$(OBJEXT) XMLIO.$(OBJEXT) \
 	rng.$(OBJEXT)
@@ -563,6 +564,7 @@ SOURCES = AnalyticCoil.cpp AnalyticCoil.h AnalyticGradPulse.cpp \
 	TrajectoryDiffusion.cpp TrajectoryDiffusion.h \
 	TrajectoryEmpty.h TrajectoryInterface.cpp \
 	TrajectoryInterface.h TrajectoryMotion.cpp TrajectoryMotion.h \
+	TrajectoryFlow.cpp TrajectoryFlow.h \
 	TrajectoryT2s.cpp TrajectoryT2s.h TrapGradPulse.cpp \
 	TrapGradPulse.h TriangleGradPulse.cpp TriangleGradPulse.h \
 	TxRxPhase.cpp TxRxPhase.h World.cpp World.h XMLIO.cpp XMLIO.h \
@@ -751,6 +753,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrajectoryDiffusion.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrajectoryInterface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrajectoryMotion.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrajectoryFlow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrajectoryT2s.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrapGradPulse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TriangleGradPulse.Po@am__quote@

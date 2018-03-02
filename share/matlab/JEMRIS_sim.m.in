@@ -201,6 +201,13 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
        SAMP.Attributes(end+1).Name='Diffusionfile';SAMP.Attributes(end).Value=fullfile(cwd,sample.DiffusionFileName);
     end     
  end
+  if isfield(sample,'FlowFileName')
+    if strcmp(sample.FlowFileName,'')
+       % do nothing
+    else
+       SAMP.Attributes(end+1).Name='FlowTrajectories';SAMP.Attributes(end).Value=fullfile(cwd,sample.FlowFileName);
+    end
+ end
  if isfield(sample,'multiple')
        SAMP.Attributes(end+1).Name='multiple';SAMP.Attributes(end).Value=num2str(sample.multiple);    
  end
@@ -1031,6 +1038,38 @@ guidata(hObject, handles);
 % --- Executes during object creation, after setting all properties.
 function multiply_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to multiply (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+function FlowTrajectoryFile_Callback(hObject, eventdata, handles)
+% hObject    handle to FlowTrajectoryFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of FlowTrajectoryFile as text
+%        str2double(get(hObject,'String')) returns contents of FlowTrajectoryFile as a double
+FlowFileName=get(hObject,'string');
+if exist(FlowFileName,'file')==2
+   handles.sample.FlowFileName=FlowFileName;
+else
+   display(['File: ''' FlowFileName ''' not found!'])
+   set(hObject,'string','');
+   handles.sample.FlowFileName='';
+end
+
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function FlowTrajectoryFile_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to FlowTrajectoryFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

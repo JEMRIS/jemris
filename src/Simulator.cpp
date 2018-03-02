@@ -3,11 +3,11 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2014  Tony Stoecker
  *                        2007-2014  Kaveh Vahedipour
  *                        2009-2014  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,6 +31,9 @@
 #include "Trajectory.h"
 #include "MultiPoolSample.h"
 #include "Bloch_McConnell_CV_Model.h"
+//MODIF
+#include "World.h"
+//MODIF***
 #include <cstdio>
 #include <sstream>
 
@@ -95,11 +98,11 @@ void Simulator::SetSample         (std::string fsample) {
 
 	if (fsample.empty())  // REVISE: IS THIS EVER FALSE?
 		fsample = GetAttr(GetElem("sample"), "uri");
-	
+
 	std::string type (GetAttr (GetElem ("sample"), "type"));
 	std::string mult (GetAttr (GetElem ("sample"), "multiple"));
 	int multiple = !mult.empty() ? atoi(mult.c_str()) : 1;
-	
+
 	m_sample = (type == "multipool") ?
 			new MultiPoolSample (fsample) :
 			new Sample (fsample,multiple);
@@ -113,7 +116,7 @@ void Simulator::SetSample         (std::string fsample) {
 
 	string sentinterval = GetAttr(GetElem("sample"),"SentInterval");
 
-	if (!sentinterval.empty())  
+	if (!sentinterval.empty())
 		m_sample->SetTimeInterval((atof(sentinterval.c_str())));
 
 }
@@ -163,84 +166,96 @@ void Simulator::SetTxCoilArray      (string ftxarray) {
 /**********************************************************/
 void Simulator::SetModel          (std::string fmodel) {
 
-	if (fmodel.empty()) 
+	if (fmodel.empty())
 		fmodel = GetAttr(GetElem("model"), "type");
 
 	if (fmodel == "BM_CVODE")
 		m_model = new Bloch_McConnell_CV_Model ();
 	else
 		m_model = new Bloch_CV_Model ();
-	
+
 	if (m_sample        != NULL && m_sequence      != NULL &&
 	    m_rx_coil_array != NULL && m_tx_coil_array != NULL &&
-	    m_model         != NULL) 
+	    m_model         != NULL)
 		m_model->Prepare( m_rx_coil_array, m_tx_coil_array, m_sequence, m_sample );
 	else
 		cout << "serious problems! Nullpointers to framework objects!!\n";
-	
+
 }
 
 /**********************************************************/
 void Simulator::SetParameter      () {
-	
+
 	DOMElement* element = GetElem("parameter");
-	
+
 	string          PR = GetAttr(element, "PositionRandomness");
 	if (!PR.empty()) m_sample->SetPositionRandomness(atof(PR.c_str()));
-	
+
 	string         lFF = GetAttr(element, "R2Prime");
 	if (!lFF.empty()) m_sample->SetR2Prime(atof(lFF.c_str()));
-	
+
 	string        step = GetAttr(element, "EvolutionSteps");
 	if (!step.empty()) m_world->saveEvolStepSize  = atoi(step.c_str());
-	
+
 	string        file = GetAttr(element, "EvolutionPrefix");
 	if (!file.empty()) m_world->saveEvolFileName  = file ;
-	
+
 	string  GMAXoverB0 = GetAttr(element, "ConcomitantFields");
 	if (!GMAXoverB0.empty()) m_world->GMAXoverB0  = atof(GMAXoverB0.c_str());
-	
+
 	string  	   PRN = GetAttr(element, "RandomNoise");
 	if (!PRN.empty()) m_world->RandNoise  = atof(PRN.c_str());
-	
+
 	string 	   LoadBal = GetAttr(element, "LoadBalancing");
 	if (!LoadBal.empty() && (atof(LoadBal.c_str()) == 1)) {
 		m_world->m_useLoadBalancing  = true;
 	}
-	
+
 	string 	   reorderSamp = GetAttr(element, "SampleReorder");
 	if (!reorderSamp.empty()) {
 		m_sample->SetReorderStrategy(reorderSamp);
 	}
-	
+
 	// load trajectories for dynamic variables:
 	DynamicVariables *dynVar = DynamicVariables::instance();
-	
+
+//MODIF
+	string     Flow = GetAttr(GetElem("sample"), "FlowTrajectories");
+	if (!Flow.empty()) {
+        string  t_loop = GetAttr(GetElem("sample"), "FlowLoopDuration");;
+        string  n_loop = GetAttr(GetElem("sample"), "FlowLoopNumber");
+        if (!(t_loop.empty() || n_loop.empty()))
+            dynVar->m_Flow->FlowLoop(atof(t_loop.c_str()),atol(n_loop.c_str()));
+		dynVar->m_Flow->LoadFile(Flow);//,m_world->TotalSpinNumber);
+		//cout<<m_world->m_myRank<<" CALLED FLOW LOADING"<<endl;
+    }
+//MODIF***
+
 	string     Motion = GetAttr(GetElem("sample"), "MotionTrajectory");
 	if (!Motion.empty()) {
 		dynVar->m_Motion->LoadFile(Motion);
 	}
-	
+
 	string     T2prime = GetAttr(GetElem("sample"), "T2primeTrajectory");
 	if (!T2prime.empty()) {
 		dynVar->m_T2prime->LoadFile(T2prime);
 	}
-	
+
 	string     T1 = GetAttr(GetElem("sample"), "R1Trajectory");
 	if (!T1.empty()) {
 		dynVar->m_R1->LoadFile(T1);
 	}
-	
+
 	string     T2 = GetAttr(GetElem("sample"), "R2Trajectory");
 	if (!T2.empty()) {
 		dynVar->m_R2->LoadFile(T2);
 	}
-	
+
 	string     M0 = GetAttr(GetElem("sample"), "M0Trajectory");
 	if (!M0.empty()) {
 		dynVar->m_M0->LoadFile(M0);
 	}
-	
+
 	string active = GetAttr(GetElem("sample"), "ActiveCircles");
 	if (!active.empty()) {
 	    stringstream ss(active); // Insert the string into a stream
@@ -253,7 +268,7 @@ void Simulator::SetParameter      () {
 	        dynVar->AddActiveCircle(pos,r);
 	    }
 	}
-	
+
 	string     diffusion = GetAttr(GetElem("sample"), "Diffusionfile");
 	if (!diffusion.empty()) {
 		dynVar->m_Diffusion->LoadFile(diffusion);

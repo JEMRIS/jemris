@@ -49,6 +49,34 @@ class World {
 
  public:
 
+ //MODIF
+     /**
+      * @brief Write or not a log file
+      */
+	bool logFile;
+
+
+     /**
+      * @brief Write or not a log file for trajectories
+      */
+	bool logTrajectories;
+
+
+    /**
+      * @brief Set trajectory parameters for MPI current sample paket
+      */
+	void setTrajLoading(int firstSpin, int paketSize)  { m_trajBegin=firstSpin; m_trajSize=paketSize; };
+
+
+     /**
+      * @brief Get trajectory parameters for MPI current sample paket
+      */
+	long getTrajBegin() { return m_trajBegin; };
+
+	long getTrajNumber() { return m_trajSize; };
+ //MODIF***
+
+
      /**
       * @brief Default destructor
       */
@@ -154,6 +182,11 @@ class World {
     int 			  m_myRank;				/**< @brief MPI rank of this process. if m_myRank<0 process is serial jemris */
     bool			  m_useLoadBalancing;	/**< @brief use load balancing (send sample in small packages top slaves) */
     int				  m_no_processes;		/**< @brief number of parallel processes; used by load balancing */
+
+    //MODIF
+    long              m_trajBegin;          /**< @brief First trajectory to load for current MPI sample paket */
+    long              m_trajSize;           /**< @brief Number of trajectories to load for current MPI sample paket */
+    //MODIF***
 
     long			  m_startSpin;			/**< @brief start calculation with this spin ( in case of restart)  */
 

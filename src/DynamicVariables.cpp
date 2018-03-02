@@ -7,11 +7,11 @@
 
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2014  Tony Stoecker
  *                        2007-2014  Kaveh Vahedipour
  *                        2009-2014  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -30,6 +30,9 @@
 
 #include "DynamicVariables.h"
 #include "TrajectoryMotion.h"
+//MODIF
+#include "TrajectoryFlow.h"
+//MODIF***
 #include "Trajectory.h"
 #include "TrajectoryT2s.h"
 #include "Trajectory1D.h"
@@ -45,6 +48,9 @@ DynamicVariables* DynamicVariables::instance() {
 
     	m_instance = new DynamicVariables();
     	//init stubs:
+//MODIF
+        m_instance->stub_flow = new TrajectoryFlow();
+//MODIF***
     	m_instance->stub_motion = new TrajectoryMotion();
     	m_instance->stub_T2s = new TrajectoryT2s();
     	m_instance->stub_r1 = new Trajectory1D();
@@ -55,6 +61,9 @@ DynamicVariables* DynamicVariables::instance() {
 
 
     	// init Trajectories
+//MODIF
+   	    m_instance->m_Flow = new Trajectory(m_instance->stub_flow);
+//MODIF***
    	    m_instance->m_Motion = new Trajectory(m_instance->stub_motion);
   	    m_instance->m_T2prime = new Trajectory(m_instance->stub_T2s);
 
@@ -76,6 +85,9 @@ DynamicVariables* DynamicVariables::instance() {
 DynamicVariables::~DynamicVariables() {
 	m_instance=0;
 	delete m_Motion;
+	//MODIF
+	delete m_Flow;
+	//MODIF***
 	delete m_T2prime;
 	delete m_R1;
 	delete m_R2;
@@ -84,6 +96,9 @@ DynamicVariables::~DynamicVariables() {
 
 	//delete stubs:
 	delete stub_motion;
+	//MODIF
+	delete stub_flow;
+	//MODIF***
 	delete stub_T2s;
 	delete stub_r1;
 	delete stub_r2;

@@ -3,11 +3,11 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2014  Tony Stoecker
  *                        2007-2014  Kaveh Vahedipour
  *                        2009-2014  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as publadched by
@@ -73,17 +73,17 @@ void Model::Solve() {
         m_world->SpinNumber = lSpin;
         double dTime  = 0.0;
         long   lIndex = 0;
-		
+
         //Prepare sequence
         m_concat_sequence->Prepare(PREP_INIT);
-		
+
         //get current spin properties
         m_sample->GetValues(lSpin, m_world->Values);
 
 		// Get helper size, initialise and fill.
 		m_world->InitHelper(m_sample->GetHelperSize());
 		m_sample->GetHelper(m_world->Helper());
-		
+
         //check for activation
         DynamicVariables*  dynvar = DynamicVariables::instance();
         dynvar->SetActivation();
@@ -102,11 +102,11 @@ void Model::Solve() {
 
         //off-resonance from the sample
         m_world->deltaB = m_sample->GetDeltaB();
-		
+
         //update progress counter
         if (m_do_dump_progress)
 		 	UpdateProcessCounter(lSpin);
-		
+
         //Solve while running down the sequence tree
         RunSequenceTree(dTime, lIndex, m_concat_sequence);
 
@@ -123,45 +123,47 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 	int ncomp  = m_world->GetNoOfCompartments();
 	int nprops = m_world->GetNoOfSpinProps();
 	int cprops = (nprops - 4) / ncomp;
-	
+
 	//recursive call for each repetition of all concat sequences
 	if (module-> GetType() == MOD_CONCAT)	{
-		
+
+
 		vector<Module*> children = module->GetChildren();
 		ConcatSequence* pCS      = (ConcatSequence*) module;
-		
+
 		for (RepIter r=pCS->begin(); r<pCS->end(); ++r)
 			for (unsigned int j=0; j<children.size() ; ++j)
 				RunSequenceTree(dTimeShift, lIndexShift, children[j]);
 
 	}
-	
+
+
 	//call Calculate for each TPOI in Atom
 	if (module-> GetType() == MOD_ATOM)	{
-		
+
 		m_world->pAtom = (AtomicSequence*) module;
 		InitSolver();
-		
+
 		vector<Module*> children      = module->GetChildren();
 		bool            bCollectTPOIs = false;
-		
+
 		//dynamic changes of ADCs
 		for (unsigned int j=0; j<children.size() ; ++j) {
-			
+
 			Pulse* p = (Pulse*) children[j];
-			
+
 			//Reset TPOIs for phaselocking events
 			if (p->GetPhaseLock ()) {
 			    p->SetTPOIs () ;
 				bCollectTPOIs = true;
 			}
-			
+
 			//set the transmitter coil (only once, i.e. at the first spin)
 			if (m_world->SpinNumber == 0)
 				if (p->GetAxis() == AXIS_RF)
 					((RFPulse*) p)->SetCoilArray (m_tx_coil_array);
 		}
-		
+
 
 		//temporary storage
 		double  dtsh = dTimeShift;
@@ -173,7 +175,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 		double  dMt  = m_world->solution[0];
 		double  dMp  = m_world->solution[1];
 		double  dMz  = m_world->solution[2];
-		
+
 		iadc=0;
 
 		if (bCollectTPOIs)
@@ -204,9 +206,8 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				if (found_next == false) next_tStop = 1e200;
 			}
 
-
 			//if numerical or occures in calculation, repeat the current atom with increased accuracy
-			if (!Calculate(next_tStop)) {				
+			if (!Calculate(next_tStop)) {
 				//remove wrong contribution to the signal(s)
 				iadc=0;
 				for (int j=0; j < i; ++j) {
@@ -222,9 +223,9 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				  m_rx_coil_array->Receive(ladc+iadc);
 				  iadc++;
 				}
-				
-				FreeSolver();				
-				
+
+				FreeSolver();
+
 				m_accuracy_factor *= 0.1; // increase accuray by factor 1e-3
 				m_world->solution[0] = dMt;
 				m_world->solution[1] = dMp;
@@ -242,7 +243,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 
 			m_world->time  += dTimeShift;
 			m_rx_coil_array->Receive(lIndexShift++);
-			
+
 			//temporary storage of solution
 			dmxy[iadc] = m_world->solution[AMPL];
 			dmph[iadc] = m_world->solution[PHASE];
@@ -350,7 +351,7 @@ inline static void progressbar (int percent) {
 	static string bars   = "***************************************************";
 	static string blancs = "                                                   ";
 
-	cout << "\rSimulating | "; 
+	cout << "\rSimulating | ";
 	cout << bars.substr(0, percent/2) << " " <<  blancs.substr(0, 50-percent/2) << "| " <<setw(3) << setfill(' ') << percent << "% done";
 
 	flush(cout);
@@ -359,7 +360,7 @@ inline static void progressbar (int percent) {
 
 /*************************************************************************/
 inline void Model::UpdateProcessCounter (const long lSpin) {
-	
+
 	if ((m_world->m_myRank > 0 )){
 
 		// parallel jemris:
@@ -371,11 +372,11 @@ inline void Model::UpdateProcessCounter (const long lSpin) {
 		static long lastspin=lSpin-1;
 		int spinsDone =0;
 		int WaitTime=2; //update progress every 2s
-		
+
 		if (((time(NULL)-lasttime)>WaitTime ) || (lSpin + 1 == m_world->TotalSpinNumber )) {
 			spinsDone = lSpin - lastspin;
 			MPI_Send(&spinsDone,1,MPI_INT,0,SPINS_PROGRESS,MPI_COMM_WORLD);
-			
+
 			if (lSpin + 1 == m_world->TotalSpinNumber )
 				lastspin = -1;
 			else

@@ -3,11 +3,11 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2014  Tony Stoecker
  *                        2007-2014  Kaveh Vahedipour
  *                        2009-2014  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,6 +26,11 @@
 
 #include "Bloch_CV_Model.h"
 #include "DynamicVariables.h"
+//MODIF
+#include <iostream>
+#include <fstream>
+//MODIF***
+
 
 /**********************************************************/
 inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
@@ -59,12 +64,55 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
 
     // update sample variables if they are dynamic:
     dv->m_Diffusion->GetValue(time, position);
+//MODIF
+    if(pW->logFile)
+    {
+        //cout<<"Spin number: "<<pW->SpinNumber<<endl;
+        if((pW->SpinNumber==0) && (time==0))  {
+            fstream log0("FLOW.log",ios::out|ios::trunc);
+            log0.close();
+            }
+        fstream log1("FLOW.log",ios::out|ios::app);
+        log1<<"t "<<time<<"  "<<"spin"<<pW->SpinNumber<<" position: "<<position[0]<<" "<<position[1]<<" "<<position[2]<<" Activation: "<<dv->m_Flow->spinActivation(pW->SpinNumber)<<endl;
+        log1.close();
+    }
+    long trajNumber=pW->getTrajBegin()+pW->SpinNumber;
+    dv->m_Flow->GetValue(time, position, trajNumber);
+    if(pW->logFile)
+    {
+        fstream log2("FLOW.log",ios::out|ios::app);
+        log2<<"t "<<time<<"  "<<"spin"<<pW->SpinNumber<<" position: "<<position[0]<<" "<<position[1]<<" "<<position[2]<<" Activation: "<<dv->m_Flow->spinActivation(pW->SpinNumber)<<endl<<endl;
+        log2.close();
+    }
+    if(pW->logTrajectories)
+    {
+        if((pW->SpinNumber==0) && (time==0))  {
+            fstream logTraj0("trajectories.log",ios::out|ios::trunc);
+            logTraj0.close();
+            }
+        if(dv->m_Flow->spinActivation(pW->SpinNumber))  {
+            fstream logTraj("trajectories.log",ios::out|ios::app);
+            if(time==0)  logTraj<<endl;
+            logTraj<<pW->SpinNumber<<" "<<time<<" "<<position[0]<<" "<<position[1]<<" "<<position[2]<<endl;
+            logTraj.close();
+            }
+    }
+//MODIF***
     dv->m_Motion->GetValue(time, position);
     dv->m_T2prime->GetValue(time, &DeltaB);
     dv->m_R1->GetValue(time, &r1);
     dv->m_R2->GetValue(time, &r2);
     dv->m_M0->GetValue(time, &m0);
 
+//MODIF
+    //check spin active: if not, set transv. magnetization to 0
+    if (! dv->m_Flow->spinActivation(pW->SpinNumber)) {
+    	NV_Ith_S(y,AMPL) = 0;
+    	NV_Ith_S(ydot,PHASE) = 0;
+    	NV_Ith_S(ydot,ZC) = 0;
+    	return 0;
+    }
+//MODIF***
 
     double  d_SeqVal[5]={0.0,0.0,0.0,0.0,0.0}; //[B1magn,B1phase,Gx,Gy,Gz]
     pW->pAtom->GetValue( d_SeqVal, t );        								    // calculates also pW->NonLinGradField
@@ -91,7 +139,7 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
     phi = NV_Ith_S(y,PHASE);
     Mz  = NV_Ith_S(y,ZC);
 
-    //avoid CVODE warnings (does not change physics!)    
+    //avoid CVODE warnings (does not change physics!)
     //trivial case: no transv. magnetisation AND no excitation
     if (Mxy<ATOL1*m0 && d_SeqVal[RF_AMP]<BEPS) {
 
@@ -111,7 +159,7 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
         s = sin(phi);
         Mx = c*Mxy;
         My = s*Mxy;
-        
+
         //compute bloch equations
         Mx_dot =   Bz*My - By*Mz - r2*Mx;
         My_dot = - Bz*Mx + Bx*Mz - r2*My;
@@ -125,6 +173,12 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
     //longitudinal relaxation
     Mz_dot +=  r1*(m0 - Mz);
     NV_Ith_S(ydot,ZC) = Mz_dot;
+
+//MODIF
+/*  NV_Ith_S(ydot,AMPL) = 0;
+    NV_Ith_S(ydot,PHASE) = 0;
+    NV_Ith_S(ydot,ZC) = 0;*/
+//MODIF***
 
     return 0;
 
@@ -155,9 +209,28 @@ Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
     NV_Ith_S(y0, PHASE) = 0;
     NV_Ith_S(y0, ZC)    = 0;
 
+   //MODIF  Define CVODE errors with external file if exists
+    /*
     NV_Ith_S(abstol, AMPL)  = ATOL1;
     NV_Ith_S(abstol, PHASE) = ATOL2;
-    NV_Ith_S(abstol, ZC)    = ATOL3;
+    NV_Ith_S(abstol, ZC)    = ATOL3;  */
+
+    ifstream CVODEfile;
+    long int MXSTEP;
+
+    CVODEfile.open("CVODEerr.dat", ifstream::in);
+    if (CVODEfile.is_open()) {
+        CVODEfile>>m_reltol>>NV_Ith_S(abstol, AMPL)>>NV_Ith_S(abstol, PHASE)>>NV_Ith_S(abstol, ZC)>>MXSTEP;
+        cout<<"CVODE file open"<<endl;
+    }
+    else  {
+        m_reltol       = RTOL;
+        NV_Ith_S(abstol, AMPL)  = ATOL1;
+        NV_Ith_S(abstol, PHASE) = ATOL2;
+        NV_Ith_S(abstol, ZC)    = ATOL3;
+        MXSTEP=100000;
+    }
+    //MODIF***
 
 #ifndef CVODE26
     if(CVodeMalloc(m_cvode_mem,bloch,0,y0,CV_SV,m_reltol,abstol) != CV_SUCCESS ) {
@@ -183,7 +256,7 @@ Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
     N_VDestroy_Serial(abstol);
 
 
-    CVodeSetMaxNumSteps(m_cvode_mem, 100000);
+    CVodeSetMaxNumSteps(m_cvode_mem, MXSTEP);//MODIF
 
     // maximum number of warnings t+h = t (if number negative -> no warnings are issued )
     CVodeSetMaxHnilWarns(m_cvode_mem,2);
@@ -193,17 +266,17 @@ Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
 
 /**********************************************************/
 void Bloch_CV_Model::InitSolver    () {
-    
+
     ((nvec*) (m_world->solverSettings))->y = N_VNew_Serial(NEQ);
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,AMPL )  = m_world->solution[AMPL] ;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,PHASE ) = fmod(m_world->solution[PHASE],TWOPI) ;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,ZC )    = m_world->solution[ZC] ;
-    
+
     ((nvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ);
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,AMPL )  = ATOL1*m_accuracy_factor;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,PHASE ) = ATOL2*m_accuracy_factor;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,ZC )    = ATOL3*m_accuracy_factor;
-    
+
     m_reltol = RTOL*m_accuracy_factor;
 
 //cvode2.5:
@@ -240,9 +313,9 @@ bool Bloch_CV_Model::Calculate(double next_tStop){
 	if ( m_world->time <= 0.0)  m_world->time = RTOL;
 
 	m_world->solverSuccess=true;
-	
+
 	CVodeSetStopTime(m_cvode_mem, next_tStop);
-    
+
 	int flag;
 #ifndef CVODE26
 	flag = CVode(m_cvode_mem, m_world->time, ((nvec*) (m_world->solverSettings))->y, &m_tpoint, CV_NORMAL_TSTOP);
@@ -250,10 +323,11 @@ bool Bloch_CV_Model::Calculate(double next_tStop){
 	do {
 		flag=CVode(m_cvode_mem, m_world->time, ((nvec*) (m_world->solverSettings))->y, &m_tpoint, CV_NORMAL);
 	} while ((flag==CV_TSTOP_RETURN) && (m_world->time-TIME_ERR_TOL > m_tpoint ));
-    
+
 #endif
+
 	if(flag < 0) { m_world->solverSuccess=false; }
-    
+
 	//reinit needed?
 	if (m_world->phase == -2.0 && m_world->solverSuccess) {
 #ifndef CVODE26
@@ -265,14 +339,14 @@ bool Bloch_CV_Model::Calculate(double next_tStop){
 		// avoiding warnings: (no idea why initial guess of steplength does not work right here...)
 		CVodeSetInitStep(m_cvode_mem,m_world->pAtom->GetDuration()/1e9);
 	}
-    
+
 	m_world->solution[AMPL]  = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, AMPL );
 	m_world->solution[PHASE] = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, PHASE );
 	m_world->solution[ZC]    = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, ZC );
-    
+
 	//higher accuracy than 1e-10 not useful. Return success and hope for the best.
 	if(m_reltol < 1e-10) { m_world->solverSuccess=true; }
-	
+
 	return m_world->solverSuccess;
 }
 
