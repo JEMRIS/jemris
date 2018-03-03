@@ -4,6 +4,6 @@
 <RXcoilarray uri="./uniform.xml"/>
 <TXcoilarray uri="./uniform.xml"/>
 <parameter ConcomitantFields="0" EvolutionPrefix="evol" EvolutionSteps="0" RandomNoise="0"/>
-<sequence name="MySequence" uri="./sequences/GRE.xml"/>
+<sequence name="MySequence" uri="./sequences/GRE_2D_tra.xml"/>
 <model name="Bloch" type="CVODE"/>
 </simulate>
