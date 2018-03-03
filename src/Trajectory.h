@@ -7,11 +7,11 @@
 
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2015  Tony Stoecker
  *                        2007-2015  Kaveh Vahedipour
  *                        2009-2015  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -48,7 +48,13 @@ public:
 	Trajectory(TrajectoryInterface *strategy):m_strategy(strategy) {}
 
 	void GetValue(double time, double *value);
+//MODIF
+	void GetValue(double time, double *value, long currentSpin);
 
+	void FlowLoop(double loopDuration,long loopTrajNumber);
+
+	bool spinActivation(long currentSpin);
+//MODIF***
 	void LoadFile(string filename);
 
 	void SetStrategy(TrajectoryInterface *new_strategy) {m_strategy = new_strategy;};

@@ -3,7 +3,6 @@ configure_file (
         "${PROJECT_BINARY_DIR}/share/matlab/JEMRIS_sim.m"
         @ONLY
 )
-
 configure_file (
         "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_seq.m.in"
         "${PROJECT_BINARY_DIR}/share/matlab/JEMRIS_seq.m"

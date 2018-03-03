@@ -35,6 +35,9 @@ using namespace std;
 #include <vector>
 #include "Trajectory.h"
 
+//MODIF
+class TrajectoryFlow;
+//MODIF***
 class TrajectoryMotion;
 class TrajectoryT2s;
 class Trajectory1D;
@@ -82,6 +85,9 @@ class DynamicVariables {
      */
     void AddActiveCircle(double pos[3],double radius);
 
+//MODIF
+    Trajectory* m_Flow;
+//MODIF***
     Trajectory* m_Motion;
     Trajectory* m_T2prime;
 
@@ -110,6 +116,9 @@ class DynamicVariables {
     /**
      * pool of available Trajectories to use with copy constructor of context class "Trajectory"
      */
+//MODIF
+    TrajectoryFlow* stub_flow;
+//MODIF***
     TrajectoryMotion* stub_motion;
     TrajectoryT2s* stub_T2s;
     Trajectory1D* stub_r1;

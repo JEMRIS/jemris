@@ -13,7 +13,7 @@ AC_DEFINE([GIT_COMMIT_DATE], "esyscmd(git log -1 | head -n 3 | grep 'Date:' | se
  | tr -d '\n')", [git HEAD commit date])
 
 # copyright notice
-AC_COPYRIGHT([2007-2014 - Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder])
+AC_COPYRIGHT([2007-2015 - Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder])
 
 AH_TEMPLATE([CXX], [c++ compiler])
 

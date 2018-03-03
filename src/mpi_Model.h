@@ -151,6 +151,28 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	// scatter sendcounts:
 	MPI_Scatter  (sendcount.data(), 1, MPI_INT, &recvbuf, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
+
+        //MODIF
+        /*int ierr,my_id,num_procs;
+        ierr = MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
+        ierr = MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+
+        printf("I'm process %i out of %i processes\n", my_id, num_procs);*/
+
+        int ii;
+        long TotalSpinNumber=pSam->GetSize(),nextSpinMem=-1;
+        for(ii=0;ii<size;ii++)
+        {
+            //cout<<ii<<" Sencount "<<sendcount[ii]<<" Displs "<<displs[ii]<<endl;
+            if(ii>0)    {
+                MPI_Send(&TotalSpinNumber,1,MPI_LONG,ii,SEND_TOTAL_NO_SPINS,MPI_COMM_WORLD);
+                MPI_Send(&displs[ii],1,MPI_LONG,ii,SEND_BEGIN_SPIN,MPI_COMM_WORLD);
+                cout<<0<<" Sent spins index information to "<<ii<<" :  "<<TotalSpinNumber<<"  "<<displs[ii]<<endl;
+                }
+        }
+        //MODIF***
+
+
 	// broadcast number of individual spin prioperties:
 	long NProps = pSam->GetNProps();
 	MPI_Bcast    (&NProps, 1, MPI_LONG, 0, MPI_COMM_WORLD);
@@ -183,6 +205,22 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 
 		//get next spin paket to send:
 		pSam->GetNextPacket(NoSpins,NextSpinToSend,SlaveID);
+
+
+        //MODIF
+        for(ii=0;ii<size;ii++)
+        {
+            //cout<<ii<<" sencount "<<NoSpins<<" displs "<<NextSpinToSend<<endl;
+            if(ii>0 && NextSpinToSend!=nextSpinMem)    {
+                MPI_Send(&NextSpinToSend,1,MPI_LONG,SlaveID,SEND_BEGIN_SPIN,MPI_COMM_WORLD);
+                cout<<endl<<0<<" sent spins index information to "<<SlaveID<<" :  "<<"--- "<<NextSpinToSend<<endl;
+                nextSpinMem=NextSpinToSend;
+                if(nextSpinMem<0)   nextSpinMem-=1;
+                }
+
+        }
+        //MODIF***
+
 
 		if (NoSpins == 0)
 			SlavesDone++;
@@ -255,6 +293,18 @@ Sample* mpi_receive_sample(int sender, int tag){
 	MPI_Scatter(NULL,1,MPI_INT,&nospins,1,MPI_INT,0, MPI_COMM_WORLD);
 	Sample* pSam = new Sample();
 
+    	//MODIF
+	long TotalSpinNumber=0,beginTraj=0;
+	//cout<<World::instance()->m_myRank<<" Query spins index information:  "<<endl;
+	MPI_Status status;
+	MPI_Recv(&TotalSpinNumber,1,MPI_LONG,0,SEND_TOTAL_NO_SPINS,MPI_COMM_WORLD,&status);
+	MPI_Recv(&beginTraj,1,MPI_LONG,0,SEND_BEGIN_SPIN,MPI_COMM_WORLD,&status);
+	World::instance()->setTrajLoading(beginTraj,TotalSpinNumber);
+	int num_traj=beginTraj;
+	cout<<World::instance()->m_myRank<<" Received spins index information:  "<<TotalSpinNumber<<"  "<<num_traj<<endl;
+	//MODIF***
+
+
 	NPoints= (long) nospins;
 	//get number of physical properties per spin
 	long NProps;
@@ -283,8 +333,10 @@ Sample* mpi_receive_sample(int sender, int tag){
 
 	int ilen; std::string  hm (MPI_MAX_PROCESSOR_NAME, ' ');
 	MPI_Get_processor_name(&hm[0],&ilen);
-	//cout << hostname << " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
-	//     << NPoints << " spins for simulation ..." << endl << flush;
+	//MODIF
+	cout <<endl<< "hostname"<< " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
+	     << NPoints << " spins for simulation ..." << endl << flush;
+    	//MODIF***
 
 	return pSam;
 
@@ -312,6 +364,15 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	MPI_Status status;
 	MPI_Recv(&NoSpins,1,MPI_INT,0,SEND_NO_SPINS,MPI_COMM_WORLD,&status);
 	
+    	//MODIF
+	long TotalSpinNumber=World::instance()->getTrajNumber(),beginTraj=0;
+	//cout<<World::instance()->m_myRank<<" query spins index information:  "<<endl;
+	//MPI_Recv(&TotalSpinNumber,1,MPI_LONG,0,SEND_TOTAL_NO_SPINS,MPI_COMM_WORLD,&status);
+	MPI_Recv(&beginTraj,1,MPI_LONG,0,SEND_BEGIN_SPIN,MPI_COMM_WORLD,&status);
+	World::instance()->setTrajLoading(beginTraj,TotalSpinNumber);
+	cout<<endl<<World::instance()->m_myRank<<" received spins index information:  "<<TotalSpinNumber<<"  "<<beginTraj<<endl;
+	//MODIF***
+
 	// Spins left?
 	if (NoSpins == 0) return false;
 	
@@ -324,8 +385,11 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	MPI_Recv(samp->GetSpinsData(),NoSpins,MPI_SPINDATA,0,SEND_SAMPLE,MPI_COMM_WORLD,&status);
 	int ilen; std::string hm (MPI_MAX_PROCESSOR_NAME, ' ');
 	MPI_Get_processor_name(&hm[0],&ilen);
-	//cout << hostname << " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
-	//     << NoSpins << " spins for simulation ..." << endl << flush;
+	//MODIF
+	cout <<endl<< "hostname" << " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
+	     << NoSpins << " spins for simulation ..." << endl << flush;
+    //pW->setTrajLoading(myRank,NoSpins);
+    //MODIF***
 
 	return true;
 

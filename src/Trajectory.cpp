@@ -7,11 +7,11 @@
 
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2015  Tony Stoecker
  *                        2007-2015  Kaveh Vahedipour
  *                        2009-2015  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,6 +35,22 @@ void Trajectory::GetValue(double time, double *value){
 	m_strategy->GetValue(time, value);
 }
 
+//MODIF
+void Trajectory::GetValue(double time, double *value, long currentSpin) {
+	if( m_strategy->getCurrentTraj() != currentSpin )
+            m_strategy->setCurrentTraj(currentSpin);
+
+    m_strategy->GetValue(time, value);
+}
+
+void Trajectory::FlowLoop(double loopDuration,long loopTrajNumber)    {
+    m_strategy->setLoop(loopDuration, loopTrajNumber);
+}
+
+bool Trajectory::spinActivation(long currentSpin) {
+    return m_strategy->spinActivation(currentSpin);
+}
+//MODIF***
 
 void Trajectory::LoadFile(string filename){
 	m_strategy->LoadFile(filename);

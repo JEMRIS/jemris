@@ -142,6 +142,9 @@ double  Coil::GetPhase (const double time) {
     position[2]=World::instance()->Values[ZC];
     DynamicVariables* dv = DynamicVariables::instance();
     dv->m_Motion->GetValue(time,position);
+//MODIF
+    dv->m_Flow->GetValue(time,position);
+//MODIF***
 
     if (m_interpolate)
 		return ( m_phase + (m_conjugate?-1.0:1.0) * InterpolateSensitivity(position,false));
@@ -158,6 +161,9 @@ double  Coil::GetSensitivity (const double time) {
     position[2]=World::instance()->Values[ZC];
     DynamicVariables* dv = DynamicVariables::instance();
     dv->m_Motion->GetValue(time,position);
+//MODIF
+    dv->m_Flow->GetValue(time,position);
+//MODIF***
 
 	if (m_interpolate) {
 		return m_scale*InterpolateSensitivity(position);

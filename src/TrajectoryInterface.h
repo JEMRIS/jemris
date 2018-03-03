@@ -6,11 +6,11 @@
  */
 
 /*
- *  JEMRIS Copyright (C) 
+ *  JEMRIS Copyright (C)
  *                        2006-2015  Tony Stoecker
  *                        2007-2015  Kaveh Vahedipour
  *                        2009-2015  Daniel Pflugfelder
- *                                  
+ *
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public:
 	TrajectoryInterface();
 	virtual ~TrajectoryInterface();
 
-	/*
+	/**
 	 * checks if data available; then call GetValueDerived:
 	 */
 	void GetValue(double time, double *value) ;
@@ -67,6 +67,28 @@ public:
 
 	virtual void UpdateTrajectory(bool init=false){};
 
+//MODIF
+	/**
+	 * @brief get spin current state : true=active, false=unactive
+	 */
+	bool spinActivation(long currentSpin) { return m_spinActive; };
+
+    /**
+	 * @brief set trajectory number associated to current spin
+	 */
+	void setCurrentTraj(long currentTraj) { m_currentSpinIndex=currentTraj; };
+
+	/**
+	 * @brief get trajectory number associated to current spin
+	 */
+	long getCurrentTraj() { return m_currentSpinIndex; };
+
+	/**
+	 * @brief set loop parameters for periodic flow
+	 */
+	void setLoop(double loopDuration, long loopTrajNumber) { m_trajLoopNumber=loopTrajNumber; m_trajLoopDuration=loopDuration; };
+//MODIF***
+
 protected:
 	/**
 	 * @brief find data index for interpolation
@@ -77,6 +99,17 @@ protected:
 	int m_LastHuntIndex;
 
 	vector<double> m_time;
+//MODIF
+	vector< vector<double> > m_time_full;
+
+	long m_currentSpinIndex;
+
+	long m_trajLoopNumber;
+
+	double m_trajLoopDuration;
+
+	bool m_spinActive;
+//MODIF***
 
 };
 

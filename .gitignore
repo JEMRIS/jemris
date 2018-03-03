@@ -17,6 +17,7 @@
 /share/matlab/JEMRIS_txrx.m
 /share/matlab/JEMRIS_ContainerSequence.m
 /share/matlab/pbs_script.sh
+/src/test*.sh
 /signals.h5
 /src/stamp-h1
 /doc/doxy.conf
