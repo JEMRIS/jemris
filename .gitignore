@@ -43,6 +43,7 @@
 .*~
 Makefile
 *.o
+*.orig
 *.lo
 *.la
 *.log
