@@ -13,7 +13,7 @@
     <ROW Property="ARPURLINFOABOUT" Value="http://www.jemris.org"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://www.jemris.org/jemris/win32"/>
     <ROW Property="CTRLS" Value="1"/>
-    <ROW Property="Manufacturer" Value="Research Centre Juelich" ValueLocId="*"/>
+    <ROW Property="Manufacturer" Value="DZNE" ValueLocId="*"/>
     <ROW Property="ProductCode" Value="1033:{C56F1397-2FE2-49B9-A646-839B460B3840} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="jemris" ValueLocId="*"/>
@@ -55,7 +55,7 @@
     <ROW File="JEMRIS_sim.fig" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~3.fig|JEMRIS_sim.fig" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\JEMRIS_sim.fig" SelfReg="false" NextFile="JEMRIS_sim.m"/>
     <ROW File="JEMRIS_sim.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~3.m|JEMRIS_sim.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\JEMRIS_sim.m" SelfReg="false" NextFile="mod.xml"/>
     <ROW File="JEMRIS_txrx.fig" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~1.fig|JEMRIS_txrx.fig" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\JEMRIS_txrx.fig" SelfReg="false" NextFile="JEMRIS_txrx.m"/>
-    <ROW File="JEMRIS_txrx.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~1.m|JEMRIS_txrx.m" Attributes="0" SourcePath="..\..\..\Program Files (x86)\Research Centre Juelich\jemris\matlab\JEMRIS_txrx.m" SelfReg="false" NextFile="MNIbrain.mat"/>
+    <ROW File="JEMRIS_txrx.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~1.m|JEMRIS_txrx.m" Attributes="0" SourcePath="..\..\..\Program Files (x86)\jemris\matlab\JEMRIS_txrx.m" SelfReg="false" NextFile="MNIbrain.mat"/>
     <ROW File="MNIbrain.mat" Component_="JEMRIS_txrx.fig" FileName="MNIbrain.mat" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\MNIbrain.mat" SelfReg="false" NextFile="MNIdeltaB.mat"/>
     <ROW File="MNIdeltaB.mat" Component_="JEMRIS_txrx.fig" FileName="MNIdel~1.mat|MNIdeltaB.mat" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\MNIdeltaB.mat" SelfReg="false" NextFile="ModuleIcons.mat"/>
     <ROW File="ModuleIcons.mat" Component_="JEMRIS_txrx.fig" FileName="Module~1.mat|ModuleIcons.mat" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\ModuleIcons.mat" SelfReg="false" NextFile="parseXMLseq.m"/>

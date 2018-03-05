@@ -41,7 +41,7 @@ the root directory of this package.
 Contact
 =======
 
-This package is maintained by Kaveh Vahedipour <tony.stoecker@dzne.de>.
+This package is maintained by Tony Stoecker <tony.stoecker@dzne.de>.
 Please find problem specific contact addresses on http://www.jemris.org.
 
 

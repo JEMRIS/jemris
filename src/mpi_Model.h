@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2015  Tony Stoecker
- *                        2007-2015  Kaveh Vahedipour
- *                        2009-2015  Daniel Pflugfelder
+ *                        2006-2018  Tony Stoecker
+ *                        2007-2018  Kaveh Vahedipour
+ *                        2009-2018  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -167,7 +167,7 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
             if(ii>0)    {
                 MPI_Send(&TotalSpinNumber,1,MPI_LONG,ii,SEND_TOTAL_NO_SPINS,MPI_COMM_WORLD);
                 MPI_Send(&displs[ii],1,MPI_LONG,ii,SEND_BEGIN_SPIN,MPI_COMM_WORLD);
-                cout<<0<<" Sent spins index information to "<<ii<<" :  "<<TotalSpinNumber<<"  "<<displs[ii]<<endl;
+                //cout<<0<<" Sent spins index information to "<<ii<<" :  "<<TotalSpinNumber<<"  "<<displs[ii]<<endl;
                 }
         }
         //MODIF***
@@ -213,7 +213,7 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
             //cout<<ii<<" sencount "<<NoSpins<<" displs "<<NextSpinToSend<<endl;
             if(ii>0 && NextSpinToSend!=nextSpinMem)    {
                 MPI_Send(&NextSpinToSend,1,MPI_LONG,SlaveID,SEND_BEGIN_SPIN,MPI_COMM_WORLD);
-                cout<<endl<<0<<" sent spins index information to "<<SlaveID<<" :  "<<"--- "<<NextSpinToSend<<endl;
+                //cout<<endl<<0<<" sent spins index information to "<<SlaveID<<" :  "<<"--- "<<NextSpinToSend<<endl;
                 nextSpinMem=NextSpinToSend;
                 if(nextSpinMem<0)   nextSpinMem-=1;
                 }
@@ -301,7 +301,7 @@ Sample* mpi_receive_sample(int sender, int tag){
 	MPI_Recv(&beginTraj,1,MPI_LONG,0,SEND_BEGIN_SPIN,MPI_COMM_WORLD,&status);
 	World::instance()->setTrajLoading(beginTraj,TotalSpinNumber);
 	int num_traj=beginTraj;
-	cout<<World::instance()->m_myRank<<" Received spins index information:  "<<TotalSpinNumber<<"  "<<num_traj<<endl;
+	//cout<<World::instance()->m_myRank<<" Received spins index information:  "<<TotalSpinNumber<<"  "<<num_traj<<endl;
 	//MODIF***
 
 
@@ -334,9 +334,9 @@ Sample* mpi_receive_sample(int sender, int tag){
 	int ilen; std::string  hm (MPI_MAX_PROCESSOR_NAME, ' ');
 	MPI_Get_processor_name(&hm[0],&ilen);
 	//MODIF
-	cout <<endl<< "hostname"<< " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
-	     << NPoints << " spins for simulation ..." << endl << flush;
-    	//MODIF***
+	//cout <<endl<< "hostname"<< " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
+	//     << NPoints << " spins for simulation ..." << endl << flush;
+    //MODIF***
 
 	return pSam;
 
@@ -370,7 +370,7 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	//MPI_Recv(&TotalSpinNumber,1,MPI_LONG,0,SEND_TOTAL_NO_SPINS,MPI_COMM_WORLD,&status);
 	MPI_Recv(&beginTraj,1,MPI_LONG,0,SEND_BEGIN_SPIN,MPI_COMM_WORLD,&status);
 	World::instance()->setTrajLoading(beginTraj,TotalSpinNumber);
-	cout<<endl<<World::instance()->m_myRank<<" received spins index information:  "<<TotalSpinNumber<<"  "<<beginTraj<<endl;
+	//cout<<endl<<World::instance()->m_myRank<<" received spins index information:  "<<TotalSpinNumber<<"  "<<beginTraj<<endl;
 	//MODIF***
 
 	// Spins left?
@@ -386,8 +386,8 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	int ilen; std::string hm (MPI_MAX_PROCESSOR_NAME, ' ');
 	MPI_Get_processor_name(&hm[0],&ilen);
 	//MODIF
-	cout <<endl<< "hostname" << " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
-	     << NoSpins << " spins for simulation ..." << endl << flush;
+	//cout <<endl<< "hostname" << " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
+	//     << NoSpins << " spins for simulation ..." << endl << flush;
     //pW->setTrajLoading(myRank,NoSpins);
     //MODIF***
 

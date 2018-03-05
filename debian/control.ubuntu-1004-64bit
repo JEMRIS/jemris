@@ -9,7 +9,7 @@ Homepage: http://www.jemris.org
 Package: jemris
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Juelich Extensible MRI Simulator
- JEMRIS, which stands for "Juelich Extensible MRI Simulator", is a general MRI simulator. Visit http://www.jemris.org for more details. 
+Description:  Extensible MRI Simulator
+ JEMRIS is a general MRI simulator. Visit http://www.jemris.org for more details. 
 
 
