@@ -2975,7 +2975,7 @@ fi
 
 
 
-$as_echo "#define GIT_COMMIT \"6d2a78f9\"" >>confdefs.h
+$as_echo "#define GIT_COMMIT \"5afeb2ad\"" >>confdefs.h
 
 
 $as_echo "#define GIT_COMMIT_DATE \"Wed Mar 7 12:52:02 2018 +0100\"" >>confdefs.h
@@ -7198,7 +7198,7 @@ rm -f conftest.*
   CXX=$MPICXX
 fi
 
-ac_config_files="$ac_config_files Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/JEMRIS_ContainerSequence.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile share/angio_simu/FlowConversion/Makefile share/angio_simu/FlowConversion/vtk/Makefile share/angio_simu/Makefile share/angio_simu/simu/Makefile share/angio_simu/simu/matlab/Makefile share/angio_simu/simu/matlab/ReconUtilities/Makefile share/angio_simu/simu/sequences/Makefile share/angio_simu/simu/sequences/PC_3D_tra_3dVxyz/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/JEMRIS_ContainerSequence.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile share/angio_simu/Makefile share/angio_simu/FlowConversion/Makefile share/angio_simu/FlowConversion/vtk/Makefile share/angio_simu/simu/Makefile share/angio_simu/simu/matlab/Makefile share/angio_simu/simu/matlab/ReconUtilities/Makefile share/angio_simu/simu/sequences/Makefile share/angio_simu/simu/sequences/PC_3D_tra_3dVxyz/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -7965,9 +7965,9 @@ do
     "share/matlab/pbs_script.sh") CONFIG_FILES="$CONFIG_FILES share/matlab/pbs_script.sh" ;;
     "doc/doxy.conf") CONFIG_FILES="$CONFIG_FILES doc/doxy.conf" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
+    "share/angio_simu/Makefile") CONFIG_FILES="$CONFIG_FILES share/angio_simu/Makefile" ;;
     "share/angio_simu/FlowConversion/Makefile") CONFIG_FILES="$CONFIG_FILES share/angio_simu/FlowConversion/Makefile" ;;
     "share/angio_simu/FlowConversion/vtk/Makefile") CONFIG_FILES="$CONFIG_FILES share/angio_simu/FlowConversion/vtk/Makefile" ;;
-    "share/angio_simu/Makefile") CONFIG_FILES="$CONFIG_FILES share/angio_simu/Makefile" ;;
     "share/angio_simu/simu/Makefile") CONFIG_FILES="$CONFIG_FILES share/angio_simu/simu/Makefile" ;;
     "share/angio_simu/simu/matlab/Makefile") CONFIG_FILES="$CONFIG_FILES share/angio_simu/simu/matlab/Makefile" ;;
     "share/angio_simu/simu/matlab/ReconUtilities/Makefile") CONFIG_FILES="$CONFIG_FILES share/angio_simu/simu/matlab/ReconUtilities/Makefile" ;;

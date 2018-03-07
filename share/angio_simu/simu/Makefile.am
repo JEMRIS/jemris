@@ -1,4 +1,7 @@
-EXTRA_DIST = lowTest.dat Makefile.am README.html README.md sampleTest.h5 signals.h5 simu_test.xml uniform.xml
+EXTRA_DIST = FlowTest.dat README.html README.md sampleTest.h5 simu_test.xml uniform.xml
+
+examplesdir = $(datadir)/jemris/angio_simu/simu
+examples_DATA = $(EXTRA_DIST)
 
 SUBDIRS = matlab sequences     
 

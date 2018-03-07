@@ -42,3 +42,7 @@ install(DIRECTORY "examples"
 INSTALL(FILES examples/ext_gx.h5 examples/ext_rf.h5 examples/sens.h5
   DESTINATION share/jemris/examples)
 
+install(DIRECTORY "angio_simu"
+        DESTINATION share/jemris
+	PATTERN "Makefile*" EXCLUDE)
+
