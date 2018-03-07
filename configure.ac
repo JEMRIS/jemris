@@ -1,5 +1,5 @@
 AC_PREREQ(2.61)
-AC_INIT([jemris], [2.8.1], [tony.stoecker@dzne.de], [jemris])
+AC_INIT([jemris], [2.8.2], [tony.stoecker@dzne.de], [jemris])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])

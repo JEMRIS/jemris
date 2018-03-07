@@ -1,13 +1,15 @@
-### Sequences indications ###
+# Sequences indications #
 
-# Here are some sequences examples for angiography.
-# With flow, the number of spins rapidly increases for long sequences duration. However, sequences with short TR and spoiling usually require a high density of spins to be realistic. Thus, to reduce computation time, an expedient is to shorten artificially the T2 relaxation time of the spins to 1/4 of the TR (only for sequences based on T1 contrast or phase value).
+## Here are some sequences examples for angiography.
 
+**Note:** With flow, the number of spins rapidly increases for long sequences duration. However, sequences with short TR and spoiling usually require a high density of spins to be realistic. Thus, to reduce computation time, an expedient is to shorten artificially the T2 relaxation time of the spins to 1/4 of the TR (only for sequences based on T1 contrast or phase value).
+
+**TMP:** Note that the example sequences use the old attribute observer syntax (< v2.8).
 
 ### 2D sequences ###
 
 
-*GRE_2D_tra: 
+*GRE_2D_tra:
 - The number of slices is Nz
 - The slice thickness (mm) is the "Aux1" parameter in the "Slice" tag
 (Interslice =  FOVz/Nz - SliceThickness)
@@ -35,7 +37,7 @@
 ### 3D sequences ###
 
 
-*GRE_3D_tra: 
+*GRE_3D_tra:
 - The number of 3D slices is Nz
 - NO SPOILING ! Reduce the T2 to 1/4 of the TR
 - Image reconstruction with ReconSimple_3D.xml

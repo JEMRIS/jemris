@@ -1,5 +1,14 @@
 
+jemris (2.8-2) stable; urgency=low
+  * Major added flow simulation
+  * Minor bug fixes
+  * Minor updated documentation
+
+ -- Tony Stoecker <tony.stoecker@dzne.de>  Wed, 07 Mar 2018 11:56:45 +0200
+
 jemris (2.8-1) stable; urgency=low
+  * Major added Pulseq support
+  * Major updated observer syntax
   * Major added ContainerSequence to encapsulate xml sub-trees for reusability
   * Minor added constant ramp time option for trapezoid gradients 
   * Minor added Frequency/Phase of Readout to shift the FOV

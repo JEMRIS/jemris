@@ -174,8 +174,8 @@ the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/
  \page ug_about About JEMRIS
 \section ug_version Version
 
-JEMRIS Version 2.8.1\n
-Copyright (C) 2006-2017  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
+JEMRIS Version 2.8.2\n
+Copyright (C) 2006-2018  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -205,21 +205,27 @@ MPI parallelization, performance debugging, code optimization, Temporal variatio
 Kaveh Vahedipour (kaveh (at) codeare.org) \n
 Framework design, parallel TX/RX, supercomputer implementation. \n
 \n
+\n
 
 \section ug_contrib Contributors
-\li Over the years JEMRIS improved a lot through feedback and bug reports from the user community. Thanks a lot for your contributions!
+Over the years JEMRIS improved a lot through feedback and bug reports from the user community. Thanks a lot for your contributions!\n
 \n
-\n
-\li A major contribution to JEMRIS is the <a href="https://pulseq.github.io/"><b>Pulseq</b></a> integration, which allows you to run JEMRIS
+A major contribution to JEMRIS is the <a href="https://pulseq.github.io/"><b>Pulseq</b></a> integration, which allows you to run JEMRIS
 sequences on real MR scanners! Thanks a lot to the Pulseq developer team!!\n
-Check the section \ref ug_command_line_jemris_export to learn how to export Pulseq files from JEMRIS.
-
+Check the section \ref ug_command_line_jemris_export to learn how to export Pulseq files from JEMRIS. Check this paper for more information: \n
+Layton, K. J., Kroboth, S., Jia, F., Littin, S., Yu, H., Leupold, J., Nielsen, J.F., Stöcker T, & Zaitsev, M. (2017). Pulseq: A rapid and hardware-independent pulse sequence prototyping framework.
+Magnetic Resonance in Medicine, 77(4), 1544–1552. <a href="https://doi.org/10.1002/mrm.26235">DOI</a>\n
+\n
+Thanks to Alexandre Fortin, JEMRIS supports simulation of flow in arbitrary complex geometries (since version 2.8.2).
+Flow simulation examples  can be found in \c "/usr/share/jemris/angio_simu" of your local JEMRIS installation. Check this paper for more information: \n
+Fortin, A., Baruthio, J., Delbany, M., & Durand, E. (2018). Flow MRI simulation in complex 3D geometries : Application to the cerebral venous network.
+Magnetic Resonance in Medicine. [early view] <a href="https://doi.org/10.1002/mrm.27114">DOI</a>\n
+\n
 \n
 
-\section ug_lit Reference
+\section ug_lit Main Reference
 
 If you use JEMRIS for research publications, please cite this paper:\n
-Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder, N. Jon Shah. High-performance computing MRI simulations. Magnetic Resonance in Medicine. 2010, 64(1), 186 - 193.
-
+Stöcker, T., Vahedipour, K., Pflugfelder, D., & Shah, N. J. (2010). High-performance computing MRI simulations. Magnetic Resonance in Medicine, 64(1), 186–93. <a href="https://doi.org/10.1002/mrm.22406">DOI</a>
 
 */
