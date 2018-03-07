@@ -13,7 +13,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -88,7 +87,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = share/matlab
+subdir = share/angio_simu/FlowConversion/vtk
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_compile_flag.m4 \
 	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
@@ -100,8 +99,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/src/config.h
-CONFIG_CLEAN_FILES = JEMRIS_sim.m JEMRIS_seq.m JEMRIS_txrx.m \
-	JEMRIS_ContainerSequence.m pbs_script.sh
+CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -122,40 +120,8 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-am__installdirs = "$(DESTDIR)$(matlabdir)"
-DATA = $(matlab_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
-am__DIST_COMMON = $(srcdir)/JEMRIS_ContainerSequence.m.in \
-	$(srcdir)/JEMRIS_seq.m.in $(srcdir)/JEMRIS_sim.m.in \
-	$(srcdir)/JEMRIS_txrx.m.in $(srcdir)/Makefile.in \
-	$(srcdir)/pbs_script.sh.in
+am__DIST_COMMON = $(srcdir)/Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -263,9 +229,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = Contents.m JEMRIS_ContainerSequence.fig JEMRIS_ContainerSequence.m JEMRIS_seq.fig JEMRIS_seq.m JEMRIS_sim.fig JEMRIS_sim.m JEMRIS_txrx.fig JEMRIS_txrx.m MNIbrain.mat MNIdeltaB.mat Makefile.am ModuleIcons.mat brainSample.m calcBfromXi.m changeSeqAttributes.m changeSeqTree.m getAllModules.m parseXMLseq.m pbs_script.sh plotCoils.m plotsensitivity.m plotSeqTree.m plotseq.m plotsim.m readEvol.m seqcad_uitoolbar.m uniform.xml userSample.mat writeSample.m writeXMLseq.m 
-matlabdir = $(datadir)/jemris/matlab
-matlab_DATA = $(EXTRA_DIST)
+EXTRA_DIST = Makefile.am vein0_0.vtk vein0_0.vtu
 all: all-am
 
 .SUFFIXES:
@@ -278,9 +242,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign share/matlab/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign share/angio_simu/FlowConversion/vtk/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign share/matlab/Makefile
+	  $(AUTOMAKE) --foreign share/angio_simu/FlowConversion/vtk/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -298,37 +262,6 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-JEMRIS_sim.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_sim.m.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-JEMRIS_seq.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_seq.m.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-JEMRIS_txrx.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_txrx.m.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-JEMRIS_ContainerSequence.m: $(top_builddir)/config.status $(srcdir)/JEMRIS_ContainerSequence.m.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-pbs_script.sh: $(top_builddir)/config.status $(srcdir)/pbs_script.sh.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-install-matlabDATA: $(matlab_DATA)
-	@$(NORMAL_INSTALL)
-	@list='$(matlab_DATA)'; test -n "$(matlabdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(matlabdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(matlabdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(matlabdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(matlabdir)" || exit $$?; \
-	done
-
-uninstall-matlabDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(matlab_DATA)'; test -n "$(matlabdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(matlabdir)'; $(am__uninstall_files_from_dir)
 tags TAGS:
 
 ctags CTAGS:
@@ -371,11 +304,8 @@ distdir-am: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(DATA)
+all-am: Makefile
 installdirs:
-	for dir in "$(DESTDIR)$(matlabdir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -426,7 +356,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-matlabDATA
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -470,7 +400,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-matlabDATA
+uninstall-am:
 
 .MAKE: install-am install-strip
 
@@ -479,12 +409,11 @@ uninstall-am: uninstall-matlabDATA
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-matlabDATA install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags-am uninstall uninstall-am \
-	uninstall-matlabDATA
+	pdf-am ps ps-am tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 

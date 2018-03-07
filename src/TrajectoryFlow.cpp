@@ -76,7 +76,7 @@ void TrajectoryFlow::LoadFile(string filename) {
     long siz_full=m_time_full.size();
     m_TotalTrajNumber=siz_full;
     World *pW(World::instance());
-    cout<<pW->m_myRank<<" number of trajectories loaded : "<<siz_full<<endl;
+    //CAcout<<pW->m_myRank<<" number of trajectories loaded : "<<siz_full<<endl;
 
     //Optional: display the trajectories loaded
  /*   long siz,siz_act;
@@ -145,7 +145,7 @@ void TrajectoryFlow::LoadTrajectoriesHDF5(string filename) {
     else                    Nspins=pW->getTrajNumber();
     //if(pW->m_myRank<=0)     { trajBegin=0; Nspins = pW->TotalSpinNumber;   }//World::instance()->TotalSpinNumber;
     //else                    { trajBegin= pW->getTrajBegin(); Nspins=trajBegin + pW->getTrajNumber(); }
-    cout<<pW->m_myRank<<" CALLS "<<Nspins<<" TRAJECTORIES"<<endl;
+    //cout<<pW->m_myRank<<" CALLS "<<Nspins<<" TRAJECTORIES"<<endl;
     //cout<<"pW->getTrajNumber() "<<pW->getTrajNumber()<<endl;
 
     //Clear previous trajectories loaded
@@ -335,7 +335,7 @@ void TrajectoryFlow::LoadTrajectoriesASCII(string filename)     {
     else                    Nspins=pW->getTrajNumber();
     //if(pW->m_myRank<=0)     { trajBegin=0; Nspins = pW->TotalSpinNumber;   }//World::instance()->TotalSpinNumber;
     //else                    { trajBegin= pW->getTrajBegin(); Nspins=trajBegin + pW->getTrajNumber(); }
-    cout<<pW->m_myRank<<" CALLS "<<Nspins<<" TRAJECTORIES"<<endl;
+    //cout<<pW->m_myRank<<" CALLS "<<Nspins<<" TRAJECTORIES"<<endl;
     //cout<<"pW->getTrajNumber() "<<pW->getTrajNumber()<<endl;
 
     //Clear previous trajectories loaded

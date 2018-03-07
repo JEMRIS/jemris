@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Parameters Duration="1" FOVx="32" FOVy="32" FOVz="30" GradMaxAmpl="12" GradSlewRate="53.5" Name="P" Nx="40" Ny="40" Nz="3" TE="5" TR="40">
+<Parameters TI="1" FOVx="32" FOVy="32" FOVz="30" GradMaxAmpl="12" GradSlewRate="53.5" Name="P" Nx="40" Ny="40" Nz="3" TE="5" TR="40">
    <ConcatSequence Aux1="a1/a2" Name="IntersliceCenter" Observe="P,FOVz/P,Nz">
       <CONCATSEQUENCE Aux1="10" Name="Slice" Observe="P,Nz" Repetitions="a1">
          <CONCATSEQUENCE Name="C3" Repetitions="5">
@@ -35,7 +35,7 @@
                <TRAPGRADPULSE Area="a1-a2*a3*(1+1/(a4-1))" Axis="GY" Name="P3" Observe="P,KMAXy/C,Counter/P,DKy/P,Ny"/>
             </ATOMICSEQUENCE>
             <ATOMICSEQUENCE Name="A6">
-               <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="a3" Name="P6" Observe="P,KMAXx/P,Nx/P,Duration"/>
+               <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="a3" Name="P6" Observe="P,KMAXx/P,Nx/P,TI"/>
             </ATOMICSEQUENCE>
             <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>
          </ConcatSequence>

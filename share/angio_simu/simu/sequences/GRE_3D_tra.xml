@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Parameters Duration="1.1" FOVx="192" FOVy="192" FOVz="126" GradMaxAmpl="12" GradSlewRate="53.5" Name="P" Nx="64" Ny="64" Nz="42" TE="4" TR="40">
+<Parameters TI="1.1" FOVx="192" FOVy="192" FOVz="126" GradMaxAmpl="12" GradSlewRate="53.5" Name="P" Nx="64" Ny="64" Nz="42" TE="4" TR="40">
    <ConcatSequence Name="R">
       <CONCATSEQUENCE Name="C3" Repetitions="10">
          <ATOMICSEQUENCE Name="A11">
@@ -22,7 +22,7 @@
                <TRAPGRADPULSE Area="a1-a2*a3*(1+1/(a4-1))" Axis="GZ" Name="P30" Observe="P,KMAXz/C4,Counter/P,DKz/P,Nz"/>
             </ATOMICSEQUENCE>
             <ATOMICSEQUENCE Name="A6">
-               <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="a3" Name="P6" Observe="P,KMAXx/P,Nx/P,Duration"/>
+               <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="a3" Name="P6" Observe="P,KMAXx/P,Nx/P,TI"/>
             </ATOMICSEQUENCE>
             <ATOMICSEQUENCE Name="A10">
                <TRAPGRADPULSE Area="2*a1" Axis="GX" Name="P88" Observe="P6,FlatTopArea"/>

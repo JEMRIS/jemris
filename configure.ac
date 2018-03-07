@@ -1,5 +1,5 @@
 AC_PREREQ(2.61)
-AC_INIT([jemris], [2.8.1], [tony.stoecker@dzne.de], [jemris])
+AC_INIT([jemris], [2.8.2], [tony.stoecker@dzne.de], [jemris])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
@@ -482,6 +482,6 @@ if test x$mpi = xtrue; then
   CXX=$MPICXX
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/JEMRIS_ContainerSequence.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile share/Makefile share/examples/Makefile share/examples/approved/Makefile share/matlab/Makefile share/matlab/JEMRIS_sim.m share/matlab/JEMRIS_seq.m share/matlab/JEMRIS_txrx.m share/matlab/JEMRIS_ContainerSequence.m share/matlab/pbs_script.sh doc/doxy.conf doc/Makefile share/angio_simu/FlowConversion/Makefile share/angio_simu/FlowConversion/vtk/Makefile share/angio_simu/Makefile share/angio_simu/simu/Makefile share/angio_simu/simu/matlab/Makefile share/angio_simu/simu/matlab/ReconUtilities/Makefile share/angio_simu/simu/sequences/Makefile share/angio_simu/simu/sequences/PC_3D_tra_3dVxyz/Makefile ])
 
 AC_OUTPUT
