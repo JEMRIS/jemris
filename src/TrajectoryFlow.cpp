@@ -76,7 +76,7 @@ void TrajectoryFlow::LoadFile(string filename) {
     long siz_full=m_time_full.size();
     m_TotalTrajNumber=siz_full;
     World *pW(World::instance());
-    //cout<<pW->m_myRank<<" number of trajectories loaded : "<<siz_full<<endl;
+    //CAcout<<pW->m_myRank<<" number of trajectories loaded : "<<siz_full<<endl;
 
     //Optional: display the trajectories loaded
  /*   long siz,siz_act;
