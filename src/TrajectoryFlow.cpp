@@ -76,7 +76,7 @@ void TrajectoryFlow::LoadFile(string filename) {
     long siz_full=m_time_full.size();
     m_TotalTrajNumber=siz_full;
     World *pW(World::instance());
-    //CAcout<<pW->m_myRank<<" number of trajectories loaded : "<<siz_full<<endl;
+    //cout<<pW->m_myRank<<" number of trajectories loaded : "<<siz_full<<endl;
 
     //Optional: display the trajectories loaded
  /*   long siz,siz_act;
@@ -127,7 +127,7 @@ void TrajectoryFlow::LoadTrajectoriesHDF5(string filename) {
     int kk;
     //cout<<"HDF5"<<endl;
     //for(kk=0;kk<trajectories.size();kk=kk+4)    cout<<trajectories[kk]<<" "<<trajectories[kk+1]<<" "<<trajectories[kk+2]<<" "<<trajectories[kk+3]<<endl;
-    cout<<"HDF5"<<endl;
+    //cout<<"HDF5"<<endl;
     //LoadTrajectoriesASCII("./Flow.dat");
 
 
@@ -168,7 +168,7 @@ void TrajectoryFlow::LoadTrajectoriesHDF5(string filename) {
     trajLine=0;
     t_mem=0;
     spinChange=true;
-    cout<<"Loop begin."<<endl;
+    //cout<<"Loop begin."<<endl;
     while (dataLine<NdataLines) {
 
         buf=trajectories[dataLine];
