@@ -181,12 +181,19 @@ IO::Status Sample::Populate (const string& fname) {
 
 	memcpy (&m_index[0], &dims[1], 3*sizeof(size_t));
 
-	// ----------------------------------------------------
+    //number of compartments (pools) needs to be the second dimension of a sample HDF5 file with in total five dimensions: (Type#, Pool#, X, Y, Z)
+    if (dims.size()>4) {
+    	SetNoSpinCompartments(dims[1]);
+    	memcpy (&m_index[0], &dims[2], 3*sizeof(size_t));
+    }
+    dims[0] = dims[0] * GetNoSpinCompartments();
+	size = size / GetNoSpinCompartments();
 
+
+	// ----------------------------------------------------
 	bc.Read (data, "resolution", "/sample");
 	grid = (bc.Status() == IO::OK);
 	m_res = data.Data();
-
 
 	bc.Read (data, "offset", "/sample");
 	m_offset = data.Data();
@@ -199,8 +206,8 @@ IO::Status Sample::Populate (const string& fname) {
 		
 		int  nprop = dims[0] + 4;
 		size_t n     = 0;
-		
-		for (size_t nz = 0; nz < m_index[ZC]; nz++)
+
+		 for (size_t nz = 0; nz < m_index[ZC]; nz++)
 			for (size_t ny = 0; ny < m_index[YC]; ny++)
 				for (size_t nx = 0; nx < m_index[XC]; nx++, n++) {
 					
@@ -209,7 +216,7 @@ IO::Status Sample::Populate (const string& fname) {
 					std::vector<double>::const_iterator sposi = tmpdat.begin() + spos;
 					std::vector<double>::iterator eposi = m_ensemble.At(M0 + epos);
 
-					if (tmpdat[spos] > 0) {
+					//if (tmpdat[spos] > 0) {
 						
 						// Copy values over
 						std::copy (sposi, sposi + dims[0], eposi);
@@ -219,14 +226,15 @@ IO::Status Sample::Populate (const string& fname) {
 						m_ensemble[YC+epos] = (ny-0.5*(m_index[YC]-1))*m_res[YC]+m_offset[YC];
 						m_ensemble[ZC+epos] = (nz-0.5*(m_index[ZC]-1))*m_res[ZC]+m_offset[ZC];
 						
-					}
+					//}
 
 				}
 		
 	} else {
-
+		// is this still working ??
 		dims[0] -= 4;
 		m_ensemble.Init (dims, size);
+	    if (GetSampleDims().size()>4) SetNoSpinCompartments(GetSampleDims()[4]); //number of pools in the fifth dimension of sample HDF5 file
 		
 		memcpy (&m_ensemble[0], &tmpdat[0], m_ensemble.Size()*sizeof(double));
 
@@ -250,6 +258,7 @@ void Sample::CropEnumerate () {
 	for (int i = 0; i < osize; i++)
 		if (m_ensemble[i * nprops + M0] > 0)
 			nsize++;
+
 
 	m_ensemble.ClearData();
 	m_ensemble.Init(nsize);

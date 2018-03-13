@@ -89,27 +89,27 @@ void LocalExchangeRates (double* global_exchange_rates, double* local_exchange_r
 static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
 
 	World*   pW        = (World*) pWorld;
-	BMAux*   m_bmaux   = (BMAux*) pW->auxiliary;
+	BMAux*   bmaux   = (BMAux*) pW->auxiliary;
 
-	int      m_nprops  = pW->m_noofspinprops;
-	int      m_ncomp   = pW->m_noofspincompartments;
-	int 	 m_ncoprops = (m_nprops - 4) / m_ncomp;
-	double*  m_exrates = m_bmaux->exrates;
-	bool     m_single  = m_bmaux->single;
+	int      nprops  = pW->m_noofspinprops;
+	int      ncomp   = pW->m_noofspincompartments;
+	int 	 ncoprops = (nprops - 4) / ncomp;
+	double*  exrates = bmaux->exrates;
+	bool     single  = bmaux->single;
 
     // Magnetisation for each poosl
-	double*   Mxy    = new double [m_ncomp];
-	double*   phi    = new double [m_ncomp];
-	double*   Mz     = new double [m_ncomp];
-	double*   s      = new double [m_ncomp];
-	double*   c      = new double [m_ncomp];
-	double*   Mx     = new double [m_ncomp];
-	double*   My     = new double [m_ncomp];
-	double*   Mx_dot = new double [m_ncomp];
-	double*   My_dot = new double [m_ncomp];
-	double*   Mz_dot = new double [m_ncomp];
+	double*   Mxy    = new double [ncomp];
+	double*   phi    = new double [ncomp];
+	double*   Mz     = new double [ncomp];
+	double*   s      = new double [ncomp];
+	double*   c      = new double [ncomp];
+	double*   Mx     = new double [ncomp];
+	double*   My     = new double [ncomp];
+	double*   Mx_dot = new double [ncomp];
+	double*   My_dot = new double [ncomp];
+	double*   Mz_dot = new double [ncomp];
 
-    for (int i = 0; i < m_ncomp; i++) {
+    for (int i = 0; i < ncomp; i++) {
 
     	Mx_dot[i] = 0.0;
     	My_dot[i] = 0.0;
@@ -124,23 +124,23 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
 
     }
 
-    //get current B-field values from the sequence
     if (t<=0.0 || t>pW->pAtom->GetDuration()) {		// Kaveh, hier hab ich gemogelt
-
     	// this case can happen when searching for step size; in this area no solution is needed
     	// -> set ydot to any defined value.
-    	for(int i = 0; i< m_ncomp*NEQ; i+=NEQ) {
-    		NV_Ith_S(ydot,XC+i) = 0.0; NV_Ith_S(ydot,YC+i) = 0.0; NV_Ith_S(ydot,ZC+i) = 0.0;
+    	for (int i = 0; i< ncomp*NEQ; i+=NEQ) {
+    		NV_Ith_S(ydot,XC+i) = 0.0;
+    		NV_Ith_S(ydot,YC+i) = 0.0;
+    		NV_Ith_S(ydot,ZC+i) = 0.0;
 		}
-
     	return 0;
     }
 
+    //get current B-field values from the sequence
     double  d_SeqVal[5] = {0.0,0.0,0.0,0.0,0.0};                           // [B1magn,B1phase,Gx,Gy,Gz]
     pW->pAtom->GetValue( d_SeqVal, t );                                    // calculates also pW->NonLinGradField
     if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( d_SeqVal, t ); // calculates also pW->NonLinGradField
     double Bx=0.0, By=0.0, Bz=0.0;
-    double* BzPool = new double[m_ncomp];
+    double* BzPool = new double[ncomp];
 
     //RF field
     Bx = d_SeqVal[RF_AMP]*cos(d_SeqVal[RF_PHS]);
@@ -151,86 +151,66 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     Bz = pW->Values[XC]*d_SeqVal[GRAD_X]+ pW->Values[YC]*d_SeqVal[GRAD_Y]+ pW->Values[ZC]*d_SeqVal[GRAD_Z];
 
     //other off-resonance contributions (differs for every pool)
-    for(int i = 0; i< m_ncomp; i++)
-    	BzPool[i] = Bz + pW->Values[i*m_ncoprops+DB] + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;
+    for(int i = 0; i< ncomp; i++)
+    	BzPool[i] = Bz + pW->Values[i*ncoprops+DB] + pW->ConcomitantField(&d_SeqVal[GRAD_X]) + pW->NonLinGradField;
 
 
     //NV_Ith_S is the solution magn. vector with components AMPL,PHASE,ZC
     //important: restrict phase to [0, 2*PI]
-    int pool =0;
-   /* for(int i = 0; i< m_ncomp*NEQ; i+=NEQ){		// loop over pools
+
+   /* for(int i = 0; i< ncomp*NEQ; i+=NEQ){		// loop over pools
     	NV_Ith_S(y,PHASE+i) 				= fmod(NV_Ith_S(y,PHASE+i),6.28318530717958);
     	Mxy[pool] = NV_Ith_S(y,AMPL+i); phi[pool] = NV_Ith_S(y,PHASE+i); Mz[pool] = NV_Ith_S(y,ZC+i);
     	pool++;
     }*/
 
-    for (int i = 0; i< m_ncomp*NEQ; i+=NEQ) {		// loop over pools
+    for (int i = 0, pool=0; i< ncomp*NEQ; i+=NEQ, pool++) {		// loop over pools
 
        	Mx[pool] = NV_Ith_S(y,XC+i); 
 		My[pool] = NV_Ith_S(y,YC+i); 
 		Mz[pool] = NV_Ith_S(y,ZC+i);
-       	pool++;
+     }
 
-    }
+ 	for (int i = 0, pool=0; i< (ncomp)*NEQ; i+=NEQ, pool++) {		// loop over pools, NEQ steps
 
-    pool = 0;
-    
-	for (int eqpool = 0; eqpool< ((m_ncomp)*NEQ); eqpool+=NEQ) {		// loop over pools, NEQ steps
+  	    double r1 = pW->Values[pool*ncoprops + R1];
+ 	    double r2 = pW->Values[pool*ncoprops + R2];
+ 	    double m0 = pW->Values[pool*ncoprops + M0];
 
     	//avoid CVODE warnings (does not change physics!)
-    	if (pW->Values[pool*m_ncoprops + M0] == 0.0) {
+    	if (m0 == 0.0) {
     		// this pool is empty, the number of pools reduces
-    		NV_Ith_S(y,XC+eqpool)    = 0.0; NV_Ith_S(y,YC+eqpool)    = 0.0;
-    		NV_Ith_S(ydot,XC+eqpool) = 0.0; NV_Ith_S(ydot,YC+eqpool) = 0.0;
-			NV_Ith_S(y,ZC+eqpool)    = 0.0;
-    		NV_Ith_S(ydot,ZC+eqpool) = 0.0;
+    		NV_Ith_S(y,XC+i)    = 0.0; NV_Ith_S(y,YC+i)    = 0.0;
+    		NV_Ith_S(ydot,XC+i) = 0.0; NV_Ith_S(ydot,YC+i) = 0.0;
+			NV_Ith_S(y,ZC+i)    = 0.0;
+    		NV_Ith_S(ydot,ZC+i) = 0.0;
 
 			
-    	} else if ((Mx[pool]*Mx[pool] + My[pool]*My[pool]) < ATOL1 * pW->Values[pool*m_ncoprops+M0] && d_SeqVal[RF_AMP]<BEPS) {
-        	//trivial case: no transv. magnetisation AND no excitation
-    		NV_Ith_S(y,XC+eqpool)    = 0.0; NV_Ith_S(y,YC+eqpool)    = 0.0;
-    		NV_Ith_S(ydot,XC+eqpool) = 0.0; NV_Ith_S(ydot,YC+eqpool) = 0.0;
+    	} else if ((Mx[pool]*Mx[pool] + My[pool]*My[pool]) < ATOL1 * m0 && d_SeqVal[RF_AMP]<BEPS) {
+        	//trivial case: no transv. magnetization AND no excitation
+    		NV_Ith_S(y,XC+i)    = 0.0; NV_Ith_S(y,YC+i)    = 0.0;
+    		NV_Ith_S(ydot,XC+i) = 0.0; NV_Ith_S(ydot,YC+i) = 0.0;
 
-    		//further, longit. magnetisation already fully relaxed
-    		if (fabs(pW->Values[pool*m_ncoprops +M0] - Mz[pool])<ATOL3  *pW->Values[pool*m_ncoprops +M0]) {
-
-    			NV_Ith_S(y,ZC+eqpool)    = pW->Values[pool*m_ncoprops +M0];
-    			NV_Ith_S(ydot,ZC+eqpool) = 0.0;
-
-    			if(eqpool == (((m_ncomp)*NEQ)-1))
-					return 0;
-
+    		//further, longit. magnetization already fully relaxed
+    		if (fabs(m0 - Mz[pool])<ATOL3  *m0) {
+    			NV_Ith_S(y,ZC+i)    = m0;
+    			NV_Ith_S(ydot,ZC+i) = 0.0;
+    			if (i == (((ncomp)*NEQ)-1)) return 0; else continue;
     		}
 
     	} else {
 
-    		//compute cartesian components of transverse magnetization
-
-    		/*c[pool] 	= cos(phi[pool]);
-    		s[pool] 	= sin(phi[pool]);
-
-
-    		Mx[pool] 	= c[pool]*Mxy[pool];
-    		My[pool] 	= s[pool]*Mxy[pool];*/
-
-
-    		// Built the n-pool bloch equation, check if each pool exists
-
-    		if (m_ncomp > 1 ){  // do this only if really necessary - time consuming!
-    			if (m_single == false) {
-    				Mx_dot[pool] = -(pW->Values[pool*m_ncoprops +R2] + exchangeConstants(m_ncomp,pool,m_exrates)) *Mx[pool] 		+ BzPool[pool]*My[pool]    - By*Mz[pool] + exchangeTerms(m_ncomp,pool,m_exrates,Mx);
-    				My_dot[pool] = - BzPool[pool]*Mx[pool]  - (pW->Values[pool*m_ncoprops +R2]+exchangeConstants(m_ncomp,pool,m_exrates)) *My[pool]  		   + Bx*Mz[pool] + exchangeTerms(m_ncomp,pool,m_exrates,My);
-    				Mz_dot[pool] =   By*Mx[pool]            	 																	   - Bx*My[pool] ;
-    			} else {
-       				Mx_dot[pool] = -(pW->Values[pool*m_ncoprops +R2]) *Mx[pool] 		+ BzPool[pool]*My[pool]    - By*Mz[pool];
-        			My_dot[pool] = - BzPool[pool]*Mx[pool]  - (pW->Values[pool*m_ncoprops +R2]) *My[pool]  	   + Bx*Mz[pool];
-        			Mz_dot[pool] =   By*Mx[pool]            	 										   - Bx*My[pool] ;
-    			}
+    		// n-pool Cartesian Bloch equation, check if each pool exists
+    		if (ncomp > 1 && !single)  {
+    			// do this only if necessary - time consuming!
+    				Mx_dot[pool] = -(r2 + exchangeConstants(ncomp,pool,exrates)) *Mx[pool] 		+ BzPool[pool]*My[pool]    - By*Mz[pool] + exchangeTerms(ncomp,pool,exrates,Mx);
+    				My_dot[pool] = - BzPool[pool]*Mx[pool]  - (r2+exchangeConstants(ncomp,pool,exrates)) *My[pool]  	   + Bx*Mz[pool] + exchangeTerms(ncomp,pool,exrates,My);
+    				Mz_dot[pool] =   By*Mx[pool]            	 														   - Bx*My[pool] ;
     		} else {
     			// use single pool model, much faster
-    			Mx_dot[pool] = - pW->Values[pool*m_ncoprops +R2] *Mx[pool] 		+ BzPool[pool]*My[pool]    - By*Mz[pool];
-				My_dot[pool] = - BzPool[pool]*Mx[pool]  - pW->Values[pool*m_ncoprops +R2] *My[pool]  		   + Bx*Mz[pool];
-				Mz_dot[pool] =   By*Mx[pool]              	 										   - Bx*My[pool] ;
+    			Mx_dot[pool] = - r2 *Mx[pool] 		    + BzPool[pool]*My[pool]   - By*Mz[pool];
+				My_dot[pool] = - BzPool[pool]*Mx[pool]  - r2 *My[pool]            + Bx*Mz[pool];
+				Mz_dot[pool] =   By*Mx[pool]              	       			      - Bx*My[pool] ;
     		}
 
     		//compute bloch equations old version
@@ -242,26 +222,21 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
 
     		//NV_Ith_S(ydot,AMPL+eqpool)   = c[pool]*Mx_dot[pool] + s[pool]*My_dot[pool];
     		//NV_Ith_S(ydot,PHASE+eqpool)  = (c[pool]*My_dot[pool] - s[pool]*Mx_dot[pool]) / (Mxy[pool]>BEPS?Mxy[pool]:BEPS); //avoid division by zero
-    		NV_Ith_S(ydot,XC+eqpool)  = Mx_dot[pool];
-    		NV_Ith_S(ydot,YC+eqpool)  = My_dot[pool];
+    		NV_Ith_S(ydot,XC+i)  = Mx_dot[pool];
+    		NV_Ith_S(ydot,YC+i)  = My_dot[pool];
 
 
     	}
 
     	//longitudinal relaxation
-		if (m_ncomp > 1){
-			if(m_single == false){
-				Mz_dot[pool] 			 +=  pW->Values[pool*m_ncoprops +R1]*(pW->Values[pool*m_ncoprops +M0] - Mz[pool]) - exchangeConstants(m_ncomp,pool,m_exrates)*Mz[pool] + exchangeTerms(m_ncomp,pool,m_exrates,Mz);
-			} else{
-				Mz_dot[pool] 			 +=  pW->Values[pool*m_ncoprops +R1]*(pW->Values[pool*m_ncoprops +M0] - Mz[pool]);
-			}
-		} else
-			Mz_dot[pool] 			 	 +=  pW->Values[pool*m_ncoprops +R1]*(pW->Values[pool*m_ncoprops +M0] - Mz[pool]);
+		if (ncomp > 1 && !single)
+				 Mz_dot[pool] 	+=  r1*(m0 - Mz[pool]) - exchangeConstants(ncomp,pool,exrates)*Mz[pool] + exchangeTerms(ncomp,pool,exrates,Mz);
+		 else
+			 	 Mz_dot[pool] 	+=  r1*(m0 - Mz[pool]);
 
 
-		NV_Ith_S(ydot,ZC+eqpool) = Mz_dot[pool];
+		NV_Ith_S(ydot,ZC+i) = Mz_dot[pool];
 
-		pool++;
     }
 
 	// Kaveh, hier stehen noch unterschiedliche Zahlen in den verschiedenen Pools
@@ -292,9 +267,6 @@ Bloch_McConnell_CV_Model::Bloch_McConnell_CV_Model     () {
     m_ropt[HMAX]   = 10000.0;// the maximum stepsize in msec of the integrator*/
     m_reltol       = RTOL;
 
-    //cvode2.5:
-    // create cvode memory pointer; no mallocs done yet.
- //   m_cvode_mem = CVodeCreate(CV_BDF,CV_NEWTON);
    m_cvode_mem = CVodeCreate(CV_ADAMS,CV_FUNCTIONAL);
 
     // cvode allocate memory.
@@ -374,27 +346,18 @@ void Bloch_McConnell_CV_Model::InitSolver    () {
 	
 	m_ncomp     = m_world->GetNoOfCompartments();
 	m_nprops    = m_world->GetNoOfSpinProps();
-	int m_ncoprops = (m_nprops - 4) / m_ncomp;
+	int ncoprops = (m_nprops - 4) / m_ncomp;
 	
+	//check, if this is a multi-pool or just a single-pool problem
 	double* m0s = new double[m_ncomp];
 	int     n   = 0;
-	
-	for (int i = 0; i < m_ncomp; i++) {
-
-		m0s[i] = m_world->Values[m_ncoprops*i+M0];
-		if (m0s[i] > 0.0)
-			n++;
-	}
-
+	for (int i = 0; i < m_ncomp; i++) { m0s[i] = m_world->Values[ncoprops*i+M0]; if (m0s[i] > 0.0) n++;	}
 	m_bmaux.Init(m_ncomp); 
-	
-	if (n == 1)
-		m_bmaux.single  = true;
+	m_bmaux.single  = (n==1);
 
 
 	//Compute local exchange rates and return them in member matrix
 	LocalExchangeRates (m_world->Helper(), m_bmaux.exrates, m0s, m_ncomp);
-
 	delete [] m0s;
 	
 	m_world->auxiliary = (void*) (&m_bmaux);
@@ -416,15 +379,15 @@ void Bloch_McConnell_CV_Model::InitSolver    () {
     int poolVal = 0;
     for ( int i = 0; i< m_ncomp*NEQ; i+=NEQ ){
 
-    	if (fabs(m_world->Values[m_ncoprops*poolVal+M0])<BEPS){
+    	if (fabs(m_world->Values[ncoprops*poolVal+M0])<BEPS){
 
     		NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,XC+i )  = ATOL1;
 			NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,ZC+i )  = ATOL3;
 
     	} else{
 
-	  		NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,XC+i )  = ATOL1*m_world->Values[m_ncoprops*poolVal+M0];
-			NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,ZC+i )  = ATOL3*m_world->Values[m_ncoprops*poolVal+M0];
+	  		NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,XC+i )  = ATOL1*m_world->Values[ncoprops*poolVal+M0];
+			NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,ZC+i )  = ATOL3*m_world->Values[ncoprops*poolVal+M0];
 		}
 
 		NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,YC+i ) = ATOL2;
@@ -464,7 +427,7 @@ bool Bloch_McConnell_CV_Model::Calculate(double next_tStop){
 	    m_world->time += RTOL;
 	
 	CVodeSetStopTime(m_cvode_mem,next_tStop);
-	cout<<NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->y,ZC ) << " "<< NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->y,ZC+3 )<<endl;
+	//cout<<NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->y,ZC ) << " "<< NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->y,ZC+3 )<<endl;
 	
 	int flag;
 #ifndef CVODE26

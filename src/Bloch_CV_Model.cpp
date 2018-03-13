@@ -39,7 +39,6 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
     DynamicVariables* dv = DynamicVariables::instance();
 	double t = (double) rt;
 
-    //get current B-field values from the sequence
     if (t < 0.0 || t > pW->pAtom->GetDuration()) {
     	// this case can happen when searching for step size; in this area no solution is needed
     	// -> set ydot to any defined value.
@@ -114,10 +113,12 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
     }
 //MODIF***
 
-    double  d_SeqVal[5]={0.0,0.0,0.0,0.0,0.0}; //[B1magn,B1phase,Gx,Gy,Gz]
+    //get current B-field values from the sequence
+    double  d_SeqVal[5]={0.0,0.0,0.0,0.0,0.0};									// [B1magn,B1phase,Gx,Gy,Gz]
     pW->pAtom->GetValue( d_SeqVal, t );        								    // calculates also pW->NonLinGradField
     if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( d_SeqVal, time );	// calculates static offsets
     pW->pAtom->GetValueLingeringEddyCurrents(d_SeqVal,t);					    // calculates lingering eddy currents
+
     double Bx, By, Bz;
 
     //Transverse Components: RF field

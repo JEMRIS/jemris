@@ -28,14 +28,21 @@ IO::Status MultiPoolSample::Populate (const std::string& fname) {
 	NDData<double>      di;
 	IO::Status    ios;
 
-	if (di.NDim() != 2)
-		return IO::UNMATCHED_DIMENSIONS;
-
-	bc.Read(di, "sample", "helper");
+	bc.Read(di, "exchange", "/");
 	if (bc.Status() != IO::OK)
 		return bc.Status();
 
 	m_helper = di.Data();
+
+	if (GetNoOfPools() != di.Size()) {
+		cout << "Error in MultiPoolSample::Populate() - exchange vector does not fit number of pools" << endl;
+		return IO::UNMATCHED_DIMENSIONS;
+	}
+
+	cout << "MPsample: #Pools= " << GetNoOfPools() << " , SampleDims=" << GetSampleDims().size() << " , SampleProps= " << GetNProps() << " , SampleSize=" << GetSize()
+		 << " , ExMatDim=" << di.NDim() << " , ExMat[0]=" << m_helper[0] << endl << endl;
+
+	m_noofpools = GetNoOfPools(); /*  this number is not used anywhere! (?) */
 
 	return IO::OK;
 
@@ -55,6 +62,9 @@ void MultiPoolSample::Prepare (const std::string& fname) {
 
 void MultiPoolSample::CropEnumerate () {
 	
+	Sample::CropEnumerate ();
+	return;
+/*
 	int  nsize = 0;
 	long osize = m_ensemble.NSpins();
  	int nprops = m_ensemble.NProps();
@@ -100,6 +110,6 @@ void MultiPoolSample::CropEnumerate () {
 	}
 
 	free (tmp);
-
+*/
 }
 

@@ -126,7 +126,7 @@ struct Ensemble {
 	 */
 	inline void ClearData () {
 		m_nspins = 0;
-		m_dims.clear();
+		//m_dims.clear();
 		m_data.clear();
 	};
 	
@@ -143,7 +143,7 @@ struct Ensemble {
 		m_dims.resize(ndim);
 		std::copy (dims, dims+ndim, m_dims.begin());
 
-		// Add spatial dimensions 
+		// Add spatial dimensions + ID
 		m_dims[0] += 4;
 
 		// Set number of live spins (Generally less spins may have M0 > 0)
@@ -165,7 +165,7 @@ struct Ensemble {
 	inline void Init (const std::vector<size_t>& dims, const size_t live) {
 
 		m_dims = dims;
-		// Add spatial dimensions
+		// Add spatial dimensions + ID
 		m_dims[0] += 4;
 
 		// Set number of live spins (Generally less spins may have M0 > 0)
@@ -221,8 +221,8 @@ struct Ensemble {
 	 *
 	 * @return      Dimensions of the ensemble
 	 */
-	inline const size_t* Dims () const {
-		return m_dims.data();
+	inline const vector<size_t> Dims () const {
+		return m_dims;
 	}
 
 
@@ -347,16 +347,16 @@ class Sample {
     /**
      * Get number of spin properties including spatial
      *
-     * @return Numnber of spin properties
+     * @return Number of spin properties
      */
     inline size_t  GetNProps () const {return m_ensemble.NProps();};
 
     /**
-     * Get number of spin properties including spatial
+     * Get number of sample dimensions
      *
-     * @return Numnber of spin properties
+     * @return number of sample dimensions
      */
-    inline const size_t* GetSampleDims () const {return m_ensemble.Dims();};
+    inline vector<size_t> GetSampleDims () const {return m_ensemble.Dims();};
 
     /**
      * Get a subset of this sample
@@ -473,24 +473,27 @@ class Sample {
     void GetNextPacket(int &noSpins, int &NextSpinToSend, int SlaveId);
 
     /**
-     * Returns No spins which still needs to be calculated.
+     * @brief Returns No spins which still needs to be calculated.
      */
     int SpinsLeft();
 
     /**
-     * Set Time interval in seconds after which new spins are sent (approx. value.)
+     * @brief Set Time interval in seconds after which new spins are sent (approx. value.)
      */
     void    SetTimeInterval(double val) {m_sent_interval=val;};
 
+    /**
+     * @brief true if simulation run is from a restart
+     */
     bool    IsRestart() {return m_is_restart;};
 
+	// HACK (bit more explanation would have been helpful)
 	void    GetHelper (double* target);
 
 	double* GetHelper ();
 
 	size_t    GetHelperSize ();
 	
-	// HACK
 	int     GetNoSpinCompartments ();
 	
 	void    SetNoSpinCompartments (int n);

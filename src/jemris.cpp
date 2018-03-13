@@ -69,8 +69,10 @@ void usage () {
 void do_simu (Simulator* sim) {
 	World* pW = World::instance();
 	cout << "Model    : " << sim->GetAttr(sim->GetElem("model"),  "name")<< "\t  , solver = "
-			      << sim->GetAttr(sim->GetElem("model"), "type")  << endl;
-	cout << "Sample   : " << sim->GetAttr(sim->GetElem("sample"), "name")<< "\t  , spins  = " << pW->TotalSpinNumber  << endl;
+			     	 	  << sim->GetAttr(sim->GetElem("model"), "type")  << endl;
+	cout << "Sample   : " << sim->GetAttr(sim->GetElem("sample"), "name")<< "\t  , spins  = " << pW->TotalSpinNumber;
+	if (pW->m_noofspincompartments > 1) cout << ", pools = " << pW->m_noofspincompartments;
+	cout << endl;
 	cout << "TxArray  : " << sim->GetAttr(sim->GetElem("TXcoilarray"), "uri") << endl;
 	cout << "RxArray  : " << sim->GetAttr(sim->GetElem("RXcoilarray"), "uri") << endl;
 	cout << "Sequence : " << sim->GetAttr(sim->GetElem("sequence"),"uri")<< endl;

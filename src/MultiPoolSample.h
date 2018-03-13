@@ -21,7 +21,8 @@ public:
     virtual void Prepare (const std::string& fname = "");
 
 	
-	int  GetNoOfPools ();
+	int  GetNoOfPools () {return GetNoSpinCompartments();}
+
 	void GetExchangeMatrix (long l, double** em);
 
 	virtual IO::Status Populate (const std::string& fname);

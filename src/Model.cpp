@@ -62,8 +62,8 @@ void Model:: Prepare (CoilArray* pRxCoilArray, CoilArray* pTxCoilArray, ConcatSe
 void Model::Solve() {
 
     //problem size
-    m_world->TotalSpinNumber = m_sample->GetSize();
 	m_world->SetNoOfCompartments(m_sample->GetNoSpinCompartments());
+    m_world->TotalSpinNumber = m_sample->GetSize() ;
 	m_world->SetNoOfSpinProps(m_sample->GetNProps());
     m_world->TotalADCNumber  = m_concat_sequence->GetNumOfADCs();
 
@@ -81,8 +81,8 @@ void Model::Solve() {
         m_sample->GetValues(lSpin, m_world->Values);
 
 		// Get helper size, initialise and fill.
-		m_world->InitHelper(m_sample->GetHelperSize());
-		m_sample->GetHelper(m_world->Helper());
+		//m_world->InitHelper(m_sample->GetHelperSize());
+		//m_sample->GetHelper(m_world->Helper());
 
         //check for activation
         DynamicVariables*  dynvar = DynamicVariables::instance();
@@ -211,7 +211,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				if (found_next == false) next_tStop = 1e200;
 			}
 
-			//if numerical or occures in calculation, repeat the current atom with increased accuracy
+			//if numerical error occurs in calculation, repeat the current atom with increased accuracy
 			if (!Calculate(next_tStop)) {
 				//remove wrong contribution to the signal(s)
 				iadc=0;
