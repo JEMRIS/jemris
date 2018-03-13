@@ -121,22 +121,7 @@ class Bloch_McConnell_CV_Model : public Model {
      */
     virtual void FreeSolver      ();
 
-    /**
-     * @brief Solve
-     *
-     * Numerical integration of the Bloch equations for a given atomic sequence
-     *
-     * @param dTimeShift  Starting time of this atom with respekt to the start of
-     *                    the whole sequence
-     * @param lIndexShift More elaborate description here please
-     * @param atom        The simulated atomic sequence
-     * @param lSpin       The index number od the spin which is being simulated
-     * @param pfout       The file output stream used for intermediate result output
-     * @param iStep       More elaborate description here please
-     */
-    void         Solve           (double& dTimeShift, long& lIndexShift, AtomicSequence* atom, long& lSpin, ofstream* pfout, int iStep);
-
-    /**
+     /**
      * @brief Summery output
      *
      * More elaborate description here please

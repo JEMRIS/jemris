@@ -118,10 +118,9 @@ class Model {
  	 * Run through the sequence tree and
 	 * execute Calculate for each atom
 	 *
-	 * @param dTimeShift  The time shift with which this run
-	 *                    starts within the sequence time frame
-	 * @param lIndexShift More elaborate description here please
-	 * @param module      The Atomic sequence simulated in this run
+	 * @param dTimeShift  The time shift with respect to the whole sequence
+	 * @param lIndexShift The ADC number shift with respect to the whole sequence
+	 * @param module      The current sequence module to be simulated
 	 */
 	void RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* module);
 
@@ -130,7 +129,7 @@ class Model {
     CoilArray*      m_tx_coil_array;    /**< @brief Transmit coil array                           */
     ConcatSequence* m_concat_sequence;  /**< @brief Top node of the sequence tree for simulation */
     Sample*         m_sample;           /**< @brief Sample                                       */
-    double	    m_accuracy_factor;  /**< @brief increase accuracy by thid factor in case of numerical problems */
+    double	        m_accuracy_factor;  /**< @brief increase accuracy by this factor in case of numerical problems */
 
     bool            m_do_dump_progress; /**< @brief If true, percentage progress during Solve() is written to .jemris_progress.out */
 

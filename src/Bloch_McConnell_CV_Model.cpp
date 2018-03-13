@@ -180,22 +180,25 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     	//avoid CVODE warnings (does not change physics!)
     	if (m0 == 0.0) {
     		// this pool is empty, the number of pools reduces
-    		NV_Ith_S(y,XC+i)    = 0.0; NV_Ith_S(y,YC+i)    = 0.0;
-    		NV_Ith_S(ydot,XC+i) = 0.0; NV_Ith_S(ydot,YC+i) = 0.0;
-			NV_Ith_S(y,ZC+i)    = 0.0;
+    		NV_Ith_S(y,   XC+i) = 0.0;
+    		NV_Ith_S(y,   YC+i) = 0.0;
+    		NV_Ith_S(ydot,XC+i) = 0.0;
+    		NV_Ith_S(ydot,YC+i) = 0.0;
+			NV_Ith_S(y,   ZC+i) = 0.0;
     		NV_Ith_S(ydot,ZC+i) = 0.0;
 
 			
     	} else if ((Mx[pool]*Mx[pool] + My[pool]*My[pool]) < ATOL1 * m0 && d_SeqVal[RF_AMP]<BEPS) {
         	//trivial case: no transv. magnetization AND no excitation
-    		NV_Ith_S(y,XC+i)    = 0.0; NV_Ith_S(y,YC+i)    = 0.0;
-    		NV_Ith_S(ydot,XC+i) = 0.0; NV_Ith_S(ydot,YC+i) = 0.0;
+    		NV_Ith_S(y,   XC+i) = 0.0;
+    		NV_Ith_S(y,   YC+i) = 0.0;
+    		NV_Ith_S(ydot,XC+i) = 0.0;
+    		NV_Ith_S(ydot,YC+i) = 0.0;
 
     		//further, longit. magnetization already fully relaxed
     		if (fabs(m0 - Mz[pool])<ATOL3  *m0) {
     			NV_Ith_S(y,ZC+i)    = m0;
     			NV_Ith_S(ydot,ZC+i) = 0.0;
-    			if (i == (((ncomp)*NEQ)-1)) return 0; else continue;
     		}
 
     	} else {

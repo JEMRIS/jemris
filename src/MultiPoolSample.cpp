@@ -9,11 +9,7 @@ MultiPoolSample::MultiPoolSample (const std::string& fname) {
 } 
 
 
-MultiPoolSample::MultiPoolSample (const long size): m_noofpools (1) {
-
-	Prepare();
-
-} 
+MultiPoolSample::MultiPoolSample (const long size): m_noofpools (1) { Prepare(); }
 
 
 IO::Status MultiPoolSample::Populate (const std::string& fname) {
@@ -34,8 +30,8 @@ IO::Status MultiPoolSample::Populate (const std::string& fname) {
 
 	m_helper = di.Data();
 
-	if (GetNoOfPools() != di.Size()) {
-		cout << "Error in MultiPoolSample::Populate() - exchange vector does not fit number of pools" << endl;
+	if (GetNoOfPools() != sqrt(di.Size())) {
+		cout << "Error in MultiPoolSample::Populate() - exchange matrix does not fit number of pools" << endl;
 		return IO::UNMATCHED_DIMENSIONS;
 	}
 
