@@ -379,22 +379,21 @@ void Bloch_McConnell_CV_Model::InitSolver    () {
     ((bmnvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ*m_ncomp);
 	
     // loop over pools, stepsize NEQ
-    int poolVal = 0;
-    for ( int i = 0; i< m_ncomp*NEQ; i+=NEQ ){
+    for ( int i = 0, pool=0; i< m_ncomp*NEQ; i+=NEQ, pool++ ){
 
-    	if (fabs(m_world->Values[ncoprops*poolVal+M0])<BEPS){
+    	if (fabs(m_world->Values[ncoprops*pool+M0])<BEPS){
 
     		NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,XC+i )  = ATOL1;
 			NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,ZC+i )  = ATOL3;
 
     	} else{
 
-	  		NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,XC+i )  = ATOL1*m_world->Values[ncoprops*poolVal+M0];
-			NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,ZC+i )  = ATOL3*m_world->Values[ncoprops*poolVal+M0];
+	  		NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,XC+i )  = ATOL1*m_world->Values[ncoprops*pool+M0];
+			NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,ZC+i )  = ATOL3*m_world->Values[ncoprops*pool+M0];
 		}
 
 		NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,YC+i ) = ATOL2;
-		poolVal++;
+		pool++;
 
     }
 	
