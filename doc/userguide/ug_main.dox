@@ -18,27 +18,31 @@
 /**
  \page ug_getit  Get it
 \n
-Get the latest version of JEMRIS:
+Get the latest stable version of JEMRIS:
 \n
 <table border="0">
  <tr><td> \li \subpage ug_downl   <td> &emsp;&emsp; <td> sources or binary packages
  <tr><td> \li \subpage ug_install   <td> &emsp;&emsp; <td> instructions to build JEMRIS on your own
 </table>
-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
+\n 
+Additionally, you can clone the JEMRIS project from <a href="https://github.com/JEMRIS/jemris">GitHub</a>.
+\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
 */
 
 /**
  \page ug_downl  Download
-
+\n
+Download the latest stable version of JEMRIS. (Alternativaly, the most recent version is on <a href="https://github.com/JEMRIS/jemris">GitHub</a>.)
+\n
 <ul>
-        <li> <b> Sources </b>
+        <li> <b> Sources </b> 
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z.tar.gz">jemris-X.Y.Z.tar.gz</a>
                 <li> md5sum: M5XXX
                 <li> shasum: SHXXX
              </ul>
 
-        <li> <b> Ubuntu Binary </b>
+        <li> <b> Ubuntu 16.04 Binary </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z-Linux.deb">jemris-X.Y.Z-Linux.deb</a>
                 <li> md5sum: M5YYY
@@ -186,6 +190,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\n
 \n
 
 \section ug_contact Contact
+
+We finally opened a <a href="https://groups.google.com/forum/?hl=en-gb#!forum/jemris"><b>discussion group on Google</b></a>.
+Please ask all questions related to JEMRIS there.
+\n
+\n
+
+\section ug_developers Developers
 
 JEMRIS is developed and maintained by ...
 

@@ -126,8 +126,10 @@ void World::SetNoOfCompartments (int n) {
 
 	m_noofspincompartments = n;
 
-    if (solution.empty())
+    if (solution.size() < 3*n) {
+    	solution.clear();
         solution.resize(m_noofspincompartments * 3);
+    }
 
 }
    

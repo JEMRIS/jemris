@@ -35,8 +35,8 @@ IO::Status MultiPoolSample::Populate (const std::string& fname) {
 		return IO::UNMATCHED_DIMENSIONS;
 	}
 
-    cout << "MPsample: #Pools= " << GetNoOfPools() << " , SampleDims=" << GetSampleDimsSize() << " , SampleProps= " << GetNProps() << " , SampleSize=" << GetSize()
-		 << " , ExMatDim=" << GetHelperSize() << " , ExMat[0]=" << m_helper.at(0) << endl << endl;
+//    cout << "MPsample: #Pools= " << GetNoOfPools() << " , SampleDims=" << GetSampleDimsSize() << " , SampleProps= " << GetNProps() << " , SampleSize=" << GetSize()
+//		 << " , ExMatDim=" << GetHelperSize() << " , ExMat[0]=" << m_helper.at(0) << endl << endl;
 
 	m_noofpools = GetNoOfPools(); /*  this number is not used anywhere! (?) */
 

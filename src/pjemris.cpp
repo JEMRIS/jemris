@@ -133,7 +133,9 @@ int main (int argc, char *argv[]) {
              <<"\n\n";
 		cout << "Model    : " << psim->GetAttr(psim->GetElem("model"),  "name")<< "\t  , solver = "
 		     << psim->GetAttr(psim->GetElem("model"), "type")  << endl;
-		cout << "Sample   : " << psim->GetAttr(psim->GetElem("sample"), "name")<< "\t  , spins  = " << World::instance()->TotalSpinNumber  << endl;
+		cout << "Sample   : " << psim->GetAttr(psim->GetElem("sample"), "name")<< "\t  , spins  = " << World::instance()->TotalSpinNumber;
+		if (pW->m_noofspincompartments > 1) cout << ", pools = " << pW->m_noofspincompartments;
+		cout  << endl;
 		cout << "TxArray  : " << psim->GetAttr(psim->GetElem("TXcoilarray"), "uri") << endl;
 		cout << "RxArray  : " << psim->GetAttr(psim->GetElem("RXcoilarray"), "uri") << endl;
 		cout << "Sequence : " << psim->GetAttr(psim->GetElem("sequence"),"uri")<< endl;

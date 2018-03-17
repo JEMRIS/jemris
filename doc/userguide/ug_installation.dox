@@ -34,18 +34,18 @@ The boost C++ libraries are used for the evaluation of elliptical integration te
 
 Note that all libraries above are mandatory for compiling JEMRIS (runtime and development versions need to be present)
 
-Download the JEMRIS source package from [http://www.jemris.org/download.html] and unpacke the tar ball.
+Download the JEMRIS source package from \ref ug_downl and unpack the tar ball.
 
 JEMRIS is built in a similiar way as many open source software packages.
 
-Installation with \c cmake (recommended)
+Installation with \c cmake 
 \li \c <b>"# cd jemris-X.X"</b>
 \li \c <b>"# mkdir build; cd build; cmake .."</b>
 \li \c <b>"# make"</b>
 \li \c <b>"# ctest -V"</b>
 \li \c <b>"# make install"</b>
 
-Installation with \c automake (deprecated)
+Installation with \c automake
 \li \c <b>"# cd jemris-X.X"</b>
 \li \c <b>"# ./configure"</b>
 \li \c <b>"# make"</b>
