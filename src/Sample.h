@@ -132,6 +132,14 @@ struct Ensemble {
 	
 
 	/**
+		 * @brief       Clear data store and dimensions.
+		 */
+		inline void ResizeDims (const size_t ndim) {
+			m_dims.resize(ndim);
+		};
+
+
+	/**
 	 * @brief  Initialize data store with dimensions and number of non-zero spins
 	 *
 	 * @param  ndim Number of dimensions
@@ -217,12 +225,23 @@ struct Ensemble {
 	}
 
 	/**
-	 * @brief       Dimensions
+	 * @brief       get Dimensions
 	 *
-	 * @return      Dimensions of the ensemble
+	 * @return      get Dimensions of the ensemble
 	 */
 	inline const vector<size_t> Dims () const {
 		return m_dims;
+	}
+
+
+	/**
+	 * @brief       set Dimensions
+	 *
+	 * @param      set Dimensions of the ensemble
+	 */
+	inline void SetDims (vector<size_t> d ) {
+		m_dims.resize(d.size());
+		for (int i=0;i<d.size();i++) m_dims[i]=d[i];
 	}
 
 
@@ -357,6 +376,22 @@ class Sample {
      * @return number of sample dimensions
      */
     inline vector<size_t> GetSampleDims () const {return m_ensemble.Dims();};
+
+    /**
+     * Get number of sample dimensions
+     *
+     * @return number of sample dimensions
+     */
+    inline void SetSampleDims (vector<size_t> d)  {m_ensemble.SetDims(d);};
+
+    /**
+	 * @brief       Dimensions
+	 *
+	 * @return      Dimensions of the ensemble
+	 */
+	inline const int GetSampleDimsSize () const { return m_ensemble.Dims().size(); }
+
+
 
     /**
      * Get a subset of this sample
@@ -500,6 +535,8 @@ class Sample {
 	
 	void    CreateHelper (const size_t l);
 	
+	void    CreateDims (const size_t l);
+
 	void    CopyHelper (double* out);
 
 	virtual void CropEnumerate ();

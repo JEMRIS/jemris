@@ -30,33 +30,26 @@ Get the latest version of JEMRIS:
 /**
  \page ug_downl  Download
 
-We have two small favours to ask:\n
-\n
-Please, let us know that you are downloading jemris by sending an E-Mail to
-<a href="mailto:tony.stoecker@dzne.de?subject=jemris download">Tony Stoecker</a>.
-In return, we will keep you up to date of updates and bug fixes.
-\n
-And please, help us with improving the software by announcing bugs.
 <ul>
         <li> <b> Sources </b>
              <ul>
-                <li> <a href="../get/jemris-X.Y.Z-src.tar.gz">jemris-X.Y.Z-src.tar.gz</a>
-                <li> md5sum: XXX
-                <li> shasum: XXX
+                <li> <a href="../get/jemris-X.Y.Z.tar.gz">jemris-X.Y.Z.tar.gz</a>
+                <li> md5sum: M5XXX
+                <li> shasum: SHXXX
              </ul>
 
         <li> <b> Ubuntu Binary </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z-Linux.deb">jemris-X.Y.Z-Linux.deb</a>
-                <li> md5sum: XXX
-                <li> shasum: XXX
+                <li> md5sum: M5YYY
+                <li> shasum: SHYYY
              </ul>
 
         <li> <b> Mac Binary </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z.mpkg.zip">jemris-X.Y.Z.mpkg.zip</a>
-                <li> md5sum: XXX
-                <li> shasum: XXX
+                <li> md5sum: M5ZZZ
+                <li> shasum: SHZZZ
                  \n<b>Note:</b>\n
                 <li> Parallel jemris requires the MPICH library from <a href="https://brew.sh/">Homebrew</a>
              </ul>
@@ -64,8 +57,8 @@ And please, help us with improving the software by announcing bugs.
         <li> <b> Windows Binary </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z.msi">jemris-X.Y.Z.msi</a>
-                <li> md5sum: XXX
-                <li> shasum: XXX
+                <li> md5sum: M5WWW
+                <li> shasum: SHWWW
                  \n<b>Note:</b>\n
                  <li> Parallel jemris requires <a href="http://www.mcs.anl.gov/research/projects/mpich2/downloads/tarballs/1.4.1p1/mpich2-1.4.1p1-win-ia32.msi">MPICH2 IA32 1.4.1p1</a>.<br/>
                  <li> <a href="ug_mpiwin.html">Install guide</a> for Windows Vista, 7 &amp; 8.

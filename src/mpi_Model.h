@@ -39,6 +39,7 @@ using namespace std;
 #include "Signal.h"
 #include "Declarations.h"
 #include "Sample.h"
+#include "MultiPoolSample.h"
 
 #ifdef HAVE_MPI_THREADS
 	#include <pthread.h>
@@ -178,9 +179,13 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 	MPI_Bcast    (&NProps, 1, MPI_LONG, 0, MPI_COMM_WORLD);
 
 	long hsize = pSam->GetHelperSize();
-
 	MPI_Bcast    (&hsize, 1, MPI_LONG, 0, MPI_COMM_WORLD);
 	MPI_Bcast    (pSam->GetHelper(), hsize, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+	long dsize = pSam->GetSampleDimsSize();
+	MPI_Bcast    (&dsize, 1, MPI_LONG, 0, MPI_COMM_WORLD);
+	MPI_Bcast    (&(pSam->GetSampleDims()[0]), dsize, MPI_INT, 0, MPI_COMM_WORLD);
+
 	int csize = pSam->GetNoSpinCompartments();
 	MPI_Bcast    (&csize , 1, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -287,11 +292,12 @@ void mpi_devide_and_send_sample (Sample* pSam, CoilArray* RxCA ) {
 Sample* mpi_receive_sample(int sender, int tag){
 
 	long NPoints;
+	World* pW = World::instance();
+	Sample* pSam;
 
 	// get number of spins:
 	int nospins;
 	MPI_Scatter(NULL,1,MPI_INT,&nospins,1,MPI_INT,0, MPI_COMM_WORLD);
-	Sample* pSam = new Sample();
 
     	//MODIF
 	long TotalSpinNumber=0,beginTraj=0;
@@ -299,7 +305,7 @@ Sample* mpi_receive_sample(int sender, int tag){
 	MPI_Status status;
 	MPI_Recv(&TotalSpinNumber,1,MPI_LONG,0,SEND_TOTAL_NO_SPINS,MPI_COMM_WORLD,&status);
 	MPI_Recv(&beginTraj,1,MPI_LONG,0,SEND_BEGIN_SPIN,MPI_COMM_WORLD,&status);
-	World::instance()->setTrajLoading(beginTraj,TotalSpinNumber);
+	pW->setTrajLoading(beginTraj,TotalSpinNumber);
 	int num_traj=beginTraj;
 	//cout<<World::instance()->m_myRank<<" Received spins index information:  "<<TotalSpinNumber<<"  "<<num_traj<<endl;
 	//MODIF***
@@ -309,21 +315,41 @@ Sample* mpi_receive_sample(int sender, int tag){
 	//get number of physical properties per spin
 	long NProps;
 	MPI_Bcast    (&NProps,1,MPI_LONG,0, MPI_COMM_WORLD);
-	
+
+	cout << "!!! " << NProps << endl;
+	if (NProps < 10)
+		pSam = new Sample();
+	else
+		pSam = new MultiPoolSample ();
+
+
 	pSam->CreateSpins(NProps, NPoints);
 
+/* >> required for multi-pool samples with exchange*/
 	long hsize = 0;
 	MPI_Bcast (&hsize, 1, MPI_LONG,0, MPI_COMM_WORLD);
 
 	pSam->CreateHelper(hsize);
 	MPI_Bcast  (pSam->GetHelper(),(int)hsize,MPI_DOUBLE,0, MPI_COMM_WORLD);
-	
+
+	long dsize = 0;
+	MPI_Bcast (&dsize, 1, MPI_LONG,0, MPI_COMM_WORLD);
+
+	pSam->CreateDims(dsize);
+	MPI_Bcast  (&(pSam->GetSampleDims()[0]),(int)dsize,MPI_INT,0, MPI_COMM_WORLD);
+
 	int csize = 0;
 	MPI_Bcast (&csize, 1, MPI_INT,0, MPI_COMM_WORLD);
 
 	pSam->SetNoSpinCompartments(csize);
-	World::instance()->SetNoOfSpinProps(pSam->GetNProps());
-	World::instance()->SetNoOfCompartments(csize);
+	pW->SetNoOfSpinProps(pSam->GetNProps());
+	pW->SetNoOfCompartments(csize);
+	pW->InitHelper(pSam->GetHelperSize());
+	pSam->GetHelper( pW->Helper() );
+
+	/* << required for multi-pool samples with exchange*/
+
+	//cout <<endl<< "hostname:  "<< " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  NProps=" << NProps << ":  hsize=" << hsize << " , csize=" << csize << endl << flush;
 
 	MPI_Datatype MPI_SPINDATA = MPIspindata();
 	// get sample:
@@ -337,7 +363,11 @@ Sample* mpi_receive_sample(int sender, int tag){
 	//cout <<endl<< "hostname"<< " -> slave " << setw(2) << MPI::COMM_WORLD.Get_rank() << ":  received "
 	//     << NPoints << " spins for simulation ..." << endl << flush;
     //MODIF***
-
+/*
+	cout << endl << "SLAVE: " << setw(2) << MPI::COMM_WORLD.Get_rank()
+		 << " , #Pools= " << pSam->GetNoSpinCompartments() << " , SampleDims=" << pSam->GetSampleDimsSize() << " , SampleProps= " << pSam->GetNProps() << " , FirstPackageSize=" << pSam->GetSize()
+		 << " , ExMatDim=" << pSam->GetHelperSize() <<  endl << endl;
+*/
 	return pSam;
 
 }
@@ -352,6 +382,9 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	World* pW 	= World::instance();
 	int myRank 	= pW->m_myRank;
 	int NoSpins = 0;
+
+	//backup dimensions
+	vector<size_t> d = samp->GetSampleDims();
 
 	// request new spins:
 	MPI_Send(&myRank,1,MPI_INT,0,REQUEST_SPINS,MPI_COMM_WORLD);
@@ -379,6 +412,9 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	// prepare sample structure
 	samp->ClearSpins();
 	samp->CreateSpins(NoSpins);
+	samp->SetSampleDims(d);
+
+
 	
 	// Receive
 	MPI_Datatype MPI_SPINDATA = MPIspindata();
@@ -390,7 +426,11 @@ bool mpi_recieve_sample_paket(Sample *samp, CoilArray* RxCA ){
 	//     << NoSpins << " spins for simulation ..." << endl << flush;
     //pW->setTrajLoading(myRank,NoSpins);
     //MODIF***
-
+/*
+	cout << endl << "SLAVE: " << setw(2) << MPI::COMM_WORLD.Get_rank()
+		 << " , #Pools= " << samp->GetNoSpinCompartments() << " , SampleDims=" << samp->GetSampleDimsSize() << " , SampleProps= " << samp->GetNProps() << " , NextPackageSize=" << samp->GetSize()
+		 << " , ExMatDim=" << samp->GetHelperSize() <<  endl << endl;
+// */
 	return true;
 
 }

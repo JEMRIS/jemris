@@ -171,6 +171,7 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
 		Mz[pool] = NV_Ith_S(y,ZC+i);
      }
 
+
  	for (int i = 0, pool=0; i< (ncomp)*NEQ; i+=NEQ, pool++) {		// loop over pools, NEQ steps
 
   	    double r1 = pW->Values[pool*ncoprops + R1];
@@ -357,7 +358,6 @@ void Bloch_McConnell_CV_Model::InitSolver    () {
 	for (int i = 0; i < m_ncomp; i++) { m0s[i] = m_world->Values[ncoprops*i+M0]; if (m0s[i] > 0.0) n++;	}
 	m_bmaux.Init(m_ncomp); 
 	m_bmaux.single  = (n==1);
-
 
 	//Compute local exchange rates and return them in member matrix
 	LocalExchangeRates (m_world->Helper(), m_bmaux.exrates, m0s, m_ncomp);

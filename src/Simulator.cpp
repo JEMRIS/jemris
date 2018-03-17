@@ -125,8 +125,8 @@ void Simulator::SetSample         (std::string fsample) {
 void      Simulator::SetSample      (Sample* sample) {
 
 	m_sample = sample;
-	//re-setting of model and simulation-parameters
-	SetModel("CVODE");
+	m_world->SetNoOfCompartments(m_sample->GetNoSpinCompartments());
+	SetModel();
 	SetParameter();
 
 }

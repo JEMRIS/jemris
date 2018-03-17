@@ -154,7 +154,6 @@ int main (int argc, char *argv[]) {
 
 	//SLAVES: receives the (sub)sample, Simulate model, then sends (sub)signal(s) of each coil
 	if ( my_rank != master) {
-
 		Sample* dummy = new Sample(0);
 		psim->SetSample(dummy);
 		Mpi2Evolution::OpenFiles ((int) psim->GetSample()->IsRestart());

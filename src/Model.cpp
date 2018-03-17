@@ -80,10 +80,6 @@ void Model::Solve() {
         //get current spin properties
         m_sample->GetValues(lSpin, m_world->Values);
 
-		// Get helper size, initialise and fill.
-		//m_world->InitHelper(m_sample->GetHelperSize());
-		//m_sample->GetHelper(m_world->Helper());
-
         //check for activation
         DynamicVariables*  dynvar = DynamicVariables::instance();
         dynvar->SetActivation();
@@ -100,17 +96,17 @@ void Model::Solve() {
 		//	cout <<"im Model solution initatilsation" << " Mz "<< m_world->solution[2+i*3]<<" Mx " << m_world->solution[0+i*3]<< " My "<< m_world->solution[1+i*3]<< endl;
 		}
 
-        //off-resonance from the sample
+     //off-resonance from the sample
         m_world->deltaB = m_sample->GetDeltaB();
 
         //update progress counter
         if (m_do_dump_progress)
 		 	UpdateProcessCounter(lSpin);
 
-        //Solve while running down the sequence tree
+       //Solve while running down the sequence tree
         RunSequenceTree(dTime, lIndex, m_concat_sequence);
 
-        //dump restart info:
+       //dump restart info:
         DumpRestartInfo(lSpin);
 
     }

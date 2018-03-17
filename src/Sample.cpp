@@ -125,6 +125,14 @@ void Sample::CreateHelper (const size_t l) {
 
 }
 
+/**********************************************************/
+void Sample::CreateDims (const size_t l) {
+
+	if (l > 0)
+		m_ensemble.ResizeDims(l);
+
+}
+
 
 /**********************************************************/
 Sample::Sample (const size_t size) {
