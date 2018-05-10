@@ -175,6 +175,20 @@ function Sample=getShape(VA)
                  end
                 end
                 if length(VA)<11, fname=sprintf('sphere_%d.bin',length(L)); end
+            case 'shepp-logan'
+                A=fliplr(phantom(round(dim(1)/2))');
+                A(A<eps)=0;
+                for i=1:6
+                 if length(VA)>3+i
+                 eval([S{i},'=VA{4+i}(1);']);
+                 end
+                 if i>1
+                    eval([S{i},'=',S{i},'*A;']);
+                 else
+                    eval([S{i},'=A.^',S{i},';']);
+                 end
+                end
+
             otherwise
                 error('unknown pre-defined sample string')
         end

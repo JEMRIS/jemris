@@ -1,31 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="7.1.1" version="10.3" Modules="simple" RootPath="." Language="en" Id="{201DA530-5716-4C1E-BDFD-14C382E61BDA}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="7.1.1" version="10.6" Modules="simple" RootPath="." Language="en" Id="{201DA530-5716-4C1E-BDFD-14C382E61BDA}">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiValidationComponent">
     <ROW Table="File" Column="Sequence" MinValue="1" MaxValue="2147483647" Description="Sequence with respect to the media images; order must track cabinet order." Options="0" ColumnType="3" ColumnIndex="7" ColumnSize="4" MsiKey="File#Sequence"/>
     <ROW Table="Media" Column="LastSequence" MinValue="0" MaxValue="2147483647" Description="File sequence number for the last file for this media." Options="0" ColumnType="3" ColumnIndex="1" ColumnSize="4" MsiKey="Media#LastSequence"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
+    <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_ThemeStyle" Value="default" MultiBuildValue="DefaultBuild:classic" MsiKey="AI_ThemeStyle"/>
     <ROW Property="ALLUSERS" Value="2"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName] [|ProductVersion]." ValueLocId="*"/>
-    <ROW Property="ARPCONTACT" Value="k.vahedipour@fz-juelich.de"/>
-    <ROW Property="ARPHELPLINK" Value="http://www.jemris.org/contact.shtml"/>
+    <ROW Property="ARPCONTACT" Value="tony.stoecker@dzne.de"/>
+    <ROW Property="ARPHELPLINK" Value="http://www.jemris.org"/>
     <ROW Property="ARPURLINFOABOUT" Value="http://www.jemris.org"/>
-    <ROW Property="ARPURLUPDATEINFO" Value="http://www.jemris.org/jemris/win32"/>
+    <ROW Property="ARPURLUPDATEINFO" Value="http://www.jemris.org"/>
     <ROW Property="CTRLS" Value="1"/>
     <ROW Property="Manufacturer" Value="DZNE" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{C56F1397-2FE2-49B9-A646-839B460B3840} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{A9370B60-450C-439E-8441-71ACC87E3426} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="jemris" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="2.6" Type="32"/>
+    <ROW Property="ProductVersion" Value="2.8.2" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{ADFD01A5-8C5C-4375-93A0-A0482133D6BA}"/>
     <ROW Property="VIEWREADME" Value="1" Type="4"/>
     <ROW Property="WIMinVersion" MultiBuildValue="DefaultBuild:2.0" ValueLocId="-"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows NT 4.0, Windows NT 4.0 Service Pack 1, Windows NT 4.0 Service Pack 2, Windows NT 4.0 Service Pack 3, Windows NT 4.0 Service Pack 4, Windows NT 4.0 Service Pack 5, Windows NT 4.0 Service Pack 6, Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows NT 4.0, Windows 2000" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4, Windows 8.1 x86" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT40" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT40Display" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows 2000, Windows 8.1 x86" ValueLocId="-"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
@@ -39,66 +42,70 @@
     <ROW Component="Path" ComponentId="{06A1A60B-161D-429C-8E72-CF6B2D2C8281}" Directory_="APPDIR" Attributes="4" KeyPath="Path_1"/>
     <ROW Component="README.win" ComponentId="{2B920DA4-98B7-410A-BB7F-A0AC597B6B53}" Directory_="APPDIR" Attributes="0" KeyPath="README.win" Type="0"/>
     <ROW Component="jemris.exe" ComponentId="{BD622C7B-1503-485E-A8B7-BDFC8BCBF212}" Directory_="APPDIR" Attributes="0" KeyPath="jemris.exe"/>
-    <ROW Component="libgcc_s_dw21.dll" ComponentId="{8556E1F6-1FA3-456B-90A8-A5948030B9B0}" Directory_="APPDIR" Attributes="0" KeyPath="libgcc_s_dw21.dll"/>
-    <ROW Component="libstdc6.dll" ComponentId="{0FCBC34B-61F3-419E-B4CF-AD61E1421118}" Directory_="APPDIR" Attributes="0" KeyPath="libstdc6.dll"/>
     <ROW Component="mod.xml" ComponentId="{99C6E5D9-6711-474F-AF39-5017014D7080}" Directory_="Simulation_DIR" Attributes="0" KeyPath="mod.xml" Type="0"/>
     <ROW Component="pjemris.exe" ComponentId="{00C20557-A8DC-44C1-BD35-517DC475BC34}" Directory_="APPDIR" Attributes="0" KeyPath="pjemris.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Attributes="0" Components="JEMRIS_txrx.fig Path README.win jemris.exe libgcc_s_dw21.dll libstdc6.dll mod.xml pjemris.exe"/>
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Attributes="0" Components="JEMRIS_txrx.fig Path README.win jemris.exe mod.xml pjemris.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="Contents.m" Component_="JEMRIS_txrx.fig" FileName="Contents.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\Contents.m" SelfReg="false" NextFile="getAllModules.m"/>
-    <ROW File="JEMRIS_seq.fig" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~2.fig|JEMRIS_seq.fig" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\JEMRIS_seq.fig" SelfReg="false" NextFile="JEMRIS_seq.m"/>
-    <ROW File="JEMRIS_seq.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~2.m|JEMRIS_seq.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\JEMRIS_seq.m" SelfReg="false" NextFile="JEMRIS_sim.fig"/>
-    <ROW File="JEMRIS_sim.fig" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~3.fig|JEMRIS_sim.fig" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\JEMRIS_sim.fig" SelfReg="false" NextFile="JEMRIS_sim.m"/>
-    <ROW File="JEMRIS_sim.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~3.m|JEMRIS_sim.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\JEMRIS_sim.m" SelfReg="false" NextFile="mod.xml"/>
-    <ROW File="JEMRIS_txrx.fig" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~1.fig|JEMRIS_txrx.fig" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\JEMRIS_txrx.fig" SelfReg="false" NextFile="JEMRIS_txrx.m"/>
-    <ROW File="JEMRIS_txrx.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~1.m|JEMRIS_txrx.m" Attributes="0" SourcePath="..\..\..\Program Files (x86)\jemris\matlab\JEMRIS_txrx.m" SelfReg="false" NextFile="MNIbrain.mat"/>
-    <ROW File="MNIbrain.mat" Component_="JEMRIS_txrx.fig" FileName="MNIbrain.mat" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\MNIbrain.mat" SelfReg="false" NextFile="MNIdeltaB.mat"/>
-    <ROW File="MNIdeltaB.mat" Component_="JEMRIS_txrx.fig" FileName="MNIdel~1.mat|MNIdeltaB.mat" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\MNIdeltaB.mat" SelfReg="false" NextFile="ModuleIcons.mat"/>
-    <ROW File="ModuleIcons.mat" Component_="JEMRIS_txrx.fig" FileName="Module~1.mat|ModuleIcons.mat" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\ModuleIcons.mat" SelfReg="false" NextFile="parseXMLseq.m"/>
-    <ROW File="README.txt" Component_="mod.xml" FileName="README.txt" Attributes="0" SourcePath="JEMRIS\share\windows\README.txt" SelfReg="false" NextFile="jempath.m"/>
-    <ROW File="README.win" Component_="README.win" FileName="README.txt" Attributes="0" SourcePath="JEMRIS\share\windows\README.txt" SelfReg="false" NextFile="JEMRIS_txrx.fig"/>
-    <ROW File="ThreePulses.xml" Component_="mod.xml" FileName="ThreeP~1.xml|ThreePulses.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\examples\ThreePulses.xml" SelfReg="false" NextFile="pjemris.exe"/>
-    <ROW File="analytic.xml" Component_="mod.xml" FileName="analytic.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\examples\analytic.xml" SelfReg="false" NextFile="epi.xml"/>
-    <ROW File="brainSample.m" Component_="JEMRIS_txrx.fig" FileName="brainS~1.m|brainSample.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\brainSample.m" SelfReg="false" NextFile="calcBfromXi.m"/>
-    <ROW File="calcBfromXi.m" Component_="JEMRIS_txrx.fig" FileName="calcBf~1.m|calcBfromXi.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\calcBfromXi.m" SelfReg="false" NextFile="changeSeqAttributes.m"/>
-    <ROW File="changeSeqAttributes.m" Component_="JEMRIS_txrx.fig" FileName="change~1.m|changeSeqAttributes.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\changeSeqAttributes.m" SelfReg="false" NextFile="changeSeqTree.m"/>
-    <ROW File="changeSeqTree.m" Component_="JEMRIS_txrx.fig" FileName="change~2.m|changeSeqTree.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\changeSeqTree.m" SelfReg="false" NextFile="Contents.m"/>
-    <ROW File="chext.xml" Component_="mod.xml" FileName="1chext.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\examples\1chext.xml" SelfReg="false" NextFile="chheadcyl.xml"/>
-    <ROW File="chheadcyl.xml" Component_="mod.xml" FileName="8chhea~1.xml|8chheadcyl.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\examples\8chheadcyl.xml" SelfReg="false" NextFile="analytic.xml"/>
-    <ROW File="epi.xml" Component_="mod.xml" FileName="epi.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\examples\epi.xml" SelfReg="false" NextFile="extpulses.h5"/>
-    <ROW File="extpulses.h5" Component_="mod.xml" FileName="extpul~1.h5|extpulses.h5" Attributes="0" SourcePath="JEMRIS\share\examples\extpulses.h5" SelfReg="false" NextFile="extpulses.xml"/>
-    <ROW File="extpulses.xml" Component_="mod.xml" FileName="extpul~1.xml|extpulses.xml" Attributes="0" SourcePath="JEMRIS\share\examples\extpulses.xml" SelfReg="false" NextFile="gre.xml"/>
-    <ROW File="getAllModules.m" Component_="JEMRIS_txrx.fig" FileName="getAll~1.m|getAllModules.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\getAllModules.m" SelfReg="false" NextFile="JEMRIS_seq.fig"/>
-    <ROW File="gre.xml" Component_="mod.xml" FileName="gre.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\examples\gre.xml" SelfReg="false" NextFile="radial.xml"/>
-    <ROW File="jempath.m" Component_="mod.xml" FileName="jempath.m" Attributes="0" SourcePath="JEMRIS\share\windows\jempath.m" SelfReg="false" NextFile="tse.xml"/>
-    <ROW File="jemris.exe" Component_="jemris.exe" FileName="jemris.exe" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\bin\jemris.exe" SelfReg="false" NextFile="libstdc6.dll" DigSign="true"/>
-    <ROW File="libgcc_s_dw21.dll" Component_="libgcc_s_dw21.dll" FileName="libgcc~1.dll|libgcc_s_dw2-1.dll" Attributes="0" SourcePath="..\..\..\MinGW\bin\libgcc_s_dw2-1.dll" SelfReg="false" NextFile="uniform.xml"/>
-    <ROW File="libstdc6.dll" Component_="libstdc6.dll" FileName="libstd~1.dll|libstdc++-6.dll" Attributes="0" SourcePath="..\..\..\MinGW\bin\libstdc++-6.dll" SelfReg="false" NextFile="libgcc_s_dw21.dll"/>
-    <ROW File="mod.xml" Component_="mod.xml" FileName="mod.xml" Attributes="0" SourcePath="JEMRIS\share\windows\mod.xml" SelfReg="false" NextFile="README.txt"/>
-    <ROW File="parseXMLseq.m" Component_="JEMRIS_txrx.fig" FileName="parseX~1.m|parseXMLseq.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\parseXMLseq.m" SelfReg="false" NextFile="pbs_script.sh"/>
-    <ROW File="pbs_script.sh" Component_="JEMRIS_txrx.fig" FileName="pbs_sc~1.sh|pbs_script.sh" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\pbs_script.sh" SelfReg="false" NextFile="plotCoils.m"/>
-    <ROW File="pjemris.exe" Component_="pjemris.exe" FileName="pjemris.exe" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\bin\pjemris.exe" SelfReg="false" NextFile="jemris.exe" DigSign="true"/>
-    <ROW File="plotCoils.m" Component_="JEMRIS_txrx.fig" FileName="plotCo~1.m|plotCoils.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\plotCoils.m" SelfReg="false" NextFile="plotsensitivity.m"/>
-    <ROW File="plotSeqTree.m" Component_="JEMRIS_txrx.fig" FileName="plotSe~2.m|plotSeqTree.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\plotSeqTree.m" SelfReg="false" NextFile="plotsim.m"/>
-    <ROW File="plotsensitivity.m" Component_="JEMRIS_txrx.fig" FileName="plotse~1.m|plotsensitivity.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\plotsensitivity.m" SelfReg="false" NextFile="plotseq.m"/>
-    <ROW File="plotseq.m" Component_="JEMRIS_txrx.fig" FileName="plotseq.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\plotseq.m" SelfReg="false" NextFile="plotSeqTree.m"/>
-    <ROW File="plotsim.m" Component_="JEMRIS_txrx.fig" FileName="plotsim.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\plotsim.m" SelfReg="false" NextFile="readEvol.m"/>
-    <ROW File="radial.xml" Component_="mod.xml" FileName="radial.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\examples\radial.xml" SelfReg="false" NextFile="sli_sel.xml"/>
-    <ROW File="readEvol.m" Component_="JEMRIS_txrx.fig" FileName="readEvol.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\readEvol.m" SelfReg="false" NextFile="seqcad_uitoolbar.m"/>
-    <ROW File="seqcad_uitoolbar.m" Component_="JEMRIS_txrx.fig" FileName="seqcad~1.m|seqcad_uitoolbar.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\seqcad_uitoolbar.m" SelfReg="false" NextFile="userSample.mat"/>
-    <ROW File="sli_sel.xml" Component_="mod.xml" FileName="sli_sel.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\examples\sli_sel.xml" SelfReg="false" NextFile="ThreePulses.xml"/>
-    <ROW File="tse.xml" Component_="mod.xml" FileName="tse.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\examples\tse.xml" SelfReg="false" NextFile="chext.xml"/>
-    <ROW File="uniform.xml" Component_="mod.xml" FileName="uniform.xml" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\uniform.xml" SelfReg="false"/>
-    <ROW File="userSample.mat" Component_="JEMRIS_txrx.fig" FileName="userSa~1.mat|userSample.mat" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\userSample.mat" SelfReg="false" NextFile="writeSample.m"/>
-    <ROW File="writeSample.m" Component_="JEMRIS_txrx.fig" FileName="writeS~1.m|writeSample.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\writeSample.m" SelfReg="false" NextFile="writeXMLseq.m"/>
-    <ROW File="writeXMLseq.m" Component_="JEMRIS_txrx.fig" FileName="writeX~1.m|writeXMLseq.m" Attributes="0" SourcePath="..\..\..\MinGW\msys\1.0\local\share\jemris\matlab\writeXMLseq.m" SelfReg="false" NextFile="brainSample.m"/>
+    <ROW File="Contents.m" Component_="JEMRIS_txrx.fig" FileName="Contents.m" Attributes="0" SourcePath="matlab\Contents.m" SelfReg="false" NextFile="getAllModules.m"/>
+    <ROW File="JEMRIS_ContainerSequence.fig" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~4.fig|JEMRIS_ContainerSequence.fig" Attributes="0" SourcePath="matlab\JEMRIS_ContainerSequence.fig" SelfReg="false" NextFile="JEMRIS_ContainerSequence.m"/>
+    <ROW File="JEMRIS_ContainerSequence.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~4.m|JEMRIS_ContainerSequence.m" Attributes="0" SourcePath="matlab\JEMRIS_ContainerSequence.m" SelfReg="false" NextFile="uniform.xml_1"/>
+    <ROW File="JEMRIS_seq.fig" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~2.fig|JEMRIS_seq.fig" Attributes="0" SourcePath="matlab\JEMRIS_seq.fig" SelfReg="false" NextFile="JEMRIS_seq.m"/>
+    <ROW File="JEMRIS_seq.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~2.m|JEMRIS_seq.m" Attributes="0" SourcePath="matlab\JEMRIS_seq.m" SelfReg="false" NextFile="JEMRIS_sim.fig"/>
+    <ROW File="JEMRIS_sim.fig" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~3.fig|JEMRIS_sim.fig" Attributes="0" SourcePath="matlab\JEMRIS_sim.fig" SelfReg="false" NextFile="JEMRIS_sim.m"/>
+    <ROW File="JEMRIS_sim.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~3.m|JEMRIS_sim.m" Attributes="0" SourcePath="matlab\JEMRIS_sim.m" SelfReg="false" NextFile="mod.xml"/>
+    <ROW File="JEMRIS_txrx.fig" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~1.fig|JEMRIS_txrx.fig" Attributes="0" SourcePath="matlab\JEMRIS_txrx.fig" SelfReg="false" NextFile="JEMRIS_txrx.m"/>
+    <ROW File="JEMRIS_txrx.m" Component_="JEMRIS_txrx.fig" FileName="JEMRIS~1.m|JEMRIS_txrx.m" Attributes="0" SourcePath="matlab\JEMRIS_txrx.m" SelfReg="false" NextFile="MNIbrain.mat"/>
+    <ROW File="MNIbrain.mat" Component_="JEMRIS_txrx.fig" FileName="MNIbrain.mat" Attributes="0" SourcePath="matlab\MNIbrain.mat" SelfReg="false" NextFile="MNIdeltaB.mat"/>
+    <ROW File="MNIdeltaB.mat" Component_="JEMRIS_txrx.fig" FileName="MNIdel~1.mat|MNIdeltaB.mat" Attributes="0" SourcePath="matlab\MNIdeltaB.mat" SelfReg="false" NextFile="ModuleIcons.mat"/>
+    <ROW File="ModuleIcons.mat" Component_="JEMRIS_txrx.fig" FileName="Module~1.mat|ModuleIcons.mat" Attributes="0" SourcePath="matlab\ModuleIcons.mat" SelfReg="false" NextFile="parseXMLseq.m"/>
+    <ROW File="README.txt" Component_="mod.xml" FileName="README.txt" Attributes="0" SourcePath="README.txt" SelfReg="false" NextFile="jempath.m"/>
+    <ROW File="README.win" Component_="README.win" FileName="README.txt" Attributes="0" SourcePath="README.txt" SelfReg="false" NextFile="JEMRIS_txrx.fig"/>
+    <ROW File="ThreePulses.xml" Component_="mod.xml" FileName="ThreeP~1.xml|ThreePulses.xml" Attributes="0" SourcePath="examples\ThreePulses.xml" SelfReg="false" NextFile="pjemris.exe"/>
+    <ROW File="analytic.xml" Component_="mod.xml" FileName="analytic.xml" Attributes="0" SourcePath="examples\analytic.xml" SelfReg="false" NextFile="epi.xml"/>
+    <ROW File="brainSample.m" Component_="JEMRIS_txrx.fig" FileName="brainS~1.m|brainSample.m" Attributes="0" SourcePath="matlab\brainSample.m" SelfReg="false" NextFile="calcBfromXi.m"/>
+    <ROW File="calcBfromXi.m" Component_="JEMRIS_txrx.fig" FileName="calcBf~1.m|calcBfromXi.m" Attributes="0" SourcePath="matlab\calcBfromXi.m" SelfReg="false" NextFile="changeSeqAttributes.m"/>
+    <ROW File="changeSeqAttributes.m" Component_="JEMRIS_txrx.fig" FileName="change~1.m|changeSeqAttributes.m" Attributes="0" SourcePath="matlab\changeSeqAttributes.m" SelfReg="false" NextFile="changeSeqTree.m"/>
+    <ROW File="changeSeqTree.m" Component_="JEMRIS_txrx.fig" FileName="change~2.m|changeSeqTree.m" Attributes="0" SourcePath="matlab\changeSeqTree.m" SelfReg="false" NextFile="Contents.m"/>
+    <ROW File="chext.xml" Component_="mod.xml" FileName="1chext.xml" Attributes="0" SourcePath="examples\1chext.xml" SelfReg="false" NextFile="chheadcyl.xml"/>
+    <ROW File="chheadcyl.xml" Component_="mod.xml" FileName="8chhea~1.xml|8chheadcyl.xml" Attributes="0" SourcePath="examples\8chheadcyl.xml" SelfReg="false" NextFile="analytic.xml"/>
+    <ROW File="cs_epiro.xml" Component_="mod.xml" FileName="cs_epiro.xml" Attributes="0" SourcePath="examples\cs_epiro.xml" SelfReg="false" NextFile="cs_sls.xml"/>
+    <ROW File="cs_sls.xml" Component_="mod.xml" FileName="cs_sls.xml" Attributes="0" SourcePath="examples\cs_sls.xml" SelfReg="false" NextFile="sens.h5"/>
+    <ROW File="epi.xml" Component_="mod.xml" FileName="epi.xml" Attributes="0" SourcePath="examples\epi.xml" SelfReg="false" NextFile="gre.xml"/>
+    <ROW File="epi_modular.xml" Component_="mod.xml" FileName="epi_mo~1.xml|epi_modular.xml" Attributes="0" SourcePath="examples\epi_modular.xml" SelfReg="false" NextFile="cs_epiro.xml"/>
+    <ROW File="ext_gx.h5" Component_="mod.xml" FileName="ext_gx.h5" Attributes="0" SourcePath="examples\ext_gx.h5" SelfReg="false" NextFile="ext_rf.h5"/>
+    <ROW File="ext_rf.h5" Component_="mod.xml" FileName="ext_rf.h5" Attributes="0" SourcePath="examples\ext_rf.h5" SelfReg="false" NextFile="extpulses.xml"/>
+    <ROW File="extpulses.xml" Component_="mod.xml" FileName="extpul~1.xml|extpulses.xml" Attributes="0" SourcePath="examples\extpulses.xml" SelfReg="false" NextFile="epi_modular.xml"/>
+    <ROW File="getAllModules.m" Component_="JEMRIS_txrx.fig" FileName="getAll~1.m|getAllModules.m" Attributes="0" SourcePath="matlab\getAllModules.m" SelfReg="false" NextFile="JEMRIS_seq.fig"/>
+    <ROW File="gre.xml" Component_="mod.xml" FileName="gre.xml" Attributes="0" SourcePath="examples\gre.xml" SelfReg="false" NextFile="radial.xml"/>
+    <ROW File="jempath.m" Component_="mod.xml" FileName="jempath.m" Attributes="0" SourcePath="jempath.m" SelfReg="false" NextFile="tse.xml"/>
+    <ROW File="jemris.exe" Component_="jemris.exe" FileName="jemris.exe" Attributes="0" SourcePath="jemris.exe" SelfReg="false" NextFile="uniform.xml" DigSign="true"/>
+    <ROW File="mod.xml" Component_="mod.xml" FileName="mod.xml" Attributes="0" SourcePath="mod.xml" SelfReg="false" NextFile="README.txt"/>
+    <ROW File="parseXMLseq.m" Component_="JEMRIS_txrx.fig" FileName="parseX~1.m|parseXMLseq.m" Attributes="0" SourcePath="matlab\parseXMLseq.m" SelfReg="false" NextFile="plotCoils.m"/>
+    <ROW File="pjemris.exe" Component_="pjemris.exe" FileName="pjemris.exe" Attributes="0" SourcePath="pjemris.exe" SelfReg="false" NextFile="jemris.exe" DigSign="true"/>
+    <ROW File="plotCoils.m" Component_="JEMRIS_txrx.fig" FileName="plotCo~1.m|plotCoils.m" Attributes="0" SourcePath="matlab\plotCoils.m" SelfReg="false" NextFile="plotsensitivity.m"/>
+    <ROW File="plotSeqTree.m" Component_="JEMRIS_txrx.fig" FileName="plotSe~2.m|plotSeqTree.m" Attributes="0" SourcePath="matlab\plotSeqTree.m" SelfReg="false" NextFile="plotsim.m"/>
+    <ROW File="plotsensitivity.m" Component_="JEMRIS_txrx.fig" FileName="plotse~1.m|plotsensitivity.m" Attributes="0" SourcePath="matlab\plotsensitivity.m" SelfReg="false" NextFile="plotseq.m"/>
+    <ROW File="plotseq.m" Component_="JEMRIS_txrx.fig" FileName="plotseq.m" Attributes="0" SourcePath="matlab\plotseq.m" SelfReg="false" NextFile="plotSeqTree.m"/>
+    <ROW File="plotsim.m" Component_="JEMRIS_txrx.fig" FileName="plotsim.m" Attributes="0" SourcePath="matlab\plotsim.m" SelfReg="false" NextFile="readEvol.m"/>
+    <ROW File="radial.xml" Component_="mod.xml" FileName="radial.xml" Attributes="0" SourcePath="examples\radial.xml" SelfReg="false" NextFile="sli_sel.xml"/>
+    <ROW File="radial2.xml" Component_="mod.xml" FileName="radial2.xml" Attributes="0" SourcePath="examples\radial2.xml" SelfReg="false" NextFile="JEMRIS_ContainerSequence.fig"/>
+    <ROW File="readEvol.m" Component_="JEMRIS_txrx.fig" FileName="readEvol.m" Attributes="0" SourcePath="matlab\readEvol.m" SelfReg="false" NextFile="seqcad_uitoolbar.m"/>
+    <ROW File="sens.h5" Component_="mod.xml" FileName="sens.h5" Attributes="0" SourcePath="examples\sens.h5" SelfReg="false" NextFile="radial2.xml"/>
+    <ROW File="seqcad_uitoolbar.m" Component_="JEMRIS_txrx.fig" FileName="seqcad~1.m|seqcad_uitoolbar.m" Attributes="0" SourcePath="matlab\seqcad_uitoolbar.m" SelfReg="false" NextFile="userSample.mat"/>
+    <ROW File="sli_sel.xml" Component_="mod.xml" FileName="sli_sel.xml" Attributes="0" SourcePath="examples\sli_sel.xml" SelfReg="false" NextFile="ThreePulses.xml"/>
+    <ROW File="tse.xml" Component_="mod.xml" FileName="tse.xml" Attributes="0" SourcePath="examples\tse.xml" SelfReg="false" NextFile="chext.xml"/>
+    <ROW File="uniform.xml" Component_="mod.xml" FileName="uniform.xml" Attributes="0" SourcePath="matlab\uniform.xml" SelfReg="false" NextFile="ext_gx.h5"/>
+    <ROW File="uniform.xml_1" Component_="JEMRIS_txrx.fig" FileName="uniform.xml" Attributes="0" SourcePath="matlab\uniform.xml" SelfReg="false"/>
+    <ROW File="userSample.mat" Component_="JEMRIS_txrx.fig" FileName="userSa~1.mat|userSample.mat" Attributes="0" SourcePath="matlab\userSample.mat" SelfReg="false" NextFile="writeSample.m"/>
+    <ROW File="writeSample.m" Component_="JEMRIS_txrx.fig" FileName="writeS~1.m|writeSample.m" Attributes="0" SourcePath="matlab\writeSample.m" SelfReg="false" NextFile="writeXMLseq.m"/>
+    <ROW File="writeXMLseq.m" Component_="JEMRIS_txrx.fig" FileName="writeX~1.m|writeXMLseq.m" Attributes="0" SourcePath="matlab\writeXMLseq.m" SelfReg="false" NextFile="brainSample.m"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="..\..\..\Temp" Languages="en" InstallationType="4"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder=".." Languages="en" InstallationType="4"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
@@ -121,9 +128,6 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
-    <ATTRIBUTE name="FixedSizeBitmaps" value="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="FolderDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
@@ -151,6 +155,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
+    <ROW Action="AI_DpiContentScale" Type="1" Source="aicustact.dll" Target="DpiContentScale"/>
     <ROW Action="AI_InstallModeCheck" Type="1" Source="aicustact.dll" Target="UpdateInstallMode" WithoutSeq="true"/>
     <ROW Action="AI_PREPARE_UPGRADE" Type="65" Source="aicustact.dll" Target="PrepareUpgrade"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="65" Source="aicustact.dll" Target="RestoreLocation"/>
@@ -159,8 +164,8 @@
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
     <ROW Action="AI_ViewReadme" Type="1" Source="aicustact.dll" Target="[#README.win]"/>
-    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]"/>
-    <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
+    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder][ProductName]"/>
+    <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]" MultiBuildTarget="DefaultBuild:[StartupFolder]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
@@ -173,16 +178,18 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
-    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="53"/>
+    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="52"/>
+    <ROW Action="AI_DpiContentScale" Sequence="51"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
-    <ROW Condition="( Version9X OR VersionNT64 OR ( VersionNT AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &gt;= 1))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 1))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 2))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 3))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 4))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 5))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 6))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &gt;= 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 2))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 3))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 4))) ) )" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNTDisplay]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="( Version9X OR VersionNT64 OR ( VersionNT AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &gt;= 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 2))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 3))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 4))) AND ((VersionNT &lt;&gt; 603) OR ((VersionNT = 603) AND (ServicePackLevel &gt;= 1)) OR VersionNT64) ) )" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNTDisplay]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]" DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionMsi &gt;= WIMinVersion" Description="[ProductName] cannot be installed on systems with Windows Installer version smaller than [WIMinVersion]" DescriptionLocId="AI.LaunchCondition.WI" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegsComponent">
-    <ROW Registry="Path_1" Root="2" Key="Software\[Manufacturer]\[ProductName]" Name="Path" Value="[APPDIR]" Component_="Path"/>
+    <ROW Registry="Path_1" Root="2" Key="Software\[ProductName]" Name="Path" Value="[APPDIR]" Component_="Path"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
     <ATTRIBUTE name="UsedTheme" value="classic"/>

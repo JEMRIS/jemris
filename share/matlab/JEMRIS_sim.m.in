@@ -140,7 +140,7 @@ C={'Sample','Signal','k-Space','k-Space (Phase)','Image','Image (phase)'};
 set(handles.showLeft,'String',C);
 C={'Signal','k-Space','k-Space (Phase)','Image','Image (phase)','Evolution'};
 set(handles.showRight,'String',C);
-C={'2D sphere','2D 2-spheres','1D column','brain','user defined'};
+C={'2D sphere','2D 2-spheres','1D column','shepp-logan','brain','user defined'};
 set(handles.Sample,'String',C);
 set(handles.EPI_L,'Visible','off');
 set(handles.EPI_R,'Visible','off');
@@ -304,13 +304,19 @@ function Sample_Callback(hObject, eventdata, handles)
         handles.sample.M0=[1 0.5];handles.sample.R=[50 4];handles.sample.DxDy=1;
         handles.sim.R2P=0;handles.sim.CSF=1;
         M0str='M0'; CSstr='CS [rad/sec]'; SSstr='Length [mm]/Blocks'; T1str='T1 [ms]';  T2str='T2 [ms]'; T2Sstr='T2* [ms]';
-   case 4 %brain
+   case 4 %shepp-logan
+        bv1='on';bv2='on';
+        handles.sample.T1=600;handles.sample.T2=400;handles.sample.T2S=400;handles.sample.CS=0;
+        handles.sample.M0=0.25;handles.sample.R=100;handles.sample.DxDy=1;
+        handles.sim.R2P=0;handles.sim.CSF=1;
+        M0str='M0 ^'; CSstr='CS x'; SSstr='matrix size [mm]'; T1str='T1 x';  T2str='T2 x'; T2Sstr='T2* x';
+   case 5 %brain
         bv1='off';bv2='on';
         set(handles.SusceptTag,'Value',0,'Visible','on');
         handles.sample.T1=1;handles.sample.T2=1;handles.sample.T2S=1;handles.sample.CS=1;
         handles.sample.M0=1;handles.sample.R=90;handles.sample.DxDy=1;
         M0str='M0 x'; CSstr='CS x'; SSstr='slice(s) [1st,last]'; T1str='T1 x';  T2str='T2 x'; T2Sstr='T2* x';
-   case 5 %user defined
+   case 6 %user defined
        bv1='off';bv2='off';
        M0str=''; CSstr=''; SSstr=''; T1str='';  T2str=''; T2Sstr='';
  end
@@ -331,14 +337,14 @@ function Sample_Callback(hObject, eventdata, handles)
  set(handles.setGrid,'String',num2str(handles.sample.DxDy),'Visible',bv2);
 
  %user defined sample
- if Nsample==5;
+ if Nsample==6;
      [FileName,PathName] = uigetfile('*.mat','Select the Sample Mat file');
      if FileName==0,return;end
      handles.UserSample=load(FileName);
  end
 
  %brain slice(s)
- if Nsample==4; handles.UserSample=brainSample(handles); end
+ if Nsample==5; handles.UserSample=brainSample(handles); end
 
  %redraw sample
  handles=write_simu_xml(handles,1);
