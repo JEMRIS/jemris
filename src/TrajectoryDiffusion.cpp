@@ -317,7 +317,7 @@ void TrajectoryDiffusion::LoadFile(string filename) {
             			}
         			}
 					if (haveDist) {
-						string Ratio = GetAttr(element,"RadiusRatioAxonToNeuron");
+						string Ratio = GetAttr(element,"SetAxonToNeuronRadiusRatio");
 						double ratio=1;
 						if (Ratio.empty()) {
 							cout <<"'SetAxonToNeuronRadiusRatio' not set in XML file. Using default. ";
