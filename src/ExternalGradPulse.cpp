@@ -46,7 +46,7 @@ bool              ExternalGradPulse::Prepare     (const PrepareMode mode)   {
 
 	m_pulse_data.SetInterp(m_interp);
 
-	if ( btag && m_tpoi.GetSize()>0 ) m_area = GetAreaNumeric(m_tpoi.GetSize());
+	if ( btag && m_tpoi.GetSize()>0 ) m_area = GetAreaNumeric(100*m_tpoi.GetSize());
 
 	btag = ( GradPulse::Prepare(mode) && btag);
     
