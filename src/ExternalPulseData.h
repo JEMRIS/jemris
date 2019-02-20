@@ -90,6 +90,13 @@ class ExternalPulseData {
      */
     void     SetTPOIs();
 
+
+	/**
+	 * @brief find data index for interpolation
+	 * get lower index for given timepoint using hunt search algorithm.
+	 */
+	int GetLowerIndex(double time);
+
     static double GetPhase (Module* mod, double time );
 
     Pulse* m_pulse;               /**<@brief My pulse*/
@@ -99,6 +106,7 @@ class ExternalPulseData {
     vector<double> m_phases;      /**< @brief Vector of phases                                 */
     double	m_phase;			  /**< @brief current phase                                    */
     bool	m_interp;			  /**< @brief if true, linear interpolation is applied         */
+    int m_LastHuntIndex;
 };
 
 #endif /*_EXTERNALPULSEDATA_H*/
