@@ -43,7 +43,7 @@ ExternalPulseData::ExternalPulseData ()  {
 /***********************************************************/
 double  ExternalPulseData::GetData (double const time)  {
 
-  //if (time < 0.0 || time > m_pulse->GetDuration() ) return 0.0;
+  if (time < 0.0 || time > m_pulse->GetDuration() ) return 0.0;
 
   double scale = *((double*) m_pulse->GetAttribute("Scale")->GetAddress() );
 
