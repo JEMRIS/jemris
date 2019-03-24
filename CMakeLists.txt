@@ -45,6 +45,7 @@ include (OptimizeForArchitecture)
 # C++ flags ---------------------------------------------------------------------
 # THis should be highly discouraged as it directly sets the compiler flags - this should be handled by cmake to allow
 # proper RELEASE, DEBUG, ... builds
+set(CMAKE_CXX_COMPILER "mpic++")
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi -DTIXML_USE_STL -fPIC -O3") 
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -114,7 +115,7 @@ if (NOT DEFINED HDF5_CXX_LIBRARIES)
    LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_hdf5_hl_LIBRARY})
 endif(NOT DEFINED HDF5_CXX_LIBRARIES)
 
-include_directories (${HDF5_CXX_INCLUDE_DIR})
+include_directories (${HDF5_INCLUDE_DIR})
 
 # Is this here really necessary?
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
@@ -150,9 +151,6 @@ set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "JEMRIS is a general purpose MRI simulato
 
 # DEB
 set (CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
-set (CPACK_DEBIAN_PACKAGE_DEPENDS "ginac-tools, mpich, libsundials-serial (>= 2.5.0), libxerces-c3.1 (>= 3.1.1), hdf5-tools")
-
-# RPM
-set (CPACK_RPM_PACKAGE_REQUIRES "hdf5, ginac, xerces-c")
+set (CPACK_DEBIAN_PACKAGE_DEPENDS "ginac-tools, openmpi, libsundials-serial (>= 2.5.0), libxerces-c3.1 (>= 3.1.1), hdf5-tools")
 
 include (CPack)
