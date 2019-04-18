@@ -1,0 +1,6 @@
+<CoilArray>
+   <BIOTSAVARTLOOP Azimuth="0" Dim="2" Extent="256" Name="C1" Points="64" Polar="90" Radius="100" XPos="256" YPos="0" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="90" Dim="2" Extent="256" Name="C3" Points="64" Polar="90" Radius="100" XPos="0" YPos="256" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="180" Dim="2" Extent="256" Name="C5" Points="64" Polar="90" Radius="100" XPos="-256" YPos="0" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="270" Dim="2" Extent="256" Name="C7" Points="64" Polar="90" Radius="100" XPos="0" YPos="-256" ZPos="0"/>
+   </CoilArray>

@@ -1,0 +1,11 @@
+<Parameters FOVx="512" FOVy="512" Name="P" Nx="128" Ny="128" TE="50" TR="100">
+   <ConcatSequence Name="C1" Repetitions="1">
+      <ATOMICSEQUENCE Name="A1">
+         <HARDRFPULSE Duration="0.1" FlipAngle="90" Name="P1" Symmetry=""/></ATOMICSEQUENCE>
+      <ATOMICSEQUENCE Name="A3">
+         <ANALYTICGRADPULSE ADCs="" Axis="GX" Diff="1" Duration="a1" Name="P3" Observe="P,TR/P,Nx/P,FOVx" Shape="T/a1*cos(a2/32*T)*a3/512"/>
+         <ANALYTICGRADPULSE Axis="GY" Diff="1" Duration="a1" Name="P4" Observe="P,TR/P,Ny/P,FOVy" Shape="T/a1*sin(a2/32*T)*a3/512"/>
+         <EMPTYPULSE ADCs="a2*a2" Axis="NONE" Duration="a1" Name="P5" Observe="P3,Duration/P,Nx" Shape="sqrt(T)"/>
+      </ATOMICSEQUENCE>
+   </ConcatSequence>
+</Parameters>

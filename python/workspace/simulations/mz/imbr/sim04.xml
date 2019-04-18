@@ -1,0 +1,8 @@
+<simulate name="JEMRIS">
+  <sequence name="gre_mp_mr.xml" uri="/home/user/python/jemris/jemris/workspace/sequences/mz/imbr/gre_mp_mr.xml"/>
+  <RXcoilarray name="8chheadcyl_64x64.xml" uri="/home/user/python/jemris/jemris/workspace/arrays/8chheadcyl_64x64.xml"/>
+  <sample name="revolver.h5" uri="/home/user/python/jemris/jemris/workspace/phantoms/revolver.h5"/>
+  <TXcoilarray name="uniform.xml" uri="/home/user/python/jemris/jemris/workspace/arrays/uniform.xml"/>
+  <model name="Bloch" type="CVODE"/>
+  <parameter ConcomitantFields="0" EvolutionPrefix="evol" EvolutionSteps="0" RandomNoise="0"/>
+</simulate>

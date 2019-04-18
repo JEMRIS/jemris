@@ -1,0 +1,15 @@
+<Parameters FOVx="128" FOVy="128" FOVz="1" Name="P" Nx="32" Ny="32" Nz="1" TE="10" TR="500">
+   <ConcatSequence Name="C" Observe="" Repetitions="17"><ATOMICSEQUENCE Name="A1">
+         <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" InitialPhase="a1*(a1+1)*50" Name="P1" Observe="C,Counter/C,Repetitions/P,FOVx"/>
+      </ATOMICSEQUENCE>
+      <ATOMICSEQUENCE Aux1="" Aux2="" Aux3="" Azimut="a1" Inclination="a2" Name="A2" Observe="A3,Azimut/A3,Inclination/A3,RotAngle" RotAngle="a3">
+         <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P2" Observe="P3,Area"/>
+      </ATOMICSEQUENCE>
+      <ATOMICSEQUENCE Aux1="" Azimut="a1*180*(3-sqrt(5))" Inclination="(2*a1-a2)/a2*45" Name="A3" Observe="C,Counter/C,Repetitions" RotAngle="180">
+         <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="8" Name="P3" Observe="P,KMAXx/P,Nx" PhaseLock="1"/>
+      </ATOMICSEQUENCE>
+      <ATOMICSEQUENCE Azimut="a1" Inclination="a2" Name="A4" Observe="A3,Azimut/A3,Inclination/A3,RotAngle" RotAngle="a3">
+         <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P4" Observe="P3,Area" Vector=""/>
+      </ATOMICSEQUENCE>
+      <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D1" Observe="P,TR" StartSeq="A1"/>
+   </ConcatSequence></Parameters>

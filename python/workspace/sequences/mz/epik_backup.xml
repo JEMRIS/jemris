@@ -1,0 +1,37 @@
+<Parameters FOVx="256" FOVy="256" GradMaxAmpl="2" GradSlewRate="10" Name="P" Nx="64" Ny="64" TE="50" TR="100">
+   <ConcatSequence Name="C1" Repetitions="3">
+      <ATOMICSEQUENCE Name="A1">
+         <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" Name="P1"/>
+      </ATOMICSEQUENCE>
+      <ATOMICSEQUENCE Name="A2">
+         <TRAPGRADPULSE Area="-0.5*abs(a1)" Axis="GX" Name="P2" Observe="P4,Area"/>
+         <TRAPGRADPULSE Area="a1-a2*a3" Axis="GY" Name="P3" Observe="P,KMAXy/C1,Counter/P,DKy"/>
+      </ATOMICSEQUENCE>
+      <DELAYATOMICSEQUENCE Delay="a1" DelayType="C2C" Name="D1" Observe="P,TE" StartSeq="A1" StopSeq="C2"/>
+      <ConcatSequence Aux3="" Name="C2" Observe="P,Ny/C3,Repetitions/C1,Repetitions" Repetitions="(a1-a2)/a3/2+1">
+         <ATOMICSEQUENCE Name="A3">
+            <TRAPGRADPULSE ADCs="a3" Axis="GX" FlatTopArea="2*a1*(-1)^a2" FlatTopTime="1" Name="P4" Observe="P,KMAXx/C2,Counter/P,Nx"/>
+         </ATOMICSEQUENCE>
+         <ATOMICSEQUENCE Aux1="" Name="A4">
+            <TRAPGRADPULSE ADCs="" Area="ite(1+a2,a3,-a1*(a4-a5),-a1*a4)" Axis="GY" Name="P5" Observe="P,DKy/C2,Counter/C2,Repetitions/C1,Repetitions/C1,Counter"/>
+         </ATOMICSEQUENCE>
+      </ConcatSequence>
+      <ConcatSequence Name="C3" Observe="P,Ny/C1,Repetitions" Repetitions="10">
+         <ATOMICSEQUENCE Name="A5">
+            <TRAPGRADPULSE ADCs="a3" Axis="GX" FlatTopArea="2*a1*(-1)^a2*(-1)^a4" FlatTopTime="1" Name="P6" Observe="P,KMAXx/C3,Counter/P,Nx/C2,Repetitions"/>
+         </ATOMICSEQUENCE>
+         <ATOMICSEQUENCE Aux1="" Name="A6">
+            <TRAPGRADPULSE Area="ite(1+a2,a3,-a1*(a4-a5),-a1)" Axis="GY" Name="P7" Observe="P,DKy/C3,Counter/C3,Repetitions/C1,Repetitions/C1,Counter"/>
+         </ATOMICSEQUENCE>
+      </ConcatSequence>
+      <ConcatSequence Name="C4" Observe="C2,Repetitions" Repetitions="a1">
+         <ATOMICSEQUENCE Name="A7">
+            <TRAPGRADPULSE ADCs="a3" Axis="GX" FlatTopArea="2*a1*(-1)^a2*(-1)^a4" FlatTopTime="1" Name="P8" Observe="P,KMAXx/C4,Counter/P,Nx/C3,Repetitions"/>
+         </ATOMICSEQUENCE>
+         <ATOMICSEQUENCE Aux1="" Name="A8">
+            <TRAPGRADPULSE Area="ite(1+a2,a3,0,-a1)*a4" Axis="GY" Name="P9" Observe="P,DKy/C4,Counter/C4,Repetitions/C1,Repetitions"/>
+         </ATOMICSEQUENCE>
+      </ConcatSequence>
+      <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>
+   </ConcatSequence>
+</Parameters>

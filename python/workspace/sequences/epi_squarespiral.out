@@ -1,0 +1,16 @@
+
+jemris 2.8.1 (d5b2c2d5)
+
+dump of sequence tree
+                          TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
+                          ----------------------------------------------------------------- |  ---------------
+sequence-root-------->   CONCAT       CONCATSEQUENCE       C1   100.000     4160      4679  |  Repetitions = 1
+  |_ child 1   ------>     ATOM       ATOMICSEQUENCE       A1     0.100        0         3  | 
+    |_ child 1   ---->    PULSE          HARDRFPULSE       P1     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,1e+16,0,0.5) 
+  |_ child 2   ------>   CONCAT       CONCATSEQUENCE       C2    67.160     4160      4674  |  Repetitions = 65
+    |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A2     1.010       64        68  | 
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P2     1.010       64        68  |  Axis = GX  , Area = 0.994561 , FlatTop: (Area,time)= (0.984615,0.99)
+    |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A3     1.010       64        68  | 
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P3     1.010       64        68  |  Axis = GY  , Area = 0.994561 , FlatTop: (Area,time)= (0.984615,0.99)
+  |_ child 3   ------>     ATOM  DELAYATOMICSEQUENCE       D2    32.740        0         2  |  DelayType = B2E  , StartSeq = A1 , Delay = 100
+    |_ child 1   ---->    PULSE           EMPTYPULSE    eP_D2    32.740        0         2  |  Axis = none 

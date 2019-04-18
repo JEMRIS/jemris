@@ -1,0 +1,39 @@
+
+jemris 2.8.1 (d5b2c2d5)
+
+P4::SetShape() warning: requested FlatTopTime too short for this TrapGradPulse.
+
+ warning in Prepare(1) of TRAPGRADPULSE P4
+P6::SetShape() warning: requested FlatTopTime too short for this TrapGradPulse.
+
+ warning in Prepare(1) of TRAPGRADPULSE P6
+
+!!! warning in Prepare(1) of sequence TSE
+
+dump of sequence tree
+                            TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
+                            ----------------------------------------------------------------- |  ---------------
+sequence-root---------->   CONCAT       CONCATSEQUENCE      TSE 32000.000    10240     17304  |  Repetitions = 1
+  |_ child 1   -------->   CONCAT       CONCATSEQUENCE        O 32000.000    10240     17304  |  Repetitions = 32
+    |_ child 1   ------>     ATOM       ATOMICSEQUENCE       A1     0.100        0         3  | 
+      |_ child 1   ---->    PULSE          HARDRFPULSE       P1     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,1e+16,0,0.5) 
+    |_ child 2   ------>     ATOM       ATOMICSEQUENCE       A6     1.780        0         6  | 
+      |_ child 1   ---->    PULSE        TRAPGRADPULSE       P2     1.780        0         4  |  Axis = GX  , Area = 0.787362
+      |_ child 2   ---->    PULSE        TRAPGRADPULSE       P3     0.200        0         4  |  Axis = GY  , Area = -0.736311
+    |_ child 3   ------>     ATOM  DELAYATOMICSEQUENCE       D1     5.620        0         2  |  DelayType = B2E  , StartSeq = A1 , Delay = 7.5
+      |_ child 1   ---->    PULSE           EMPTYPULSE    eP_D1     5.620        0         2  |  Axis = none 
+    |_ child 4   ------>   CONCAT       CONCATSEQUENCE        I   155.300      320       530  |  Repetitions = 10
+      |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A2     1.020        0         4  | 
+        |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     1.020        0         4  |  Axis = GX  , Area = -1.01 , FlatTop: (Area,time)= (-1,1)
+      |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A3     0.100        0         3  | 
+        |_ child 1   -->    PULSE          HARDRFPULSE       P5     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (180,90,1e+16,0,0.5) 
+      |_ child 3   ---->     ATOM       ATOMICSEQUENCE       A4     1.020        0         4  | 
+        |_ child 1   -->    PULSE        TRAPGRADPULSE       P6     1.020        0         4  |  Axis = GX  , Area = -1.01 , FlatTop: (Area,time)= (-1,1)
+      |_ child 4   ---->     ATOM       ATOMICSEQUENCE       A5     4.020       32        36  | 
+        |_ child 1   -->    PULSE        TRAPGRADPULSE       P7     4.020       32        36  |  Axis = GX  , Area = 1.57472 , FlatTop: (Area,time)= (1.5708,4)
+      |_ child 5   ---->     ATOM       ATOMICSEQUENCE       A7     0.350        0         4  | 
+        |_ child 1   -->    PULSE        TRAPGRADPULSE      P3b     0.350        0         4  |  Axis = GY  , Area = -1.47262
+      |_ child 6   ---->     ATOM  DELAYATOMICSEQUENCE       D2     9.000        0         2  |  DelayType = C2C  , StartSeq = A2 , StopSeq = A7 , Delay = 15
+        |_ child 1   -->    PULSE           EMPTYPULSE    eP_D2     9.000        0         2  |  Axis = none 
+    |_ child 5   ------>     ATOM  DELAYATOMICSEQUENCE       D4   837.200        0         2  |  DelayType = B2E  , StartSeq = A1 , Delay = 1000
+      |_ child 1   ---->    PULSE           EMPTYPULSE    eP_D4   837.200        0         2  |  Axis = none 

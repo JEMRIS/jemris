@@ -1,0 +1,8 @@
+<simulate name="JEMRIS">
+  <sequence name="epik.xml" uri="/home/user/python/jemris/jemris/sequences/mz/epik.xml"/>
+  <RXcoilarray uri="/home/user/python/jemris/jemris/arrays/uniform.xml"/>
+  <sample name="sphere.h5" uri="/home/user/python/jemris/jemris/phantoms/sphere.h5" R2Trajectory="/home/user/python/jemris/jemris/simulations/syun/bold/r2_bold2.txt" ActiveCircles="0 50 0 5 0 25 0 5 0 0 0 5 0 -25 0 5 0 -50 0 5"/>
+  <TXcoilarray uri="/home/user/python/jemris/jemris/arrays/uniform.xml"/>
+  <model name="Bloch" type="CVODE"/>
+  <parameter ConcomitantFields="0" EvolutionPrefix="evol" EvolutionSteps="0" RandomNoise="0"/>
+</simulate>

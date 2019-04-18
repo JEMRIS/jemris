@@ -1,0 +1,8 @@
+<simulate name="JEMRIS">
+  <sequence name="epi.xml" uri="/home/user/python/jemris/jemris/workspace/sequences/epi.xml"/>
+  <RXcoilarray name="8chheadcyl_mod.xml" uri="/home/user/python/jemris/jemris/workspace/arrays/8chheadcyl_mod.xml"/>
+  <sample MotionTrajectory="/home/user/python/jemris/jemris/workspace/simulations/motion/traj_smooth.dat" name="sphere.h5" uri="/home/user/python/jemris/jemris/workspace/phantoms/sphere.h5"/>
+  <TXcoilarray name="uniform.xml" uri="/home/user/python/jemris/jemris/workspace/arrays/uniform.xml"/>
+  <model name="Bloch" type="CVODE"/>
+  <parameter ConcomitantFields="0" EvolutionPrefix="evol" EvolutionSteps="0" RandomNoise="0"/>
+</simulate>

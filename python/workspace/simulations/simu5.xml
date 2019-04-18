@@ -1,0 +1,8 @@
+<simulate name="JEMRIS">
+  <sequence name="spiral01.xml" uri="/home/user/python/jemris/jemris/workspace/sequences/spiral01.xml"/>
+  <RXcoilarray name="uniform.xml" uri="/home/user/python/jemris/jemris/workspace/arrays/uniform.xml"/>
+  <sample name="sphere.h5" uri="/home/user/python/jemris/jemris/workspace/phantoms/sphere.h5"/>
+  <TXcoilarray name="uniform.xml" uri="/home/user/python/jemris/jemris/workspace/arrays/uniform.xml"/>
+  <model name="Bloch" type="CVODE"/>
+  <parameter ConcomitantFields="0" EvolutionPrefix="evol" EvolutionSteps="0" RandomNoise="0"/>
+</simulate>

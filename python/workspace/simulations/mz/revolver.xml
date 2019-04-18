@@ -1,0 +1,8 @@
+<simulate name="JEMRIS">
+  <sequence name="cartesian01_hr.xml" uri="/home/user/python/jemris/jemris/sequences/cartesian01_hr.xml"/>
+  <RXcoilarray uri="/home/user/python/jemris/jemris/arrays/uniform.xml"/>
+  <sample name="revolver.h5" uri="/home/user/python/jemris/jemris/phantoms/revolver.h5"/>
+  <TXcoilarray uri="/home/user/python/jemris/jemris/arrays/uniform.xml"/>
+  <model name="Bloch" type="CVODE"/>
+  <parameter ConcomitantFields="0" EvolutionPrefix="evol" EvolutionSteps="0" RandomNoise="0"/>
+</simulate>

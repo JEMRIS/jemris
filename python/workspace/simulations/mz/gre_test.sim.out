@@ -1,0 +1,15 @@
+
+Parallel jemris 2.8.1 (d5b2c2d5)
+
+Model    : Bloch	  , solver = CVODE
+Sample   : brain80.h5	  , spins  = 26863
+TxArray  : /home/user/python/jemris/jemris/workspace/arrays/uniform.xml
+RxArray  : /home/user/python/jemris/jemris/workspace/arrays/uniform.xml
+Sequence : /home/user/python/jemris/jemris/workspace/sequences/QUTE_hr.xml
+
+Restart files found. Resuming calculation.
+
+
+MNB -> Master Process: send MR sample (26863 spins) to 7 slave(s)
+
+Simulating |                                                    |   1% doneSimulating | *                                                  |   2% doneSimulating | *                                                  |   3% doneSimulating | **                                                 |   4% done

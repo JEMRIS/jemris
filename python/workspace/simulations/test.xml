@@ -1,0 +1,8 @@
+<simulate name="JEMRIS">
+  <sequence name="" uri=""/>
+  <RXcoilarray name="" uri=""/>
+  <sample ActiveCircles="0 50 0 5 0 25 0 5 0 0 0 5 0 -25 0 5 0 -50 0 5" MotionTrajectory="/home/user/python/jemris/jemris/simulations/motion/traj_smooth.dat" R2Trajectory="/home/user/python/jemris/jemris/simulations/r2/r2_bold1.txt" name="" uri=""/>
+  <TXcoilarray name="" uri=""/>
+  <model name="Bloch" type="CVODE"/>
+  <parameter ConcomitantFields="0" EvolutionPrefix="evol" EvolutionSteps="0" RandomNoise="0"/>
+</simulate>

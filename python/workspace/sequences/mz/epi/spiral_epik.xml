@@ -1,0 +1,11 @@
+<Parameters FOVx="256" FOVy="256" Name="P" Nx="128" Ny="128" TE="10" TR="2000">
+   <ConcatSequence Name="C1" Repetitions="4">
+      <ATOMICSEQUENCE Name="A1">
+         <HARDRFPULSE Duration="0.1" FlipAngle="90" Name="P1" Symmetry=""/></ATOMICSEQUENCE>
+      <ATOMICSEQUENCE Name="A3" Observe="C1,Counter/C1,Repetitions" RotAngle="a1*360/a2">
+         <ANALYTICGRADPULSE ADCs="" Axis="GX" Diff="1" Duration="2*a1" Name="P3" Observe="P,TE/P,Nx/P,FOVx" Shape="(T/a1)^2*cos(a2/32*T)*a3/512"/>
+         <ANALYTICGRADPULSE Axis="GY" Diff="1" Duration="2*a1" Name="P4" Observe="P,TE/P,Ny/P,FOVy" Shape="(T/a1)^2*sin(a2/32*T)*a3/512"/>
+         <EMPTYPULSE ADCs="a2*a2" Axis="NONE" Duration="a1" Name="P5" Observe="P3,Duration/P,Nx" Shape="sqrt(T)"/>
+      </ATOMICSEQUENCE>
+   <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D1" Observe="P,TR" StartSeq="A1"/></ConcatSequence>
+</Parameters>
