@@ -461,7 +461,7 @@ class kSpaceTrajPlotter(object):
 
         # Color background
         self.fig.set_facecolor(bgc)
-        ax.set_axis_bgcolor(bgc)
+        ax.set_facecolor(bgc)
 
         # Transparent background
         if view3d:
