@@ -11,10 +11,10 @@ To run this gui, you need a proper python installation, with the PyQt5 library.
 Quick Start
 ===========
 
-To start the gui, go to the python directory of this project and start the jemris python file:
+To start the gui, go to the python directory of this project and call the jemris python file:
 
 ```bash
-cd ./python
+cd ./share/python
 python jemris.py
 ```
 
