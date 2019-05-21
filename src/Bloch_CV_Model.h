@@ -48,10 +48,10 @@
 
 
 #define NEQ   3                   // number of equations
-#define RTOL  1e-15                // scalar relative tolerance
-#define ATOL1 1e-6                // vector absolute tolerance components
-#define ATOL2 1e-6
-#define ATOL3 1e-6
+#define RTOL  1e-6                // scalar relative tolerance
+#define ATOL1 1e-8                // vector absolute tolerance components
+#define ATOL2 1e-8
+#define ATOL3 1e-8
 #define BEPS  1e-10
 
 //! Structure keeping the vectors for cvode

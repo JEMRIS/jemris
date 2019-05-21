@@ -62,7 +62,7 @@ bool EddyPulse::Prepare  (PrepareMode mode) {
     SetName     ( "EC_"+m_gen_pulse->GetName() );
     m_initial_delay = m_gen_pulse->GetInitialDelay() ;
 
-	if ( !Insert(mode) ) return false; //should never happen
+	if ( !Insert(mode) ) return true; //was already inserted (?)
 
 	//prepare for GetValue of decaying eddies outside the atom
 	ConvKernel() ;
@@ -140,6 +140,11 @@ bool  EddyPulse::Insert (PrepareMode mode) {
 
 	if (m_prepared || mode==PREP_UPDATE) return true;
 
+	if (m_parent->GetPrototypeByAttributeValue("Name",GetName()) != NULL) {
+		//cout << "well ???\n " << endl;
+		return false; //double check
+	}
+//cout << " done only once !!!! " << endl;
 	//insert DOM-node in parent
 	DOMElement* node = m_parent->GetSeqTree()->GetDOMDocument()->createElement(StrX("EDDYCURRENT").XMLchar());
 	if (node==NULL) return false;
@@ -190,9 +195,9 @@ double EddyPulse::GetGradient  (double const time){
 	//convolve dG/dt with kernel
 	for (int i=0; i<m_kernel.size(); ++i) {
 		t = time - i*m_dt;
-		if ( t > m_gen_pulse->GetDuration() ) continue;
-		if ( t < m_dt          				) break;
-		d += ( m_gen_pulse->GetGradient(t) - m_gen_pulse->GetGradient(t-m_dt) ) * m_kernel.at(i);
+		if ( t+m_dt > m_gen_pulse->GetDuration() ) continue;
+		if ( t      < m_dt          			 ) break;
+		d += ( m_gen_pulse->GetGradient(t+m_dt) - m_gen_pulse->GetGradient(t-m_dt) ) * m_kernel.at(i);
 	}
 
 	*((bool*) m_gen_pulse->GetAttribute("Hide")->GetAddress()) = hide;

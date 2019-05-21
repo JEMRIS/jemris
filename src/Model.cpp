@@ -91,8 +91,8 @@ void Model::Solve() {
 			//start with equilibrium solution
 			m_world->solution[0+i*3]=0.0;
 			m_world->solution[1+i*3]=0.0;
-			m_world->solution[2+i*3]=m_world->Values[i*m_ncoprops+3]; // Values in world [0] to [2] are the x,y,z coordinates, followed by the M0, R1, R2, DB for each pool
-
+			m_world->solution[2+i*3]=1.0*m_world->Values[i*m_ncoprops+3]; // Values in world [0] to [2] are the x,y,z coordinates, followed by the M0, R1, R2, DB for each pool
+			m_accuracy_factor  = m_world->Values[i*m_ncoprops+3];		  // requested solver accuracy scales with M0 in case of small equilibrium magnetization
 		//	cout <<"im Model solution initatilsation" << " Mz "<< m_world->solution[2+i*3]<<" Mx " << m_world->solution[0+i*3]<< " My "<< m_world->solution[1+i*3]<< endl;
 		}
 
@@ -227,7 +227,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 
 				FreeSolver();
 
-				m_accuracy_factor *= 0.1; // increase accuray by factor 1e-3
+				m_accuracy_factor *= 0.1; // increase accuracy by factor 0.1
 				m_world->solution[0] = dMt;
 				m_world->solution[1] = dMp;
 				m_world->solution[2] = dMz;
@@ -235,7 +235,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 				RunSequenceTree(dtsh, ladc, m_world->pAtom);
 				dTimeShift  = dtsh;
 				lIndexShift = ladc;
-				m_accuracy_factor *= 10.0; // back to default  accuray
+				m_accuracy_factor *= 10.0; // back to default accuracy
 				return;
 			}
 
