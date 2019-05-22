@@ -38,6 +38,7 @@ void	EddyPulse::Init           () {
 	 m_length = 500;		/* TMP !!! needs to be user-defined */
 	 m_dt	  = 0.0;
 	 m_linger_time = 0.0;
+	 m_area_gen_pulse = 0.0;
 }
 /***********************************************************/
 bool EddyPulse::Prepare  (PrepareMode mode) {
@@ -64,16 +65,16 @@ bool EddyPulse::Prepare  (PrepareMode mode) {
 
 	if ( !Insert(mode) ) return true; //was already inserted (?)
 
-	//prepare for GetValue of decaying eddies outside the atom
-	ConvKernel() ;
-
-    m_area = GetAreaNumeric(1000);
+	//prepare eddy currents
+	m_prepared       = Convolve() ;
 
 	//use NLGs from the generating pulse
     //cout << GetName() << " : " << m_gen_pulse->HasDOMattribute("NLG_field") << " : " << HasDOMattribute("NLG_field") << endl;
     if ( mode !=PREP_UPDATE) {
-    	if ( m_gen_pulse->HasDOMattribute("NLG_field") && !HasDOMattribute("NLG_field") )
+    	if ( m_gen_pulse->HasDOMattribute("NLG_field") && !HasDOMattribute("NLG_field") ) {
     		AddDOMattribute("NLG_field",m_gen_pulse->GetDOMattribute("NLG_field"));
+    		m_non_lin_grad = true;
+    	}
     		//cout << " !! " << GetDOMattribute("NLG_field") << endl;
     		// -> nonsense? Observe ( GetAttribute("Area"), m_gen_pulse->GetName(),"Area", mode == PREP_VERBOSE);
     }
@@ -85,38 +86,58 @@ bool EddyPulse::Prepare  (PrepareMode mode) {
 }
 
 /*****************************************************************/
-bool  EddyPulse::ConvKernel () {
+bool  EddyPulse::Convolve () {
 
+	// Check if this eddy convolution has to be recalculated, assuming that nothing
+	// has to be done if area is set and are of generating pulse is unchanged.
+	double gp_area = m_gen_pulse->GetAreaNumeric(1000);
+	if (fabs(m_area) > 0.0 && m_area_gen_pulse == gp_area) return true;
+
+	m_area_gen_pulse = gp_area;
 	double t = 0.0, d=0.0, e=0.0, s=0.0;
-	int imax = 0, n = 50;
+	int imax = 256000; // max. number of points for eddy kernel
 	m_kernel.clear();
+    m_eddy.clear();
+
 
 	m_dt = m_gen_pulse->GetDuration()/m_length;
 
-	//step 1: total energy of IRF (impulse response function == convolution kernel)
-	for (int i=0; i<n*m_length; ++i) {
-		t = (i+1)*m_dt;
-		d = m_gen_pulse->GetAttribute("EddyCurrents")->EvalCompiledExpression(t,"EddyTime");
-		e += pow(d,2.0);
+	if (m_dt < 1e-16) return true;
+
+	//step 1: find significant kernel size ( assuming a decaying IRF in steps 10*m_dt ! )
+	for (int i=0; i<imax/10; ++i) {
+		s=0.0;
+		for (int j=0;j<10; j++) {
+			d = m_gen_pulse->GetAttribute("EddyCurrents")->EvalCompiledExpression((i*10+j)*m_dt,"EddyTime");
+			s += pow(d,2.0);
+		}
+		e += s;
+		if ( pow(s,2.0) < 1e-6*e/(i+1) ) { imax=i*10; break; }
 	}
-	//step 2: find significant length of IRF
-	for (int i=0; i<n*m_length; ++i) {
-		t = (i+1)*m_dt;
-		d = m_gen_pulse->GetAttribute("EddyCurrents")->EvalCompiledExpression(t,"EddyTime");
-		s += pow(d,2.0);
-		if ( s > 0.99*e ) { imax=i; break; }
-	}
-	//step 3: store IRF
+
+	//step 2: store IRF
 	for (int i=0; i<imax; ++i) {
 		t = (i+1)*m_dt;
-		d = m_gen_pulse->GetAttribute("EddyCurrents")->EvalCompiledExpression(t,"EddyTime");
+		d = m_gen_pulse->GetAttribute("EddyCurrents")->EvalCompiledExpression(i*m_dt,"EddyTime");
 		m_kernel.push_back(d);
 	}
 
-	//cout << " CS (" << t << ") = " << s << " at " << imax << endl;
+	//step 3: compute eddy current by convolution
+	for (size_t n = 0; n < m_length + m_kernel.size() - 1; n++) {
+	   	m_eddy.push_back(0.0);
+	   	size_t kmin = (n >= m_kernel.size() - 1) ? n - (m_kernel.size() - 1) : 0           ;
+	   	size_t kmax = (n < m_length - 1)         ? n                         : m_length - 1;
+	       for (size_t k = kmin; k < kmax; k++)
+	    	   m_eddy[n] -= m_kernel[n-k] *( m_gen_pulse->GetGradient((k+1)*m_dt)-m_gen_pulse->GetGradient(k*m_dt) );//m_dt ;
+	}
 
-	// - set duration of this EddyCurrent
-	// - if longer than parent, add this EddyCurrent to world multimap lingering
+    //double norm = 0.0; for (int i=0; i<m_eddy.size(); i++) { norm += m_eddy[i]*m_eddy[i]; } norm=sqrt(norm);
+    //cout << "EDDY " << GetName() << ": " << m_length << "," << m_kernel.size() << "," << m_dt << "," << norm << endl;
+
+
+	// final steps:
+    // - set duration of this EddyCurrent
+	// - if longer than parent atom, add this EddyCurrent to world multimap lingering
 	d = m_gen_pulse->GetDuration() + m_kernel.size()*m_dt;
 	//cout << "! MD = " << m_parent->GetDuration() << " : " << m_gen_pulse->GetDuration() << " : "<< m_kernel.size() << endl;
 	if (d>m_parent->GetDuration()) {
@@ -133,18 +154,19 @@ bool  EddyPulse::ConvKernel () {
 
     SetDuration ( d );
 
-	return true;
+    m_area = GetAreaNumeric(1000);
+
+
+    return true;
+
 }
 /*****************************************************************/
 bool  EddyPulse::Insert (PrepareMode mode) {
 
 	if (m_prepared || mode==PREP_UPDATE) return true;
 
-	if (m_parent->GetPrototypeByAttributeValue("Name",GetName()) != NULL) {
-		//cout << "well ???\n " << endl;
-		return false; //double check
-	}
-//cout << " done only once !!!! " << endl;
+	if (m_parent->GetPrototypeByAttributeValue("Name",GetName()) != NULL)  return false;  //already inserted
+
 	//insert DOM-node in parent
 	DOMElement* node = m_parent->GetSeqTree()->GetDOMDocument()->createElement(StrX("EDDYCURRENT").XMLchar());
 	if (node==NULL) return false;
@@ -161,6 +183,7 @@ bool  EddyPulse::Insert (PrepareMode mode) {
 inline void  EddyPulse::SetTPOIs () {
 
 	  Pulse::SetTPOIs();
+/*
 	    double dt = 0.0;
 
 	  	if (m_parent==NULL)
@@ -170,7 +193,7 @@ inline void  EddyPulse::SetTPOIs () {
 
 	    for (unsigned i = 1; i < m_length; i++)
 	    	m_tpoi + TPOI::set((i+1)*dt, -1.0 );
-
+*/
 }
 
 /***********************************************************/
@@ -185,26 +208,11 @@ return;
 /***********************************************************/
 double EddyPulse::GetGradient  (double const time){
 
-	if (time < 0.0 || time > m_parent->GetDuration() + m_linger_time ) { return 0.0; }
+	size_t  n = time/m_dt;
+	return  ( (n<m_eddy.size() ) ? m_eddy[n] : 0.0 );
 
-	double t=0.0, d=0.0;
-
-	bool hide = *((bool*) m_gen_pulse->GetAttribute("Hide")->GetAddress()) ;
-	*((bool*) m_gen_pulse->GetAttribute("Hide")->GetAddress()) = false;
-
-	//convolve dG/dt with kernel
-	for (int i=0; i<m_kernel.size(); ++i) {
-		t = time - i*m_dt;
-		if ( t+m_dt > m_gen_pulse->GetDuration() ) continue;
-		if ( t      < m_dt          			 ) break;
-		d += ( m_gen_pulse->GetGradient(t+m_dt) - m_gen_pulse->GetGradient(t-m_dt) ) * m_kernel.at(i);
-	}
-
-	*((bool*) m_gen_pulse->GetAttribute("Hide")->GetAddress()) = hide;
-
-	return d;
-	//cout << "EC GetValue : " << time << " : " << v << " : " << d << " : " << d-v << endl;
 }
+
 
 /***********************************************************/
 double EddyPulse::GetAreaNumeric (int steps){
@@ -224,6 +232,7 @@ string          EddyPulse::GetInfo() {
 
 	s << GradPulse::GetInfo();
 	s << " , Impulse Response = " << m_gen_pulse->GetDOMattribute("EddyCurrents");
+	s << " , kernel size = " << m_kernel.size();
 	s << " , linger time = " << m_linger_time;
 	return s.str();
 }

@@ -155,16 +155,16 @@ class AtomicSequence : public Sequence {
     void    GetValueLingeringEddyCurrents (double * dAllVal, double const time);
 
     /**
-     * @brief prepare lingering eddy currents in this atom for GetValue in next atom
-     */
-    void    PrepareEddyCurrents ();
-
-    /**
-     * @brief update lingering eddy currents which are still alive after this atom
+     * @brief update eddy currents in case generating gradient waveform has changed
      */
     void    UpdateEddyCurrents ();
 
     /**
+     * @brief prepare lingering eddy currents in this atom for GetValue in next atom
+     */
+    void    PrepareEddyCurrents ();
+
+     /**
      * @brief true, if this atom contains eddy currents
      * @return status of eddy currents
      */

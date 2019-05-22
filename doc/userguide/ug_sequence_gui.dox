@@ -221,11 +221,11 @@ All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pu
 	<li> <b> \c AnalyticRFPulse</b>: An arbitrary RF pulse specified through an analytic expression. It has all the attributes of the
 		GaussianRFPulse, and additionally
 	 <ol>
-         	<li> \c "Shape" The analytic expression of the RF pulse. See \ref ug_JEMRIS_seq_spec for explanation.
+         	<li> \c "Shape" The analytic expression for the RF pulse shape, using the time variable \c "T". The expression can be complex to define the
+         	magnitude and phase of the RF-pulse. Use \c "I" as imaginary unit, e.g. \c "Shape=sech(T)^(1.0+I)" generates a hyperbolic secant pulse.
          	<li> \c "Diff" If set to 1, then the actual pulse shape is defined by the first derivative of the analytic expression.
 			In this case, the flip angle is set via the analytic expression rather than numerical integration.
-         	<li> \c "Constants" A comma-sparated list of floating point numbers, which may be used as variables \c "c1,c2,..."
-                                    in the Shape expression.
+         	<li> \c "Constants" A comma-sparated list of floating point numbers, which may be used as variables \c "c1,c2,..." in the Shape expression.
 	 </ol>
 
 	<li> <b> \c ExternalRFPulse</b>: An arbitrary RF pulse specified through an external file. It has all the attributes of the
@@ -260,13 +260,27 @@ are in common for these pulses:
 	a gradient and hiding the copies, it is possible to individually specify arbirtrary eddy current cross terms.
 
 Eddy currents are implemented in a very flexible way: the eddy currents will adapt automatically, if the gradient module changes its shape
-during the sequence runtime (e.g. a phase-encoding gradient). Further, eddy currents typically last longer than the gradient event itself, i.e. beyond the
-AtomicSequence in which it was originated. In this case the transients are taken over to the next AtomicSequence - which could be again the
-same module, if it runs in a loop (e.g. in EPI). <b> Caution: </b> the latter will fail, if additionally the gradient dynamically changes its shape within
-the loop, as then the transients are no longer corrrect. In such a case, a dfferent way to implement the sequence has to be chosen. For instance in EPI one
-could use two readout gradient events with static polarities (positive and negative) within the echotrain loop.
+during the sequence runtime (e.g. a phase-encoding gradient). Note, that Eddy currents can be combined with nonlinear gradient fields 
+Further, eddy currents typically last longer than the gradient event itself, i.e. beyond the
+AtomicSequence in which it was originated. In this case the transients are taken over to the next AtomicSequence. <b> Caution: </b> the latter may fail in a loop, 
+if the remaining eddy current overlaps with the same AtomicSequence in which it was orginally generated. Then, only original eddy current is played out and the
+remaining eddy current is lost. In order to correctly simulate such long lasting eddy currents, the loop structure must be changed accordingly.
 
-Further, each gradient can have a specific spatial dependence, i.e. it can be a nonlinear gradient. See \ref ug_JEMRIS_seq_spec for explanation.
+Further, each gradient can define a non-linear spatial field dependence, instead of the default linear gradient fields.
+
+\li \c "NLG_field": an analytical expression for non-linear gradient field can be specified to every gradient module. Use \c "X,Y,Z" as space variables, 
+     and \c "G" as the gradient value, e.g.  \c "NLG_field=X*G+0.001*G*X^2" will simulate a linear x-gradient field with a small quadratic term.
+     Take into account that
+	 <ol>
+         	<li> the defined axis of this gradient (GX, GY, or GZ) has no meaning, 
+         	<li> the Sequence GUI can not display nonlinear-gradients, thus these pulses are displayed as standard gradients,
+         	<li> nonlinear gradient events get rotated, if the according AtomicSequence defines a rotation of the coordinate system.
+         	<li> nonlinear gradient events can be used to simualte time-dependent frequency shifts (zero oder).
+         	     For that, simple use \c "NLG_field=G" i.e. omit any spatial dependence in the analytical expression.
+         	<li> nonlinear gradient events can be combined with eddy currents to generate higher or zero order eddy currents.          	          	
+	 </ol>
+
+
 The following gradient pulse modules exist in JEMRIS:
 
 <ul> 
@@ -416,16 +430,14 @@ does not work, i.e. these attributes can not be observed by other modules! These
 
 \li \c "Observe": Of course the Observe attribute itself can not be observed.
 
-\li \c "Vector": Every pulse has the attribute \c "Vector". It is a space-separated list of floating point values which can be accessed by another attribute of this pulse. The values can be addressed by observation of loop counters, for instance an RF pulse may set \c Observe="C=C1.Counter" and \c FlipAngle="Vector(C)". Thus, the flip angle will loop through the vector as the loop-counter of the ConcatSequence increases. Note that in the Matlab GUI, \c "Vector" can also take any Matlab expression which results in a vector as input such as e.g. \c "rand(10,1)".
+\li \c "Vector": Every pulse has the attribute \c "Vector". It is a space-separated list of floating point values which can be accessed by another attribute of this pulse.
+The values can be addressed by observation of loop counters, for instance an RF pulse may set \c Observe="C=C1.Counter" and \c FlipAngle="Vector(C)".
+Thus, the flip angle will loop through the vector as the loop-counter of the ConcatSequence increases.
+Note that in the Matlab GUI, \c "Vector" can also take any Matlab expression which results in a vector as input such as e.g. \c "rand(10,1)".
 
-\li \c "Shape": For analytical RF / gradient pulses, this attribute defines the shape of the pulse using an analytical expression using the time variable \c "T". For RF-pulses, this expression can be complex to define the magnitude and phase of the RF-pulse. Use \c "I" as imaginary unit. The expression is again evaluated using GiNaC which is capable to perform derivatives. If here additionally the attribute \c "Diff=1" is set, the expression provided by the \c "Shape" attribute will be differentiated once, thus it is possible to directly provide the gradient moments.
+\li \c "Shape": For analytical RF / gradient pulses, this attribute defines the shape of the pulse 
 
-\li \c "NLG_field": an analytical expression for non-linear gradient field can be specified to every gradient module. Use \c "X,Y,Z" as space variables, and \c "G" as the gradient value, e.g.  \c "NLG_field=X*G+0.001*G*X^2" will simulate a linear x-gradient field with a small quadratic term. Take into account that
-	 <ol>
-         	<li> \c  the defined axis of this gradient (GX, GY, or GZ) has no meaning, 
-         	<li> \c  the Sequence GUI can not display nonlinear-gradients, thus these pulses are displayed as standard gradients,
-         	<li> \c  nonlinear gradient events get rotated, if the according AtomicSequence defines a rotation of the coordinate system.
-	 </ol>
+\li \c "NLG_field": the analytical expression for non-linear gradient fields
 
 ***************************************************
 */

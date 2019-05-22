@@ -145,6 +145,10 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 		m_world->pAtom = (AtomicSequence*) module;
 		InitSolver();
 
+		//prepare eddy currents: computes eddy waveforms for this atom, if recalculation is needed
+		m_world->pAtom->PrepareEddyCurrents();
+
+
 		vector<Module*> children      = module->GetChildren();
 		bool            bCollectTPOIs = false;
 
@@ -268,8 +272,8 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 		dTimeShift += m_world->pAtom->GetDuration();
 		FreeSolver();
 
+		//update eddy currents: sets the linger times for following atoms
 		m_world->pAtom->UpdateEddyCurrents();
-		m_world->pAtom->PrepareEddyCurrents();
 
 	}
 
