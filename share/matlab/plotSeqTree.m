@@ -56,7 +56,7 @@ end
 % plot static atom to the right (second child of parameters)
 if numel(handles.Seq(1).Children)>1 && strcmpi(handles.Seq(1).Name,'PARAMETERS')
  if strcmp(S.Attributes(1).Value,handles.Seq(1).Children(2).Attributes(1).Value)
-    x=1;y=1;
+    x=1.5;y=1.5;
     C=[.5 .5 1];
  end
 end
