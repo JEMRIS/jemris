@@ -172,7 +172,7 @@ the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/
 \section ug_version Version
 
 JEMRIS Version 2.8.2\n
-Copyright (C) 2006-2018  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
+Copyright (C) 2006-2019  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

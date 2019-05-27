@@ -5,9 +5,9 @@ function [M,t]=readEvol(fsample,fevols,do_plot)
 
 %
 %  JEMRIS Copyright (C)
-%                        2006-2015  Tony Stoecker
+%                        2006-2019  Tony Stoecker
 %                        2007-2015  Kaveh Vahedipour
-%                        2009-2015  Daniel Pflugfelder
+%                        2009-2019  Daniel Pflugfelder
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
