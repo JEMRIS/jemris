@@ -45,7 +45,7 @@ include (OptimizeForArchitecture)
 # C++ flags ---------------------------------------------------------------------
 # THis should be highly discouraged as it directly sets the compiler flags - this should be handled by cmake to allow
 # proper RELEASE, DEBUG, ... builds
-#set(CMAKE_CXX_COMPILER "mpic++")
+set(CMAKE_CXX_COMPILER "mpic++")
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi -DTIXML_USE_STL -fPIC -O3") 
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
