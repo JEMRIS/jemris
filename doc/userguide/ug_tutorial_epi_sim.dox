@@ -12,10 +12,11 @@ For simulation control JEMRIS provides a 2nd GUI, JEMRIS_sim.
 You will see the following empty Simulation GUI where a simple
 spherical phantom slice with adjustable values is presented
 accompanied by some default values. JEMRIS_sim is described in some
-detail here: \ref ug_usage_simulation_gui.
+detail here: \ref ug_JEMRIS_sim.
 
-\image html pics/jemris_sim_epi_1.png
-\image latex pics/jemris_sim_epi_1.png
+\htmlonly <style>div.image img[src="jemris_sim_epi_1.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/jemris_sim_epi_1.png
+\image latex pics/jemris_sim_epi_1.png width=12cm
 
 Let us load our EPI sequence, \c <b>MyEPI</b>:
 
@@ -35,16 +36,16 @@ It is now safe to immediately start the simulation. A progress bar
 will pop up and resemble the advancing simulation process.
 
 The simulation should take less than 4 minutes to run a single EPI
-scan of the 2D sphere preselected on the left on a single 2.4 GHz
-Pentium 6 core. The parallel execution should deliver its results on a
-Quadcore Pentium 6 at 2.4 GHz in less than 45 seconds.
+scan of the 2D sphere preselected on the left on a single 2.4 GHz i7 core.
+The parallel execution should deliver its results in about 45 seconds.
 
 After completion you are prompted with the resulting signal. The
 following screen shot was taken after successful simulation of the
 above experimental setup:
 
-\image html pics/jemris_sim_epi_2.png
-\image latex pics/jemris_sim_epi_2.png
+\htmlonly <style>div.image img[src="jemris_sim_epi_2.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/jemris_sim_epi_2.png
+\image latex pics/jemris_sim_epi_2.png width=12cm
 
 You are also prompted with some information in the text field at the
 top right, titled \c <b>simulation message dump</b>. These are in
@@ -56,25 +57,24 @@ simulated isoschromats etc.
 For this tutorial, the simulator output revealed the following information:
 
 <div style="border:1pt solid #808080;">
-
-PARALLEL JEMRIS<br/><br/>
-Model    : Bloch		  , solver = CVODE<br/>
-Sample   : 2D sphere	    , spins  = 7825<br/>
+Parallel jemris 2.8.2 (4a3461f8)<br/>
+<br/>
+Model    : Bloch	  , solver = CVODE<br/>
+Sample   : 2D sphere	  , spins  = 7825<br/>
 TxArray  : /usr/local/share/jemris/matlab/uniform.xml<br/>
 RxArray  : /usr/local/share/jemris/matlab/uniform.xml<br/>
-Sequence : /data/mr_cluster/home/kvahed/JEMRIS2/app/src/MyEPI.xml<br/><br/>
-nmrpc03 -> Master Process: send MR sample (7825 spins) to 4 slave(s)<br/><br/>
-nmrpc03 -> slave  1:  received 1957 spins for simulation ...<br/>
-nmrpc03 -> slave  2:  received 1956 spins for simulation ...<br/>
-nmrpc03 -> slave  3:  received 1956 spins for simulation ...<br/>
-nmrpc03 -> slave  4:  received 1956 spins for simulation ...<br/><br/>
-MPI Process Wtime = 39.6328 seconds<br/><br/>
+Sequence : /Users/stoeckert/DZNE/tmp/jemris-doc/MyEPI.xml<br/>
+<br/>
+DZNEM339 -> Master Process: send MR sample (7825 spins) to 8 slave(s)<br/>
+<br/>
+Simulating | ************************************************** | 100% done<br/>
+<br/>
+Actual simulation took 49.08 seconds.<br/>
 </div>
 
 Should you want to have a look at the simulation result in image- and k-space,
-you will able to find corresponding options in the drop-down at the bottom right.
+you find the corresponding options in the drop-down at the bottom right.
 Just select the desired view.
 
 ***************************************************
 */
-
