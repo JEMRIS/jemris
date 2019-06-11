@@ -166,7 +166,6 @@ Finally, a c++ framework extension is shown.
  \subpage ug_example_artifacts \n \n
  \subpage ug_example_nlg \n \n
  \subpage ug_example_ktblast \n \n
- \subpage ug_example_selex \n \n
  \n
  \n
  (1) Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder, N. Jon Shah. High-performance computing MRI simulations. Magnetic Resonance in Medicine. 2010, 64(1), 186 - 193.\n
