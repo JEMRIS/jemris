@@ -1,6 +1,6 @@
 /**
 ***************************************************
-* \page ug_tutorial_epi_sim %First steps tutorial - simulation
+* \page ug_tutorial_epi_sim %First steps tutorial: simulation
 
 \n
 
@@ -14,8 +14,11 @@ spherical phantom slice with adjustable values is presented
 accompanied by some default values. JEMRIS_sim is described in some
 detail here: \ref ug_JEMRIS_sim.
 
-\htmlonly <style>div.image img[src="jemris_sim_epi_1.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="sim-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/sim-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sim_epi_1.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sim_epi_1.png
+\image latex pics/sim-gui-top.png width=12cm
 \image latex pics/jemris_sim_epi_1.png width=12cm
 
 Let us load our EPI sequence, \c <b>MyEPI</b>:
@@ -43,8 +46,11 @@ After completion you are prompted with the resulting signal. The
 following screen shot was taken after successful simulation of the
 above experimental setup:
 
-\htmlonly <style>div.image img[src="jemris_sim_epi_2.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="sim-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/sim-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sim_epi_2.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sim_epi_2.png
+\image latex pics/sim-gui-top.png width=12cm
 \image latex pics/jemris_sim_epi_2.png width=12cm
 
 You are also prompted with some information in the text field at the

@@ -1,6 +1,6 @@
 /**
 ***************************************************
-* \page ug_tutorial_selex1 %In depth tutorial - Part 1
+* \page ug_tutorial_selex1 %In depth tutorial - Part 1: analytic pulse shapes
 
 \n
 
@@ -100,22 +100,32 @@ computed only once during sequence preparation.
 
 Lets have a look at the final sequence:
 
-\htmlonly <style>div.image img[src="jemris_sta_1.png"]{width:800px;}</style> \endhtmlonly
+The following image reflects the sequence GUI up to this point:
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sta_1.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sta_1.png
+\image latex pics/seq-gui-top.png width=12cm
 \image latex pics/jemris_sta_1.png width=12cm
 
 Click now on the check box \c <b>Sequence Diagram</b> to see the sequence diagram.
 Select a short time \c <b>interval</b> of \c <b>[0 2]</b> ms to see the selective excitation pulse.
 
-\htmlonly <style>div.image img[src="jemris_sta_2.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sta_2.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sta_2.png
+\image latex pics/seq-gui-top.png width=12cm
 \image latex pics/jemris_sta_2.png width=12cm
 
 
 You may now simulate the sequence as described in the first steps
 tutorial:
-\htmlonly <style>div.image img[src="jemris_sta_3.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="sim-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/sim-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sta_3.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sta_3.png
+\image latex pics/sim-gui-top.png width=12cm
 \image latex pics/jemris_sta_3.png width=12cm
 
 

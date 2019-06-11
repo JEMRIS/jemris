@@ -24,7 +24,7 @@ Get the latest stable version of JEMRIS:
  <tr><td> \li \subpage ug_downl   <td> &emsp;&emsp; <td> sources or binary packages
  <tr><td> \li \subpage ug_install   <td> &emsp;&emsp; <td> instructions to build JEMRIS on your own
 </table>
-\n 
+\n
 Additionally, you can clone the JEMRIS project from <a href="https://github.com/JEMRIS/jemris">GitHub</a>.
 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
 */
@@ -35,7 +35,7 @@ Additionally, you can clone the JEMRIS project from <a href="https://github.com/
 Download the latest stable version of JEMRIS. (Alternativaly, the most recent version is on <a href="https://github.com/JEMRIS/jemris">GitHub</a>.)
 \n
 <ul>
-        <li> <b> Sources </b> 
+        <li> <b> Sources </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z.tar.gz">jemris-X.Y.Z.tar.gz</a>
                 <li> md5sum: M5XXX
@@ -145,7 +145,13 @@ the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/
 
 /**
  \page ug_tutor Tutorials
-<b>Caution:</b> the tutorials are outdated and do not reflect the current functionality of JEMRIS. We hope to update the tutorials soon. Sorry for any inconvenience.
+
+Some first steps with JEMRIS:
+
+Learn to implement an EPI sequence from scratch, do the
+simulation, and extend it to 2D selective excitation by means of analytic pulse shapes.
+
+Finally, a c++ framework extension is shown.
 
  \subpage ug_tutorial_epi_seq \n \n
  \subpage ug_tutorial_epi_sim \n \n

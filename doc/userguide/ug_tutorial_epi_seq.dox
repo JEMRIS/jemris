@@ -1,6 +1,6 @@
 /**
 ***************************************************
-* \page ug_tutorial_epi_seq %First steps tutorial
+* \page ug_tutorial_epi_seq %First steps tutorial: sequence
 
 \n
 
@@ -23,11 +23,14 @@ MATLAB runtime
 \li Start up the <b>Sequence GUI</b> with the following command<br>
     <b> \c >> \c JEMRIS_seq</b>
 
-\htmlonly <style>div.image img[src="jemris_sequence.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sequence.png
+\image latex pics/seq-gui-top.png width=12cm
 \image latex pics/jemris_sequence.png width=12cm
 
-\li From the File drop down menue choose "New sequence".
+\li From the File drop down menu choose "New sequence".
 \li As <b>Filename</b> choose \c <b>MyEPI.xml</b> and save.
 
 You will now see the minimum requirements for a sequence. The <b>top
@@ -79,8 +82,11 @@ sequence.
 \li Set \c <b>FlipAngle</b> to 90 for 90 degrees.
 
 Your sequence should, so far, look like this:
-\htmlonly <style>div.image img[src="jemris_sequence_1.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_1.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sequence_1.png
+\image latex pics/seq-gui-top.png width=12cm
 \image latex pics/jemris_sequence_1.png width=12cm
 
 
@@ -126,8 +132,11 @@ The \c <b>StopSeq</b> will be defined later, once we have created the EPI readou
 
 
 You should be looking at a sequence representation looking as follows:
-\htmlonly <style>div.image img[src="jemris_sequence_2.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_2.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sequence_2.png
+\image latex pics/seq-gui-top.png width=12cm
 \image latex pics/jemris_sequence_2.png width=12cm
 
 Let us now compose the EPI readout. For this, we would like
@@ -160,7 +169,9 @@ simple assignment, using the parameter attribute for k-space increment:
 \li Set <b>\c Area</b> of <b>\c PEG</b> equal <b>\c A</b>.
 
 The following image reflects the content of the sequence GUI up to this point:
-\htmlonly <style>div.image img[src="jemris_sequence_3.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_3.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sequence_3.png
 \image latex pics/jemris_sequence_3.png width=12cm
 
@@ -193,20 +204,29 @@ We are done with the EPI sequence.
 Let us, finally, have a look at the EPI sequence, the associated sequence diagram, and the k-space trajectory reflecting the data acquisition scheme in the following three images.
 
 The following image reflects the sequence GUI up to this point:
-\htmlonly <style>div.image img[src="jemris_sequence_4.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_4.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sequence_4.png
+\image latex pics/seq-gui-top.png width=12cm
 \image latex pics/jemris_sequence_4.png width=12cm
 
 Click now on the check box \c <b>"Sequence Diagram"</b> at the top to see the sequence diagram:
 
-\htmlonly <style>div.image img[src="jemris_sequence_5.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_5.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sequence_5.png
+\image latex pics/seq-gui-top.png width=12cm
 \image latex pics/jemris_sequence_5.png width=12cm
 
 Click now on the check box \c <b>"k-space trajecory"</b> and then \c <b>"add ADCs"</b> to verify the k-space trajectory and sampling of the EPI sequence:
 
-\htmlonly <style>div.image img[src="jemris_sequence_6.png"]{width:800px;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_6.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
 @image html pics/jemris_sequence_6.png
+\image latex pics/seq-gui-top.png width=12cm
 \image latex pics/jemris_sequence_6.png width=12cm
 
 Let us go on to simulate the sequence: <a href="ug_tutorial_epi_sim.html">%First steps tutorial - simulation</a>
