@@ -42,7 +42,7 @@ Download the latest stable version of JEMRIS. (Alternativaly, the most recent ve
                 <li> shasum: SHXXX
              </ul>
 
-        <li> <b> Ubuntu 16.04 Binary </b>
+        <li> <b> Ubuntu 18.04 Binary </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z-Linux.deb">jemris-X.Y.Z-Linux.deb</a>
                 <li> md5sum: M5YYY
