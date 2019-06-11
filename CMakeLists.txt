@@ -151,6 +151,6 @@ set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "JEMRIS is a general purpose MRI simulato
 
 # DEB
 set (CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
-set (CPACK_DEBIAN_PACKAGE_DEPENDS "ginac-tools, openmpi, libsundials-serial (>= 2.5.0), libxerces-c3.1 (>= 3.1.1), hdf5-tools")
+set (CPACK_DEBIAN_PACKAGE_DEPENDS "ginac-tools, openmpi-bin, libsundials-cvode2, libxerces-c3.2, libhdf5-cpp-100")
 
 include (CPack)
