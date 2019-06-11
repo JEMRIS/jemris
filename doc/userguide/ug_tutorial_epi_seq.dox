@@ -193,7 +193,11 @@ area needs to be exactly half the size of the readout gradient. Let's correct th
  \li Change \c <b>Observe</b> to  <b>\c A=P4.Area</b>
  \li Change \c <b>Area</b> to  <b>\c -abs(A)/2</b>
 
-Here, \c "-abs()" was used to ensure negative polarity of the dephaser. <b>\c P4.Area</b> changes its polarity dynamically, starting with a positive readout (loop counter start at zero).
+Here, \c "-abs()" was used to ensure negative polarity of the dephaser, as the readout gradient area,
+<b>\c P4.Area</b>, starts with a positive readout.\n
+(Note that every change of the readout polarity will notify the dephaser to update its area.
+This is a consequence of the built-in observe-notify mechanism of JEMRIS modules. It has no
+effect in this example but is useful in others, e.g. to automatically set the area of a phase encode rewinder.)
 
 Let us now define the missing parameters of the delay <b>\c D1</b>, to ensure that the delay time TE is counted from center to center (\c C2C) between RF pulse and EPI readout:
 \li Click on the delay atom \c <b>D1</b>

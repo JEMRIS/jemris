@@ -5,8 +5,8 @@
 \n
 
 In the following, a 2D spatially-selective excitation experiment
-[Pauly 1989] will be demonstrated in detail in three different
-ways. The example reflects the flexibility of the symbolic
+[Pauly 1989] will be demonstrated.
+The example reflects the flexibility of the symbolic
 mathematics evaluation capabilities of JEMRIS.
 
 \li Start the sequence GUI.
