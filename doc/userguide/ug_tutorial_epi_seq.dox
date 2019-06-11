@@ -12,17 +12,12 @@ To proceed the user must have successfully installed JEMRIS.
 
 \section ug_tutorial_epi_seq_seq Setup the EPI sequence
 
-\li Create a directory for your simulation experiments. This directory
-will be called <b>\c work_dir</b> hereafter.
 \li Start up MATLAB
-\li In MATLAB change directory to \c <b>work_dir</b>: <br/>
-    <b> \c >> \c cd \c work_dir</b>
-\li Add the path to the directory with the JEMRIS matlab code to your
-MATLAB runtime
+\li Add the directory with the JEMRIS matlab code to the MATLAB path with
     <b> \c >> \c addpath \c /usr/local/share/jemris/matlab</b>
 \li Start up the <b>Sequence GUI</b> with the following command<br>
     <b> \c >> \c JEMRIS_seq</b>
-
+The Sequence GUI window pops up:
 \htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
 @image html pics/seq-gui-top.png
 \htmlonly <style>div.image img[src="jemris_sequence.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
@@ -33,22 +28,28 @@ MATLAB runtime
 \li From the File drop down menu choose "New sequence".
 \li As <b>Filename</b> choose \c <b>MyEPI.xml</b> and save.
 
-You will now see the minimum requirements for a sequence. The <b>top
- node</b> (outer most loop) of the sequence, \c <b>C1</b>, short
-  ConcatSequence1, and the <b>parameters</b>, \c <b>P</b>. Let us start
+You will now see the minimum requirements for a sequence: the <b>top
+ node ConcatSequence</b> (outer most loop) of the sequence, \c <b>C1</b>, short
+  ConcatSequence, and <b>Parameters node</b>, \c <b>P</b>. Let us start
  with the parameters. The <b>parameters</b> hold information valid for
  the whole sequence. These include in order from top left to bottom
  right: <b>name</b>, <b>FOV in x, y, and z direction</b>,<b>maximum
  gradient amplitude</b>, <b>maximum slewrate</b>, <b>TD</b>,
- <b>TE</b>, <b>TI</b>, and <b>TR</b>.
+ <b>TE</b>, <b>TI</b>, and <b>TR</b>. Note that these values do not do anything
+ as long as they are not used by the sequence. The parameter node
+ is merely a collection of values to be used by other modules.
 
+\li Click on the parameter node \c <b>P</b>
 \li Set <b>\c FOVx</b> and <b>\c FOVy</b> to <b>\c 200</b> each.
 \li Set <b>\c MaxGradAmpl</b> to <b>\c 5</b>.
 \li Set <b>\c MaxSlewRate</b> to <b>\c 20</b>.
 \li Set <b>\c Nx</b> and <b>\c Ny</b> to <b>\c 64</b> each.
 \li Set <b>\c TE</b> to <b>\c 50</b>.
 \li Set <b>\c TR</b> to <b>\c 100</b>.
-\li Click on write XML.
+\li Click on \c "write XML"
+
+Note that the last step has to be done always in order to apply unsaved changes.
+<b> Do this always in order to see the effect of a change. </b>
 
 Let us now model the sequence.
 
@@ -63,7 +64,7 @@ sequences</b>.
 
 \li Click in the selection bar on the symbol for atomic
 sequences \c <b>A</b>.
-\li Click on \c <b>C1</b> and you will append.
+\li Click on \c <b>C1</b> and the atom will be appended.
 
 An atomic sequence is appended to \c <b>C1</b> by the name
 of \c <b>A1</b>.
@@ -89,6 +90,9 @@ Your sequence should, so far, look like this:
 \image latex pics/seq-gui-top.png width=12cm
 \image latex pics/jemris_sequence_1.png width=12cm
 
+Note the \c "jemris tree dump" at the bottom of the window. It shows the jemris output of
+the sequence. Any error messages due to incorrect or insufficient module attributes will
+show up here.
 
 The excitation is now sufficiently defined. We now need to insert
 into the sequence the <b>dephasers</b> in read as well as PE
@@ -114,7 +118,7 @@ resolution. For that, the gradients have to observe the according parameters
 Do the same for dephaser \c <b>P2</b> (using the parameter <b>\c P.KMAXy</b>).
 \n
 We will later define the EPI readout along the x-axis. Then, we will see that the
-above definition of the dephaser <b>P1</b> was not fully exact and we have to chnage it.
+above definition of the dephaser <b>P1</b> was not fully exact and we have to change it.
 
 Next we need to introduce a dead time to match the center of the
 EPI readout with \c <b>TE</b> from the parameters.
@@ -122,9 +126,10 @@ EPI readout with \c <b>TE</b> from the parameters.
 \li Choose the symbol for a delay atomic sequence from the module bar.
 \li Click on \c <b>C1</b> to add it to the sequence.
 You will find details on delays here: \ref ug_JEMRIS_seq_intro_seqmod.
-Start preapring the delay \c <b>B1</b> by observing the attribute \c TE of the
+Start preapring the delay \c <b>D1</b> by observing the attribute \c TE of the
 parameter node:
 
+\li Click on the delay \c <b>D1</b>
 \li Set \c <b>Observe</b> to  <b>\c TE=P.TE</b>
 \li Set the \c <b>Delay</b> to <b>\c TE</b>
 \li Set the \c <b>StartSeq</b> to <b>\c A1</b>
@@ -145,28 +150,33 @@ encoding blip to run through all phase encoding steps.
 
 \li Click on the symbol of a concat sequence in the module bar.
 \li Add it to the sequence by clicking on <b>\c C1</b>.
-\li Set <b>\c Observe</b> to <b>\c N=P.Ny</b>.
+\li Click on the new concat sequence \c <b>C2</b> (the EPI loop)
+\li Set <b>\c Observe</b> to <b>\c N=P.Ny</b>
 \li Set <b>\c Repetitions</b> to <b>\c N</b>
 \li Add two atomic sequences to <b>\c C2</b>, one for the readout and one for the blips.
-\li Add to each atomic sequence, <b>\c A3</b> and <b>\c A4</b>, one trapezoidal gradient and change their <b>\c Axis</b> to <b>\c GX</b> and <b>\c GY</b>, respectively.
+\li Add to each atomic sequence, <b>\c A3</b> and <b>\c A4</b>, one trapezoidal gradient (<b>\c P4</b> and <b>\c P5</b>) and change their
+<b>\c Axis</b> to <b>\c GX</b> and <b>\c GY</b>, respectively.
 
 We have to define the FlatTopArea and the number of sampling points on
 the flat top of the readout gradient <b>\c P4</b>:
 
-\li Set <b>\c Observe</b> to <b>\c A=P.KMAXx, C=C2.Counter,N=P.Nx"</b>.
-\li Set <b>\c ADCs</b> to <b>\c N</b>.
-\li Set <b>\c FlatTopArea</b> to<b>\c 2*A*(-1)^C</b>.
-\li Set <b>\c FlatTopTime</b> to <b>\c 1</b>.
+\li Click on the gradient \c <b>P4</b>
+\li Set <b>\c Observe</b> to <b>\c A=P.KMAXx, C=C2.Counter,N=P.Nx</b>
+\li Set <b>\c ADCs</b> to <b>\c N</b>
+\li Set <b>\c FlatTopArea</b> to<b>\c 2*A*(-1)^C</b>
+\li Set <b>\c FlatTopTime</b> to <b>\c 1</b>
 
-Thus, the flat top has a fixed duration of 1ms. Its area and polarity is set
-automatically. By observing the lopp counter, the polarity will toggle between
-even and odd lines in k-space.
+Thus, the flat top has a fixed duration of 1ms. Area and polarity will be set
+according to the defined formula. By observing the loop counter, the polarity
+will toggle between even and odd lines in k-space. (Note: loop counters always
+start at zero in jemris!)
 
  Next, define the <b>\c Area</b> of the PE blip <b>\c P5</b>. This is a
-simple assignment, using the parameter attribute for k-space increment:
+simple assignment, observing the parameter attribute for k-space increment:
 
+\li Click on the gradient \c <b>P5</b>
 \li Set <b>\c Observe</b> to <b>\c A=P.DKy</b>.
-\li Set <b>\c Area</b> of <b>\c PEG</b> equal <b>\c A</b>.
+\li Set <b>\c Area</b> to <b>\c A</b>.
 
 The following image reflects the content of the sequence GUI up to this point:
 \htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
@@ -177,15 +187,15 @@ The following image reflects the content of the sequence GUI up to this point:
 
 We are nearly done, this is already close to a working EPI sequence. However, if you look at
 the k-space encoding (select \c "sequence Diagram" and \c "k-space trajectory"), you will notice
-that the readout encoding is not exactly symmetrical. The problem is, that the dephaser
+that the readout encoding is not exactly symmetrical to k-space center. For that the dephaser
 area needs to be exactly half the size of the readout gradient. Let's correct that:
 \li Click on the first dephaser \c <b>P1</b>
  \li Change \c <b>Observe</b> to  <b>\c A=P4.Area</b>
  \li Change \c <b>Area</b> to  <b>\c -abs(A)/2</b>
 
-Here, \c "abs()" was used to ensure the right polarity. <b>\c P4.Area</b> changes its polarity dynamically, starting with a positive readout (loop counter start at zero).
+Here, \c "-abs()" was used to ensure negative polarity of the dephaser. <b>\c P4.Area</b> changes its polarity dynamically, starting with a positive readout (loop counter start at zero).
 
-Let us now define the missing parameters of the delay <b>\c D1</b>, to ensures that the delay time TE is counted from center to center (\c C2C) between RF pulse and EPI readout:
+Let us now define the missing parameters of the delay <b>\c D1</b>, to ensure that the delay time TE is counted from center to center (\c C2C) between RF pulse and EPI readout:
 \li Click on the delay atom \c <b>D1</b>
 \li Set the <b>\c DelayType</b> to <b>\c C2C</b>.
 \li Set <b>\c StopSeq</b> to <b>\c C2</b>.
