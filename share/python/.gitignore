@@ -1,0 +1,4 @@
+*.out
+*.sim.out
+*.bak
+*.h5
