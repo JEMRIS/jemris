@@ -1,0 +1,9 @@
+# --------------------------------------------------------------------------- #
+JEMRIS Settings File
+# --------------------------------------------------------------------------- #
+
+workspace = 
+Jpath = /usr/local/bin
+Jshare = /usr/local/share/jemris/matlab
+MPIcall = /usr/bin/mpiexec
+QStyle = Fusion
