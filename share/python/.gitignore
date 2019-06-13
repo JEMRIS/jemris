@@ -2,3 +2,4 @@
 *.sim.out
 *.bak
 *.h5
+*.pyc
