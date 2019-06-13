@@ -84,19 +84,15 @@ class Reconstructor(QtCore.QThread):
         self.thread_finished.emit(recon)
 
 
-def CartRecon(S, Kx, Ky, Kz, reco, param, mode):
+def CartRecon(S, Kx, Ky, Kz, reco, param):
 
     S = S.reshape(param['N'] + S.shape[1:])
-
-    if reco['PRx'] in ['Sum of Squares']:
-
-        x = icfftn(S)
-
-        x = np.sqrt(np.sum(np.abs(x)**2, axis=-1))
-
-    else:
-
-        x = icfftn(S[:, reco['CH']])
+    
+    x = icfftn(S)
+    
+    sos = np.sqrt(np.sum(np.abs(x)**2, axis=-1, keepdims=True))
+    
+    x = np.concatenate((x, sos), axis=-1)
 
     return x
 

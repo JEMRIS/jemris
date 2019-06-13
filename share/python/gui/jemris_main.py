@@ -904,16 +904,6 @@ class QReconstructionOptions(QtWidgets.QWidget, QRecOptForm):
 
         self.Instance = Instance
 
-    def update(self):
-
-        self.channelBox.clear()
-
-        if self.Instance.status == 0:
-
-            for channel in self.Instance.channels:
-                self.channelBox.addItem(channel)
-            self.channelBox.addItem('Sum of Squares')
-
     def selRecoPage(self):
 
         self.stackedWidget.setCurrentIndex(
@@ -922,9 +912,6 @@ class QReconstructionOptions(QtWidgets.QWidget, QRecOptForm):
     def doReco(self):
 
         reco = dict()
-
-        reco['CH'] = self.channelBox.currentIndex()
-        reco['PRx'] = self.channelBox.currentText()
 
         text = self.reconstructionBox.currentText()
 

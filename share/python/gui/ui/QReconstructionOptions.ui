@@ -29,14 +29,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="channelLabel">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Channels&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="3">
+      <item row="2" column="0" colspan="2">
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="currentIndex">
          <number>0</number>
@@ -109,14 +102,14 @@
         </widget>
        </widget>
       </item>
-      <item row="4" column="0" colspan="3">
+      <item row="3" column="0" colspan="2">
        <widget class="QPushButton" name="reconstructionButton">
         <property name="text">
          <string>Do Reconstruction</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="3">
+      <item row="0" column="0" colspan="2">
        <widget class="QComboBox" name="reconstructionBox">
         <property name="styleSheet">
          <string notr="true"/>
@@ -127,9 +120,6 @@
          </property>
         </item>
        </widget>
-      </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="QComboBox" name="channelBox"/>
       </item>
      </layout>
     </widget>
