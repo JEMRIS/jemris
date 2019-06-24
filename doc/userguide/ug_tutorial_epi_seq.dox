@@ -41,8 +41,8 @@ You will now see the minimum requirements for a sequence: the <b>top
 
 \li Click on the parameter node \c <b>P</b>
 \li Set <b>\c FOVx</b> and <b>\c FOVy</b> to <b>\c 200</b> each.
-\li Set <b>\c MaxGradAmpl</b> to <b>\c 5</b>.
-\li Set <b>\c MaxSlewRate</b> to <b>\c 20</b>.
+\li Set <b>\c GradMaxAmpl</b> to <b>\c 5</b>.
+\li Set <b>\c GradSlewRate</b> to <b>\c 20</b>.
 \li Set <b>\c Nx</b> and <b>\c Ny</b> to <b>\c 64</b> each.
 \li Set <b>\c TE</b> to <b>\c 50</b>.
 \li Set <b>\c TR</b> to <b>\c 100</b>.
@@ -111,7 +111,7 @@ The dephasing areas will be chosen as half the size of k-space. These values
 can be obtained from the <b>parameters</b> node, which defines the image
 resolution. For that, the gradients have to observe the according parameters
 (cf. section \ref ug_JEMRIS_seq_ginac):
-\li Click on the first dephaser \c <b>P1</b>
+\li Click on the first dephaser \c <b>P2</b>
  \li Set \c <b>Observe</b> to  <b>\c A=P.KMAXx</b>
  \li Set \c <b>Area</b> to  <b>\c -A</b>
 
@@ -126,7 +126,7 @@ EPI readout with \c <b>TE</b> from the parameters.
 \li Choose the symbol for a delay atomic sequence from the module bar.
 \li Click on \c <b>C1</b> to add it to the sequence.
 You will find details on delays here: \ref ug_JEMRIS_seq_intro_seqmod.
-Start preapring the delay \c <b>D1</b> by observing the attribute \c TE of the
+Start preparing the delay \c <b>D1</b> by observing the attribute \c TE of the
 parameter node:
 
 \li Click on the delay \c <b>D1</b>
@@ -189,7 +189,7 @@ We are nearly done, this is already close to a working EPI sequence. However, if
 the k-space encoding (select \c "sequence Diagram" and \c "k-space trajectory"), you will notice
 that the readout encoding is not exactly symmetrical to k-space center. For that the dephaser
 area needs to be exactly half the size of the readout gradient. Let's correct that:
-\li Click on the first dephaser \c <b>P1</b>
+\li Click on the first dephaser \c <b>P2</b>
  \li Change \c <b>Observe</b> to  <b>\c A=P4.Area</b>
  \li Change \c <b>Area</b> to  <b>\c -abs(A)/2</b>
 

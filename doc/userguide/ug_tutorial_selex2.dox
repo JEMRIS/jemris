@@ -7,6 +7,9 @@
 Let us now extend the framework to achieve the same
 results as in the previous example \ref ug_tutorial_selex1
 
+This tutorial assumes that you are familiar with compiling JEMRIS. The
+necessary steps for recompiling will not be explained in detail.
+
 The workflow will involve the creation of two new classes one for the
 RF pulse and one for the gradient pulses.
 
@@ -14,8 +17,7 @@ Let us start with defining the template for an RF pulse, which
 inherits from the RF pulse functionality implemented in framework.
 This is done with a few lines for the object declaration.
 
-Enter the directory in the
-\c<b>[jemris-dir]/app/src/framework</b>. Create a new header file for
+Enter the directory \c<b>[jemris-dir]/src</b>. Create a new header file for
 the STA RF pulse by the name \c<b>STARFPulse.h</b>. And type in the
 lines below.
 
@@ -289,7 +291,9 @@ string          STASpiralGradPulse::GetInfo() {
 \endcode
 
 We now have to introduce the two new modules to the framework factory
-by adding them to the \c<b>ModulePrototypeFactory</b>. Just append the two include at the end of the module list.
+by adding them to the \c<b>ModulePrototypeFactory</b>.
+
+Open \c<b>ModulePrototypeFactory.cpp</b> and include the headers of the new modules:
 
 \code
 
@@ -299,8 +303,7 @@ by adding them to the \c<b>ModulePrototypeFactory</b>. Just append the two inclu
 
 \endcode
 
-Open \c<b>ModulePrototypeFactory.cpp</b> and add the headers of the new modules.
-And, further, add the object prototypes to the factory by appending the following two lines after the last entry in \c<b>ModulePrototypeFactory::ModulePrototypeFactory</b>:
+Next, add the object prototypes to the factory constructor by appending the following two lines after the last entry in \c<b>ModulePrototypeFactory::ModulePrototypeFactory</b>:
 
 \code
 
@@ -313,6 +316,7 @@ ModulePrototypeFactory::ModulePrototypeFactory () {
 
 \endcode
 
-We are done with the framework extension.
+We are done with the framework extension. After recompile, the modules will be available
+for simulations. They also automatically appear in the Matlab sequence GUI.
 
 *************************************************** */

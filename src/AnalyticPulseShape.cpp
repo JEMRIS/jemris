@@ -87,17 +87,15 @@ void  AnalyticPulseShape::PrepareInit (bool verbose) {
 	( (AnalyticRFPulse*) m_pulse)->insertGetPhaseFunction( &AnalyticPulseShape::GetPhase );
     }
 
-    //init observable and visible attributes: "Shape", "TPOIs"
+    //initialize attributes
     if (m_pulse->m_attributes.find("Shape")==m_pulse->m_attributes.end() )
-	m_pulse->m_attributes.insert(pair<string,Attribute*>("Shape",new Attribute("Shape",m_pulse, true, true, m_analytic_value)));
-    //if (m_pulse->m_attributes.find("TPOIs")==m_pulse->m_attributes.end() )
-	//m_pulse->m_attributes.insert(pair<string,Attribute*>("TPOIs",new Attribute("TPOIs",m_pulse, true, true, m_more_tpois)));
+    	m_pulse->m_attributes.insert(pair<string,Attribute*>("Shape",new Attribute("Shape",m_pulse, true, true, m_analytic_value)));
 
-    //init unobservable and visible attributes: "Diff" and "Constants"
     if (m_pulse->m_attributes.find("Diff")==m_pulse->m_attributes.end() )
-	m_pulse->m_attributes.insert(pair<string,Attribute*>("Diff",new Attribute("Diff",m_pulse, false, false )));
+    	m_pulse->m_attributes.insert(pair<string,Attribute*>("Diff",new Attribute("Diff",m_pulse, false, false )));
+
     if (m_pulse->m_attributes.find("Constants")==m_pulse->m_attributes.end() )
-	m_pulse->m_attributes.insert(pair<string,Attribute*>("Constants",new Attribute("Constants",m_pulse, false, false )));
+    	m_pulse->m_attributes.insert(pair<string,Attribute*>("Constants",new Attribute("Constants",m_pulse, false, false )));
 
     m_pulse->GetAttribute("Shape")->ResetCurrentFunctionPointer();	// if not in update, start to iterate compiled functions from beginning
     m_pulse->GetAttribute("Shape")->SetObservable(false);		// avoid Prototype::Prepare of the "Shape" attribute
@@ -117,18 +115,17 @@ bool  AnalyticPulseShape::PrepareAnalytic (bool verbose) {
 		m_pulse->Observe(m_pulse->GetAttribute("Shape"),m_pulse->GetName(),"AnalyticTime", verbose);
 		m_pulse->ReplaceSymbolString(val,"T",m_pulse->GetName()+"_AnalyticTime");
 
-	//2. "Shape" observes "Constants": replace "c{i}" with the appropriate attribute counter "a{i}"
+	//2. "Shape" observes constants c1 ... cN
 		if (m_pulse->HasDOMattribute("Constants")) {
 			string constants = m_pulse->GetDOMattribute("Constants");
 			vector<string> vp = m_pulse->Tokenize(constants,",");
 			for (unsigned int i=0;i<vp.size();i++) {
 				m_constant[i] = atof(vp[i].c_str());
-				stringstream C; C << "Constant" << i+1;
+				stringstream C; C << "c" << i+1;
 				if (m_pulse->m_attributes.find(C.str())==m_pulse->m_attributes.end() )
 				    m_pulse->m_attributes.insert(pair<string,Attribute*>(C.str(),new Attribute(C.str(),m_pulse, false, true, m_constant[i])));
 				m_pulse->Observe(m_pulse->GetAttribute("Shape"),m_pulse->GetName(),C.str(), verbose);
-				stringstream c; c << "c" << i+1;
-				m_pulse->ReplaceSymbolString(val,c.str(),m_pulse->GetName()+"_"+C.str());
+				m_pulse->ReplaceSymbolString(val,C.str(),m_pulse->GetName()+"_"+C.str());
 			}
 		}
 

@@ -20,7 +20,6 @@
 /src/test*.sh
 /signals.h5
 /src/stamp-h1
-/doc/doxy.conf
 /doc/site/nav.js
 /doc/userguide/doxy-jemris.conf
 /doc/userguide/ug_imp.dox
