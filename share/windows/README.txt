@@ -7,4 +7,4 @@ To start:
 - Start GUIs acoordingly: 
   - JEMRIS_seq (Sequence design GUI)
   - JEMRIS_txrx (Coil array GUI)
-  - JEMRI_sim  (Simulation GUI)
+  - JEMRIS_sim  (Simulation GUI)
