@@ -395,6 +395,7 @@ inline void TrapGradPulse::GenerateEvents(std::vector<Event*> &events) {
 	grad->m_ramp_up_time = round(m_ramp_up_time*1e3);
 	grad->m_ramp_down_time = round(m_ramp_dn_time*1e3);
 	grad->m_amplitude = m_amplitude;
+	grad->m_delay = round(GetInitialDelay()*1.0e3);
 
 	grad->m_channel = (int)(m_axis-AXIS_GX);
 	grad->m_shape = -1;	// indicates trapezoid;
@@ -406,7 +407,7 @@ inline void TrapGradPulse::GenerateEvents(std::vector<Event*> &events) {
 		ADCEvent *adc = new ADCEvent();
 		adc->m_num_samples = N;
 		adc->m_dwell_time = 1e6*m_flat_top_time/N;
-		adc->m_delay = m_ramp_up_time*1e3;
+		adc->m_delay = round(GetInitialDelay()*1.0e3)+m_ramp_up_time*1e3;
 
 		double p = GetInitialPhase()*PI/180.0;
 		p = fmod( p, 2*PI );

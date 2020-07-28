@@ -75,13 +75,18 @@ inline void  EmptyPulse::SetTPOIs () {
 /*****************************************************************/
 inline void EmptyPulse::GenerateEvents(std::vector<Event*> &events) {
 
+	// (Mis)use EmptyPulse for a delay event that can occur parallel to an AtomicSequence - mv
+	DelayEvent *delay = new DelayEvent();
+	delay->m_delay = (long) round(GetDuration()*1e3);
+	events.push_back(delay);
+
 	// Add ADCs (if any)
 	int N = GetNADC();
 	if (N>0) {
 		ADCEvent *adc = new ADCEvent();
 		adc->m_num_samples = N;
 		adc->m_dwell_time = GetDuration()/N*1e6;
-		adc->m_delay = GetInitialDelay()*1e3;
+		adc->m_delay = round(GetInitialDelay()*1.0e3);
 
 		adc->m_phase_offset = 0;
 		adc->m_freq_offset = 0;
