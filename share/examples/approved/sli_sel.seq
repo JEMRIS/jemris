@@ -1,6 +1,11 @@
 # Pulseq sequence format
 # Created by JEMRIS 2.8.3
 
+[VERSION]
+major 1
+minor 2
+revision 1
+
 [DEFINITIONS]
 Num_Blocks 6
 
@@ -15,18 +20,18 @@ Num_Blocks 6
 6  1  0   0   0   0  0
 
 # Format of RF events:
-# id amplitude mag_id phase_id freq phase
-# ..        Hz   ....     ....   Hz   rad
+# id amplitude mag_id phase_id delay freq phase
+# ..        Hz   ....     ....    us   Hz   rad
 [RF]
-1      748.727 1 2 0 0
-2      748.727 1 2 2247.19 0
+1      748.727 1 2  60 0 0
+2      748.727 1 2  60 2247.19 0
 
 # Format of trapezoid gradients:
-# id amplitude rise flat fall
-# ..      Hz/m   us   us   us
+# id amplitude rise flat fall delay
+# ..      Hz/m   us   us   us    us
 [TRAP]
- 1      89887.64  60 2670  60
- 2     -438202.2 280    0 280
+ 1      89887.64  60 2670  60   0
+ 2     -438202.2 280    0 280   0
 
 # Format of ADC events:
 # id num dwell delay freq phase
@@ -45,10 +50,7 @@ Num_Blocks 6
 [SHAPES]
 
 shape_id 1
-num_samples 2727
-0
-0
-58
+num_samples 2667
 1.301821e-10
 1.212561e-07
 1.212561e-07
@@ -871,10 +873,7 @@ num_samples 2727
 4
 
 shape_id 2
-num_samples 2727
-0
-0
-58
+num_samples 2667
 0.5
 0.07957747
 0.01266515
