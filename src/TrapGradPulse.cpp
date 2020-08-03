@@ -406,9 +406,15 @@ inline void TrapGradPulse::GenerateEvents(std::vector<Event*> &events) {
 	if (N>0) {
 		ADCEvent *adc = new ADCEvent();
 		adc->m_num_samples = N;
-		adc->m_dwell_time = 1e6*m_flat_top_time/N;
-		adc->m_delay = round(GetInitialDelay()*1.0e3)+m_ramp_up_time*1e3;
-
+		// If flat top time is set, no ramp sampling will be used
+		if (m_flat_top_time>0) {
+			adc->m_dwell_time = 1e6*m_flat_top_time/N;
+			adc->m_delay = round(GetInitialDelay()*1.0e3) + round(m_ramp_up_time*1e3);
+		}
+		else {
+			adc->m_dwell_time = 1e6*GetDuration()/N;
+			adc->m_delay = round(GetInitialDelay()*1.0e3);
+		}
 		double p = GetInitialPhase()*PI/180.0;
 		p = fmod( p, 2*PI );
 		p = p<0.0 ? p+2*PI : p;
