@@ -38,7 +38,7 @@ Num_Blocks 6
 # ..  ..    ns    us   Hz   rad
 [ADC]
  1   5 534000  60 0 0
- 2   5      0 280 0 0
+ 2   5 112000   0 0 0
 
 # Format of delays:
 # id delay (us)
