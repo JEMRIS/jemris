@@ -56,8 +56,11 @@ inline MPI_Datatype MPIspindata () {
     MPI_Datatype MPI_SPINDATA ;
 	MPI_Datatype type = MPI_DOUBLE;
 	MPI_Aint     disp = 0;
-
+#if MPI_VERSION < 3
     MPI_Type_struct( 1, &NUM_DATA, &disp, &type, &MPI_SPINDATA);
+#else
+    MPI_Type_create_struct( 1, &NUM_DATA, &disp, &type, &MPI_SPINDATA);
+#endif
     MPI_Type_commit( &MPI_SPINDATA);
 
     return  MPI_SPINDATA;
