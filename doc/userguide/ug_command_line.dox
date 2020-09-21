@@ -238,36 +238,53 @@ end
 \endcode
 \n
 \n
-\subsection ug_command_line_jemris_export Exporting a Sequence to an MRI Scanner
+\subsection ug_command_line_jemris_export Exporting a Sequence to an MRI Scanner with Pulseq
 Running jemris with the -x option exports the sequence in Pulseq format
 (http://pulseq.github.io) for execution on a real MRI scanner,
 \code
 me@my_box:~$ jemris -x -d id=1 -f epi /usr/local/share/jemris/examples/epi.xml
 me@my_box:~$ head -n 20 epi.seq
 # Pulseq sequence format
-# Created by JEMRIS 2.8
+# Created by JEMRIS 2.8.3
+
+[VERSION]
+major 1
+minor 2
+revision 1
 
 [DEFINITIONS]
 id 1
 Num_Blocks 132
-Rot_Matrix 0 -1 -0 1 0 -0 0 0 1
 
 # Format of blocks:
-# #  D RF  GX  GY  GZ  GA  GB  GC ADC
+# #  D RF  GX  GY  GZ ADC
 [BLOCKS]
-  1  0  1   0   0   0   0   0   0  0
-  2  0  0   1   2   0   0   0   0  0
-  3  1  0   0   0   0   0   0   0  0
-  4  0  0   3   0   0   0   0   0  1
-  5  0  0   0   4   0   0   0   0  0
-  6  0  0   5   0   0   0   0   0  1
-  7  0  0   0   4   0   0   0   0  0
-  8  0  0   3   0   0   0   0   0  1
-  9  0  0   0   4   0   0   0   0  0
+  1  0  1   0   0   0  0
+  2  0  0   1   2   0  0
+  3  1  0   0   0   0  0
+  4  0  0   3   0   0  1
+  5  0  0   0   4   0  0
 \endcode
 This creates a file suitable to run on a scanner.
 The -x option indicates export, -d allows for custom definitions
-(such as scan ID), and the .seq file is named according to the -f option.
+(such as scan ID), and the .seq file is named according to the -f option (default: external.seq).
+\n \n
+<b>Caution:</b> read the Pulseq manual carefully before running sequences created with JEMRIS on the scanner!
+Creating valid Pulseq files requires some experience. \n
+Here is a brief and incomplete list of things which should be taken into account when creating Pulseq files with JEMRIS:
+\li For trapezoidal gradients (TrapGradPulse): ramp sampling is not used if FlatTopTime and FlatTopArea are set.
+    Otherwise, ramp sampling is always enabled (as displayed in the \ref ug_JEMRIS_seq )
+\li All other gradient forms are exported as arbitrary gradients.
+\li ADCs which are specified from a DelayAtomicSequence are not exported!
+\li The EmptyPulse can be used as a delay. Here, ADCs are exported to the Pulseq file.
+\li For all ADC events, the dwell time is defined as Duration / number of ADCs
+
+Additionally, there are hardware-specific restrictions which have to be considered (This is not JEMRIS-specific - see the Pulseq Manual for more details).
+\li In Pulseq's "strict timing mode", the RF pulse requires a simultaneous GradPulse or EmptyPulse in the same AtomicSequence.
+    Otherwise the Strict Duration Check may fail due to missing dead times before and/or after the RF pulse.
+\li The number of ADCs should be chosen such that the dwell time is compatible with the hardware RF raster time.
+\li Sequence blocks should not end with an ADC, for example a delay can be set parallel to the ADC.
+\li For large numbers of ADCs it might be necessary to segment ADCs events, which match gradient raster time
 
  <HR>
 \section ug_command_line_pjemris Invoking the parallel version of JEMRIS
