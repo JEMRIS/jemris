@@ -67,7 +67,7 @@ struct BMAux {
 
 #define NEQ   3                   // number of equations
 #ifndef RTOL
-	#define RTOL  1e-6                // scalar relative tolerance
+	#define RTOL  1e-8                // scalar relative tolerance
 #endif
 #ifndef ATOL1
 	#define ATOL1 1e-8                // vector absolute tolerance components

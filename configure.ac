@@ -1,5 +1,5 @@
 AC_PREREQ(2.61)
-AC_INIT([jemris], [2.8.3], [tony.stoecker@dzne.de], [jemris])
+AC_INIT([jemris], [2.8.4], [tony.stoecker@dzne.de], [jemris])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
@@ -13,7 +13,7 @@ AC_DEFINE([GIT_COMMIT_DATE], "esyscmd(git log -1 | head -n 3 | grep 'Date:' | se
  | tr -d '\n')", [git HEAD commit date])
 
 # copyright notice
-AC_COPYRIGHT([2007-2018 - Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder])
+AC_COPYRIGHT([2007-2020 - Tony Stoecker, Kaveh Vahedipour, Daniel Pflugfelder])
 
 AH_TEMPLATE([CXX], [c++ compiler])
 

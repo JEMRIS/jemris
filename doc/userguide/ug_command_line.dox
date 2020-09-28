@@ -156,7 +156,7 @@ sequence-root-------->   CONCAT       CONCATSEQUENCE       C1   100.000     4096
     |_ child 1   ---->    PULSE           EMPTYPULSE    eP_D2     4.726        0         1  |  Axis = none
 
 \endcode
-Additionally, a  HDF5-:file "seq.h5" is written which is read by the Matlab GUI to plot the sequence diagram.
+Additionally, a  HDF5-file "seq.h5" is written which is read by the Matlab GUI to plot the sequence diagram.
 
 The output shows that this sequence has in total 4096 ADC points. The sequence diagram is non-equidistantly sampled:
 it consists of 4488 TPOIs ("time points of interest") which are the ADCs plus some additional important time points
@@ -270,8 +270,8 @@ The -x option indicates export, -d allows for custom definitions
 (such as scan ID), and the .seq file is named according to the -f option (default: external.seq).
 \n \n
 <b>Caution:</b> read the Pulseq manual carefully before running sequences created with JEMRIS on the scanner!
-Creating valid Pulseq files requires some experience. \n
-Here is a brief and incomplete list of things which should be taken into account when creating Pulseq files with JEMRIS:
+Creating valid Pulseq files requires some experience.
+Here is a brief and incomplete list of things which may be taken into account when creating Pulseq files with JEMRIS:
 \li For trapezoidal gradients (TrapGradPulse): ramp sampling is not used if FlatTopTime and FlatTopArea are set.
     Otherwise, ramp sampling is always enabled (as displayed in the \ref ug_JEMRIS_seq )
 \li All other gradient forms are exported as arbitrary gradients.
@@ -279,7 +279,7 @@ Here is a brief and incomplete list of things which should be taken into account
 \li The EmptyPulse can be used as a delay. Here, ADCs are exported to the Pulseq file.
 \li For all ADC events, the dwell time is defined as Duration / number of ADCs
 
-Additionally, there are hardware-specific restrictions which have to be considered (This is not JEMRIS-specific - see the Pulseq Manual for more details).
+Additionally, some hardware-specific restrictions may have to be considered (see the Pulseq Manual for more details).
 \li In Pulseq's "strict timing mode", the RF pulse requires a simultaneous GradPulse or EmptyPulse in the same AtomicSequence.
     Otherwise the Strict Duration Check may fail due to missing dead times before and/or after the RF pulse.
 \li The number of ADCs should be chosen such that the dwell time is compatible with the hardware RF raster time.
