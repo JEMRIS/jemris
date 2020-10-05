@@ -20,9 +20,9 @@ Some Linux distributions have the above packages prebuilt and included in their 
 
 \section ug_install_opt Optionals
 
-\subsection ug_install_mpi MPICH
+\subsection ug_install_mpi MPI Library
 
-Should you want to exploit more than one CPU core, you will need an implementation of MPI. <b>JEMRIS</b> has been tested with <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2</a>.
+Should you want to exploit more than one CPU core, you will need an implementation of MPI. <b>JEMRIS</b> has been tested with <a href="https://www.open-mpi.org/">Open MPI</a> and <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2</a>.
 <b>JEMRIS</b> on Mac OS X works well with the pre-compiled MPICH implementation available from <a href="https://brew.sh/">Homebrew</a>.   
 
 
