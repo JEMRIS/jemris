@@ -115,8 +115,7 @@ if (NOT DEFINED HDF5_CXX_LIBRARIES)
    LIST(APPEND HDF5_CXX_LIBRARIES ${HDF5_hdf5_hl_LIBRARY})
 endif(NOT DEFINED HDF5_CXX_LIBRARIES)
 
-include_directories (${HDF5_CXX_INCLUDE_DIRS})
-#include_directories (${HDF5_INCLUDE_DIR})
+include_directories (${HDF5_INCLUDE_DIR})
 
 # Is this here really necessary?
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
