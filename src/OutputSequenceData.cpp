@@ -160,6 +160,13 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	distanceFromIdentity += fabs(m_rot_matrix[1][0]) + fabs(m_rot_matrix[1][1]-1.) + fabs(m_rot_matrix[1][2]);
 	distanceFromIdentity += fabs(m_rot_matrix[2][0]) + fabs(m_rot_matrix[2][1]) + fabs(m_rot_matrix[2][2]-1.);
 
+	// Output Pulseq Version
+	outfile << "[VERSION]" << endl;
+	outfile << "major 1" << endl;
+	outfile << "minor 2" << endl;
+	outfile << "revision 1" << endl;
+	outfile << endl;
+
 	// Output high level parameters
 	outfile << "[DEFINITIONS]" << endl;
 	for (map<string,string>::iterator it=m_definitions.begin(); it!=m_definitions.end(); ++it)
@@ -203,13 +210,13 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	// RF events
 	if (m_rf_library.size()>0) {
 		outfile << "# Format of RF events:" << endl;
-		outfile << "# id amplitude mag_id phase_id freq phase" << endl;
-		outfile << "# ..        Hz   ....     ....   Hz   rad" << endl;
+		outfile << "# id amplitude mag_id phase_id delay freq phase" << endl;
+		outfile << "# ..        Hz   ....     ....    us   Hz   rad" << endl;
 		outfile << "[RF]" << endl;
 		for (int iE=0; iE<m_rf_library.size(); iE++) {
 			RFEvent &rf = m_rf_library[iE];
 			outfile << iE+1 << " " <<  setw(12) << FREQ_TO_EXTERNAL*rf.m_amplitude
-			        << " " << rf.m_mag_shape << " " << rf.m_phase_shape
+			        << " " << rf.m_mag_shape << " " << rf.m_phase_shape << " " << setw(3) << rf.m_delay
 			        << " " << FREQ_TO_EXTERNAL*rf.m_freq_offset << " " << rf.m_phase_offset << endl;
 		}
 		outfile << endl;
@@ -226,13 +233,13 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	// Arbitrary gradient events
 	if (numArbGrad>0) {
 		outfile << "# Format of arbitrary gradients:" << endl;
-		outfile << "# id amplitude shape_id" << endl;
-		outfile << "# ..      Hz/m     ...." << endl;
+		outfile << "# id amplitude shape_id delay" << endl;
+		outfile << "# ..      Hz/m     ....    us" << endl;
 		outfile << "[GRADIENTS]" << endl;
 		for (int iE=0; iE<m_grad_library.size(); iE++) {
 			GradEvent &grad = m_grad_library[iE];
 			if (grad.m_shape>0)
-				outfile << iE+1 << " " << setw(12) << GRAD_TO_EXTERNAL*grad.m_amplitude << " " << grad.m_shape << endl;
+				outfile << iE+1 << " " << setw(12) << GRAD_TO_EXTERNAL*grad.m_amplitude << " " << grad.m_shape << " " << setw(3) << grad.m_delay << endl;
 		}
 		outfile << endl;
 	}
@@ -240,14 +247,14 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	// Trapezoid gradient events
 	if (numTrapGrad>0) {
 		outfile << "# Format of trapezoid gradients:" << endl;
-		outfile << "# id amplitude rise flat fall" << endl;
-		outfile << "# ..      Hz/m   us   us   us" << endl;
+		outfile << "# id amplitude rise flat fall delay" << endl;
+		outfile << "# ..      Hz/m   us   us   us    us" << endl;
 		outfile << "[TRAP]" << endl;
 		for (int iE=0; iE<m_grad_library.size(); iE++) {
 			GradEvent &grad = m_grad_library[iE];
 			if (grad.m_shape<0)
 				outfile << setw(2) << iE+1 << " " <<  setprecision(7) << setw(13) << GRAD_TO_EXTERNAL*grad.m_amplitude << " " << setw(3) << grad.m_ramp_up_time
-				        << " " << setw(4) << grad.m_flat_time << " " << setw(3) << grad.m_ramp_down_time << endl;
+				        << " " << setw(4) << grad.m_flat_time << " " << setw(3) << grad.m_ramp_down_time << " " << setw(3) << grad.m_delay << endl;
 		}
 		outfile << endl;
 	}

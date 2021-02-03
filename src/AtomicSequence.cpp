@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C)
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -220,8 +220,10 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 	World* pW = World::instance();
 
 	//turn off nonlinear gradients for sequence diagram calculation
-	this->SetNonLinGrad(false);
+	SetNonLinGrad(false);
 	CollectTPOIs();
+
+    PrepareEddyCurrents();
 
 	for (int i=0; i < GetNumOfTPOIs(); ++i) {
 		seqdata(0,offset+i+1) = m_tpoi.GetTime(i) + t;
@@ -233,8 +235,7 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 		seqdata(MAX_SEQ_VAL+1+2,offset+i+1) = m_tpoi.GetMask(i);
 	}
 
-    this->UpdateEddyCurrents();
-    this->PrepareEddyCurrents();
+	UpdateEddyCurrents();
 
     //increase sequence time and TPOI offset
 	t      += GetDuration();
@@ -287,7 +288,7 @@ void    AtomicSequence::GetValueLingeringEddyCurrents (double * dAllVal, double 
 
 	for(iter = pW->m_eddies.begin(); iter != pW->m_eddies.end(); iter++) {
 
-		if ( iter->second < 0.0 )
+		if ( iter->second < 1e-16 )
 			continue;
 
 		if (HasNonLinGrad() && iter->first->HasNonLinGrad()) {
@@ -313,62 +314,35 @@ void    AtomicSequence::GetValueLingeringEddyCurrents (double * dAllVal, double 
 }
 
 /***********************************************************/
-void AtomicSequence::UpdateEddyCurrents() {
-
-	World* pW = World::instance();
-	multimap<EddyPulse*,double>::iterator iter;
-
-	//find eddy currents which are still alive
-	multimap<EddyPulse*,double>	m_still_alive;
-	for (iter = pW->m_eddies.begin(); iter != pW->m_eddies.end(); iter++ ) {
-		if ( iter->second > GetDuration() )
-			m_still_alive.insert(pair<EddyPulse*,double>(iter->first, iter->second - GetDuration() ));
-		iter->second = -iter->first->GetLingerTime();
-	}
-
-	//check for nonlinear gradients
-	bool b = HasNonLinGrad();
-	for (iter = pW->m_eddies.begin(); iter != pW->m_eddies.end(); iter++ ) {
-		if ( iter->first->HasNonLinGrad() ) { b=true; break;}
-	}
-	SetNonLinGrad(b);
-
-	//add eddies which are still alive to the multimap
-	for (iter = m_still_alive.begin(); iter != m_still_alive.end(); iter++)
-		pW->m_eddies.insert(pair<EddyPulse*,double>(iter->first, iter->second) );
-
-
-	//*/remove exact double entries from multimap (?)
-	multimap<EddyPulse*,double>::iterator it1 = pW->m_eddies.begin();
-	multimap<EddyPulse*,double>::iterator it2 = pW->m_eddies.begin();
-	multimap<EddyPulse*,double>::iterator it3 = pW->m_eddies.begin();
-	vector <multimap<EddyPulse*,double>::iterator> del;
-
-	for (it1 = pW->m_eddies.begin(); it1 != pW->m_eddies.end(); it1++ ) {
-		it3 = it1; it3++;
-		if (it3 == pW->m_eddies.end() ) break;
-		for (it2 = it3; it2!=pW->m_eddies.end(); it2++) {
-			if ( it1->first == it2->first && it1->second == it2->second )	{
-				bool b = true;
-				for (unsigned int j=0; j<del.size() ; ++j)
-					if ( del[j] == it1 ) {b=false; break;}
-				if (b) del.push_back(it1);
-			}
-		}
-	}
-	for (unsigned int j=0; j<del.size() ; ++j) pW->m_eddies.erase(del[j]);
-
-
-	//cout << "!!! " << pW->m_eddies.size() << endl << endl;
-}
-
-/***********************************************************/
 void AtomicSequence::PrepareEddyCurrents() {
 
 	if (!m_eddy) return;
 
 	World* pW = World::instance();
 	multimap<EddyPulse*,double>::iterator iter;
+	vector<Module*> children = GetChildren();
+
+	// find my eddies
+	for (unsigned int j=0; j<children.size() ; ++j) {
+		PulseAxis ax = ((Pulse*) children[j])->GetAxis();
+		if ( ax==AXIS_RF || ax==AXIS_VOID ) continue;
+		iter = pW->m_eddies.find(((EddyPulse*) children[j])); //OK - finds the first inserted EddyPulse
+		if (iter == pW->m_eddies.end() ) continue;
+		iter->first->Convolve();
+	}
+
+}
+/***********************************************************/
+void AtomicSequence::UpdateEddyCurrents() {
+
+	// reduce linger time for all eddies
+	World* pW = World::instance();
+	multimap<EddyPulse*,double>::iterator iter;
+	for (iter = pW->m_eddies.begin(); iter != pW->m_eddies.end(); iter++ )
+		iter->second -= GetDuration();
+
+	// set linger time for my eddies
+	if (!m_eddy) return;
 	vector<Module*> children = GetChildren();
 
 	for (unsigned int j=0; j<children.size() ; ++j) {

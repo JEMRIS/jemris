@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ bool              ExternalGradPulse::Prepare     (const PrepareMode mode)   {
 
 	m_pulse_data.SetInterp(m_interp);
 
-	if ( btag && m_tpoi.GetSize()>0 ) m_area = GetAreaNumeric(m_tpoi.GetSize());
+	if ( btag && m_tpoi.GetSize()>0 ) m_area = GetAreaNumeric(100*m_tpoi.GetSize());
 
 	btag = ( GradPulse::Prepare(mode) && btag);
     

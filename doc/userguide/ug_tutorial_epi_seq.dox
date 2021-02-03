@@ -1,253 +1,249 @@
 /**
 ***************************************************
-* \page ug_tutorial_epi_seq %First steps tutorial
+* \page ug_tutorial_epi_seq %First steps tutorial: sequence
 
 \n
 
-In this tutorial the user is introduced guided through the setup and
-performance of an EPI experiment. This step by step introduction shall
+In this tutorial the user is guided through the setup and
+simulation of an EPI experiment. This step by step introduction shall
 enable the user to setup own experiments thereafter.
 
-To proceed the user must have successfully compiled JEMRIS 2 as
-described in the \ref ug_intro_installation section. 
+To proceed the user must have successfully installed JEMRIS.
 
 \section ug_tutorial_epi_seq_seq Setup the EPI sequence
 
-\li Create a directory for your simulation experiments. This directory
-will be called <b>\c work_dir</b> hereafter. 
 \li Start up MATLAB
-\li In MATLAB change directory to \c <b>work_dir</b>: <br/>
-    <b> \c >> \c cd \c work_dir</b>
-\li Add the path to the directory with the JEMRIS matlab code to your
-MATLAB runtime
+\li Add the directory with the JEMRIS matlab code to the MATLAB path with
     <b> \c >> \c addpath \c /usr/local/share/jemris/matlab</b>
 \li Start up the <b>Sequence GUI</b> with the following command<br>
     <b> \c >> \c JEMRIS_seq</b>
-\image html pics/jemris_sequence.png
-\image latex pics/jemris_sequence.png
+The Sequence GUI window pops up:
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sequence.png
+\image latex pics/seq-gui-top.png width=12cm
+\image latex pics/jemris_sequence.png width=12cm
 
-We will now start to model an EPI sequence with the following
- protocol: TE 50ms, TR 100ms, FA 90, Imaging matrix 64x64, Maxmum
- gradient amplitude 40 mT/m, Maximum slewrate 200 mT/m, and FOV
- 100x100.
-
-\li From the File drop down menue choose "New sequence".
+\li From the File drop down menu choose "New sequence".
 \li As <b>Filename</b> choose \c <b>MyEPI.xml</b> and save.
 
-You will now see the minimum requirements for a sequence. The <b>top
- node</b> (outer most loop) of the sequence, \c <b>C1</b>, short
-  ConcatSequence1, and the <b>paramters</b>, \c <b>P</b>. Let us start
+You will now see the minimum requirements for a sequence: the <b>top
+ node ConcatSequence</b> (outer most loop) of the sequence, \c <b>C1</b>, short
+  ConcatSequence, and <b>Parameters node</b>, \c <b>P</b>. Let us start
  with the parameters. The <b>parameters</b> hold information valid for
  the whole sequence. These include in order from top left to bottom
  right: <b>name</b>, <b>FOV in x, y, and z direction</b>,<b>maximum
  gradient amplitude</b>, <b>maximum slewrate</b>, <b>TD</b>,
- <b>TE</b>, <b>TI</b>, and <b>TR</b>.
+ <b>TE</b>, <b>TI</b>, and <b>TR</b>. Note that these values do not do anything
+ as long as they are not used by the sequence. The parameter node
+ is merely a collection of values to be used by other modules.
 
-\li Set <b>\c FOVx</b> and <b>\c FOVy</b> to <b>\c 100</b> each.
-\li Set <b>\c MaxGradAmpl</b> to <b>\c 40</b>.
-\li Set <b>\c MaxSlewRate</b> to <b>\c 200</b>.
+\li Click on the parameter node \c <b>P</b>
+\li Set <b>\c FOVx</b> and <b>\c FOVy</b> to <b>\c 200</b> each.
+\li Set <b>\c GradMaxAmpl</b> to <b>\c 5</b>.
+\li Set <b>\c GradSlewRate</b> to <b>\c 20</b>.
 \li Set <b>\c Nx</b> and <b>\c Ny</b> to <b>\c 64</b> each.
 \li Set <b>\c TE</b> to <b>\c 50</b>.
 \li Set <b>\c TR</b> to <b>\c 100</b>.
-\li Click on write XML.
+\li Click on \c "write XML"
+
+Note that the last step has to be done always in order to apply unsaved changes.
+<b> Do this always in order to see the effect of a change. </b>
 
 Let us now model the sequence.
 
 \li Click on the concat sequence \c <b>C1</b>
-\li Set name to <b>\c Sli</b> for Slice loop.
 
-Since we do not loop over more than one slices you do not need to
-change any of the parameters of \c <b>Sli</b>.
+Since we do not want to loop over the EPI readout, you do not need to
+change any of the parameters of \c <b>C1</b>.
 
-We want to start with inserting the excitation puls. Pulses, which
+We want to start with inserting the excitation pulse. Pulses, which
 are played out simultaneously are contained in <b>atomic
-sequences</b>. 
+sequences</b>.
 
 \li Click in the selection bar on the symbol for atomic
 sequences \c <b>A</b>.
-\li Click on \c <b>Sli</b> and you will append.
+\li Click on \c <b>C1</b> and the atom will be appended.
 
-An atomic sequence is appended to \c <b>Sli</b> by the name
+An atomic sequence is appended to \c <b>C1</b> by the name
 of \c <b>A1</b>.
 
-\li Change its name to \c <b>Exc</b> for excitation
-
 Since we do not care for slice selection for this tutorial, we now
-insert an hard RF pulse.
+insert a hard RF pulse.
 
 \li Click in the module bar on the symbol for the hard RF pulses.
 
 When you hover over the fields a short description is shown for every
 module.
 
-\li Click on \c <b>Exc</b> to append the pulse to the excitation atomic
-sequence. 
-\li Change its name to \c <b>HRF</b> for hard RF pulse.
-\li Set \c <b>Duration</b> to 2 for 2ms.
+\li Click on \c <b>A1</b> to append the pulse to the excitation atomic
+sequence.
+\li Set \c <b>Duration</b> to 1 for 1ms.
 \li Set \c <b>FlipAngle</b> to 90 for 90 degrees.
 
 Your sequence should, so far, look like this:
-\image html pics/jemris_sequence_1.png
-\image latex pics/jemris_sequence_1.png
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_1.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sequence_1.png
+\image latex pics/seq-gui-top.png width=12cm
+\image latex pics/jemris_sequence_1.png width=12cm
 
+Note the \c "jemris tree dump" at the bottom of the window. It shows the jemris output of
+the sequence. Any error messages due to incorrect or insufficient module attributes will
+show up here.
 
 The excitation is now sufficiently defined. We now need to insert
 into the sequence the <b>dephasers</b> in read as well as PE
 directions. For this purpose the next atom needs to be added after
-the \c <b>Exc</b> atom. 
+the \c <b>A1</b> atom.
 
 \li Select from the symbol bar the symbol for atomic sequences.
-\li Click on \c <b>Sli</b> to insert the atom after \c <b>Exc</b>.
-\li Change its name to \c <b>Dph</b> for dephasers.
-\li Choose from the symbol bar the symbol for trapeziodal gradients.
-\li Click on \c <b>Dph</b> to insert it therein.
-\li Change its name to \c <b>RDp</b> for read dephaser.
+\li Click on \c <b>C1</b> to insert the atom after \c <b>A1</b>.
+\li Choose from the symbol bar the symbol for trapezoidal gradients.
+\li Click on \c <b>A2</b> to insert it therein.
+\li Change its axis to \c <b>GX</b>
 \li Repeat the last three steps for the phase encoding
-dephaser. 
-\li Change its name to \c <b>PDp</b>
-\li Change its axis to \c <b>GY</b>
+dephaser, with axis \c <b>GY</b> in the last step
 
-The areas for the dephasing gradients can not be set yet, since we
-have to prepare the actual readout and phase encoding gradients first.
-But first we need to introduct a dead time to match the center of the
+The dephasing areas will be chosen as half the size of k-space. These values
+can be obtained from the <b>parameters</b> node, which defines the image
+resolution. For that, the gradients have to observe the according parameters
+(cf. section \ref ug_JEMRIS_seq_ginac):
+\li Click on the first dephaser \c <b>P2</b>
+ \li Set \c <b>Observe</b> to  <b>\c A=P.KMAXx</b>
+ \li Set \c <b>Area</b> to  <b>\c -A</b>
+
+Do the same for dephaser \c <b>P2</b> (using the parameter <b>\c P.KMAXy</b>).
+\n
+We will later define the EPI readout along the x-axis. Then, we will see that the
+above definition of the dephaser <b>P1</b> was not fully exact and we have to change it.
+
+Next we need to introduce a dead time to match the center of the
 EPI readout with \c <b>TE</b> from the parameters.
 
 \li Choose the symbol for a delay atomic sequence from the module bar.
-\li Click on \c <b>Sli</b> to add it to the sequence.
-\li Set its name to <b>\c DTE</b>
+\li Click on \c <b>C1</b> to add it to the sequence.
+You will find details on delays here: \ref ug_JEMRIS_seq_intro_seqmod.
+Start preparing the delay \c <b>D1</b> by observing the attribute \c TE of the
+parameter node:
 
-You will find details on delays here: \ref
-ug_usage_sequence_gui_intro_seqmod. Once again the delay cannot be complete
-entirely besides that we know that \c <b>TE</b> starts at the centre of
-the excitation and ends at the centre of the EPI
-readout. 
+\li Click on the delay \c <b>D1</b>
+\li Set \c <b>Observe</b> to  <b>\c TE=P.TE</b>
+\li Set the \c <b>Delay</b> to <b>\c TE</b>
+\li Set the \c <b>StartSeq</b> to <b>\c A1</b>
+The \c <b>StopSeq</b> will be defined later, once we have created the EPI readout.
 
-One could now type in the value for TE in \c <b>Duration</b>. But a
-very convenient feature of JEMRIS helps us minimize the effort for
-future changes to our sequence such as changes to TE. Namely that
-every module is able to <b>observe</b> values in other modules of the
-sequence; may they be dynamically changing over the duration of the
-sequence or static.
-
-We would like to observe \c <b>TE</b> from \c <b>P</b>. We inform \c
-<b>DTE</b> in the following manner:
-
-\li Set \c <b>Observe</b> to  <b>\c P,\c TE</b>
-
-You will find a short introduction to the concept of observing attibutes here: \ref ug_usage_sequence_gui_ginac_obs.
-Now we can use this new <b>attribute</b> known to the module as \c <b>a1</b>.
-
-\li Set the \c <b>Delay</b> to <b>\c a1</b>.
 
 You should be looking at a sequence representation looking as follows:
-\image html pics/jemris_sequence_2.png
-\image latex pics/jemris_sequence_2.png
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_2.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sequence_2.png
+\image latex pics/seq-gui-top.png width=12cm
+\image latex pics/jemris_sequence_2.png width=12cm
 
-Let us now insert and compose the EPI readout. For this, we would like
+Let us now compose the EPI readout. For this, we would like
 to implement a loop structure for one readout line and one phase
 encoding blip to run through all phase encoding steps.
 
 \li Click on the symbol of a concat sequence in the module bar.
-\li Add it to the sequence by clicking on <b>\c Sli</b>.
-\li Change its name to <b>\c ERL</b> for EPI readout loop.
-\li Set <b>\c Observe</b> to <b>\c P,Ny</b>.
-\li Set <b>\c Repetitions</b> to <b>\c a1</b> to reflect the repetition for each phase encoding step.
-\li Add two atomic sequences to <b>\c ERL</b> to <b>\c ERL</b> and change their
-names to <b>\c ROA</b> and <b>\c PEA</b> for readout atom and phase
-encoding atom.
-\li Add to each one trapezoidal gradient and change their names to
-<b>\c ROG</b> and <b>\c PEG</b> and their <b>\c Axes</b> to <b>\c
-GX</b> and <b>\c GY</b> respectively.
+\li Add it to the sequence by clicking on <b>\c C1</b>.
+\li Click on the new concat sequence \c <b>C2</b> (the EPI loop)
+\li Set <b>\c Observe</b> to <b>\c N=P.Ny</b>
+\li Set <b>\c Repetitions</b> to <b>\c N</b>
+\li Add two atomic sequences to <b>\c C2</b>, one for the readout and one for the blips.
+\li Add to each atomic sequence, <b>\c A3</b> and <b>\c A4</b>, one trapezoidal gradient (<b>\c P4</b> and <b>\c P5</b>) and change their
+<b>\c Axis</b> to <b>\c GX</b> and <b>\c GY</b>, respectively.
 
 We have to define the FlatTopArea and the number of sampling points on
-the flat top of <b>\c ROG</b>. The latter is rather
-straightforward. We need to <b>observe</b> the imaging matrix size
-defined in <b>\c P</b>. 
+the flat top of the readout gradient <b>\c P4</b>:
 
-\li Set <b>\c Observe</b> to <b>\c P,Nx</b>.
+\li Click on the gradient \c <b>P4</b>
+\li Set <b>\c Observe</b> to <b>\c A=P.KMAXx, C=C2.Counter,N=P.Nx</b>
+\li Set <b>\c ADCs</b> to <b>\c N</b>
+\li Set <b>\c FlatTopArea</b> to<b>\c 2*A*(-1)^C</b>
+\li Set <b>\c FlatTopTime</b> to <b>\c 1</b>
 
-This is the first attribute and known to <b>\c ROG</b>, according to
-above, as <b>\c a1</b>.
+Thus, the flat top has a fixed duration of 1ms. Area and polarity will be set
+according to the defined formula. By observing the loop counter, the polarity
+will toggle between even and odd lines in k-space. (Note: loop counters always
+start at zero in jemris!)
 
-\li Set <b>\c ADCs</b> to <b>\c a1</b>.
+ Next, define the <b>\c Area</b> of the PE blip <b>\c P5</b>. This is a
+simple assignment, observing the parameter attribute for k-space increment:
 
-For defining the flat top of <b>\c ROG</b> we have to know the maximum
-k-space vector in readout direction and the number of the line, which
-is acquired. We introduce these two attributes to <b>\c
-Observe</b>. Observed values are seperated by <b>\c /</b> (slash).
-
-\li Append to <b>\c Observe</b> the following string: <b>\c
-"/P,KMAXx/ERL,Counter"</b>
-
-<b>\c ROG</b> now knows the two new attributes as <b>\c a2</b> an
-<b>\c a3</b>. The <b>\c FlatTopArea</b> then should change the polarity for
-every second line and go from <b>\c -KMAXx</b> to <b>\c +KMAXx</b>.
-
-\li Set <b>\c FlatTopArea</b> to<b>\c 2*a2*(-1)^a3</b>.
-\li Set <b>\c FlatTopTime</b> to <b>\c 1</b>.
-
-Here the integrated library for symbolic mathematics, GiNAC helps us
-to calculate the <b>\c FlatTopArea</b> by the evaluation of a symbolic
-formula.
-
-Let us define the <b>\c Area</b> of the PE blips, <b>\c PEG</b>. This is a very
-simple assignement. The area will be the size of the phase encoding
-steps in <b>\c Ky</b> direction.
-
-\li Set <b>\c Observe</b> to <b>\c P,DKy</b>.
-\li Set <b>\c Area</b> of <b>\c PEG</b> equal <b>\c -a1</b>.
+\li Click on the gradient \c <b>P5</b>
+\li Set <b>\c Observe</b> to <b>\c A=P.DKy</b>.
+\li Set <b>\c Area</b> to <b>\c A</b>.
 
 The following image reflects the content of the sequence GUI up to this point:
-\image html pics/jemris_sequence_3.png
-\image latex pics/jemris_sequence_3.png
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_3.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sequence_3.png
+\image latex pics/jemris_sequence_3.png width=12cm
 
-Now that <b>\c ROG</b> and <b>\c PEG </b>are defined we can go back and
-define the missing parameters of <b>\c RDp</b> and <b>\c PDp</b>. <b>\c RDp</b>
-should send the magnetisation to <b>\c -KMAXx</b> and <b>\c PDp</b> to
-the top edge of the K-space (<b>\c KMAXy</b>).
+We are nearly done, this is already close to a working EPI sequence. However, if you look at
+the k-space encoding (select \c "sequence Diagram" and \c "k-space trajectory"), you will notice
+that the readout encoding is not exactly symmetrical to k-space center. For that the dephaser
+area needs to be exactly half the size of the readout gradient. Let's correct that:
+\li Click on the first dephaser \c <b>P2</b>
+ \li Change \c <b>Observe</b> to  <b>\c A=P4.Area</b>
+ \li Change \c <b>Area</b> to  <b>\c -abs(A)/2</b>
 
-\li Set <b>\c Observe</b> of <b>\c RDp</b> to <b>\c P,KMAXx</b>.
-\li Set <b>\c Area</b> of <b>\c RDp</b> to <b>\c -a1</b>.
-\li Set <b>\c Observe</b> of <b>\c PDp</b> to <b>\c P,KMAXy</b>.
-\li Set <b>\c Area</b> of <b>\c PDp</b> to <b>\c a1</b>.
+Here, \c "-abs()" was used to ensure negative polarity of the dephaser, as the readout gradient area,
+<b>\c P4.Area</b>, starts with a positive readout.\n
+(Note that every change of the readout polarity will notify the dephaser to update its area.
+This is a consequence of the built-in observe-notify mechanism of JEMRIS modules. It has no
+effect in this example but is useful in others, e.g. to automatically set the area of a phase encode rewinder.)
 
-Let us now define the missing parameters of the delay <b>\c DTE</b>. 
-
+Let us now define the missing parameters of the delay <b>\c D1</b>, to ensure that the delay time TE is counted from center to center (\c C2C) between RF pulse and EPI readout:
+\li Click on the delay atom \c <b>D1</b>
 \li Set the <b>\c DelayType</b> to <b>\c C2C</b>.
-\li Set <b>\c StartSeq</b> to <b>\c HRF</b>.
-\li Set <b>\c StopSeq</b> to <b>\c REL</b>.
+\li Set <b>\c StopSeq</b> to <b>\c C2</b>.
 
-The only missing element is now the constraints associated with TR. So
-will add a delay to the end of the sequence to suffice those
-constraints.
+Finally, we add a delay to the end of the sequence to define the TR of the sequence:
 
 \li Choose from the module bar the symbol for an DelayAtomicSequence.
-\li Click on <b>\c Sli</b> to append it to the sequence.
-\li Set <b>\c Name</b> to <b>\c DTR</b>
+\li Click on <b>\c C1</b> to append it to the sequence.
 \li Set <b>\c DelayTape</b> to <b>\c B2E</b>.
-\li Set <b>\c Observe</b> to <b>\c P,TR</b>.
-\li Set <b>\c Delay</b> to <b>\c a1</b>.
-\li Set <b>\c StartSeq</b> to <b>\c Sli</b>.
+\li Set <b>\c Observe</b> to <b>\c TR=P.TR</b>.
+\li Set <b>\c Delay</b> to <b>\c TR</b>.
+\li Set <b>\c StartSeq</b> to <b>\c A1</b>.
 
-We are done now with the EPI sequence. 
+We are done with the EPI sequence.
 
-Let us, finally, have a look at the completed single slice EPI sequence, the associated sequence diagram, and the k-space trajectory reflecting the data acquisition scheme in the following three images:
+Let us, finally, have a look at the EPI sequence, the associated sequence diagram, and the k-space trajectory reflecting the data acquisition scheme in the following three images.
 
-\image html pics/jemris_sequence_4.png
-\image latex pics/jemris_sequence_4.png
+The following image reflects the sequence GUI up to this point:
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_4.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sequence_4.png
+\image latex pics/seq-gui-top.png width=12cm
+\image latex pics/jemris_sequence_4.png width=12cm
 
-Click now on the check box \c <b>Sequence Diagram</b> at the top to see the currents played out during this sequence.
+Click now on the check box \c <b>"Sequence Diagram"</b> at the top to see the sequence diagram:
 
-\image html pics/jemris_sequence_5.png
-\image latex pics/jemris_sequence_5.png
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_5.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sequence_5.png
+\image latex pics/seq-gui-top.png width=12cm
+\image latex pics/jemris_sequence_5.png width=12cm
 
-Click now on the check boxes \c <b>k-space trajecory</b> and \c <b>continuous</b> to verify the sampling pattern and time evolution from \c <b>early</b> to \c <b>late</b>.
+Click now on the check box \c <b>"k-space trajecory"</b> and then \c <b>"add ADCs"</b> to verify the k-space trajectory and sampling of the EPI sequence:
 
-\image html pics/jemris_sequence_6.png
-\image latex pics/jemris_sequence_6.png
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sequence_6.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sequence_6.png
+\image latex pics/seq-gui-top.png width=12cm
+\image latex pics/jemris_sequence_6.png width=12cm
 
 Let us go on to simulate the sequence: <a href="ug_tutorial_epi_sim.html">%First steps tutorial - simulation</a>
 
 ***************************************************
 */
-

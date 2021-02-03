@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_6">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::South</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab_arrtree">
+       <attribute name="title">
+        <string>Array Tree</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Tree Dump</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <item row="0" column="0">
+         <widget class="QTextEdit" name="textEdit"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_sensmaps">
+       <attribute name="title">
+        <string>Sensitivity Maps</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <action name="actionBiotSavart">
+   <property name="icon">
+    <iconset theme="document-open">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>BiotSavart</string>
+   </property>
+  </action>
+  <action name="actionAnalytic">
+   <property name="icon">
+    <iconset theme="document-save">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Analytic</string>
+   </property>
+  </action>
+  <action name="actionExternal">
+   <property name="icon">
+    <iconset theme="document">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>External</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

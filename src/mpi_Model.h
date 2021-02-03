@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -56,8 +56,11 @@ inline MPI_Datatype MPIspindata () {
     MPI_Datatype MPI_SPINDATA ;
 	MPI_Datatype type = MPI_DOUBLE;
 	MPI_Aint     disp = 0;
-
+#if MPI_VERSION < 3
     MPI_Type_struct( 1, &NUM_DATA, &disp, &type, &MPI_SPINDATA);
+#else
+    MPI_Type_create_struct( 1, &NUM_DATA, &disp, &type, &MPI_SPINDATA);
+#endif
     MPI_Type_commit( &MPI_SPINDATA);
 
     return  MPI_SPINDATA;

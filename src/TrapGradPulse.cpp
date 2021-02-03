@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -395,6 +395,7 @@ inline void TrapGradPulse::GenerateEvents(std::vector<Event*> &events) {
 	grad->m_ramp_up_time = round(m_ramp_up_time*1e3);
 	grad->m_ramp_down_time = round(m_ramp_dn_time*1e3);
 	grad->m_amplitude = m_amplitude;
+	grad->m_delay = round(GetInitialDelay()*1.0e3);
 
 	grad->m_channel = (int)(m_axis-AXIS_GX);
 	grad->m_shape = -1;	// indicates trapezoid;
@@ -405,9 +406,15 @@ inline void TrapGradPulse::GenerateEvents(std::vector<Event*> &events) {
 	if (N>0) {
 		ADCEvent *adc = new ADCEvent();
 		adc->m_num_samples = N;
-		adc->m_dwell_time = 1e6*m_flat_top_time/N;
-		adc->m_delay = m_ramp_up_time*1e3;
-
+		// If flat top time is set, no ramp sampling will be used
+		if (m_flat_top_time>0) {
+			adc->m_dwell_time = 1e6*m_flat_top_time/N;
+			adc->m_delay = round(GetInitialDelay()*1.0e3) + round(m_ramp_up_time*1e3);
+		}
+		else {
+			adc->m_dwell_time = 1e6*GetDuration()/N;
+			adc->m_delay = round(GetInitialDelay()*1.0e3);
+		}
 		double p = GetInitialPhase()*PI/180.0;
 		p = fmod( p, 2*PI );
 		p = p<0.0 ? p+2*PI : p;

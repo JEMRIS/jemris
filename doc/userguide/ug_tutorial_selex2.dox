@@ -1,14 +1,14 @@
 /**
 *************************************************** *
-* \page ug_tutorial_selex2 %In depth tutorial - Part 2 
+* \page ug_tutorial_selex2 %In depth tutorial - Part 2: c++ framework extension
 
 \n
 
-Let us now consider extending the framework to achieve the same
-results. One may ask why this could be of any interest. First of all,
-the symbolic math toolbox requires additional computation
-power. The implementation of the nessecary code in the simulator
-framwork speeds up the simualtion process dramatically.
+Let us now extend the framework to achieve the same
+results as in the previous example \ref ug_tutorial_selex1
+
+This tutorial assumes that you are familiar with compiling JEMRIS. The
+necessary steps for recompiling will not be explained in detail.
 
 The workflow will involve the creation of two new classes one for the
 RF pulse and one for the gradient pulses.
@@ -17,12 +17,11 @@ Let us start with defining the template for an RF pulse, which
 inherits from the RF pulse functionality implemented in framework.
 This is done with a few lines for the object declaration.
 
-Enter the directory in the
-\c<b>[jemris-dir]/app/src/framework</b>. Create a new header file for
+Enter the directory \c<b>[jemris-dir]/src</b>. Create a new header file for
 the STA RF pulse by the name \c<b>STARFPulse.h</b>. And type in the
 lines below.
 
-\code 
+\code
 
 #ifndef STARFPULSE_H_
 #define STARFPULSE_H_
@@ -50,14 +49,14 @@ class STARFPulse : public RFPulse {
 
     // Prepare the pulse with nessecary parameters.
     //
-    // param mode. Sets the preparation mode, one of enum PrepareMode 
+    // param mode. Sets the preparation mode, one of enum PrepareMode
     //             {PREP_INIT,PREP_VERBOSE,PREP_UPDATE}.
     // returns     Success of the preparation.
     virtual bool Prepare  (PrepareMode mode);
 
     // Returns a constant Magnitude for all times.
     //
-    // param time. The magnitude is requested for "time". Offset is the start time of the pulse. 
+    // param time. The magnitude is requested for "time". Offset is the start time of the pulse.
     // returns     Magnitude at time "time".
     inline virtual double  GetMagnitude (double time );
 
@@ -66,8 +65,8 @@ class STARFPulse : public RFPulse {
 
     // Constants as described in the paper.
     double m_Gamma; // Parameter Gamma.
-    double m_Alpha; // Parameter Alpha.    
-    double m_A;     // Parameter A.    
+    double m_Alpha; // Parameter Alpha.
+    double m_A;     // Parameter A.
     double m_Beta;  // Parameter Beta.
     int    m_N;     // Parameter N.
 
@@ -89,9 +88,9 @@ framework element inherting from the virtual implementation RFPulse.
 
 Let us now have a look at the implementation. Add
 \c<b>STARFPulse.cpp</b> to the framework directory with the following
-content. 
+content.
 
-\code 
+\code
 #include "STARFPulse.h"
 
 /***********************************************************/
@@ -100,7 +99,7 @@ bool STARFPulse::Prepare  (PrepareMode mode) {
     bool btag = true;
 
     // Every attribute, which needs to be set with values before the simulation starts
-    // needs to be declared to the framework's attribute decalaration and observation 
+    // needs to be declared to the framework's attribute decalaration and observation
     // mechanism. With the macro ATTRIBUTE("ATTRIBUTE_NAME", &m_attribute_name);
 
     ATTRIBUTE("Gamma", &m_Gamma);
@@ -143,12 +142,12 @@ bool STARFPulse::Prepare  (PrepareMode mode) {
 
     }
 
-    // Extremely vital step. Here the preparation is passed up the chain for 
+    // Extremely vital step. Here the preparation is passed up the chain for
     // inheriting framework members. This encapsulates common functionality
     // and, thus, follows the object oriented paradigm.
     btag = (RFPulse::Prepare(mode) && btag);
 
-    // Everything went well? 
+    // Everything went well?
     if (!btag && mode == PREP_VERBOSE)
         cout << "\n warning in Prepare(1) of RFPULSE " << GetName() << endl;
 
@@ -162,7 +161,7 @@ double STARFPulse::GetMagnitude (double const time)  {
 
     // Strait forward: Return the value for this pulse at "time" in ms from the beginning
     // of the pulse.
-    return m_Gamma * m_Alpha / GetDuration() * exp(-pow(m_Beta,2)*pow(1-time/GetDuration(),2)) * 
+    return m_Gamma * m_Alpha / GetDuration() * exp(-pow(m_Beta,2)*pow(1-time/GetDuration(),2)) *
            sqrt( pow(2*PI*m_N*(1-time/GetDuration()),2) + 1);
 
 }
@@ -196,7 +195,7 @@ class STASpiralGradPulse : public GradPulse {
     // Destructor.
     ~SpiralGradPulse              () {};
 
-    // Cloning mechanism 
+    // Cloning mechanism
     STASpiralGradPulse* Clone        () const;
 
     // Prepare the spiral gradient pulse.
@@ -213,8 +212,8 @@ class STASpiralGradPulse : public GradPulse {
     virtual string GetInfo ();
 
     // Constants as described in the paper.
-    double m_A;    
-    double m_N;    
+    double m_A;
+    double m_N;
 
 };
 
@@ -222,10 +221,10 @@ class STASpiralGradPulse : public GradPulse {
 
 \endcode
 
-The code of the implementation will now reflect the physics in 
+The code of the implementation will now reflect the physics in
 \c<b>STAGradPulse.cpp</b>
 
-\code 
+\code
 
 #include "STASpiralGradPulse.h"
 
@@ -292,9 +291,11 @@ string          STASpiralGradPulse::GetInfo() {
 \endcode
 
 We now have to introduce the two new modules to the framework factory
-by adding them to the \c<b>ModulePrototypeFactory</b>. Just append the two include at the end of the module list.
+by adding them to the \c<b>ModulePrototypeFactory</b>.
 
-\code 
+Open \c<b>ModulePrototypeFactory.cpp</b> and include the headers of the new modules:
+
+\code
 
 ...
 #include "STASpiralGradPulse.h"
@@ -302,10 +303,9 @@ by adding them to the \c<b>ModulePrototypeFactory</b>. Just append the two inclu
 
 \endcode
 
-Open \c<b>ModulePrototypeFactory.cpp</b> and add the headers of the new modules. 
-And, further, add the object prototypes to the factory by appending the following two lines after the last entry in \c<b>ModulePrototypeFactory::ModulePrototypeFactory</b>: 
+Next, add the object prototypes to the factory constructor by appending the following two lines after the last entry in \c<b>ModulePrototypeFactory::ModulePrototypeFactory</b>:
 
-\code 
+\code
 
 ModulePrototypeFactory::ModulePrototypeFactory () {
     ...
@@ -316,6 +316,7 @@ ModulePrototypeFactory::ModulePrototypeFactory () {
 
 \endcode
 
-We are done with the framework extension.
+We are done with the framework extension. After recompile, the modules will be available
+for simulations. They also automatically appear in the Matlab sequence GUI.
 
 *************************************************** */

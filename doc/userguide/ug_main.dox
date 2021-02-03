@@ -9,7 +9,7 @@
  \li Here you can \subpage ug_downl the most recent JEMRIS version and learn how to work with the \subpage ug_uis.
  \n \n \n \n \n
  <CENTER> <b> Example Gallery </b> </CENTER>
- \image html pics/jemris_website_misc.png  \n
+ \image html pics/jemris_website_misc.png 
   \n
   \n
   \n
@@ -24,7 +24,7 @@ Get the latest stable version of JEMRIS:
  <tr><td> \li \subpage ug_downl   <td> &emsp;&emsp; <td> sources or binary packages
  <tr><td> \li \subpage ug_install   <td> &emsp;&emsp; <td> instructions to build JEMRIS on your own
 </table>
-\n 
+\n
 Additionally, you can clone the JEMRIS project from <a href="https://github.com/JEMRIS/jemris">GitHub</a>.
 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
 */
@@ -35,14 +35,14 @@ Additionally, you can clone the JEMRIS project from <a href="https://github.com/
 Download the latest stable version of JEMRIS. (Alternativaly, the most recent version is on <a href="https://github.com/JEMRIS/jemris">GitHub</a>.)
 \n
 <ul>
-        <li> <b> Sources </b> 
+        <li> <b> Sources </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z.tar.gz">jemris-X.Y.Z.tar.gz</a>
                 <li> md5sum: M5XXX
                 <li> shasum: SHXXX
              </ul>
 
-        <li> <b> Ubuntu 16.04 Binary </b>
+        <li> <b> Ubuntu 18.04 Binary </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z-Linux.deb">jemris-X.Y.Z-Linux.deb</a>
                 <li> md5sum: M5YYY
@@ -145,7 +145,13 @@ the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/
 
 /**
  \page ug_tutor Tutorials
-<b>Caution:</b> the tutorials are outdated and do not reflect the current functionality of JEMRIS. We hope to update the tutorials soon. Sorry for any inconvenience.
+
+Some first steps with JEMRIS:
+
+Learn to implement an EPI sequence from scratch, do the
+simulation, and extend it to 2D selective excitation by means of analytic pulse shapes.
+
+Finally, a c++ framework extension is shown.
 
  \subpage ug_tutorial_epi_seq \n \n
  \subpage ug_tutorial_epi_sim \n \n
@@ -160,7 +166,6 @@ the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/
  \subpage ug_example_artifacts \n \n
  \subpage ug_example_nlg \n \n
  \subpage ug_example_ktblast \n \n
- \subpage ug_example_selex \n \n
  \n
  \n
  (1) Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder, N. Jon Shah. High-performance computing MRI simulations. Magnetic Resonance in Medicine. 2010, 64(1), 186 - 193.\n
@@ -171,8 +176,8 @@ the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/
  \page ug_about About JEMRIS
 \section ug_version Version
 
-JEMRIS Version 2.8.2\n
-Copyright (C) 2006-2018  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
+JEMRIS Version 2.8.3\n
+Copyright (C) 2006-2019  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

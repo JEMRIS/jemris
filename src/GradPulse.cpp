@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -225,6 +225,7 @@ inline void GradPulse::GenerateEvents(std::vector<Event*> &events) {
 
 	grad->m_amplitude = max_amplitude;
 	grad->m_channel = (int)(m_axis-AXIS_GX);
+	grad->m_delay = round(GetInitialDelay()*1.0e3);
 
 	events.push_back(grad);
 
@@ -234,7 +235,7 @@ inline void GradPulse::GenerateEvents(std::vector<Event*> &events) {
 		ADCEvent *adc = new ADCEvent();
 		adc->m_num_samples = N;
 		adc->m_dwell_time = 1e6*GetDuration()/N;
-		adc->m_delay = 0;
+		adc->m_delay = round(GetInitialDelay()*1.0e3);
 
 		adc->m_phase_offset = 0;
 		adc->m_freq_offset = 0;

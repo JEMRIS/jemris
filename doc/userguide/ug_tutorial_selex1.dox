@@ -1,40 +1,36 @@
 /**
 ***************************************************
-* \page ug_tutorial_selex1 %In depth tutorial - Part 1
+* \page ug_tutorial_selex1 %In depth tutorial - Part 1: analytic pulse shapes
 
 \n
 
 In the following, a 2D spatially-selective excitation experiment
-[Pauly 1989] will be demontrated in detail in three different
-ways. The first will reflect the flexibility of the symbolic
-mathematics evaluation capabilities of JEMRIS. In the second part, the
-use and implementation of external gradient and RF pulses will be
-demonstrated, and in a third part, the framework will be extended to
-boost the performance of the simulation process.
+[Pauly 1989] will be demonstrated.
+The example reflects the flexibility of the symbolic
+mathematics evaluation capabilities of JEMRIS.
 
 \li Start the sequence GUI.
 \li From the \c <b>File</b> menu select \c <b>Open sequence</b>.
 \li Select the sequence file created in the first steps tutorial: \c <b>MyEPI.xml</b>.
-\li To not overwrite MyEPI, save it as \c <b>PaulyEtAl.xml</b>
+\li To not overwrite it, save it as \c <b>Selex-EPI.xml</b>
 
 The paper describes the spatially-selective small tip
 angle excitation with the application of two gradients accompanied by
 an RF pulse.
 
-To start off, let us delete the hard rf pulse and replace it with a 2D selective excitation block consisting of an analytic RF pulse, and two analytic gradient pulses in read and phase direction.
+To start off, lets replace the hard RF pulse and replace it with a 2D selective excitation block consisting of an analytic RF pulse, and two analytic gradient pulses in read and phase direction.
 
-\li Click on the rubber gum in the on the module bar and click on 
-\li Choose an analytic RF pulse from the module menue and \c <b>HRF</b>.
-\li Click in the moldule bar on the symbol for an analytic RF pulse add it to \c <b>Exc</b>.
-\li Rename it to \c <b>ERF</b>, for excitation RF pulse.
-\li Add two analytic gradient pulses to \c <b>Exc</b> by clicking on
-the corresponding modul symbol and afterwards on \c <b>Exc</b>.
-\li Call the first \c <b>EGX</b> for analytic gradient on the X axis.
-\li Call the second \c <b>EGY</b> for analytic gradient on the Y axis.
-\li Set the \c <b>Axis</b> of the latter to \c <b>GY</b>.
+\li Click in the module bar on the symbol for an analytic RF pulse add it to \c <b>A1</b>.
+\li Add two analytic gradient pulses to \c <b>A1</b> by clicking on
+the corresponding module symbol and afterwards on \c <b>A1</b>.
+\li Set the \c <b>Axis</b> of the latter to \c \c <b>GX</b> and <b>GY</b>, respectively.
+\li Click on the rubber gum in the module bar, then click on \c <b>P1</b> to delete the hard RF pulse
 
-Let us now have a look at the analytical solution for the rf pulse and
-the k-space trajectory presented by the author, which we want to
+Note: we deleted \c <b>P1</b> in the last step in order not to mix up the UI's automatic naming
+of pulses. You can of course rename all pulses as you like.
+
+Let us now have a look at the analytical solution for the RF pulse and
+the k-space trajectory presented by the Pauly et al., which we want to
 implement:
 
 \image html pics/B1.png
@@ -44,69 +40,52 @@ implement:
 \image html pics/ky.png
 \image latex pics/ky.png
 
-The paper investigates the case where beta is 2, n is 8, and A is 1
-while the excitation is played out for 2 ms. The following steps will
-associate the excitation block to the according formulas.
+The following steps will associate the excitation block to the according formulas.
 
-\li Click on \c <b>ERF</b>.
+\li Click on the analytic RF pulse \c <b>P6</b>.
 \li Set \c <b>Duration</b> to 2.
-\li Set \c <b>Observe</b> to \c <b>ERF,Duration</b>.
+\li Set \c <b>Observe</b> to \c <b>D=P6.Duration</b>.
 
-What the last step essentially means, is that some attribute of RF
-pulse needs to know about its own duration. You can see,
-the magnitude of the RF pulse is time dependent and varies over the 2
-ms pulse duration. The concept of observing oneselfs attribute may
-appear confusing on a first glance, but is due to the flexibility of
-the attribute implmentation. 
+The last step means, that the pulse observes its own duration.
 
-Let us now type in the constants involved in order of apearance. They
-can be accessed by depending attributes as \c <b>c1</b> through
-\c <b>c5</b>.
+Let us now type in the constants involved in order of appearance. They
+can be accessed in the <b>Shape</b> attribute by \c <b>c1</b> through
+\c <b>c4</b>.
 
-\li Type \c <b>1,.01,1,2,8</b> for gamma, alpha, A, beta, and n. 
+\li Type \c <b>.01,1,4,8</b> in attribute <b> Constants </b> for alpha, A, beta, and n.
 
-Here, some explanation is needed as to why gamma is set to 1.  Simply
-put, JEMRIS does not simulate the nuclear physics deeper than to the
-point, where the relaxation times for proton imaging are given. In
-that case the field strength dependant part is intrinsically built
-into the sample. So, in order to simulate the effects associated with
-faster T2 decay at high fields, one changes the value for T2
-accordingly. 
+Let us now type in the formula of the time dependent RF magnitude.
 
-Let us now type in the formula of the time dependant rf magnitude.
+\li Set \c <b>Shape</b> to \c <b>c1*c2/D*exp( -c3^2 * (1-T/D)^2) * ((2*Pi*c4*(1-T/D))^2 + 1)^0.5</b>
+\li Set \c <b>ADCs</b> to \c <b>-200</b>
 
-\li Set \c <b>Shape</b> to \c <b>c1*c2*c3/a1*exp( -c4^2 * (1-T/a1)^2) *
-  ((2*Pi*c5*(1-T/a1))^2 + 1)^0.5</b>.
-\li Set \c <b>TPOIs</b> to \c <b>200</b>.
+Negative ADCs will not produce data acquisition but only add time points of interest
+(TPOIs) for visualization of the pulse shape. See  \ref ug_JEMRIS_seq_intro_pulse for
+explanation of the TPOI concept.
 
-You should now be looking at the GUI in the following state:
+Next, the gradients are defined:
 
-\image html pics/jemris_sta_1.png
-\image latex pics/jemris_sta_1.png
-
-We are not finished yet. The Gradients are next.
-
-\li Click on \c <b>EGX</b>.
+\li Click on \c <b>P7</b>.
 
 We need to introduce the necessary parameters, all stemming from
-\c <b>ERF</b>. As there are the duration, A, and n.
+\c <b>P6</b>. As there are the duration, A, and n.
 
 \li Set \c <b>Observe</b> to
-\c <b>ERF,Duration/ERF,Constant3/ERF,Constant5</b>.
-\li Set \c <b>Duration</b> to \c <b>a1</b>.
-\li Set \c <b>Shape</b> to \c <b>a2*(1-T/a1)*cos(2*Pi*a3*T/a1)</b>.
+\c <b>D=P6.Duration, A=P6.c2, n=P6.c4</b>.
+\li Set \c <b>Duration</b> to \c <b>D</b>.
+\li Set \c <b>Shape</b> to \c <b>A*(1-T/D)*cos(2*Pi*n*T/D)</b>
 \li Set \c <b>Diff</b> to 1.
-\li Click on \c <b>EGY</b>.
-\li Set \c <b>Duration</b> to \c <b>a1</b>.
-\li Set \c <b>Shape</b> to \c <b>a2*(1-T/a1)*sin(2*Pi*a3*T/a1)</b>.
-\li Set \c <b>Diff</b> to 1.
+
+Do the exact same steps for the other gradient pulse <b>P8</b>, only
+replacing the <b>cos</b> with a <b>sin</b> function.
 
 The not obvious step in the last instruction block is the setting of
 the value for \c <b>Diff</b>. In this step, the flexibility of the
 symbolic math library is demonstrated. The formula, that was typed in
-for the \c <b>Shape</b> describes the k-space trajectory's time
-evolution. However, we are interested in the shape of the
-corresponding gradient. Which is just the first derivative with
+for the \c <b>Shape</b> describes the k-space trajectory.
+However, we are interested in the shape of the
+corresponding gradient, which is obtained by the first derivative
+of the k-space trajectory with
 respect to time or \c <b>T</b>. Alternatively you may also reset Diff
 to 0 and set \c <b>Shape</b> to the formula for the gradients as
 described in the paper:
@@ -116,27 +95,52 @@ described in the paper:
 \image html pics/Gy.png
 \image latex pics/Gy.png
 
-It is easily comprehendable that the differentiation will cost
-simulation time.
+However, the differentiation will hardly cost any simulation time since it is
+computed only once during sequence preparation.
 
-In Part 2, we will expand the framework by two very easily coded
-classes to demonstrate the extensibility of the
-framework. Additionally, as the use of symbolic mathematics is very
-appealing and should be the first choice for implementing new ideas,
-there are some performance issues to be considered. If, however, the
-computation is shifted to the level of the framework in C++, major
-speed ups may be gained depending on the complexity of the mathematics
-involved. 
+Lets have a look at the final sequence:
+
+The following image reflects the sequence GUI up to this point:
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sta_1.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sta_1.png
+\image latex pics/seq-gui-top.png width=12cm
+\image latex pics/jemris_sta_1.png width=12cm
+
+Click now on the check box \c <b>Sequence Diagram</b> to see the sequence diagram.
+Select a short time \c <b>interval</b> of \c <b>[0 2]</b> ms to see the selective excitation pulse.
+
+\htmlonly <style>div.image img[src="seq-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/seq-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sta_2.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sta_2.png
+\image latex pics/seq-gui-top.png width=12cm
+\image latex pics/jemris_sta_2.png width=12cm
+
 
 You may now simulate the sequence as described in the first steps
-tutorial. But! be very careful here. The simulation involves some
-computation power and, depending on the sample size, some RAM.
+tutorial:
+\htmlonly <style>div.image img[src="sim-gui-top.png"]{width:800px;}</style> \endhtmlonly
+@image html pics/sim-gui-top.png
+\htmlonly <style>div.image img[src="jemris_sta_3.png"]{width:800px;margin-top:-15px}</style> \endhtmlonly
+@image html pics/jemris_sta_3.png
+\image latex pics/sim-gui-top.png width=12cm
+\image latex pics/jemris_sta_3.png width=12cm
 
-Step on to: <a href="ug_tutorial_selex2.html">%In depth tutorial -
-  Part 2</a>
+
+In Part 2, we will expand the framework by two classes to demonstrate the
+C++ extensibility of the framework. This extension will use the same example
+as shown here, i.e. the RF and gradient modules for 2D selective excitation
+will be implemented instead of using analytical pulses.
+
+However, note that all symbolic expressions are compiled in run time and do not
+significantly increase simulation times. That means, extending the C++ framework by new
+modules is not necessarily an advantage with respect to computational performance.
+
+Step on to: <a href="ug_tutorial_selex2.html">%In depth tutorial - Part 2</a>
 
 <b>[Pauly 1989]</b> Pauly JM, Nishimura DG, Macovski A. <b>A k-Space
 Analysis of Small-Tip-Angle Excitation</b>. Journal of Magnetic
 Resonance, 81, 43-56 (1989)
 *************************************************** */
-

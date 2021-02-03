@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C)
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -346,7 +346,7 @@ bool Bloch_CV_Model::Calculate(double next_tStop){
 	m_world->solution[ZC]    = NV_Ith_S(((nvec*) (m_world->solverSettings))->y, ZC );
 
 	//higher accuracy than 1e-10 not useful. Return success and hope for the best.
-	if(m_reltol < 1e-10) { m_world->solverSuccess=true; }
+	if(m_accuracy_factor < 1e-10) { m_world->solverSuccess=true; }
 
 	return m_world->solverSuccess;
 }

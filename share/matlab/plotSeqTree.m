@@ -4,9 +4,9 @@ function [S,x]=plotSeqTree(S,handles,x,y)
 
 %
 %  JEMRIS Copyright (C) 
-%                        2006-2015  Tony Stoecker
+%                        2006-2019  Tony Stoecker
 %                        2007-2015  Kaveh Vahedipour
-%                        2009-2015  Daniel Pflugfelder
+%                        2009-2019  Daniel Pflugfelder
 %                                  
 %
 %  This program is free software; you can redistribute it and/or modify
@@ -56,7 +56,7 @@ end
 % plot static atom to the right (second child of parameters)
 if numel(handles.Seq(1).Children)>1 && strcmpi(handles.Seq(1).Name,'PARAMETERS')
  if strcmp(S.Attributes(1).Value,handles.Seq(1).Children(2).Attributes(1).Value)
-    x=1;y=1;
+    x=1.5;y=1.5;
     C=[.5 .5 1];
  end
 end

@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C)
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -90,13 +90,14 @@ public:
 	 * @see Event::operator==()
 	 */
 	bool operator==(const RFEvent &other) const {
-	    return (this->m_amplitude==other.m_amplitude && this->m_mag_shape==other.m_mag_shape && this->m_phase_shape==other.m_phase_shape &&
+	    return (this->m_amplitude==other.m_amplitude && this->m_mag_shape==other.m_mag_shape && this->m_phase_shape==other.m_phase_shape && this->m_delay==other.m_delay &&
 	    		this->m_freq_offset==other.m_freq_offset && this->m_phase_offset==other.m_phase_offset);
 	}
 public:
 	double m_amplitude;                  /**< @brief Amplitude (rad/ms) */
 	int m_mag_shape;                     /**< @brief ID of magnitude shape (set by OutputSequenceData) */
 	int m_phase_shape;                   /**< @brief ID of phase shape (set by OutputSequenceData) */
+	int m_delay;               		 	 /**< @brief Initial delay (us) */
 	double m_freq_offset;                /**< @brief Frequency offset (rad/ms) */
 	double m_phase_offset;               /**< @brief Phase offset (rad) */
 	std::vector<double> m_magnitude;     /**< @brief Magnitude waveform samples */
@@ -124,11 +125,13 @@ public:
 			ok = (this->m_shape==other.m_shape);
 		else                     // Trapezoidal gradient
 			ok = (this->m_ramp_up_time==other.m_ramp_up_time && this->m_flat_time==other.m_flat_time && this->m_ramp_down_time==other.m_ramp_down_time);
-		return (ok && this->m_amplitude==other.m_amplitude && this->m_channel==other.m_channel);
+		return (ok && this->m_amplitude==other.m_amplitude && this->m_channel==other.m_channel && this->m_delay==other.m_delay);
 	}
 public:
 	int  m_channel;                      /**< @brief Channel (0, 1 or 2 for X,Y,Z) */
 	double m_amplitude;                  /**< @brief Amplitude (rad/ms/mm) */
+	int m_delay;               			 /**< @brief Initial delay (us) */
+
 	// Trapezoid:
 	long m_ramp_up_time;                 /**< @brief Ramp up time (us) */
 	long m_flat_time;                    /**< @brief Flat-top time (us) */

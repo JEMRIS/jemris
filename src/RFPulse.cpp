@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -94,11 +94,13 @@ inline void RFPulse::GenerateEvents(std::vector<Event*> &events) {
 	p = round(p*1.0e5)/1.0e5;
 	rf->m_phase_offset = p;
 	rf->m_freq_offset = GetFrequency();
+	rf->m_delay = round(GetInitialDelay()*1.0e3);
 
-	// Fill the initial delay period with zeros
-	int num_initial_samples = round(GetInitialDelay()*1.0e3);
-	rf->m_magnitude.insert (rf->m_magnitude.begin(),num_initial_samples,0.0);
-	rf->m_phase.insert (rf->m_phase.begin(),num_initial_samples,0.0);
+	// Fill the initial delay period with zeros - deprecated since Pulseq 1.2.1
+	// initial delays are now part of the Pulseq file format
+	// int num_initial_samples = round(GetInitialDelay()*1.0e3);
+	// rf->m_magnitude.insert (rf->m_magnitude.begin(),num_initial_samples,0.0);
+	// rf->m_phase.insert (rf->m_phase.begin(),num_initial_samples,0.0);
 
 	double max_magnitude = std::numeric_limits<double>::min();
 	double magn, mag1, mag2;

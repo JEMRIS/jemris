@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C)
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,7 @@ class EddyPulse : public GradPulse {
     /**
      * @brief compute the convolution kernel
      */
-    bool  ConvKernel ();
+    bool  Convolve ();
 
     /**
      * @brief compute the area of the eddy currents
@@ -138,13 +138,15 @@ class EddyPulse : public GradPulse {
 
  private:
 
-    double 			m_dt;		   /**< convolution smapling interval*/
-    double			m_linger_time; /**< time of the EC outside the parent atom*/
-    int				m_length;      /**< length of the convolution kernel*/
-    vector<double>  m_kernel;      /**< @brief Convolution kernel for EC calculation */
-    bool			m_prepared;    /**< @brief status whether eddy currents were succesfully prepared */
-    GradPulse*		m_gen_pulse;   /**< @brief The pulse which generates the eddy currents */
-    AtomicSequence* m_parent;      /**< @brief The parent atom */
+    double 			m_dt;		      /**< convolution smapling interval*/
+    double			m_linger_time;    /**< time of the EC outside the parent atom*/
+    double			m_area_gen_pulse; /**< area of the generating gradient pulse */
+    int				m_length;         /**< length of the convolution kernel*/
+    vector<double>  m_kernel;         /**< @brief Convolution kernel for EC calculation */
+    vector<double>  m_eddy;           /**< @brief the eddy current */
+    bool			m_prepared;       /**< @brief status whether eddy currents were succesfully prepared */
+    GradPulse*		m_gen_pulse;      /**< @brief The pulse which generates the eddy currents */
+    AtomicSequence* m_parent;         /**< @brief The parent atom */
 
 };
 

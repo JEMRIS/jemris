@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *                                  
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,8 @@ void Coil::InitSignal(long lADCs) {
 /**********************************************************/
 void Coil::Receive (long lADC) {
 	
-    m_signal->Repo()->TP(lADC) = World::instance()->time;
+	World* pW = World::instance();
+    m_signal->Repo()->TP(lADC) = pW->time;
 	
     double sens  = GetSensitivity (m_signal->Repo()->TP(lADC));
     double phase = GetPhase       (m_signal->Repo()->TP(lADC));
@@ -74,15 +75,13 @@ void Coil::Receive (long lADC) {
 
 	for (int i = 0; i < m_signal->Repo()->Compartments(); i++) {
 
-		tm = - World::instance()->phase + phase + World::instance()->solution[PHASE+ i*3];
+		tm = - pW->phase + phase + World::instance()->solution[PHASE+ i*3];
 
-		m_signal->Repo()->at(pos +     i*3) +=  sens  * World::instance()->solution[i*3 + AMPL] * cos (tm);
-		m_signal->Repo()->at(pos + 1 + i*3) +=  sens  * World::instance()->solution[i*3 + AMPL] * sin (tm);
-		m_signal->Repo()->at(pos + 2 + i*3) +=  sens  * World::instance()->solution[i*3 + 2];
-
+		m_signal->Repo()->at(pos +     i*3) += sens  * pW->solution[i*3 + AMPL] * cos (tm);
+		m_signal->Repo()->at(pos + 1 + i*3) += sens  * pW->solution[i*3 + AMPL] * sin (tm);
+		m_signal->Repo()->at(pos + 2 + i*3) += sens  * pW->solution[i*3 + 2];
 
 	}
-
 }
 
 /**********************************************************/

@@ -4,9 +4,9 @@
 
 /*
  *  JEMRIS Copyright (C)
- *                        2006-2018  Tony Stoecker
+ *                        2006-2019  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
- *                        2009-2018  Daniel Pflugfelder
+ *                        2009-2019  Daniel Pflugfelder
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -67,11 +67,17 @@ struct BMAux {
 
 #define NEQ   3                   // number of equations
 #ifndef RTOL
-	#define RTOL  1e-4                // scalar relative tolerance
+	#define RTOL  1e-6                // scalar relative tolerance
 #endif
-#define ATOL1 1e-6                // vector absolute tolerance components
-#define ATOL2 1e-6
-#define ATOL3 1e-6
+#ifndef ATOL1
+	#define ATOL1 1e-8                // vector absolute tolerance components
+#endif
+#ifndef ATOL2
+	#define ATOL2 1e-8
+#endif
+#ifndef ATOL3
+	#define ATOL3 1e-8
+#endif
 #define BEPS  1e-10
 
 //! Structure keeping the vectors for cvode
