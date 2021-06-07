@@ -125,6 +125,62 @@ void Sequence::SeqDiag (const string& fname ) {
 }
 
 /***********************************************************/
+void Sequence::SeqISMRMRD (const string& fname ) {
+
+	if ( GetNumOfTPOIs()==0  ) return;
+
+	Prepare(PREP_INIT);
+
+	NDData<double>      di (GetNumOfTPOIs() + 1);
+	std::vector<double>  t (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
+	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
+
+	// Start with 0 and track excitations and refocusing
+	NDData<double> seqdata(numaxes+1,GetNumOfTPOIs()+1);	/** Extra axis for META */
+	
+
+	//turn off nonlinear gradients in static events for sequence diagram calculation
+	World* pW = World::instance();
+	if (pW->pStaticAtom != NULL) pW->pStaticAtom->SetNonLinGrad(false);
+
+	// recursive data collect
+	double seqtime=  0.;
+	long   offset =  0l;
+	seqdata (1,0) = -1.;
+	CollectSeqData (seqdata, seqtime, offset);
+
+	// Write acquisitions & trajectory to ISMRMRD file
+	/** ToDo: trajectory (subvector from di, controlled by meta index)
+			  header from Parameters
+			  set flags 
+	*/
+	std::remove(fname.c_str()); // otherwise data is appended
+	ISMRMRD::Dataset d(fname.c_str(), "dataset", true);
+	Parameters* P = Parameters::instance();
+	ISMRMRD::Acquisition acq;
+	seqdata = transpose(seqdata);
+	std::copy (&seqdata[0], &seqdata[0]+di.Size(), t.begin());
+	for (size_t i = 1; i < meta.size(); ++i){
+		meta[i] = seqdata(i,numaxes);
+		if (meta[i] != meta[i-1]){
+			// add trajectory to acquisitions here
+			d.appendAcquisition(acq);
+		}
+	}
+
+	// std::string URN;
+	// for (size_t i=0; i<4+gradSuffixes.length(); i++) {
+	// 	URN = seqaxis[i];
+	// 	memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
+	// 	bc.Write(di, URN, "/seqdiag");
+	// 	if (i >= 4 )			/* Gradient channels*/
+	// 		bc.Write (cumtrapz(di,t,meta), std::string("K") + gradSuffixes[i-4], "/seqdiag");
+	// }
+
+}
+
+/***********************************************************/
 void Sequence::OutputSeqData (map<string,string> &scanDefs, const string& outDir, const string& outFile ) {
 
 	OutputSequenceData seqdata;
