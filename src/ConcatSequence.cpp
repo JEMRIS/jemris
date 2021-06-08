@@ -31,6 +31,8 @@
 ConcatSequence::ConcatSequence  (const ConcatSequence& cs ) {
     m_repetitions = 1;
     m_counter = 0;
+    m_sliceloop = false;
+    m_slicemultishot = false;
 }
 
 /***********************************************************/
@@ -39,11 +41,17 @@ bool    ConcatSequence::Prepare (const PrepareMode mode){
 	m_type = MOD_CONCAT;
 
 	ATTRIBUTE("Repetitions", m_repetitions);
+	ATTRIBUTE("SliceLoop", m_sliceloop);
+	ATTRIBUTE("SliceMultishot", m_slicemultishot);
+
 	HIDDEN_ATTRIBUTE("Counter", m_counter);
 	if (mode != PREP_UPDATE) GetDuration();
 
 	if (mode != PREP_UPDATE)
 		SetRepCounter( 0);
+
+	if (mode == PREP_VERBOSE && m_sliceloop && m_slicemultishot)
+		cout   << "Warning in " << GetName() << ": contradiction! boolean attributes SliceLoop and SliceMultishot are both true" << endl;
 
 	    return Sequence::Prepare(mode);
 }

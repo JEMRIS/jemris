@@ -83,6 +83,12 @@ void TPOI::Sort ()        {
 
 }
 
+/***********************************************************/
+void TPOI::Print () const {
+	 for (size_t i = 0; i < m_time.size(); ++i)
+		 cout << m_time[i] << "\t" << m_phase[i] << "\t" << m_mask[i] << std::endl;
+	 cout << std::endl;
+ }
 
 /***********************************************************/
 void TPOI::Purge ()        { 

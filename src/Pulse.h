@@ -169,6 +169,7 @@ class Pulse :public Module {
 
     PulseAxis     m_axis;              /**< The axis of this pulse*/
     unsigned int  m_adc;               /**< Number of ADCs */
+    int  		  m_adc_flag;          /**< Property of ADCs (see TPOI) */
     double        m_initial_delay;     /**< Time shift at the beginning inside the atom */
     bool          m_phase_lock;        /**< Lock phase of ADCs to the phase of the last RF pulse event*/
 

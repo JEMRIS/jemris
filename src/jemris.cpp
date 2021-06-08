@@ -62,8 +62,8 @@ void usage () {
 	cout   << "  Parameters:" << endl;
 	cout   << "     -o <output_dir>: Output directory" << endl;
 	cout   << "     -f <filename>:   Output filename (without extension)"  << endl;
-	cout   << "     -x: Output sequence file for execution"  << endl;
-	cout   << "     -d <def>=<val>:  Define custom sequence variable"  << endl;
+	cout   << "     -x: Output Pulseq sequence file format (.seq)"  << endl;
+	cout   << "     -d <def>=<val>:  Define custom sequence variable for Pulseq file"  << endl;
 }
 
 void do_simu (Simulator* sim) {
