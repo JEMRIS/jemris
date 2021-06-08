@@ -141,6 +141,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	
 
 	//turn off nonlinear gradients in static events for sequence diagram calculation
+	// needed???
 	World* pW = World::instance();
 	if (pW->pStaticAtom != NULL) pW->pStaticAtom->SetNonLinGrad(false);
 
@@ -150,36 +151,87 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	seqdata (1,0) = -1.;
 	CollectSeqData (seqdata, seqtime, offset);
 
+	// Meta and t vector for cumtrapz
+	seqdata = transpose(seqdata);
+	std::copy (&seqdata[0], &seqdata[0]+di.Size(), t.begin());
+	for (size_t i = 1; i < meta.size(); ++i)
+		meta[i] = seqdata(i,numaxes);
+
+	// Calculate k-space trajectory
+	NDData<double> kx (GetNumOfTPOIs() + 1);
+	NDData<double> ky (GetNumOfTPOIs() + 1);
+	NDData<double> kz (GetNumOfTPOIs() + 1);
+	memcpy (&di[0], &seqdata[4*di.Size()], di.Size() * sizeof(double));
+	kx = cumtrapz(di,t,meta);
+	memcpy (&di[0], &seqdata[5*di.Size()], di.Size() * sizeof(double));
+	ky = cumtrapz(di,t,meta);
+	memcpy (&di[0], &seqdata[6*di.Size()], di.Size() * sizeof(double));
+	kz = cumtrapz(di,t,meta);
+
 	// Write acquisitions & trajectory to ISMRMRD file
-	/** ToDo: trajectory (subvector from di, controlled by meta index)
-			  header from Parameters
-			  set flags 
+	/** ToDo: - control acquisition saving by meta
+			  - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
+			  - add more header information?
+			  - set flags from meta: meta=1 Standard ADC, meta=2 Imaging, meta=4 ACS, meta=8 PC
+			  - set flag for last scan in slice
+			  if simulation:
+			  	- append simulated data
+				- append coil maps?
 	*/
 	std::remove(fname.c_str()); // otherwise data is appended
 	ISMRMRD::Dataset d(fname.c_str(), "dataset", true);
+
+	// Header
+	ISMRMRD::IsmrmrdHeader h;
 	Parameters* P = Parameters::instance();
+	ISMRMRD::Encoding e;
+	e.trajectory = ISMRMRD::TrajectoryType::OTHER;
+	e.encodedSpace.matrixSize.x = P->m_iNx;
+	e.encodedSpace.matrixSize.y = P->m_iNy;
+	e.encodedSpace.matrixSize.z = P->m_iNz;
+	e.encodedSpace.fieldOfView_mm.x = P->m_fov_x;
+	e.encodedSpace.fieldOfView_mm.y = P->m_fov_y;
+	e.encodedSpace.fieldOfView_mm.z = P->m_fov_z;
+	e.reconSpace.matrixSize.x = P->m_iNx;
+	e.reconSpace.matrixSize.y = P->m_iNy;
+	e.reconSpace.matrixSize.z = P->m_iNz;
+	e.reconSpace.fieldOfView_mm.x = P->m_fov_x;
+	e.reconSpace.fieldOfView_mm.y = P->m_fov_y;
+	e.reconSpace.fieldOfView_mm.z = P->m_fov_z;
+	h.encoding.push_back(e);
+
+	// Serialize header and write it to the data file
+    std::stringstream str;
+	ISMRMRD::serialize( h, str);
+    std::string xml_header = str.str();
+	d.writeHeader(xml_header);
+
+	// Acquisitions
 	ISMRMRD::Acquisition acq;
-	seqdata = transpose(seqdata);
-	std::copy (&seqdata[0], &seqdata[0]+di.Size(), t.begin());
+	u_int16_t ncoils = 0; // WIP: add coil number in simulation
+	u_int16_t axes = 3;
+	u_int16_t readout;
+
+	size_t adc_start = 0;
 	for (size_t i = 1; i < meta.size(); ++i){
-		meta[i] = seqdata(i,numaxes);
 		if (meta[i] != meta[i-1]){
-			// add trajectory to acquisitions here
-			d.appendAcquisition(acq);
+			acq.clearAllFlags();
+			readout = i - adc_start;
+			acq.resize(readout, ncoils, axes);
+			for (size_t k = 0; k<readout; ++k){
+				acq.traj(0,k) = kx[k+adc_start];
+				acq.traj(1,k) = ky[k+adc_start];
+				acq.traj(2,k) = kz[k+adc_start];
+			}
+			// WIP: set flag according to meta and save acq only if needed (meta = 2,4 or 8)
+			if (meta[i-1] == 2)
+				d.appendAcquisition(acq);
+			adc_start = i;
 		}
 	}
 
-	// std::string URN;
-	// for (size_t i=0; i<4+gradSuffixes.length(); i++) {
-	// 	URN = seqaxis[i];
-	// 	memcpy (&di[0], &seqdata[i*di.Size()], di.Size() * sizeof(double));
-	// 	bc.Write(di, URN, "/seqdiag");
-	// 	if (i >= 4 )			/* Gradient channels*/
-	// 		bc.Write (cumtrapz(di,t,meta), std::string("K") + gradSuffixes[i-4], "/seqdiag");
-	// }
 
 }
-
 /***********************************************************/
 void Sequence::OutputSeqData (map<string,string> &scanDefs, const string& outDir, const string& outFile ) {
 
