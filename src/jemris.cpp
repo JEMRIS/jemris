@@ -180,7 +180,8 @@ int main (int argc, char *argv[]) {
 				filename += ".h5";
 			seqTree.Populate();
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
-			seq->SeqDiag(output_dir + filename);
+			// seq->SeqDiag(output_dir + filename);
+			seq->SeqISMRMRD(output_dir + filename);
 			seq->DumpTree();
 
 			filename = baseFilename;

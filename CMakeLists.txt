@@ -117,6 +117,10 @@ endif(NOT DEFINED HDF5_CXX_LIBRARIES)
 
 include_directories (${HDF5_INCLUDE_DIR})
 
+find_package(ISMRMRD REQUIRED)
+link_directories(${ISMRMRD_LIBRARY_DIRS})
+include_directories(${ISMRMRD_INCLUDE_DIRS})
+
 # Is this here really necessary?
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} hdf5.lib hdf5_cpp.lib")
