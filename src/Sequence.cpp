@@ -171,7 +171,6 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	// Write acquisitions & trajectory to ISMRMRD file
 	/** ToDo: - control acquisition saving by meta
 			  - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
-			  - add more header information?
 			  - set flags from meta: meta=1 Standard ADC, meta=2 Imaging, meta=4 ACS, meta=8 PC
 			  - set flag for last scan in slice
 			  if simulation:
@@ -198,13 +197,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	e.reconSpace.fieldOfView_mm.x = P->m_fov_x;
 	e.reconSpace.fieldOfView_mm.y = P->m_fov_y;
 	e.reconSpace.fieldOfView_mm.z = P->m_fov_z;
-	h.encoding.push_back(e);
 
-	// Serialize header and write it to the data file
-    std::stringstream str;
-	ISMRMRD::serialize( h, str);
-    std::string xml_header = str.str();
-	d.writeHeader(xml_header);
 
 	// Acquisitions
 	ISMRMRD::Acquisition acq;
@@ -213,6 +206,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	u_int16_t readout;
 
 	size_t adc_start = 0;
+	int slices = 0; // WIP: get total slice number from slice flag
 	for (size_t i = 1; i < meta.size(); ++i){
 		if (meta[i] != meta[i-1]){
 			acq.clearAllFlags();
@@ -224,12 +218,22 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 				acq.traj(2,k) = kz[k+adc_start];
 			}
 			// WIP: set flag according to meta and save acq only if needed (meta = 2,4 or 8)
+			// maybe save all acq and just set some flag, which marks "non ADCs"
 			if (meta[i-1] == 2)
 				d.appendAcquisition(acq);
 			adc_start = i;
 		}
 	}
 
+	// Write maximum slice number
+	e.encodingLimits.slice = ISMRMRD::Limit(0, slices-1, slices/2);
+	h.encoding.push_back(e);
+
+	// Serialize header and write it to the data file
+    std::stringstream str;
+	ISMRMRD::serialize( h, str);
+    std::string xml_header = str.str();
+	d.writeHeader(xml_header);
 
 }
 /***********************************************************/
