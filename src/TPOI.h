@@ -45,12 +45,12 @@ using namespace std;
 template<class T> inline T BIT (const T& x) { return T(1) << x; }
 
 //static const size_t JTPOI_T   (0);	//standard JEMRIS TPOI (never used!?)
-static const size_t ADC_T     (0);	//ADC
-static const size_t ADC_IMG_T (1);	//an imaging ADC (for ismrmrd output)
-static const size_t ADC_ACS_T (2);	//auto-calibration scan (for ismrmrd output)
-static const size_t ADC_PC_T  (3);	//phase correction scan (for ismrmrd output)
-static const size_t EXCITE_T  (4);	//excitation pulse
-static const size_t REFOCUS_T (5);	//refocusing pulse
+static const size_t ADC_T     (0);	//  1 : ADC
+static const size_t ADC_IMG_T (1);	//  2 : an imaging ADC (for ismrmrd output)
+static const size_t ADC_ACS_T (2);	//  4 : auto-calibration scan (for ismrmrd output)
+static const size_t ADC_PC_T  (3);	//  8 : phase correction scan (for ismrmrd output)
+static const size_t EXCITE_T  (4);	// 16 : excitation pulse
+static const size_t REFOCUS_T (5);	// 32 : refocusing pulse
 
 template<class T, class S> inline bool check_bit (const T& x, const S& y) { return 0 != (x & BIT(y)); }
 
@@ -145,6 +145,8 @@ class TPOI {
 
 
      void Print () const ;
+
+     void PrintMeta (const size_t pos) const ;
 
     /**
      * Get the time of a pos-th point

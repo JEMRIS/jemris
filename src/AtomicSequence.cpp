@@ -188,7 +188,7 @@ void AtomicSequence::CollectTPOIs() {
 				m_tpoi	+ TPOI::set(d + p->GetTPOIs()->GetTime(i),
 						p->GetTPOIs()->GetPhase(i), p->GetTPOIs()->GetMask(i));
 
-				//one TPOI prior to the pulse in case of intial delay phase == -2.0 -> ReInit CVode
+				//one TPOI prior to the pulse in case of initial delay phase == -2.0 -> ReInit CVode
 				if (d>TIME_ERR_TOL)
 					m_tpoi + TPOI::set(d-TIME_ERR_TOL/2, -2.0, 0);
 
