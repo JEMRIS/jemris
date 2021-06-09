@@ -97,6 +97,9 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
             }
     }
 //MODIF***
+//Mod
+    dv->m_Respiration->GetValue(time, position);
+//
     dv->m_Motion->GetValue(time, position);
     dv->m_T2prime->GetValue(time, &DeltaB);
     dv->m_R1->GetValue(time, &r1);

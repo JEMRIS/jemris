@@ -231,6 +231,14 @@ void Simulator::SetParameter      () {
     }
 //MODIF***
 
+//Mod
+    string     Respiration= GetAttr(GetElem("sample"), "RespirationTrajectory");
+    if (!Respiration.empty()) {
+        dynVar->m_Respiration->LoadFile(Respiration);
+    }
+
+//
+
 	string     Motion = GetAttr(GetElem("sample"), "MotionTrajectory");
 	if (!Motion.empty()) {
 		dynVar->m_Motion->LoadFile(Motion);

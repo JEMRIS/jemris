@@ -202,8 +202,19 @@ public:
 	inline T  operator() (const size_t n0, const size_t n1, const size_t n2) const {
 		return _data[n2*Dim(0)*Dim(1)+n1*Dim(0)+n0];
 	}
+	
+    inline T& operator () (const size_t n0, const size_t n1, const size_t n2, const size_t n3) {
+        return _data[n3 * Dim(2) * Dim(1) * Dim(0) +
+                     n2 * Dim(1) * Dim(0) + n1 * Dim(0) + n0];
+    }
 
-	inline const T* Ptr (const size_t n = 0) const { return &_data[n]; }
+    inline T operator () (const size_t n0, const size_t n1, const size_t n2, const size_t n3) const {
+        return _data[n3 * Dim(2) * Dim(1) * Dim(0) +
+                     n2 * Dim(1) * Dim(0) + n1 * Dim(0) + n0];
+    }
+
+
+    inline const T* Ptr (const size_t n = 0) const { return &_data[n]; }
 
 	inline T* Ptr (const size_t n = 0) { return &_data[n]; }
 
