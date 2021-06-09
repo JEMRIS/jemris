@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2019  Tony Stoecker
+ *                        2006-2020  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
  *                        2009-2019  Daniel Pflugfelder
  *                                  
@@ -32,6 +32,7 @@ Pulse::Pulse  () {
 
 	m_axis              = AXIS_VOID;
 	m_adc               = 0;
+	m_adc_flag			= 0;
 	m_initial_delay     = 0.0;
 	m_phase_lock        = false;
 
@@ -45,6 +46,7 @@ bool Pulse::Prepare  (const PrepareMode mode) {
 	//every Pulse might has Axis, Duration, ADCs, and an initial delay
 	ATTRIBUTE ("Axis"        , m_axis         );
 	ATTRIBUTE ("ADCs"        , m_adc          );
+	ATTRIBUTE ("ADCFlag"     , m_adc_flag     );
 	ATTRIBUTE ("PhaseLock"   , m_phase_lock   );
 	ATTRIBUTE ("InitialDelay", m_initial_delay);
 
@@ -58,14 +60,20 @@ inline void  Pulse::SetTPOIs () {
 
     m_tpoi.Reset();
 
-    m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0);
-    m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
+    size_t bitmask = 0;
+    double p = -1.0;
 
-    double p = (m_phase_lock?World::instance()->PhaseLock:0.0);
+    m_tpoi + TPOI::set(TIME_ERR_TOL, p, bitmask);
+    m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, p, bitmask);
 
     int N = abs(GetNADC());
-    size_t bitmask = BIT(ADC_T);
-    if ( GetNADC() < 0 ) { p = -1.0; bitmask = 0; }
+
+    if (GetNADC()<0) m_adc_flag = -1; //backwards compatibility
+
+    if ( m_adc_flag >= 0 ) {
+    	p = (m_phase_lock?World::instance()->PhaseLock:0.0);
+    	bitmask = BIT(m_adc_flag) ;
+    }
 
     for (int i = 0; i < N; i++)
     	m_tpoi + TPOI::set((i+1)*GetDuration()/(N+1), p, bitmask );

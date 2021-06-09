@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 2.8)
 project (jemris) 
 set (jemris_VERSION_MAJOR 2)
 set (jemris_VERSION_MINOR 8)
-set (jemris_VERSION_PATCH 3)
+set (jemris_VERSION_PATCH 4)
 set (jemris_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 
 set(CMAKE_BUILD_TYPE "Release")
@@ -45,7 +45,7 @@ include (OptimizeForArchitecture)
 # C++ flags ---------------------------------------------------------------------
 # THis should be highly discouraged as it directly sets the compiler flags - this should be handled by cmake to allow
 # proper RELEASE, DEBUG, ... builds
-set(CMAKE_CXX_COMPILER "mpic++")
+set(CMAKE_CXX_COMPILER "mpicxx")
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi -DTIXML_USE_STL -fPIC -O3") 
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

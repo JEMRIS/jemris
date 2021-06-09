@@ -116,6 +116,20 @@ class ConcatSequence : public Sequence {
     inline unsigned int    GetMyRepCounter  () {return m_counter;};
 
     /**
+     * @brief This ConcatSequence is the slice loop.
+     *
+     * @return true / false
+     */
+    inline bool    IsSliceLoop  () {return m_sliceloop;};
+
+    /**
+     * @brief This ConcatSequence is the multi-shot loop within a slice
+     *
+     * @return true / false
+     */
+    inline bool    IsSliceMultishot  () {return m_slicemultishot;};
+
+    /**
      * Get the initial iterator for counting repetitions.
      *
      * @return The first repetition iterator.
@@ -168,6 +182,8 @@ class ConcatSequence : public Sequence {
 
     unsigned int m_repetitions; /**< @brief The number of repetitions for this container */
     unsigned int m_counter;     /**< @brief Current value of the repetition counter for this container */
+    bool m_sliceloop;			/**< @brief This loop runs over slices (required for recon)*/
+    bool m_slicemultishot; 		/**< @brief This loop acquires scans within the same slice (required for recon)*/
 };
 
 #endif /*CONCATSEQUENCE_H_*/

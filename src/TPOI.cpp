@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2019  Tony Stoecker
+ *                        2006-2020  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
  *                        2009-2019  Daniel Pflugfelder
  *                                  
@@ -83,6 +83,12 @@ void TPOI::Sort ()        {
 
 }
 
+/***********************************************************/
+void TPOI::Print () const {
+	 for (size_t i = 0; i < m_time.size(); ++i)
+		 cout << m_time[i] << "\t" << m_phase[i] << "\t" << m_mask[i] << std::endl;
+	 cout << std::endl;
+ }
 
 /***********************************************************/
 void TPOI::Purge ()        { 

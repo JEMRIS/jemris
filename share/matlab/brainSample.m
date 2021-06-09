@@ -50,7 +50,7 @@ if add_susceptiblity
   if Nz==1
     DB = interp2(y,x,DB,Y',X,'nearest');
   else
-    Z=[z(1):(z(Nz)-z(1))/(2*Nz-1):z(Nz)];
+    Z=[z(1):(z(Nz)-z(1))/(Nz-1):z(Nz)];
     DB = interp3(y,x,z,DB,Y',X,Z,'nearest');
  end 
 end

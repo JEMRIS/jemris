@@ -107,9 +107,12 @@ So far, there exist five modules which are of type sequence:
 		<li> "Counter" is the loop counter through which other modules get information of the current value of the loop counter.
 		<li> "Duration" specifies the duration of the ConcatSequence, which of course depends on the duration of its children.
 	 </ol>
-	 Additionally, the attributes \c "aux1,aux2,aux3" define  auxiliary
+	 The attributes \c "aux1,aux2,aux3" define  auxiliary
          variables. These values are not used in the calculation of the ConcatSequence. However they can be observed by other modules,
          thus lengthy expressions can be displayed in a more structured way.
+	 The boolean attributes  \c "SliceLoop, SliceMultishot" specify if this loop interates over slices or over
+	 shots within the same slice (e.g. phase encoding). Possible values are 1 / 0 (default). The information is needed for 
+	 image reconstruction and stored to ISMRMD output.
 
     <li> The <b> AtomicSequence </b> module (purple circles) contains the actual pulses. Each AtomicSequence can contain multiple
          pulses which are then applied simultaneously.  Additionally, the attributes \c "Inclination", \c "Azimut", \c "RotAngle" define

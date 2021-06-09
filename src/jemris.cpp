@@ -6,7 +6,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2019  Tony Stoecker
+ *                        2006-2020  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
  *                        2009-2019  Daniel Pflugfelder
  *                                  
@@ -62,8 +62,8 @@ void usage () {
 	cout   << "  Parameters:" << endl;
 	cout   << "     -o <output_dir>: Output directory" << endl;
 	cout   << "     -f <filename>:   Output filename (without extension)"  << endl;
-	cout   << "     -x: Output sequence file for execution"  << endl;
-	cout   << "     -d <def>=<val>:  Define custom sequence variable"  << endl;
+	cout   << "     -x: Output Pulseq sequence file format (.seq)"  << endl;
+	cout   << "     -d <def>=<val>:  Define custom sequence variable for Pulseq file"  << endl;
 }
 
 void do_simu (Simulator* sim) {
@@ -180,8 +180,8 @@ int main (int argc, char *argv[]) {
 				filename += ".h5";
 			seqTree.Populate();
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
-			// seq->SeqDiag(output_dir + filename);
-			seq->SeqISMRMRD(output_dir + filename);
+			 seq->SeqDiag(output_dir + filename);
+			// seq->SeqISMRMRD(output_dir + filename);
 			seq->DumpTree();
 
 			filename = baseFilename;
