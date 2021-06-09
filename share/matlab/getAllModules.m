@@ -37,7 +37,6 @@ function [modules,params]=getAllModules(Jcall,Jpath)
 
  for i=1:length(S.Children)
     c=S.Children(i);
-    
         
     if strcmp(upper(c.Name),'PARAMETERS')
         [params.a,params.ha]=get_attributes(c.Attributes);
@@ -51,6 +50,8 @@ function [modules,params]=getAllModules(Jcall,Jpath)
         modules(end).type=c.Name(1:end-1);
     end
 
+     
+    
  end
 
  return

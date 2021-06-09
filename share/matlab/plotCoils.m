@@ -200,7 +200,7 @@ if isempty(HA)
  set(handles.HiddenAttr,'Visible','off');
 else
  set(handles.HiddenAttr,'Visible','on');
- HA(2:end+1)=HA; HA{1}=' list of hidden attributes';
+ HA(2:end+1)=HA; HA{1}='hidden attributes';
  for i=2:length(HA),HA{i}=strrep(HA{i},'HIDDEN','');end
  set(handles.HiddenAttr,'String',HA);
 end
