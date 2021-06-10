@@ -75,7 +75,7 @@ World* World::instance() {
         m_instance->m_no_processes      = 1;  /* default: serial jemris */
         m_instance->m_startSpin         = 0;
 
-        m_instance->m_slice             = -1;
+        m_instance->m_slice             = 0;
         m_instance->m_lastScanInSlice   = false;
 
     }

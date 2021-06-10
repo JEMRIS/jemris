@@ -134,6 +134,9 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	NDData<double>      di (GetNumOfTPOIs() + 1);
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  slc_ctr (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  lastScaninSlice (GetNumOfTPOIs() + 1);
+
 	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
 	// Start with 0 and track excitations and refocusing
@@ -158,6 +161,12 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	std::copy (&seqdata[0], &seqdata[0]+di.Size(), t.begin());
 	for (size_t i = 1; i < meta.size(); ++i)
 		meta[i] = seqdata(i,numaxes);
+
+	// Slice information
+	for (size_t i = 1; i < meta.size(); ++i)
+		slc_ctr[i] = seqdata(i,numaxes+1);
+	for (size_t i = 1; i < meta.size(); ++i)
+		lastScaninSlice[i] = seqdata(i,numaxes+2);
 
 	// Calculate k-space trajectory
 	NDData<double> kx (GetNumOfTPOIs() + 1);
@@ -208,7 +217,6 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 
 	// Acquisitions
 	ISMRMRD::Acquisition acq;
-	u_int16_t ncoils = 0; // WIP: add coil number in simulation
 	u_int16_t axes = 3;
 	u_int16_t readout;
 
@@ -218,7 +226,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 		if (meta[i] != meta[i-1]){
 			acq.clearAllFlags();
 			readout = i - adc_start;
-			acq.resize(readout, ncoils, axes);
+			acq.resize(readout, acq.active_channels(), axes);
 			for (size_t k = 0; k<readout; ++k){
 				acq.traj(0,k) = kx[k+adc_start];
 				acq.traj(1,k) = ky[k+adc_start];
@@ -232,6 +240,9 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			else if (meta[i-1] != 2)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // everything else thats not imaging (meta=2) is flagged as dummyscan
 
+			acq.idx().slice = slc_ctr[i];
+			if (lastScaninSlice[i])
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
 			d.appendAcquisition(acq);
 			adc_start = i;
 		}

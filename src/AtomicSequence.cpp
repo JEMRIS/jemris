@@ -237,7 +237,7 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 		// set slice counter and last scan in slice flag
 		seqdata(MAX_SEQ_VAL+4,offset+i) = pW->m_slice;
 		if (pW->m_lastScanInSlice)
-			seqdata(MAX_SEQ_VAL+5,offset+i) = -1;
+			seqdata(MAX_SEQ_VAL+5,offset+i) = 1;
 		else
 			seqdata(MAX_SEQ_VAL+5,offset+i) = 0;
 	}

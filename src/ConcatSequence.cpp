@@ -161,6 +161,7 @@ void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r)
+		// Wip: sth is wrong with the flags here
 		if (slicemultishot){
 			if(GetMyRepCounter() == GetMyRepetitions() -1)
 				pW->m_lastScanInSlice = true;
