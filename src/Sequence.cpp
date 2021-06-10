@@ -226,11 +226,11 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			}
 
 			if (meta[i-1] == 4)
-				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PARALLEL_CALIBRATION)
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PARALLEL_CALIBRATION);
 			else if (meta[i-1] == 8)
-				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PHASECORR_DATA)
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PHASECORR_DATA);
 			else if (meta[i-1] != 2)
-				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA) // everything else thats not imaging (meta=2) is flagged as dummyscan
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // everything else thats not imaging (meta=2) is flagged as dummyscan
 
 			d.appendAcquisition(acq);
 			adc_start = i;
