@@ -137,7 +137,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
 	// Start with 0 and track excitations and refocusing
-	NDData<double> seqdata(numaxes+1,GetNumOfTPOIs()+1);	/** Extra axis for META */
+	NDData<double> seqdata(numaxes+3,GetNumOfTPOIs()+1);	/** Extra axes for META, slice number and last scan in slice*/
 	
 
 	//turn off nonlinear gradients in static events for sequence diagram calculation
@@ -149,6 +149,8 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	double seqtime=  0.;
 	long   offset =  0l;
 	seqdata (1,0) = -1.;
+	seqdata (0,numaxes+1) = 0; // WIP: add this also in SegDiag and increase number of axes also there
+	seqdata (0,numaxes+2) = 0; // WIP: add this also in SegDiag and increase number of axes also there
 	CollectSeqData (seqdata, seqtime, offset);
 
 	// Meta and t vector for cumtrapz
@@ -170,12 +172,20 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 
 	// Write acquisitions & trajectory to ISMRMRD file
 	/** ToDo: - control acquisition saving by meta
-			  - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
 			  - set flags from meta: meta=1 Standard ADC, meta=2 Imaging, meta=4 ACS, meta=8 PC
-			  - set flag for last scan in slice
+			  - set flag for last scan in slice and set slice number --> future: set other counters as averages, contrasts etc. as well
+			  	--> slicemultishot + slice loop will be replaced by looptype: e.g 1=slice loop, 2=shot loop, 4=contrast loop etc.
+			  - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
 			  if simulation:
-			  	- append simulated data
-				- append coil maps?
+			  	in CoilArray.cpp:
+				1. #include "SequenceTree.h" + #include "ConcatSequence.h"
+				2. Get sequence:
+					SequenceTree seqTree;
+					seqTree.Initialize(input);
+					seqTree.Populate();
+					ConcatSequence* seq = seqTree.GetRootConcatSequence();
+				3. seq->SeqISMRMRD(m_signal_output_dir + m_signal_prefix + ".h5");
+				4. Append signal and coil data
 	*/
 	std::remove(fname.c_str()); // otherwise data is appended
 	ISMRMRD::Dataset d(fname.c_str(), "dataset", true);

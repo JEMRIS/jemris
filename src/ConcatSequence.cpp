@@ -151,9 +151,25 @@ string          ConcatSequence::GetInfo() {
 /***********************************************************/
 void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& offset) {
 
+	// check loop type - WIP: in the future more loop types will be possible via a single looptype variable
+	// the current implementation only works for a single slice loop and a single shot loop
+	bool sliceloop = IsSliceLoop();
+	bool slicemultishot = IsSliceMultishot();
+
+	World* pW = World::instance();
+
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r)
+		if (slicemultishot){
+			if(GetMyRepCounter() == GetMyRepetitions() -1)
+				pW->m_lastScanInSlice = true;
+			else
+				pW->m_lastScanInSlice = false;
+			}
+		if (sliceloop)
+			pW->m_slice = GetMyRepCounter();
+
 		for (unsigned int j=0; j<children.size() ; ++j) {
 			if (children[j]->GetHardwareMode()<=0) {
 				((Sequence*) children[j])->GetDuration(); // triggers duration notification
