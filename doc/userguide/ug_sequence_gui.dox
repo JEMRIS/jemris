@@ -178,12 +178,23 @@ There exist several pulses which may be inserted into an AtomicSequence. All pul
 
  \li \c InitialDelay: A pulse may start at a later time within the atom, e.g. an RF pulse may wait for the ramp-up time of a gradient pulse.
 
- \li \c ADC: The ADCs specify the number of readout events. These events are equidistantly distributed over the length of the pulse,
-        and the simulator will save the acquired signal at each of these time points. It is possible to specify a <b> negative number of ADCs </b> :
-	in this case the time points are not ADC events, but so called TPOIs (Time Points Of Interest), at which the pulse is evaluated but
-        no signal acquired, as specified by ADCs. This concept is good for a) better visualization of certain pulse shapes and b) force
-	the simulator to evaluate the solution at these time points. However, keep in mind that many TPOIs (or ADCs) will slow down the
-	simulation.
+ \li \c ADCs: The ADCs specify the number of readout events. These events are equidistantly distributed over the length of the pulse.
+        The simulator will save the acquired signal at each of these time points.
+ 
+\li \c ADCFlag: the type of ADCs. This is mainly important for image reconstruction purposes and has no specific meaning in JEMRIS.
+       Possible values are: 
+      <ul>
+		<li> \c 1 : a standard ADC. This is the default, if the ADCFlag is not set.
+		<li> \c 2 : an imaging ADC.
+		<li> \c 4 : an auto-calibration scan (ACS) for parallel imaging.
+		<li> \c 8 : a phase correction scan.
+      </ul>
+	If ADCFlag is a sum of the above numbers, all according flags are set.
+	Finally, ADCFlag can be zero. In this case the time points are not ADC events, but so called TPOIs (Time Points Of Interest),
+	at which the pulse is evaluated but no signal acquired. This is good for a) better visualization
+	of certain pulse shapes and b) force the simulator to evaluate the solution at these time points. However, keep in mind that many
+	TPOIs (or ADCs) will slow down the simulation.  It is also possible to specify a <b> negative number of ADCs </b>, which has the same
+	meaning, i.e. ADCFlag=0. This is for backward compatibility and should not be used for new sequences. (Instead, use ADCFlag=0.)
 
  \li \c Phaselock: Locks the phase of the ADCs inside the module to the phase of the last RF pulse. Can be \c 1 (true) or \c 0 (false).
 
@@ -314,7 +325,7 @@ The following gradient pulse modules exist in JEMRIS:
 			Therefore, the \c "FlatTopTime" is in case of ADCs the reciprocal of the readout bandwidth.
          	<li> \c "Asymetric"   Ratio of the slew rates between the ramp up and the ramp down.
 	 </ol>
-
+	Note that the default ADCFlag is 2 (imaging scan) for a TrapGradPulse.
 	Finally, the TrapGradPulse has several hidden attributes which may provide important information to other
 	modules: \c "Amplitude", \c "RampUpTime", \c "RampDnTime", "EndOfFlatTop".
 

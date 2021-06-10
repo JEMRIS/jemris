@@ -91,6 +91,16 @@ void TPOI::Print () const {
  }
 
 /***********************************************************/
+void TPOI::PrintMeta (const size_t pos) const {
+	cout       	 << " | IsADC : " << IsADC(pos)
+    	    	 << " | IsImg : " << IsImg(pos)
+    	    	 << " | IsACS : " << IsACS(pos)
+    	    	 << " | IsPC : "  << IsPC(pos)
+    	    	 << " | IsExcitation : " << IsExcitation(pos)
+    	    	 << " | IsRefocussing : " << IsRefocussing(pos);
+
+ }
+/***********************************************************/
 void TPOI::Purge ()        { 
 
 	// will only purge, if more than one data points

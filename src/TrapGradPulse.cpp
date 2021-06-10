@@ -95,6 +95,8 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 
 	if ( mode != PREP_UPDATE )
 	{
+		if (!HasDOMattribute("ADCFlag") && m_adc>0) m_adc_flag = 2;   // assume imaging ADCs if no ADCFLag provided
+
 		//XML error checking
     	m_has_flat_top_time = HasDOMattribute("FlatTopTime"); // these conditions have to be known
     	m_has_flat_top_area = HasDOMattribute("FlatTopArea"); // also during PREP_UPDATE, therefore
@@ -327,7 +329,7 @@ inline void  TrapGradPulse::SetTPOIs () {
 	double p0 = (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
 	p0 += GetInitialPhase()*PI/180.0;
 
-	size_t bitmask = GetNADC() < 0 ? 0 : BIT(ADC_T);
+	size_t bitmask = GetNADC() < 0 ? 0 : m_adc_flag;
 
 	if ( m_has_flat_top_time || m_has_flat_top_area)
 	{
@@ -366,6 +368,8 @@ inline void  TrapGradPulse::SetTPOIs () {
 	//add TPOIs at nonlinear points of the trapezoid
 	m_tpoi + TPOI::set(m_ramp_up_time	   , -1.0);
 	m_tpoi + TPOI::set(m_ramp_up_time+m_ft , -1.0);
+
+    //cout << GetName() << " m_adc_flag = " << m_adc_flag;  m_tpoi.PrintMeta(2); cout << endl;
 
 }
 
