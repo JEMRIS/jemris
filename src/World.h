@@ -204,6 +204,9 @@ class World {
 	
 	multimap<EddyPulse*,double>	m_eddies; /**< @brief map of remaining eddies still to be played out (duration,pointer) */
 
+    int 			  m_slice;              /**< @brief slice number */
+    bool 			  m_lastScanInSlice;    /**< @brief flag for last scan in slice */
+
  private:
 
     /**

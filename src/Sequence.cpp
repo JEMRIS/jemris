@@ -171,10 +171,8 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	kz = cumtrapz(di,t,meta);
 
 	// Write acquisitions & trajectory to ISMRMRD file
-	/** ToDo: - control acquisition saving by meta
-			  - set flags from meta: meta=1 Standard ADC, meta=2 Imaging, meta=4 ACS, meta=8 PC
-			  - set flag for last scan in slice and set slice number --> future: set other counters as averages, contrasts etc. as well
-			  	--> slicemultishot + slice loop will be replaced by looptype: e.g 1=slice loop, 2=shot loop, 4=contrast loop etc.
+	/** ToDo: - future: set all counters as slices, averages, contrasts etc. with a looptype parameter
+			  	e.g 1=slice loop, 2=shot loop, 4=contrast loop etc.
 			  - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
 			  if simulation:
 			  	in CoilArray.cpp:
@@ -208,7 +206,6 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	e.reconSpace.fieldOfView_mm.y = P->m_fov_y;
 	e.reconSpace.fieldOfView_mm.z = P->m_fov_z;
 
-
 	// Acquisitions
 	ISMRMRD::Acquisition acq;
 	u_int16_t ncoils = 0; // WIP: add coil number in simulation
@@ -227,10 +224,15 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 				acq.traj(1,k) = ky[k+adc_start];
 				acq.traj(2,k) = kz[k+adc_start];
 			}
-			// WIP: set flag according to meta and save acq only if needed (meta = 2,4 or 8)
-			// maybe save all acq and just set some flag, which marks "non ADCs"
-			if (meta[i-1] == 2)
-				d.appendAcquisition(acq);
+
+			if (meta[i-1] == 4)
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PARALLEL_CALIBRATION)
+			else if (meta[i-1] == 8)
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PHASECORR_DATA)
+			else if (meta[i-1] != 2)
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA) // everything else thats not imaging (meta=2) is flagged as dummyscan
+
+			d.appendAcquisition(acq);
 			adc_start = i;
 		}
 	}
