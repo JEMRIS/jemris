@@ -6792,7 +6792,7 @@ fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for GiNaC library" >&5
 printf %s "checking for GiNaC library... " >&6; }
 OLD_LIBS=$LIBS
-LIBS="${LIBS} -lginac -lcln -lgmp"
+LIBS="${LIBS} -lginac -lcln -lgmp -lismrmrd"
 
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */

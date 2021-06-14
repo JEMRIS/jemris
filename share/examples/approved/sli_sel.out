@@ -1,7 +1,7 @@
 dump of sequence tree
                         TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
                         ----------------------------------------------------------------- |  ---------------
-sequence-root------>   CONCAT       CONCATSEQUENCE       C1     6.900       22       304  |  Repetitions = 2
+sequence-root------>   CONCAT       CONCATSEQUENCE       C1     6.900       22       304  |  Repetitions = 2, type SLI|PHA|PAR|SET|AVI|AVO = 0|0|0|0|0|0
   |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     2.790        5       142  | 
     |_ child 1   -->    PULSE          SINCRFPULSE       P1     2.667     -100       134  |  Axis = RF  , InitDelay = 0.06 , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,3,0,0.5)  , (Zero-crossings,Apodization) = (4,0.5)
     |_ child 2   -->    PULSE        TRAPGRADPULSE       P2     2.790        5         9  |  Axis = GX  , Area = 1.54185 , FlatTop: (Area,time)= (1.50796,2.67)

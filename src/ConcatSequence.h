@@ -29,6 +29,17 @@
 
 #include "Sequence.h"
 #include "RepIter.h"
+#include "TPOI.h"
+
+
+// LOOP counter bitmask (for recon purposes)
+static const size_t SLICE_L      (0);	//  1 : slice loop
+static const size_t PHASE_L      (1);	//  2 : phase encoding loop
+static const size_t PARTITION_L  (2);	//  4 : partition loop
+static const size_t SET_L        (3);	//  8 : set loop
+static const size_t AVERAGE_I_L  (4);	// 16 : inner averaging loop
+static const size_t AVERAGE_O_L  (5);	// 32 : outer averaging loop
+
 
 /**
  * @brief Concat sequence prototype
@@ -115,19 +126,14 @@ class ConcatSequence : public Sequence {
      */
     inline unsigned int    GetMyRepCounter  () {return m_counter;};
 
-    /**
-     * @brief This ConcatSequence is the slice loop.
-     *
-     * @return true / false
-     */
-    inline bool    IsSliceLoop  () {return m_sliceloop;};
 
-    /**
-     * @brief This ConcatSequence is the multi-shot loop within a slice
-     *
-     * @return true / false
-     */
-    inline bool    IsSliceMultishot  () {return m_slicemultishot;};
+    bool IsSliceLoop     () const {return check_bit (m_mask, SLICE_L);     }
+    bool IsPhaseLoop     () const {return check_bit (m_mask, PHASE_L);     }
+    bool IsPartitionLoop () const {return check_bit (m_mask, PARTITION_L); }
+    bool IsSetLoop       () const {return check_bit (m_mask, SET_L);       }
+    bool IsAvgInnerLoop  () const {return check_bit (m_mask, AVERAGE_I_L); }
+    bool IsAvgOuterLoop  () const {return check_bit (m_mask, AVERAGE_O_L); }
+
 
     /**
      * Get the initial iterator for counting repetitions.
@@ -182,8 +188,8 @@ class ConcatSequence : public Sequence {
 
     unsigned int m_repetitions; /**< @brief The number of repetitions for this container */
     unsigned int m_counter;     /**< @brief Current value of the repetition counter for this container */
-    bool m_sliceloop;			/**< @brief This loop runs over slices (required for recon)*/
-    bool m_slicemultishot; 		/**< @brief This loop acquires scans within the same slice (required for recon)*/
+    int      m_loop_flag;         /**< Property of loop counter */
+    size_t   m_mask;              /**< loop bitmask */
 };
 
 #endif /*CONCATSEQUENCE_H_*/
