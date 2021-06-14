@@ -30,9 +30,9 @@
 /***********************************************************/
 ConcatSequence::ConcatSequence  (const ConcatSequence& cs ) {
     m_repetitions = 1;
-    m_counter = 0;
-    m_sliceloop = false;
-    m_slicemultishot = false;
+    m_counter     = 0;
+    m_loop_flag   = 0;
+    m_mask        = 0;
 }
 
 /***********************************************************/
@@ -41,17 +41,15 @@ bool    ConcatSequence::Prepare (const PrepareMode mode){
 	m_type = MOD_CONCAT;
 
 	ATTRIBUTE("Repetitions", m_repetitions);
-	ATTRIBUTE("SliceLoop", m_sliceloop);
-	ATTRIBUTE("SliceMultishot", m_slicemultishot);
+	ATTRIBUTE("LoopFlag", m_loop_flag);
 
 	HIDDEN_ATTRIBUTE("Counter", m_counter);
-	if (mode != PREP_UPDATE) GetDuration();
 
-	if (mode != PREP_UPDATE)
+	if (mode != PREP_UPDATE) {
+		GetDuration();
 		SetRepCounter( 0);
-
-	if (mode == PREP_VERBOSE && m_sliceloop && m_slicemultishot)
-		cout   << "Warning in " << GetName() << ": contradiction! boolean attributes SliceLoop and SliceMultishot are both true" << endl;
+		if (HasDOMattribute("LoopFlag") ) m_mask = m_loop_flag;
+	}
 
 	    return Sequence::Prepare(mode);
 }
@@ -144,31 +142,26 @@ long  ConcatSequence::GetNumOfADCs () {
 /***********************************************************/
 string          ConcatSequence::GetInfo() {
 	stringstream s;
-	s << " Repetitions = " << m_repetitions;
+	s << " Repetitions = " << m_repetitions << ", type SLI|PHA|PAR|SET|AVI|AVO = "
+	  << IsSliceLoop() << "|" << IsPhaseLoop() << "|"<< IsPartitionLoop() << "|"<< IsSetLoop() << "|"<< IsAvgInnerLoop() << "|" << IsAvgOuterLoop() ;
 	return s.str();
 }
 
 /***********************************************************/
 void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& offset) {
 
-	// check loop type - WIP: in the future more loop types will be possible via a single looptype variable
-	// the current implementation only works for a single slice loop and a single shot loop
-	bool sliceloop = IsSliceLoop();
-	bool slicemultishot = IsSliceMultishot();
-
 	World* pW = World::instance();
 
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r){
-		// Wip: sth is wrong with the flags here
-		if (slicemultishot){
+		if (IsPhaseLoop() ){ //TMP - the phase loop sets the lastscaninslice (?)
 			if(GetMyRepCounter() == GetMyRepetitions() -1)
 				pW->m_lastScanInSlice = true;
 			else
 				pW->m_lastScanInSlice = false;
 			}
-		if (sliceloop)
+		if ( IsSliceLoop() )
 			pW->m_slice = GetMyRepCounter();
 
 		for (unsigned int j=0; j<children.size() ; ++j) {

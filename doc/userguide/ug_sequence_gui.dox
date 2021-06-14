@@ -107,12 +107,20 @@ So far, there exist five modules which are of type sequence:
 		<li> "Counter" is the loop counter through which other modules get information of the current value of the loop counter.
 		<li> "Duration" specifies the duration of the ConcatSequence, which of course depends on the duration of its children.
 	 </ol>
-	 The attributes \c "aux1,aux2,aux3" define  auxiliary
-         variables. These values are not used in the calculation of the ConcatSequence. However they can be observed by other modules,
-         thus lengthy expressions can be displayed in a more structured way.
-	 The boolean attributes  \c "SliceLoop, SliceMultishot" specify if this loop interates over slices or over
-	 shots within the same slice (e.g. phase encoding). Possible values are 1 / 0 (default). The information is needed for 
-	 image reconstruction and stored to ISMRMD output.
+	 The attributes \c "aux1,aux2,aux3" define  auxiliary variables. These values are not used in the calculation of the ConcatSequence.
+   However they can be observed by other modules, thus lengthy expressions can be displayed in a more structured way.
+	 The attribute  \c "LoopFlag" defines the function of this loop. This information might be needed for image reconstruction and is stored to ISMRMD output.
+	 Possible values are:
+   <ul>
+      <li> \c 0  : no specific functionality (default)
+      <li> \c 1  : slice loop
+      <li> \c 2  : phase-encoding loop
+      <li> \c 4  : partition loop
+      <li> \c 8  : set loop (various purposes)
+      <li> \c 16 : inner averaging loop
+      <li> \c 32 : outer averaging loop
+   </ul>
+   A loop can have multiple functionalities by providing the sum of the above flags.
 
     <li> The <b> AtomicSequence </b> module (purple circles) contains the actual pulses. Each AtomicSequence can contain multiple
          pulses which are then applied simultaneously.  Additionally, the attributes \c "Inclination", \c "Azimut", \c "RotAngle" define
@@ -180,9 +188,9 @@ There exist several pulses which may be inserted into an AtomicSequence. All pul
 
  \li \c ADCs: The ADCs specify the number of readout events. These events are equidistantly distributed over the length of the pulse.
         The simulator will save the acquired signal at each of these time points.
- 
+
 \li \c ADCFlag: the type of ADCs. This is mainly important for image reconstruction purposes and has no specific meaning in JEMRIS.
-       Possible values are: 
+       Possible values are:
       <ul>
 		<li> \c 1 : a standard ADC. This is the default, if the ADCFlag is not set.
 		<li> \c 2 : an imaging ADC.
