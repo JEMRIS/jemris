@@ -77,7 +77,7 @@ void Sequence::SeqDiag (const string& fname ) {
 	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
 	// Start with 0 and track excitations and refocusing
-	NDData<double> seqdata(numaxes+1,GetNumOfTPOIs()+1);	/** Extra axis for META */
+	NDData<double> seqdata(numaxes+3,GetNumOfTPOIs()+1);	/** Extra axes for META, slice number and last scan in slice*/
 	
 	// HDF5 dataset names
 	vector<string> seqaxis;
@@ -99,6 +99,8 @@ void Sequence::SeqDiag (const string& fname ) {
 	double seqtime=  0.;
 	long   offset =  0l;
 	seqdata (1,0) = -1.;
+	seqdata (numaxes+1,0) = 0;
+	seqdata (numaxes+2,0) = 0;
 	CollectSeqData (seqdata, seqtime, offset);
 
 	// Faster
@@ -152,11 +154,11 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	double seqtime=  0.;
 	long   offset =  0l;
 	seqdata (1,0) = -1.;
-	seqdata (0,numaxes+1) = 0; // WIP: add this also in SegDiag and increase number of axes also there
-	seqdata (0,numaxes+2) = 0; // WIP: add this also in SegDiag and increase number of axes also there
+	seqdata (numaxes+1,0) = 0;
+	seqdata (numaxes+2,0) = 0;
 	CollectSeqData (seqdata, seqtime, offset);
 
-	// Meta and t vector for cumtrapz
+	// Transpose Data and collect meta and t-vector for cumtrapz
 	seqdata = transpose(seqdata);
 	std::copy (&seqdata[0], &seqdata[0]+di.Size(), t.begin());
 	for (size_t i = 1; i < meta.size(); ++i)

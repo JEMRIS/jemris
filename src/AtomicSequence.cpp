@@ -235,11 +235,11 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 		seqdata(MAX_SEQ_VAL+1+2,offset+i+1) = m_tpoi.GetMask(i);
 
 		// set slice counter and last scan in slice flag
-		seqdata(MAX_SEQ_VAL+4,offset+i) = pW->m_slice;
+		seqdata(MAX_SEQ_VAL+1+3,offset+i+1) = pW->m_slice;
 		if (pW->m_lastScanInSlice)
-			seqdata(MAX_SEQ_VAL+5,offset+i) = 1;
+			seqdata(MAX_SEQ_VAL+1+4,offset+i+1) = 1;
 		else
-			seqdata(MAX_SEQ_VAL+5,offset+i) = 0;
+			seqdata(MAX_SEQ_VAL+1+4,offset+i+1) = 0;
 	}
 
 	UpdateEddyCurrents();
