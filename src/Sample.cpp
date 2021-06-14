@@ -525,7 +525,7 @@ void Sample::DumpRestartInfo(CoilArray* RxCA) {
 	// wait at least 10 seconds to dump restart info again. (-> in parallel jemris and syncron slaves prevent excessive disk writing...)
 	if (abs(time(NULL) - lasttime) > 10) {
 		lasttime = time(NULL);
-		RxCA->DumpSignals(".tmp_sig", false);
+		// RxCA->DumpSignals(".tmp_sig", false);
 		string fname(".spins_state.dat");
 		ofstream fout(fname.c_str() , ios::binary);
 		fout.write(&m_spin_state.at(0), sizeof(char)*m_spin_state.size());

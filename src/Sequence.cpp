@@ -235,12 +235,14 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 				acq.traj(2,k) = kz[k+adc_start];
 			}
 
-			if (meta[i-1] == 4)
+			if (meta[i-1] == 1)
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_NAVIGATION_DATA); // misuse navigation data flag for ADCs with no specific purpose
+			else if (meta[i-1] == 4)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PARALLEL_CALIBRATION);
 			else if (meta[i-1] == 8)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PHASECORR_DATA);
 			else if (meta[i-1] != 2)
-				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // everything else thats not imaging (meta=2) is flagged as dummyscan
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // TPOI's without ADCs get dummyscan flag, imaging scans get no flag
 
 			acq.idx().slice = slc_ctr[i];
 			if (lastScaninSlice[i])

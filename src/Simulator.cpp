@@ -309,6 +309,25 @@ void Simulator::Simulate          (bool bDumpSignal) {
 }
 
 /**********************************************************/
+void Simulator::SimulateISMRMRD          (bool bDumpSignal) {
+
+	m_rx_coil_array->InitializeSignals (m_sequence->GetNumOfADCs());
+
+	if (bDumpSignal) {
+		// Initialize temporary ISMRMRD file - write sequence data
+		m_sequence->SeqISMRMRD(m_output_dir + m_signal_prefix + "_tmp.h5");
+	}
+
+	m_model->Solve();
+
+	if (bDumpSignal) {
+		m_rx_coil_array->DumpSignalsISMRMRD();
+		DeleteTmpFiles();
+	}
+
+}
+
+/**********************************************************/
 void Simulator::SetSignalPrefix(string prefix) {
 
 	m_signal_prefix = prefix;

@@ -77,7 +77,8 @@ void do_simu (Simulator* sim) {
 	cout << "RxArray  : " << sim->GetAttr(sim->GetElem("RXcoilarray"), "uri") << endl;
 	cout << "Sequence : " << sim->GetAttr(sim->GetElem("sequence"),"uri")<< endl;
 	cout << endl;
-	sim->Simulate();
+	// sim->Simulate();
+	sim->SimulateISMRMRD();
 	cout << endl;
 	cout << endl;
 }
