@@ -211,7 +211,6 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	u_int16_t readout;
 
 	size_t adc_start = 0;
-	int slices = 0;
 	for (size_t i = 1; i < meta.size(); ++i){
 		if (meta[i] != meta[i-1]){
 			acq.clearAllFlags();
@@ -241,6 +240,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	}
 
 	// Write maximum slice number
+	int slices = *max_element(slc_ctr.begin(), slc_ctr.end()) + 1;
 	e.encodingLimits.slice = ISMRMRD::Limit(0, slices-1, slices/2);
 	h.encoding.push_back(e);
 
