@@ -220,20 +220,19 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 }
 
 /**********************************************************/
-void CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
+IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 
 	// Open ISMRMRD dataset containing sequence data
-	ISMRMRD::Dataset d_tmp((m_signal_output_dir + m_signal_prefix + "_tmp.h5").c_str(), "dataset", false);
+	ISMRMRD::Dataset d_tmp((m_signal_output_dir + m_signal_prefix + prefix + "_tmp.h5").c_str(), "dataset", false);
 	std::string xml;
     d_tmp.readHeader(xml);
 
 	// Write new file containing both sequence and signal data
-	std::remove((m_signal_output_dir + m_signal_prefix + ".h5").c_str());
-	ISMRMRD::Dataset d((m_signal_output_dir + m_signal_prefix + ".h5").c_str(), "dataset", true);
+	std::remove((m_signal_output_dir + m_signal_prefix + prefix + ".h5").c_str());
+	ISMRMRD::Dataset d((m_signal_output_dir + m_signal_prefix + prefix + ".h5").c_str(), "dataset", true);
 	d.writeHeader(xml);
 
 	ISMRMRD::Acquisition acq;
-	NDData<double> di;
 	int offset = 0;
 
 	for (int n = 0; n < d_tmp.getNumberOfAcquisitions(); ++n){
@@ -251,7 +250,7 @@ void CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 
 				for (long i = 0; i < repository->Samples(); i++) {
 					
-					if (normalize) {
+					if (normalize && n==0) {
 						
 						for (int j = 0; j < repository->NProps(); j++) 
 							(*repository)[i*repository->NProps() + j] /= World::instance()->TotalSpinNumber;
@@ -275,11 +274,12 @@ void CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 					}
 					
 				}
-		
-				di = NDData<double> (repository->Samples(), repository->NProps());
+
+				// this is slower, but more memory efficient than saving the data from all coils in one array
+				NDData<double> di (repository->NProps(), repository->Samples());
 				memcpy (&di[0], repository->Data(), di.Size() * sizeof(double));
 				for (int s = 0; s < acq.number_of_samples(); ++s){
-					std::complex<float> sig (di(offset+s,0), di(offset+s,1));
+					std::complex<float> sig (di(0,offset+s), di(1,offset+s));
 					acq.data(s,c) = sig;
 				}
 			}
@@ -292,7 +292,9 @@ void CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 	if(offset != repository->Samples())
 		cout << "Not all signal samples written to ISMRMRD file. Number of unwritten samples: " << repository->Samples() - offset << endl;
 
-	std::remove((m_signal_output_dir + m_signal_prefix + "_tmp.h5").c_str());
+	std::remove((m_signal_output_dir + m_signal_prefix + prefix + "_tmp.h5").c_str());
+
+	return IO::OK;
 
 }
 

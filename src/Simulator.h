@@ -111,11 +111,6 @@ class Simulator {
 	void        Simulate     (bool bDumpSignal = true);
 
 	/**
-	 * @brief Start the simulation after every necessary credentials have been set. Dump signals to ISMRMRD file
-	 */
-	void      SimulateISMRMRD     (bool bDumpSignal = true);
-
-	/**
 	 * @brief Set my sample from XML
 	 */
 	void      SetSample      (std::string fsample);

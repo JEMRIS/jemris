@@ -182,20 +182,8 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	kz = cumtrapz(di,t,meta);
 
 	// Write acquisitions & trajectory to ISMRMRD file
-	/** ToDo: - future: set all counters as slices, averages, contrasts etc. with a looptype parameter
-			  	e.g 1=slice loop, 2=shot loop, 4=contrast loop etc.
-			  - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
-			  if simulation:
-			  	in CoilArray.cpp:
-				1. #include "SequenceTree.h" + #include "ConcatSequence.h"
-				2. Get sequence:
-					SequenceTree seqTree;
-					seqTree.Initialize(input);
-					seqTree.Populate();
-					ConcatSequence* seq = seqTree.GetRootConcatSequence();
-				3. seq->SeqISMRMRD(m_signal_output_dir + m_signal_prefix + ".h5");
-				4. Append signal and coil data
-	*/
+	// WIP: Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
+
 	std::remove(fname.c_str()); // otherwise data is appended
 	ISMRMRD::Dataset d(fname.c_str(), "dataset", true);
 
@@ -223,7 +211,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	u_int16_t readout;
 
 	size_t adc_start = 0;
-	int slices = 0; // WIP: get total slice number from slice flag
+	int slices = 0;
 	for (size_t i = 1; i < meta.size(); ++i){
 		if (meta[i] != meta[i-1]){
 			acq.clearAllFlags();

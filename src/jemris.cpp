@@ -77,8 +77,7 @@ void do_simu (Simulator* sim) {
 	cout << "RxArray  : " << sim->GetAttr(sim->GetElem("RXcoilarray"), "uri") << endl;
 	cout << "Sequence : " << sim->GetAttr(sim->GetElem("sequence"),"uri")<< endl;
 	cout << endl;
-	// sim->Simulate();
-	sim->SimulateISMRMRD();
+	sim->Simulate();
 	cout << endl;
 	cout << endl;
 }
@@ -176,13 +175,11 @@ int main (int argc, char *argv[]) {
 		if (seqTree.GetStatus()) {
 			string baseFilename(filename);
 			if(filename == "")
-				filename = "seq.h5";
-			else
-				filename += ".h5";
+				filename = "seq";
 			seqTree.Populate();
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
-			//  seq->SeqDiag(output_dir + filename);
-			seq->SeqISMRMRD(output_dir + filename);
+			seq->SeqDiag(output_dir + filename + ".h5");
+			seq->SeqISMRMRD(output_dir + filename + "_ismrmrd.h5");
 			seq->DumpTree();
 
 			filename = baseFilename;
