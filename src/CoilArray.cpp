@@ -36,7 +36,9 @@
 CoilArray::CoilArray () {
 
     m_dom_doc = 0;
+    m_radius  = 0;
     m_mode    = RX;
+    m_params  = NULL;
     m_signal_prefix = "signals";
     m_senmap_prefix = "sensmaps";
     m_signal_output_dir = "";
