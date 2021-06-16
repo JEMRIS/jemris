@@ -288,6 +288,8 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 		}
 	}
 
+	// WIP: append sensitivity maps as Array to ISMRMRD file
+
 	Repository* repository = m_coils[0]->GetSignal()->Repo();
 	if(offset != repository->Samples())
 		cout << "Not all signal samples written to ISMRMRD file. Number of unwritten samples: " << repository->Samples() - offset << endl;
