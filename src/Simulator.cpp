@@ -298,7 +298,7 @@ void Simulator::Simulate          (bool bDumpSignal) {
 		CheckRestart();
 
 		// Initialize temporary ISMRMRD file with sequence data
-		m_sequence->SeqISMRMRD(m_output_dir + m_signal_prefix + "_ismrmrd_tmp.h5");
+		m_sequence->SeqISMRMRD(m_rx_coil_array->GetSignalOutputDir() + m_rx_coil_array->GetSignalPrefix() + "_ismrmrd_tmp.h5");
 	}
 
 	m_model->Solve();

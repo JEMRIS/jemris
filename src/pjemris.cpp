@@ -150,8 +150,10 @@ int main (int argc, char *argv[]) {
 		if (filename != "")
 			// set output name
 			RxCA->SetSignalPrefix(filename);
-		// RxCA->DumpSignals();
-		RxCA->DumpSignalsISMRMRD();
+		RxCA->DumpSignals();
+		// Initialize temporary ISMRMRD file with sequence information, afterwards dump signals
+		psim->GetSequence()->SeqISMRMRD(RxCA->GetSignalOutputDir() + RxCA->GetSignalPrefix() + "_ismrmrd_tmp.h5");
+		RxCA->DumpSignalsISMRMRD("_ismrmrd", true);
 		psim->DeleteTmpFiles();
 	}
 
