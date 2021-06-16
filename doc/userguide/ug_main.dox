@@ -231,8 +231,7 @@ Flow simulation examples can be found in \c "/usr/local/share/jemris/angio_simu"
 Magnetic Resonance in Medicine. </i> <a href="https://doi.org/10.1002/mrm.27114">DOI</a>\n
 \n
 Hanna Hanson and Benny Rowland implemented motion of deformable phantoms into JEMRIS, which can e.g. be used for realistic simulations of cardiac MRI or respiration.
-An example can be found on Hanna's github page: <a href=" https://github.com/hmhanson/4DPhantomMRI"><b>discussion group on Google</b></a>
-Read this paper for more information: \n
+An example can be found on  <a href=" https://github.com/hmhanson/4DPhantomMRI"><b>Hanna's github page</b></a>. Read this paper for more information: \n
 <i> Hanson, H.M. , Eiben, B.,  McClelland, J.R., van Herk, M. & Rowland, B.C. (2021) 4D Deformable Digital Phantom for MRI Sequence Development. Medical Physics. </i>
 <a>https://aapm.onlinelibrary.wiley.com/doi/10.1002/mp.15036</a>
 \n
