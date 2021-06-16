@@ -155,12 +155,13 @@ void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r){
-		if (IsPhaseLoop() ){ //TMP - the phase loop sets the lastscaninslice (?)
+		if (IsPhaseLoop() ){ //TMP - the phase loop sets the lastscaninslice
 			if(GetMyRepCounter() == GetMyRepetitions() -1)
 				pW->m_lastScanInSlice = true;
 			else
 				pW->m_lastScanInSlice = false;
 			}
+		 // WIP: save counters from other looptypes
 		if ( IsSliceLoop() )
 			pW->m_slice = GetMyRepCounter();
 

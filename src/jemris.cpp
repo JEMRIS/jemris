@@ -175,13 +175,11 @@ int main (int argc, char *argv[]) {
 		if (seqTree.GetStatus()) {
 			string baseFilename(filename);
 			if(filename == "")
-				filename = "seq.h5";
-			else
-				filename += ".h5";
+				filename = "seq";
 			seqTree.Populate();
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
-			//  seq->SeqDiag(output_dir + filename);
-			seq->SeqISMRMRD(output_dir + filename);
+			seq->SeqDiag(output_dir + filename + ".h5");
+			seq->SeqISMRMRD(output_dir + filename + "_ismrmrd.h5");
 			seq->DumpTree();
 
 			filename = baseFilename;

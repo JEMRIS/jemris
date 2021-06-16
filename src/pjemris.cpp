@@ -150,7 +150,8 @@ int main (int argc, char *argv[]) {
 		if (filename != "")
 			// set output name
 			RxCA->SetSignalPrefix(filename);
-		RxCA->DumpSignals();
+		// RxCA->DumpSignals();
+		RxCA->DumpSignalsISMRMRD();
 		psim->DeleteTmpFiles();
 	}
 

@@ -29,6 +29,8 @@
 #include "Coil.h"
 #include "StrX.h"
 #include <sstream>
+#include "SequenceTree.h"
+#include "ConcatSequence.h"
 
 /***********************************************************/
 CoilArray::CoilArray () {
@@ -215,6 +217,85 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 	//REVISE
 	return IO::OK;
 	
+}
+
+/**********************************************************/
+IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
+
+	// Open ISMRMRD dataset containing sequence data
+	ISMRMRD::Dataset d_tmp((m_signal_output_dir + m_signal_prefix + prefix + "_tmp.h5").c_str(), "dataset", false);
+	std::string xml;
+    d_tmp.readHeader(xml);
+
+	// Write new file containing both sequence and signal data
+	std::remove((m_signal_output_dir + m_signal_prefix + prefix + ".h5").c_str());
+	ISMRMRD::Dataset d((m_signal_output_dir + m_signal_prefix + prefix + ".h5").c_str(), "dataset", true);
+	d.writeHeader(xml);
+
+	ISMRMRD::Acquisition acq;
+	int offset = 0;
+
+	for (int n = 0; n < d_tmp.getNumberOfAcquisitions(); ++n){
+		
+		d_tmp.readAcquisition(n, acq);
+
+		if (!acq.isFlagSet(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA)){
+					
+			acq.resize(acq.number_of_samples(), GetSize(), acq.trajectory_dimensions()); // set number of coils
+
+			for (int c = 0; c < GetSize(); c++) {
+				
+				Repository* repository = m_coils[c]->GetSignal()->Repo();
+				RNG*        rng        = m_coils[c]->GetSignal()->Noise();
+
+				for (long i = 0; i < repository->Samples(); i++) {
+					
+					if (normalize && n==0) {
+						
+						for (int j = 0; j < repository->NProps(); j++) 
+							(*repository)[i*repository->NProps() + j] /= World::instance()->TotalSpinNumber;
+						
+						//dwelltime-weighted random noise
+						if (World::instance()->RandNoise > 0.0) {
+							
+							double dt =  1.0;
+							
+							if      (i                    > 0) dt = repository->TP(i  ) - repository->TP(i-1);
+							else if (repository->Samples() > 1) dt = repository->TP(i+1) - repository->TP(i  );
+							
+							//definition: Gaussian has std-dev World::instance()->RandNoise at a dwell-time of 0.01 ms
+							for (int j = 0; j < repository->Compartments(); j++) {
+								(*repository)[i*repository->NProps() + j*3 + 0] += World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
+								(*repository)[i*repository->NProps() + j*3 + 1] += World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
+							}
+							
+						}
+
+					}
+					
+				}
+
+				// this is slower, but more memory efficient than saving the data from all coils in one array
+				NDData<double> di (repository->NProps(), repository->Samples());
+				memcpy (&di[0], repository->Data(), di.Size() * sizeof(double));
+				for (int s = 0; s < acq.number_of_samples(); ++s){
+					std::complex<float> sig (di(0,offset+s), di(1,offset+s));
+					acq.data(s,c) = sig;
+				}
+			}
+			d.appendAcquisition(acq);
+			offset += acq.number_of_samples();
+		}
+	}
+
+	Repository* repository = m_coils[0]->GetSignal()->Repo();
+	if(offset != repository->Samples())
+		cout << "Not all signal samples written to ISMRMRD file. Number of unwritten samples: " << repository->Samples() - offset << endl;
+
+	std::remove((m_signal_output_dir + m_signal_prefix + prefix + "_tmp.h5").c_str());
+
+	return IO::OK;
+
 }
 
 /**********************************************************/

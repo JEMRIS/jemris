@@ -113,6 +113,12 @@ class CoilArray  {
 	IO::Status DumpSignals       (string tmp_prefix = "", bool normalize = true);
 
     /**
+     * @brief Dump all signals
+     * Dump the signals from all coils to ISMRMRD file.
+     */
+	IO::Status DumpSignalsISMRMRD       (string tmp_prefix = "", bool normalize = true);
+
+    /**
      * @brief Dump all sensitivities
      * Dump the sensitivities from all coils to discrete files.
      */

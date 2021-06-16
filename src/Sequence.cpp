@@ -187,20 +187,8 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	kz = cumtrapz(di,t,meta);
 
 	// Write acquisitions & trajectory to ISMRMRD file
-	/** ToDo: - future: set all counters as slices, averages, contrasts etc. with a looptype parameter
-			  	e.g 1=slice loop, 2=shot loop, 4=contrast loop etc.
-			  - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
-			  if simulation:
-			  	in CoilArray.cpp:
-				1. #include "SequenceTree.h" + #include "ConcatSequence.h"
-				2. Get sequence:
-					SequenceTree seqTree;
-					seqTree.Initialize(input);
-					seqTree.Populate();
-					ConcatSequence* seq = seqTree.GetRootConcatSequence();
-				3. seq->SeqISMRMRD(m_signal_output_dir + m_signal_prefix + ".h5");
-				4. Append signal and coil data
-	*/
+	// WIP: Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
+
 	std::remove(fname.c_str()); // otherwise data is appended
 	ISMRMRD::Dataset d(fname.c_str(), "dataset", true);
 
@@ -228,7 +216,6 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	u_int16_t readout;
 
 	size_t adc_start = 0;
-	int slices = 0; // WIP: get total slice number from slice flag
 	for (size_t i = 1; i < meta.size(); ++i){
 		if (meta[i] != meta[i-1]){
 			acq.clearAllFlags();
@@ -240,12 +227,14 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 				acq.traj(2,k) = kz[k+adc_start];
 			}
 
-			if (meta[i-1] == 4)
+			if (meta[i-1] == 1)
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_NAVIGATION_DATA); // misuse navigation data flag for ADCs with no specific purpose
+			else if (meta[i-1] == 4)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PARALLEL_CALIBRATION);
 			else if (meta[i-1] == 8)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PHASECORR_DATA);
 			else if (meta[i-1] != 2)
-				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // everything else thats not imaging (meta=2) is flagged as dummyscan
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // TPOI's without ADCs get dummyscan flag, imaging scans get no flag
 
 			acq.idx().slice = slc_ctr[i];
 			if (lastScaninSlice[i])
@@ -256,6 +245,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	}
 
 	// Write maximum slice number
+	int slices = *max_element(slc_ctr.begin(), slc_ctr.end()) + 1;
 	e.encodingLimits.slice = ISMRMRD::Limit(0, slices-1, slices/2);
 	h.encoding.push_back(e);
 
