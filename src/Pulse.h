@@ -59,7 +59,7 @@ class Pulse :public Module {
      * @brief Copy constructor.
      */
     Pulse                  (const Pulse&) :
-    	m_adc(0), m_initial_delay(0), m_axis(AXIS_VOID), m_phase_lock(0) {};
+    	m_adc(0), m_initial_delay(0), m_axis(AXIS_VOID), m_phase_lock(0), m_adc_flag(1) {};
 
     /**
      * See Module::GetValue

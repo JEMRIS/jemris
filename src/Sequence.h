@@ -32,10 +32,6 @@
 #include "NDData.h"
 #include "OutputSequenceData.h"
 
-#include "ismrmrd/ismrmrd.h"
-#include "ismrmrd/xml.h"
-#include "ismrmrd/dataset.h"
-#include "ismrmrd/version.h"
 
 //! Super class for all sequence (non-pulse) modules
 

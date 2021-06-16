@@ -31,6 +31,11 @@
 #include "BinaryContext.h"
 #include "EddyPulse.h"
 
+#include "ismrmrd/ismrmrd.h"
+#include "ismrmrd/xml.h"
+#include "ismrmrd/dataset.h"
+#include "ismrmrd/version.h"
+
 /***********************************************************/
 bool    Sequence::Prepare(const PrepareMode mode){
 
