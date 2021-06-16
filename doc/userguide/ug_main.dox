@@ -9,7 +9,7 @@
  \li Here you can \subpage ug_downl the most recent JEMRIS version and learn how to work with the \subpage ug_uis.
  \n \n \n \n \n
  <CENTER> <b> Example Gallery </b> </CENTER>
- \image html pics/jemris_website_misc.png 
+ \image html pics/jemris_website_misc.png
   \n
   \n
   \n
@@ -228,8 +228,13 @@ Magnetic Resonance in Medicine, 77(4), 1544–1552.</i> <a href="https://doi.org
 Thanks to Alexandre Fortin et al, <b> JEMRIS now supports flow simulation </b> in arbitrary complex geometries (since version 2.8.2).
 Flow simulation examples can be found in \c "/usr/local/share/jemris/angio_simu" of your local JEMRIS installation. Read this paper for more information: \n
 <i>Fortin, A., Baruthio, J., Delbany, M., & Durand, E. (2018). Flow MRI simulation in complex 3D geometries : Application to the cerebral venous network.
-Magnetic Resonance in Medicine. [early view] </i> <a href="https://doi.org/10.1002/mrm.27114">DOI</a>\n
+Magnetic Resonance in Medicine. </i> <a href="https://doi.org/10.1002/mrm.27114">DOI</a>\n
 \n
+Hanna Hanson and Benny Rowland implemented motion of deformable phantoms into JEMRIS, which can e.g. be used for realistic simulations of cardiac MRI or respiration.
+An example can be found on Hanna's github page: <a href=" https://github.com/hmhanson/4DPhantomMRI"><b>discussion group on Google</b></a>
+Read this paper for more information: \n
+<i> Hanson, H.M. , Eiben, B.,  McClelland, J.R., van Herk, M. & Rowland, B.C. (2021) 4D Deformable Digital Phantom for MRI Sequence Development. Medical Physics. </i>
+<a>https://aapm.onlinelibrary.wiley.com/doi/10.1002/mp.15036</a>
 \n
 
 \section ug_lit Main Reference

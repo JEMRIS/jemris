@@ -37,6 +37,7 @@
 #include "ismrmrd/dataset.h"
 #include "ismrmrd/version.h"
 
+
 //! Super class for all sequence (non-pulse) modules
 
 class Sequence : public Module {
