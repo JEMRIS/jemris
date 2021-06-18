@@ -137,7 +137,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  slc_ctr (GetNumOfTPOIs() + 1);
-	std::vector<size_t>  lastScaninSlice (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  shot_ctr (GetNumOfTPOIs() + 1);
 
 	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
@@ -164,11 +164,11 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	for (size_t i = 1; i < meta.size(); ++i)
 		meta[i] = seqdata(i,numaxes);
 
-	// Slice information
-	for (size_t i = 1; i < meta.size(); ++i)
+	// Slice and shot information
+	for (size_t i = 1; i < slc_ctr.size(); ++i)
 		slc_ctr[i] = seqdata(i,numaxes+1);
-	for (size_t i = 1; i < meta.size(); ++i)
-		lastScaninSlice[i] = seqdata(i,numaxes+2);
+	for (size_t i = 1; i < shot_ctr.size(); ++i)
+		shot_ctr[i] = seqdata(i,numaxes+2);
 
 	// Calculate k-space trajectory
 	NDData<double> kx (GetNumOfTPOIs() + 1);
@@ -223,7 +223,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 
 	size_t adc_start = 0;
 	for (size_t i = 1; i < meta.size(); ++i){
-		if (meta[i] != meta[i-1]){
+		if (meta[i] != meta[i-1] || i == meta.size()-1){
 			acq.clearAllFlags();
 			readout = i - adc_start;
 			acq.resize(readout, acq.active_channels(), axes);
@@ -242,8 +242,8 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			else if (meta[i-1] != 2)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // TPOI's without ADCs get dummyscan flag, imaging scans get no flag
 
-			acq.idx().slice = slc_ctr[i];
-			if (lastScaninSlice[i])
+			acq.idx().slice = slc_ctr[i-1];
+			if (shot_ctr[i-1] == pW->m_shotmax-1) // WIP: this doesnt work for multiple ADCs per loop, also partitions are not yet supported
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
 			d.appendAcquisition(acq);
 			adc_start = i;

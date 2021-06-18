@@ -155,14 +155,12 @@ void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r){
-		if (IsPhaseLoop() ){ //TMP - the phase loop sets the lastscaninslice, WIP: also support partition loop
-			if(GetMyRepCounter() == GetMyRepetitions() -1)
-				pW->m_lastScanInSlice = true;
-			else
-				pW->m_lastScanInSlice = false;
-			}
-		 // WIP: save counters from other looptypes (sets, avg, partitions, phase)
-		 // maybe add new array "k_ctr" instead of saving kspace info in seqdata
+		// WIP: save counters from other looptypes (sets, avg, partitions, phase)
+		// maybe add new array "k_ctr" instead of saving kspace info in seqdata
+		if ( IsPhaseLoop() ){
+			pW->m_shot = GetMyRepCounter();
+			pW->m_shotmax = GetMyRepetitions();
+		}
 		if ( IsSliceLoop() )
 			pW->m_slice = GetMyRepCounter();
 
