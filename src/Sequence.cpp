@@ -182,13 +182,24 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	kz = cumtrapz(di,t,meta);
 
 	// Write acquisitions & trajectory to ISMRMRD file
-	// WIP: Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
+	// WIP: - add counters from other loops to ISMRMRD file (use only slice counter or set,slice,(averages)???)
+	//      - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
+	// 		- how to append Sensitivity Maps? Arrays are not streamed by the client - maybe dump somewhere as h5 and write filepath to ISMRMRD header??
 
 	std::remove(fname.c_str()); // otherwise data is appended
 	ISMRMRD::Dataset d(fname.c_str(), "dataset", true);
 
 	// Header
 	ISMRMRD::IsmrmrdHeader h;
+	ISMRMRD::AcquisitionSystemInformation sys;
+
+	// Set system info to not crash reco
+	sys.systemVendor.set("JEMRIS");
+	sys.systemModel.set("v2.8.4");
+	sys.systemFieldStrength_T.set(0);
+	h.acquisitionSystemInformation.set(sys);
+
+	// Encoding
 	Parameters* P = Parameters::instance();
 	ISMRMRD::Encoding e;
 	e.trajectory = ISMRMRD::TrajectoryType::OTHER;

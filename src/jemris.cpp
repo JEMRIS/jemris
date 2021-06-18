@@ -223,6 +223,7 @@ int main (int argc, char *argv[]) {
 			do_simu(&sim);
 			runtime = clock() - runtime;
 			printf ("Actual simulation took %.2f seconds.\n", runtime / 1000000.0);
+			// WIP: start recon from jemris
 			return 0;
 		}
 	} catch (...) {
