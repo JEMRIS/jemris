@@ -239,13 +239,13 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			}
 
 			if (meta[i-1] == 1)
-				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_NAVIGATION_DATA); // misuse navigation data flag for ADCs with no specific purpose
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // ADCs with no specific purpose
 			else if (meta[i-1] == 4)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PARALLEL_CALIBRATION);
 			else if (meta[i-1] == 8)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PHASECORR_DATA);
 			else if (meta[i-1] != 2)
-				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // TPOI's without ADCs get dummyscan flag, imaging scans get no flag
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_USER1); // TPOI's without ADCs get user1 flag
 
 			acq.idx().slice = slc_ctr[i-1];
 			if (shot_ctr[i-1] == pW->m_shotmax-1 && meta[i-1] == 2){ // set last scan in slice - WIP: partitions are not yet supported
@@ -255,7 +255,6 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 				last_adc = acqList.size();
 			}
 			acqList.push_back(acq);
-			// d.appendAcquisition(acq);
 			adc_start = i;
 		}
 	}
