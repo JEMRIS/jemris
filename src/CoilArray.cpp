@@ -297,6 +297,29 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 
 	std::remove((m_signal_output_dir + m_signal_prefix + prefix + "_tmp.h5").c_str());
 
+	// Write sensitivity maps - WIP: Arrays are not streamed in Recon - how to access sensmaps?
+	size_t sl = m_coils[0]->GetPoints();
+	NDData<double> mag = (m_coils[0]->GetNDim() == 3) ? NDData<double> (sl, sl, sl) : NDData<double> (sl, sl, 1);
+	NDData<double> pha = mag;
+	std::vector<size_t> dims = mag.Dims();
+	dims.push_back(GetSize());
+	ISMRMRD::NDArray<complex_float_t> sens(dims);
+
+	std::cout << std::endl << dims[0] << "  " << dims[1] << "  " << dims[2] << "  " << dims[3] << std::endl;
+	for (unsigned i = 0; i < m_coils.size(); ++i) {
+		m_coils[i]->GridMap();
+		memcpy (&mag[0], m_coils[i]->MagnitudeMap(), sizeof(double)*mag.Size());
+		memcpy (&pha[0], m_coils[i]->PhaseMap(), sizeof(double)*mag.Size());
+		for(size_t x = 0; x < dims[0]; ++x){
+			for(size_t y = 0; y < dims[1]; ++y){
+				for(size_t z = 0; z < dims[2]; ++z)
+					sens(x,y,z,i) = std::polar(mag(x,y,z), pha(x,y,z));
+			}
+		}
+	}
+	std::cout << sens.getDataSize() << std::endl;
+	d.appendNDArray("SENSEMap",sens);
+
 	return IO::OK;
 
 }
