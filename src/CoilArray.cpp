@@ -241,7 +241,7 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 		
 		d_tmp.readAcquisition(n, acq);
 
-		if (!acq.isFlagSet(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA)){
+		if (!acq.isFlagSet(ISMRMRD::ISMRMRD_ACQ_USER1)){ // USER1 flag is set for TPOI's without ADCs
 					
 			acq.resize(acq.number_of_samples(), GetSize(), acq.trajectory_dimensions()); // set number of coils
 
