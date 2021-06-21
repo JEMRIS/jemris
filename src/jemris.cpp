@@ -223,7 +223,22 @@ int main (int argc, char *argv[]) {
 			do_simu(&sim);
 			runtime = clock() - runtime;
 			printf ("Actual simulation took %.2f seconds.\n", runtime / 1000000.0);
-			// WIP: start recon from jemris
+
+			// Recon, if available
+			try{
+				printf ("Starting recon.\n");
+				static clock_t runtime = clock();
+				string infile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd.h5";
+				string outfile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd_recon.h5";
+				std::remove(outfile.c_str());
+				string cmd = "gadgetron_ismrmrd_client -a 127.0.0.1 -c bart_jemris -f " + infile + " -o " + outfile + " -G images";
+				system(cmd.c_str());
+				runtime = clock() - runtime;
+				printf ("Recon took %.2f seconds.\n", runtime / 1000000.0);
+			}
+			catch (...) {
+				printf ("Recon could not be started. Gadgetron ISMRMRD client not installed.\n");
+			}
 			return 0;
 		}
 	} catch (...) {
