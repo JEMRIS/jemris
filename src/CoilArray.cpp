@@ -305,7 +305,6 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 	dims.push_back(GetSize());
 	ISMRMRD::NDArray<complex_float_t> sens(dims);
 
-	std::cout << std::endl << dims[0] << "  " << dims[1] << "  " << dims[2] << "  " << dims[3] << std::endl;
 	for (unsigned i = 0; i < m_coils.size(); ++i) {
 		m_coils[i]->GridMap();
 		memcpy (&mag[0], m_coils[i]->MagnitudeMap(), sizeof(double)*mag.Size());
@@ -317,7 +316,6 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 			}
 		}
 	}
-	std::cout << sens.getDataSize() << std::endl;
 	d.appendNDArray("SENSEMap",sens);
 
 	return IO::OK;
