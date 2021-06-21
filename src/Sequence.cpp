@@ -77,7 +77,7 @@ void Sequence::SeqDiag (const string& fname ) {
 	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
 	// Start with 0 and track excitations and refocusing
-	NDData<double> seqdata(numaxes+3,GetNumOfTPOIs()+1);	/** Extra axes for META, slice number and last scan in slice*/
+	NDData<double> seqdata(numaxes+3,GetNumOfTPOIs()+1);	/** Extra axes for META, slice and shot number*/
 	
 	// HDF5 dataset names
 	vector<string> seqaxis;
@@ -156,6 +156,9 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	seqdata (1,0) = -1.;
 	seqdata (numaxes+1,0) = 0;
 	seqdata (numaxes+2,0) = 0;
+	pW->m_slice = 0; // reset singletons
+	pW->m_shot = 0;
+	pW->m_shotmax = 0;
 	CollectSeqData (seqdata, seqtime, offset);
 
 	// Transpose Data and collect meta and t-vector for cumtrapz
@@ -181,10 +184,10 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	memcpy (&di[0], &seqdata[6*di.Size()], di.Size() * sizeof(double));
 	kz = cumtrapz(di,t,meta);
 
-	// Write acquisitions & trajectory to ISMRMRD file
-	// WIP: - add counters from other loops to ISMRMRD file (use only slice counter or set,slice,(averages)???)
-	//      - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
-	// 		- how to append Sensitivity Maps? Arrays are not streamed by the client - maybe dump somewhere as h5 and write filepath to ISMRMRD header??
+	/* Write acquisitions & trajectory to ISMRMRD file
+	 WIP: - add counters from other loops to ISMRMRD file (use only slice counter or set,slice,(averages)???)
+	      - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
+	 	  - how to append Sensitivity Maps? Arrays are not streamed by the client - maybe dump somewhere as h5 and write filepath to ISMRMRD header?? */
 
 	std::remove(fname.c_str()); // otherwise data is appended
 	ISMRMRD::Dataset d(fname.c_str(), "dataset", true);
@@ -217,11 +220,13 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	e.reconSpace.fieldOfView_mm.z = P->m_fov_z;
 
 	// Acquisitions
+	std::vector<ISMRMRD::Acquisition> acqList;
 	ISMRMRD::Acquisition acq;
 	u_int16_t axes = 3;
 	u_int16_t readout;
 
 	size_t adc_start = 0;
+	size_t last_adc = 0; // helper variable for last scan in slice
 	for (size_t i = 1; i < meta.size(); ++i){
 		if (meta[i] != meta[i-1] || i == meta.size()-1){
 			acq.clearAllFlags();
@@ -243,12 +248,20 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // TPOI's without ADCs get dummyscan flag, imaging scans get no flag
 
 			acq.idx().slice = slc_ctr[i-1];
-			if (shot_ctr[i-1] == pW->m_shotmax-1) // WIP: this doesnt work for multiple ADCs per loop, also partitions are not yet supported
+			if (shot_ctr[i-1] == pW->m_shotmax-1 && meta[i-1] == 2){ // set last scan in slice - WIP: partitions are not yet supported
+				if (slc_ctr[last_adc] == slc_ctr[i-1])
+					acqList[last_adc].clearFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE); // flag is only set for last ADC in loop
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
-			d.appendAcquisition(acq);
+				last_adc = acqList.size();
+			}
+			acqList.push_back(acq);
+			// d.appendAcquisition(acq);
 			adc_start = i;
 		}
 	}
+
+	for(size_t i=0; i<acqList.size(); ++i)
+		d.appendAcquisition(acqList[i]);
 
 	// Write maximum slice number
 	int slices = *max_element(slc_ctr.begin(), slc_ctr.end()) + 1;
