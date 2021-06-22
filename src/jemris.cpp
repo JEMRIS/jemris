@@ -63,6 +63,7 @@ void usage () {
 	cout   << "     -o <output_dir>: Output directory" << endl;
 	cout   << "     -f <filename>:   Output filename (without extension)"  << endl;
 	cout   << "     -x: Output Pulseq sequence file format (.seq)"  << endl;
+	cout   << "     -r: Start reconstruction after simulation (running recon server is required). "  << endl;
 	cout   << "     -d <def>=<val>:  Define custom sequence variable for Pulseq file"  << endl;
 }
 
@@ -102,11 +103,12 @@ int main (int argc, char *argv[]) {
 	std::size_t pos;
 	map<string,string> scan_defs;
 	bool export_seq=false;
+	bool recon=false;
 	opterr = 0;
 	int status;
 
 	int c;
-	while((c = getopt (argc, argv, "f:o:d:x")) != -1)
+	while((c = getopt (argc, argv, "f:o:d:x:r")) != -1)
 	{
 		switch (c)
 		{
@@ -126,6 +128,9 @@ int main (int argc, char *argv[]) {
 			break;
 		case 'x':
 			export_seq=true;
+			break;
+		case 'r':
+			recon=true;
 			break;
 		case 'd':
 			definition = optarg;
@@ -225,19 +230,25 @@ int main (int argc, char *argv[]) {
 			printf ("Actual simulation took %.2f seconds.\n", runtime / 1000000.0);
 
 			// Recon, if available
-			try{
-				printf ("Starting recon.\n");
-				static clock_t runtime = clock();
-				string infile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd.h5";
-				string outfile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd_recon.h5";
-				std::remove(outfile.c_str());
-				string cmd = "gadgetron_ismrmrd_client -a 127.0.0.1 -c bart_jemris -f " + infile + " -o " + outfile + " -G images";
-				system(cmd.c_str());
-				runtime = clock() - runtime;
-				printf ("Recon took %.2f seconds.\n", runtime / 1000000.0);
-			}
-			catch (...) {
-				printf ("Recon could not be started. Gadgetron ISMRMRD client not installed.\n");
+			if (recon){
+				try{
+					printf ("Starting reconstruction.\n");
+					struct timeval begin, end;
+					gettimeofday(&begin, 0);
+					string infile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd.h5";
+					string outfile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd_recon.h5";
+					std::remove(outfile.c_str());
+					string cmd = "gadgetron_ismrmrd_client -a 127.0.0.1 -c bart_jemris -f " + infile + " -o " + outfile + " -G images";
+					system(cmd.c_str());
+					gettimeofday(&end, 0);
+					long sec = end.tv_sec - begin.tv_sec;
+					long usec = end.tv_usec - begin.tv_usec;
+					double elapsed = sec + usec*1e-6;
+					printf ("Recon took %.2f seconds.\n", elapsed);
+				}
+				catch (...) {
+					printf ("Recon could not be started. Gadgetron ISMRMRD client not installed.\n");
+				}
 			}
 			return 0;
 		}
