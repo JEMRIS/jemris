@@ -129,6 +129,11 @@ void Sequence::SeqDiag (const string& fname ) {
 /***********************************************************/
 void Sequence::SeqISMRMRD (const string& fname ) {
 
+	/* WIP: - add counters from other loops to ISMRMRD file (use only slice counter or set,slice,(averages)???)
+			- Reco: Sensitivity Maps in Reco & Python Client mit setup.py installieren
+		    - Plot reconstruction results in GUI
+		    - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file */
+
 	if ( GetNumOfTPOIs()==0  ) return;
 
 	Prepare(PREP_INIT);
@@ -184,11 +189,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	memcpy (&di[0], &seqdata[6*di.Size()], di.Size() * sizeof(double));
 	kz = cumtrapz(di,t,meta);
 
-	/* Write acquisitions & trajectory to ISMRMRD file
-	 WIP: - add counters from other loops to ISMRMRD file (use only slice counter or set,slice,(averages)???)
-	      - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
-	 	  - how to append Sensitivity Maps? Arrays are not streamed by the client - maybe dump somewhere as h5 and write filepath to ISMRMRD header?? */
-
+	// Write acquisitions & trajectory to ISMRMRD file
 	std::remove(fname.c_str()); // otherwise data is appended
 	ISMRMRD::Dataset d(fname.c_str(), "dataset", true);
 
