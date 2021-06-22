@@ -241,7 +241,7 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 		
 		d_tmp.readAcquisition(n, acq);
 
-		if (!acq.isFlagSet(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA)){
+		if (!acq.isFlagSet(ISMRMRD::ISMRMRD_ACQ_USER1)){ // USER1 flag is set for TPOI's without ADCs
 					
 			acq.resize(acq.number_of_samples(), GetSize(), acq.trajectory_dimensions()); // set number of coils
 
@@ -290,13 +290,33 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 		}
 	}
 
-	// WIP: append sensitivity maps as Array to ISMRMRD file
 
 	Repository* repository = m_coils[0]->GetSignal()->Repo();
 	if(offset != repository->Samples())
 		cout << "Not all signal samples written to ISMRMRD file. Number of unwritten samples: " << repository->Samples() - offset << endl;
 
 	std::remove((m_signal_output_dir + m_signal_prefix + prefix + "_tmp.h5").c_str());
+
+	// Write sensitivity maps - WIP: Arrays are not streamed in Recon - how to access sensmaps?
+	size_t sl = m_coils[0]->GetPoints();
+	NDData<double> mag = (m_coils[0]->GetNDim() == 3) ? NDData<double> (sl, sl, sl) : NDData<double> (sl, sl, 1);
+	NDData<double> pha = mag;
+	std::vector<size_t> dims = mag.Dims();
+	dims.push_back(GetSize());
+	ISMRMRD::NDArray<complex_float_t> sens(dims);
+
+	for (unsigned i = 0; i < m_coils.size(); ++i) {
+		m_coils[i]->GridMap();
+		memcpy (&mag[0], m_coils[i]->MagnitudeMap(), sizeof(double)*mag.Size());
+		memcpy (&pha[0], m_coils[i]->PhaseMap(), sizeof(double)*mag.Size());
+		for(size_t x = 0; x < dims[0]; ++x){
+			for(size_t y = 0; y < dims[1]; ++y){
+				for(size_t z = 0; z < dims[2]; ++z)
+					sens(x,y,z,i) = std::polar(mag(x,y,z), pha(x,y,z));
+			}
+		}
+	}
+	d.appendNDArray("SENSEMap",sens);
 
 	return IO::OK;
 

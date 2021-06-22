@@ -76,7 +76,8 @@ World* World::instance() {
         m_instance->m_startSpin         = 0;
 
         m_instance->m_slice             = 0;
-        m_instance->m_lastScanInSlice   = false;
+        m_instance->m_shot              = 0;
+        m_instance->m_shotmax           = 0;
 
     }
 

@@ -77,7 +77,7 @@ void Sequence::SeqDiag (const string& fname ) {
 	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
 	// Start with 0 and track excitations and refocusing
-	NDData<double> seqdata(numaxes+3,GetNumOfTPOIs()+1);	/** Extra axes for META, slice number and last scan in slice*/
+	NDData<double> seqdata(numaxes+3,GetNumOfTPOIs()+1);	/** Extra axes for META, slice and shot number*/
 	
 	// HDF5 dataset names
 	vector<string> seqaxis;
@@ -137,7 +137,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	std::vector<double>  t (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  slc_ctr (GetNumOfTPOIs() + 1);
-	std::vector<size_t>  lastScaninSlice (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  shot_ctr (GetNumOfTPOIs() + 1);
 
 	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
@@ -156,6 +156,9 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	seqdata (1,0) = -1.;
 	seqdata (numaxes+1,0) = 0;
 	seqdata (numaxes+2,0) = 0;
+	pW->m_slice = 0; // reset singletons
+	pW->m_shot = 0;
+	pW->m_shotmax = 0;
 	CollectSeqData (seqdata, seqtime, offset);
 
 	// Transpose Data and collect meta and t-vector for cumtrapz
@@ -164,11 +167,11 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	for (size_t i = 1; i < meta.size(); ++i)
 		meta[i] = seqdata(i,numaxes);
 
-	// Slice information
-	for (size_t i = 1; i < meta.size(); ++i)
+	// Slice and shot information
+	for (size_t i = 1; i < slc_ctr.size(); ++i)
 		slc_ctr[i] = seqdata(i,numaxes+1);
-	for (size_t i = 1; i < meta.size(); ++i)
-		lastScaninSlice[i] = seqdata(i,numaxes+2);
+	for (size_t i = 1; i < shot_ctr.size(); ++i)
+		shot_ctr[i] = seqdata(i,numaxes+2);
 
 	// Calculate k-space trajectory
 	NDData<double> kx (GetNumOfTPOIs() + 1);
@@ -181,14 +184,25 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	memcpy (&di[0], &seqdata[6*di.Size()], di.Size() * sizeof(double));
 	kz = cumtrapz(di,t,meta);
 
-	// Write acquisitions & trajectory to ISMRMRD file
-	// WIP: Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
+	/* Write acquisitions & trajectory to ISMRMRD file
+	 WIP: - add counters from other loops to ISMRMRD file (use only slice counter or set,slice,(averages)???)
+	      - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file
+	 	  - how to append Sensitivity Maps? Arrays are not streamed by the client - maybe dump somewhere as h5 and write filepath to ISMRMRD header?? */
 
 	std::remove(fname.c_str()); // otherwise data is appended
 	ISMRMRD::Dataset d(fname.c_str(), "dataset", true);
 
 	// Header
 	ISMRMRD::IsmrmrdHeader h;
+	ISMRMRD::AcquisitionSystemInformation sys;
+
+	// Set system info to not crash reco
+	sys.systemVendor.set("JEMRIS");
+	sys.systemModel.set("v2.8.4");
+	sys.systemFieldStrength_T.set(0);
+	h.acquisitionSystemInformation.set(sys);
+
+	// Encoding
 	Parameters* P = Parameters::instance();
 	ISMRMRD::Encoding e;
 	e.trajectory = ISMRMRD::TrajectoryType::OTHER;
@@ -206,13 +220,15 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	e.reconSpace.fieldOfView_mm.z = P->m_fov_z;
 
 	// Acquisitions
+	std::vector<ISMRMRD::Acquisition> acqList;
 	ISMRMRD::Acquisition acq;
 	u_int16_t axes = 3;
 	u_int16_t readout;
 
 	size_t adc_start = 0;
+	size_t last_adc = 0; // helper variable for last scan in slice
 	for (size_t i = 1; i < meta.size(); ++i){
-		if (meta[i] != meta[i-1]){
+		if (meta[i] != meta[i-1] || i == meta.size()-1){
 			acq.clearAllFlags();
 			readout = i - adc_start;
 			acq.resize(readout, acq.active_channels(), axes);
@@ -223,21 +239,28 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			}
 
 			if (meta[i-1] == 1)
-				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_NAVIGATION_DATA); // misuse navigation data flag for ADCs with no specific purpose
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // ADCs with no specific purpose
 			else if (meta[i-1] == 4)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PARALLEL_CALIBRATION);
 			else if (meta[i-1] == 8)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PHASECORR_DATA);
 			else if (meta[i-1] != 2)
-				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // TPOI's without ADCs get dummyscan flag, imaging scans get no flag
+				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_USER1); // TPOI's without ADCs get user1 flag
 
-			acq.idx().slice = slc_ctr[i];
-			if (lastScaninSlice[i])
+			acq.idx().slice = slc_ctr[i-1];
+			if (shot_ctr[i-1] == pW->m_shotmax-1 && meta[i-1] == 2){ // set last scan in slice - WIP: partitions are not yet supported
+				if (slc_ctr[last_adc] == slc_ctr[i-1])
+					acqList[last_adc].clearFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE); // flag is only set for last ADC in loop
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
-			d.appendAcquisition(acq);
+				last_adc = acqList.size();
+			}
+			acqList.push_back(acq);
 			adc_start = i;
 		}
 	}
+
+	for(size_t i=0; i<acqList.size(); ++i)
+		d.appendAcquisition(acqList[i]);
 
 	// Write maximum slice number
 	int slices = *max_element(slc_ctr.begin(), slc_ctr.end()) + 1;

@@ -234,12 +234,10 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
         GetValueLingeringEddyCurrents(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
 		seqdata(MAX_SEQ_VAL+1+2,offset+i+1) = m_tpoi.GetMask(i);
 
-		// set slice counter and last scan in slice flag
+		// set slice and shot counters
 		seqdata(MAX_SEQ_VAL+1+3,offset+i+1) = pW->m_slice;
-		if (pW->m_lastScanInSlice)
-			seqdata(MAX_SEQ_VAL+1+4,offset+i+1) = 1;
-		else
-			seqdata(MAX_SEQ_VAL+1+4,offset+i+1) = 0;
+		seqdata(MAX_SEQ_VAL+1+4,offset+i+1) = pW->m_shot;
+
 	}
 
 	UpdateEddyCurrents();
