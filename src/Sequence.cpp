@@ -129,8 +129,7 @@ void Sequence::SeqDiag (const string& fname ) {
 /***********************************************************/
 void Sequence::SeqISMRMRD (const string& fname ) {
 
-	/* WIP: - add counters from other loops to ISMRMRD file (use only slice counter or set,slice,(averages)???)
-			- Reco: Sensitivity Maps in Reco & Python Client mit setup.py installieren
+	/* WIP: - Add counters from other loops to ISMRMRD file (use only slice counter or set,slice,(averages)???)
 		    - Plot reconstruction results in GUI
 		    - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file */
 
