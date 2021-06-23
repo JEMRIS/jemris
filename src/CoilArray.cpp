@@ -241,7 +241,7 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 	NDData<double> mag = (m_coils[0]->GetNDim() == 3) ? NDData<double> (sl, sl, sl) : NDData<double> (sl, sl, 1);
 	NDData<double> pha = mag;
 	std::vector<size_t> dims = mag.Dims();
-	if(dims[0]*dims[1] < 65535 && dims[2]*3 < 65535){ // maximum of uint16
+	if(dims[0]*dims[1] <= 65535 && dims[2]*3 <= 65535){ // maximum of uint16
 		acq.resize(dims[0]*dims[1], dims[2], 3);
 
 		for (unsigned i = 0; i < m_coils.size(); ++i) {
@@ -254,16 +254,15 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 						acq.data(y*dims[2] + x, z) = std::polar(mag(x,y,z), pha(x,y,z));
 				}
 			}
-			// save dimensions for reshaping in reco
-			acq.traj(0,0) = dims[0];
-			acq.traj(1,0) = dims[1];
-			acq.traj(2,0) = dims[2];
+			// save points and extent for reshaping and interpolation in reco
+			acq.user_int()[0] = sl;
+			acq.user_int()[1] = m_coils[i]->GetExtent();
 			acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_SURFACECOILCORRECTIONSCAN_DATA);
 			d.appendAcquisition(acq);
 		}
 	}
 	else{
-		printf("Coil size too big to save it in ISMRMRD file.");
+		printf("Coil size too big to save it in ISMRMRD file. Number of points should not exceed 255."); // has to be < sqrt(65535)
 	}
 
 	// Dump data to ISMRMRD file

@@ -125,6 +125,10 @@ int Coil::GetPoints () {
 	return m_points;
 }
 
+int Coil::GetExtent () {
+	return m_extent;
+}
+
 unsigned Coil::GetNDim () {
 	return m_dim;
 }
