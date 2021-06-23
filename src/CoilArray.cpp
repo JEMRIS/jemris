@@ -254,7 +254,10 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 						acq.data(y*dims[2] + x, z) = std::polar(mag(x,y,z), pha(x,y,z));
 				}
 			}
-			// save points and extent for reshaping and interpolation in reco
+			// save dimensions for reshaping and interpolation in reco
+			acq.traj(0,0) = dims[0];
+			acq.traj(1,0) = dims[1];
+			acq.traj(2,0) = dims[2];
 			acq.user_int()[0] = sl;
 			acq.user_int()[1] = m_coils[i]->GetExtent();
 			acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_SURFACECOILCORRECTIONSCAN_DATA);
