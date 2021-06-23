@@ -248,10 +248,10 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 			m_coils[i]->GridMap();
 			memcpy (&mag[0], m_coils[i]->MagnitudeMap(), sizeof(double)*mag.Size());
 			memcpy (&pha[0], m_coils[i]->PhaseMap(), sizeof(double)*mag.Size());
-			for(size_t z = 0; z < dims[0]; ++z){
+			for(size_t z = 0; z < dims[2]; ++z){
 				for(size_t y = 0; y < dims[1]; ++y){
-					for(size_t x = 0; x < dims[2]; ++x)
-						acq.data(y*dims[2] + x, z) = std::polar(mag(x,y,z), pha(x,y,z));
+					for(size_t x = 0; x < dims[0]; ++x)
+						acq.data(y*dims[0] + x, z) = std::polar(mag(x,y,z), pha(x,y,z));
 				}
 			}
 			// save dimensions for reshaping and interpolation in reco

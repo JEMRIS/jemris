@@ -238,7 +238,7 @@ int main (int argc, char *argv[]) {
 					string infile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd.h5";
 					string outfile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd_recon.h5";
 					remove(outfile.c_str());
-					string cmd = "gadgetron_ismrmrd_client -a 127.0.0.1 -c bart_jemris -f " + infile + " -o " + outfile + " -G images";
+					string cmd = "client.py -a 127.0.0.1 -c bart_jemris " + infile + " -o " + outfile + " -G images";
 					system(cmd.c_str());
 					gettimeofday(&end, 0);
 					long sec = end.tv_sec - begin.tv_sec;
@@ -247,7 +247,7 @@ int main (int argc, char *argv[]) {
 					printf ("Reconstruction took %.2f seconds.\n", elapsed);
 				}
 				catch (...) {
-					printf ("Reconstruction could not be started. Gadgetron ISMRMRD client not installed.\n");
+					printf ("Reconstruction could not be started. ISMRMRD client not installed.\n");
 				}
 			}
 			return 0;
