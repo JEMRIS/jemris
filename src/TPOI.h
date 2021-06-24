@@ -45,12 +45,13 @@ using namespace std;
 template<class T> inline T BIT (const T& x) { return T(1) << x; }
 
 //static const size_t JTPOI_T   (0);	//standard JEMRIS TPOI (never used!?)
-static const size_t ADC_T     (0);	//  1 : ADC
-static const size_t ADC_IMG_T (1);	//  2 : an imaging ADC (for ismrmrd output)
-static const size_t ADC_ACS_T (2);	//  4 : auto-calibration scan (for ismrmrd output)
-static const size_t ADC_PC_T  (3);	//  8 : phase correction scan (for ismrmrd output)
-static const size_t EXCITE_T  (4);	// 16 : excitation pulse
-static const size_t REFOCUS_T (5);	// 32 : refocusing pulse
+static const size_t ADC_T       (0);	//  1 : ADC
+static const size_t ADC_IMG_T   (1);	//  2 : an imaging ADC (for ismrmrd output)
+static const size_t ADC_ACS_T   (2);	//  4 : auto-calibration scan (for ismrmrd output)
+static const size_t ADC_PC_T    (3);	//  8 : phase correction scan (for ismrmrd output)
+static const size_t ADC_NOISE_T (4);	// 16 : noise scan (for ismrmrd output)
+static const size_t EXCITE_T    (5);	// 32 : excitation pulse
+static const size_t REFOCUS_T   (6);	// 64 : refocusing pulse
 
 template<class T, class S> inline bool check_bit (const T& x, const S& y) { return 0 != (x & BIT(y)); }
 
@@ -168,6 +169,7 @@ class TPOI {
      bool IsImg (const size_t pos) const {return check_bit (m_mask[pos], ADC_IMG_T); }
      bool IsACS (const size_t pos) const {return check_bit (m_mask[pos], ADC_ACS_T); }
      bool IsPC (const size_t pos) const {return check_bit (m_mask[pos], ADC_PC_T); }
+     bool IsNoise (const size_t pos) const {return check_bit (m_mask[pos], ADC_NOISE_T); }
      bool IsExcitation (const size_t pos) const {return check_bit (m_mask[pos], EXCITE_T); }
      bool IsRefocussing (const size_t pos) const {return check_bit (m_mask[pos], REFOCUS_T); }
 
