@@ -238,8 +238,10 @@ int main (int argc, char *argv[]) {
 					string infile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd.h5";
 					string outfile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd_recon.h5";
 					remove(outfile.c_str());
-					string cmd = "client.py -a 127.0.0.1 -c bart_jemris " + infile + " -o " + outfile + " -G images";
-					system(cmd.c_str());
+					string cmd = "client.py -c bart_jemris " + infile + " -o " + outfile + " -G images";
+					int err = system(cmd.c_str());
+					if (err)
+						std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
 					gettimeofday(&end, 0);
 					long sec = end.tv_sec - begin.tv_sec;
 					long usec = end.tv_usec - begin.tv_usec;
@@ -247,7 +249,7 @@ int main (int argc, char *argv[]) {
 					printf ("Reconstruction took %.2f seconds.\n", elapsed);
 				}
 				catch (...) {
-					printf ("Reconstruction could not be started. ISMRMRD client not installed.\n");
+
 				}
 			}
 			return 0;
