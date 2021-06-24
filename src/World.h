@@ -205,8 +205,13 @@ class World {
 	multimap<EddyPulse*,double>	m_eddies; /**< @brief map of remaining eddies still to be played out (duration,pointer) */
 
     int 			  m_slice;              /**< @brief slice number */
+    int 			  m_set;                /**< @brief set number */
+    int 			  m_contrast;           /**< @brief contrast number */
+    int 			  m_average;            /**< @brief average number */
     int 			  m_shot;               /**< @brief shot number */
     int 			  m_shotmax;            /**< @brief total number of shots */
+    int 			  m_partition;          /**< @brief partition number */
+    int 			  m_partitionmax;       /**< @brief total number of partitions */
 
  private:
 

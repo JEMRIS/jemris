@@ -77,7 +77,7 @@ void Sequence::SeqDiag (const string& fname ) {
 	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
 	// Start with 0 and track excitations and refocusing
-	NDData<double> seqdata(numaxes+3,GetNumOfTPOIs()+1);	/** Extra axes for META, slice and shot number*/
+	NDData<double> seqdata(numaxes+1,GetNumOfTPOIs()+1);	/** Extra axis for META */
 	
 	// HDF5 dataset names
 	vector<string> seqaxis;
@@ -99,8 +99,6 @@ void Sequence::SeqDiag (const string& fname ) {
 	double seqtime=  0.;
 	long   offset =  0l;
 	seqdata (1,0) = -1.;
-	seqdata (numaxes+1,0) = 0;
-	seqdata (numaxes+2,0) = 0;
 	CollectSeqData (seqdata, seqtime, offset);
 
 	// Faster
@@ -129,9 +127,9 @@ void Sequence::SeqDiag (const string& fname ) {
 /***********************************************************/
 void Sequence::SeqISMRMRD (const string& fname ) {
 
-	/* WIP: - Add counters from other loops to ISMRMRD file (use only slice counter or set,slice,(averages)???)
-		    - Plot reconstruction results in GUI
-		    - Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file */
+	/* WIP: - Plot reconstruction results in GUI
+			- Export sequence to Pulseq and implement reconstruction of that data. 
+			  Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file */
 
 	if ( GetNumOfTPOIs()==0  ) return;
 
@@ -142,15 +140,17 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	std::vector<size_t>  meta (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  slc_ctr (GetNumOfTPOIs() + 1);
 	std::vector<size_t>  shot_ctr (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  part_ctr (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  set_ctr (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  contr_ctr (GetNumOfTPOIs() + 1);
+	std::vector<size_t>  avg_ctr (GetNumOfTPOIs() + 1);
 
 	int numaxes = (MAX_SEQ_VAL+1)+2;	/** Two extra: time, receiver phase */
 
 	// Start with 0 and track excitations and refocusing
-	NDData<double> seqdata(numaxes+3,GetNumOfTPOIs()+1);	/** Extra axes for META, slice number and last scan in slice*/
+	NDData<double> seqdata(numaxes+7,GetNumOfTPOIs()+1);	/** Extra axes for META and 6 kspace counters */
 	
-
 	//turn off nonlinear gradients in static events for sequence diagram calculation
-	// needed???
 	World* pW = World::instance();
 	if (pW->pStaticAtom != NULL) pW->pStaticAtom->SetNonLinGrad(false);
 
@@ -160,6 +160,10 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	seqdata (1,0) = -1.;
 	seqdata (numaxes+1,0) = 0;
 	seqdata (numaxes+2,0) = 0;
+	seqdata (numaxes+3,0) = 0;
+	seqdata (numaxes+4,0) = 0;
+	seqdata (numaxes+5,0) = 0;
+	seqdata (numaxes+6,0) = 0;
 	pW->m_slice = 0; // reset singletons
 	pW->m_shot = 0;
 	pW->m_shotmax = 0;
@@ -176,6 +180,14 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 		slc_ctr[i] = seqdata(i,numaxes+1);
 	for (size_t i = 1; i < shot_ctr.size(); ++i)
 		shot_ctr[i] = seqdata(i,numaxes+2);
+	for (size_t i = 1; i < slc_ctr.size(); ++i)
+		part_ctr[i] = seqdata(i,numaxes+3);
+	for (size_t i = 1; i < shot_ctr.size(); ++i)
+		set_ctr[i] = seqdata(i,numaxes+4);
+	for (size_t i = 1; i < slc_ctr.size(); ++i)
+		contr_ctr[i] = seqdata(i,numaxes+5);
+	for (size_t i = 1; i < shot_ctr.size(); ++i)
+		avg_ctr[i] = seqdata(i,numaxes+6);
 
 	// Calculate k-space trajectory
 	NDData<double> kx (GetNumOfTPOIs() + 1);
@@ -227,6 +239,8 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 
 	size_t adc_start = 0;
 	size_t last_adc = 0; // helper variable for last scan in slice
+	size_t last_idx = 0; // helper variable for last scan in slice
+
 	for (size_t i = 1; i < meta.size(); ++i){
 		if (meta[i] != meta[i-1] || i == meta.size()-1){
 			acq.clearAllFlags();
@@ -249,12 +263,21 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			else if (meta[i-1] != 2)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_USER1); // TPOI's without ADCs get user1 flag
 
+			// kspace counters
 			acq.idx().slice = slc_ctr[i-1];
-			if (shot_ctr[i-1] == pW->m_shotmax-1 && meta[i-1] == 2){ // set last scan in slice - WIP: partitions are not yet supported
-				if (slc_ctr[last_adc] == slc_ctr[i-1])
-					acqList[last_adc].clearFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE); // flag is only set for last ADC in loop
+			acq.idx().kspace_encode_step_1 = shot_ctr[i-1];
+			acq.idx().kspace_encode_step_2 = part_ctr[i-1];
+			acq.idx().set = set_ctr[i-1];
+			acq.idx().contrast = contr_ctr[i-1];
+			acq.idx().average = avg_ctr[i-1];
+
+			// set last scan in slice
+			if (shot_ctr[i-1] == pW->m_shotmax-1 && part_ctr[i-1] == pW->m_partitionmax-1 && meta[i-1] == 2){ 
+				if (slc_ctr[last_idx] == slc_ctr[i-1] && set_ctr[last_idx] == set_ctr[i-1] && contr_ctr[last_idx] == contr_ctr[i-1] && avg_ctr[last_idx] == avg_ctr[i-1])
+					acqList[last_adc].clearFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE); // flag is currently only set for last ADC in loop
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
 				last_adc = acqList.size();
+				last_idx = i-1;
 			}
 			acqList.push_back(acq);
 			adc_start = i;

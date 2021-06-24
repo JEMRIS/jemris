@@ -37,8 +37,8 @@ static const size_t SLICE_L      (0);	//  1 : slice loop
 static const size_t PHASE_L      (1);	//  2 : phase encoding loop
 static const size_t PARTITION_L  (2);	//  4 : partition loop
 static const size_t SET_L        (3);	//  8 : set loop
-static const size_t AVERAGE_I_L  (4);	// 16 : inner averaging loop
-static const size_t AVERAGE_O_L  (5);	// 32 : outer averaging loop
+static const size_t CONTRAST_L   (4);	// 16 : contrast loop
+static const size_t AVERAGE_L    (5);	// 32 : average loop
 
 
 /**
@@ -131,8 +131,8 @@ class ConcatSequence : public Sequence {
     bool IsPhaseLoop     () const {return check_bit (m_mask, PHASE_L);     }
     bool IsPartitionLoop () const {return check_bit (m_mask, PARTITION_L); }
     bool IsSetLoop       () const {return check_bit (m_mask, SET_L);       }
-    bool IsAvgInnerLoop  () const {return check_bit (m_mask, AVERAGE_I_L); }
-    bool IsAvgOuterLoop  () const {return check_bit (m_mask, AVERAGE_O_L); }
+    bool IsContrastLoop  () const {return check_bit (m_mask, CONTRAST_L);  }
+    bool IsAvgLoop       () const {return check_bit (m_mask, AVERAGE_L);   }
 
 
     /**

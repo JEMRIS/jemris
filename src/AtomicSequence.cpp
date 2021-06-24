@@ -234,9 +234,15 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
         GetValueLingeringEddyCurrents(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
 		seqdata(MAX_SEQ_VAL+1+2,offset+i+1) = m_tpoi.GetMask(i);
 
-		// set slice and shot counters
-		seqdata(MAX_SEQ_VAL+1+3,offset+i+1) = pW->m_slice;
-		seqdata(MAX_SEQ_VAL+1+4,offset+i+1) = pW->m_shot;
+		if (seqdata.Dim(0) > MAX_SEQ_VAL+1+3){
+			// set kspace counters
+			seqdata(MAX_SEQ_VAL+1+3,offset+i+1) = pW->m_slice;
+			seqdata(MAX_SEQ_VAL+1+4,offset+i+1) = pW->m_shot;
+			seqdata(MAX_SEQ_VAL+1+5,offset+i+1) = pW->m_partition;
+			seqdata(MAX_SEQ_VAL+1+6,offset+i+1) = pW->m_set;
+			seqdata(MAX_SEQ_VAL+1+7,offset+i+1) = pW->m_contrast;
+			seqdata(MAX_SEQ_VAL+1+8,offset+i+1) = pW->m_average;
+		}
 
 	}
 
