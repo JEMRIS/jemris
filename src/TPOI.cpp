@@ -96,6 +96,7 @@ void TPOI::PrintMeta (const size_t pos) const {
     	    	 << " | IsImg : " << IsImg(pos)
     	    	 << " | IsACS : " << IsACS(pos)
     	    	 << " | IsPC : "  << IsPC(pos)
+				 << " | IsNoise : " << IsNoise(pos)
     	    	 << " | IsExcitation : " << IsExcitation(pos)
     	    	 << " | IsRefocussing : " << IsRefocussing(pos);
 

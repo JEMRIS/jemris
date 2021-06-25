@@ -235,6 +235,39 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 	d.writeHeader(xml);
 
 	ISMRMRD::Acquisition acq;
+
+	// Write sensitivity maps - (mis)use the first N acquisitions, where N is the number of coils
+	size_t sl = m_coils[0]->GetPoints();
+	NDData<double> mag = (m_coils[0]->GetNDim() == 3) ? NDData<double> (sl, sl, sl) : NDData<double> (sl, sl, 1);
+	NDData<double> pha = mag;
+	std::vector<size_t> dims = mag.Dims();
+	if(dims[0]*dims[1] <= 65535 && dims[2]*3 <= 65535){ // maximum of uint16
+		acq.resize(dims[0]*dims[1], dims[2], 3);
+
+		for (unsigned i = 0; i < m_coils.size(); ++i) {
+			m_coils[i]->GridMap();
+			memcpy (&mag[0], m_coils[i]->MagnitudeMap(), sizeof(double)*mag.Size());
+			memcpy (&pha[0], m_coils[i]->PhaseMap(), sizeof(double)*mag.Size());
+			for(size_t x = 0; x < dims[0]; ++x){
+				for(size_t y = 0; y < dims[1]; ++y){
+					for(size_t z = 0; z < dims[2]; ++z)
+						acq.data(x*dims[1] + y, z) = std::polar(mag(x,y,z), pha(x,y,z));
+				}
+			}
+			// save dimensions for reshaping and interpolation in reco
+			acq.traj(0,0) = dims[0];
+			acq.traj(1,0) = dims[1];
+			acq.traj(2,0) = dims[2];
+			acq.user_int()[0] = m_coils[i]->GetExtent();
+			acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_SURFACECOILCORRECTIONSCAN_DATA);
+			d.appendAcquisition(acq);
+		}
+	}
+	else{
+		printf("Coil size too big to save it in ISMRMRD file. Number of points should not exceed 255."); // has to be < sqrt(65535)
+	}
+
+	// Dump data to ISMRMRD file
 	int offset = 0;
 
 	for (int n = 0; n < d_tmp.getNumberOfAcquisitions(); ++n){
@@ -296,27 +329,6 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 		cout << "Not all signal samples written to ISMRMRD file. Number of unwritten samples: " << repository->Samples() - offset << endl;
 
 	std::remove((m_signal_output_dir + m_signal_prefix + prefix + "_tmp.h5").c_str());
-
-	// Write sensitivity maps - WIP: Arrays are not streamed in Recon - how to access sensmaps?
-	size_t sl = m_coils[0]->GetPoints();
-	NDData<double> mag = (m_coils[0]->GetNDim() == 3) ? NDData<double> (sl, sl, sl) : NDData<double> (sl, sl, 1);
-	NDData<double> pha = mag;
-	std::vector<size_t> dims = mag.Dims();
-	dims.push_back(GetSize());
-	ISMRMRD::NDArray<complex_float_t> sens(dims);
-
-	for (unsigned i = 0; i < m_coils.size(); ++i) {
-		m_coils[i]->GridMap();
-		memcpy (&mag[0], m_coils[i]->MagnitudeMap(), sizeof(double)*mag.Size());
-		memcpy (&pha[0], m_coils[i]->PhaseMap(), sizeof(double)*mag.Size());
-		for(size_t x = 0; x < dims[0]; ++x){
-			for(size_t y = 0; y < dims[1]; ++y){
-				for(size_t z = 0; z < dims[2]; ++z)
-					sens(x,y,z,i) = std::polar(mag(x,y,z), pha(x,y,z));
-			}
-		}
-	}
-	d.appendNDArray("SENSEMap",sens);
 
 	return IO::OK;
 

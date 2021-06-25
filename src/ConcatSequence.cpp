@@ -142,8 +142,8 @@ long  ConcatSequence::GetNumOfADCs () {
 /***********************************************************/
 string          ConcatSequence::GetInfo() {
 	stringstream s;
-	s << " Repetitions = " << m_repetitions << ", type SLI|PHA|PAR|SET|AVI|AVO = "
-	  << IsSliceLoop() << "|" << IsPhaseLoop() << "|"<< IsPartitionLoop() << "|"<< IsSetLoop() << "|"<< IsAvgInnerLoop() << "|" << IsAvgOuterLoop() ;
+	s << " Repetitions = " << m_repetitions << ", type SLI|PHA|PAR|SET|CON|AVG = "
+	  << IsSliceLoop() << "|" << IsPhaseLoop() << "|"<< IsPartitionLoop() << "|"<< IsSetLoop() << "|"<< IsContrastLoop() << "|" << IsAvgLoop() ;
 	return s.str();
 }
 
@@ -155,14 +155,23 @@ void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 	vector<Module*> children = GetChildren();
 
 	for (RepIter r=begin(); r<end(); ++r){
-		// WIP: save counters from other looptypes (sets, avg, partitions, phase)
-		// maybe add new array "k_ctr" instead of saving kspace info in seqdata
+
 		if ( IsPhaseLoop() ){
 			pW->m_shot = GetMyRepCounter();
 			pW->m_shotmax = GetMyRepetitions();
 		}
+		if ( IsPartitionLoop() ){
+			pW->m_partition = GetMyRepCounter();
+			pW->m_partitionmax = GetMyRepetitions();
+		}
 		if ( IsSliceLoop() )
 			pW->m_slice = GetMyRepCounter();
+		if ( IsSetLoop() )
+			pW->m_set = GetMyRepCounter();
+		if ( IsContrastLoop() )
+			pW->m_contrast = GetMyRepCounter();
+		if ( IsAvgLoop() )
+			pW->m_average = GetMyRepCounter();
 
 		for (unsigned int j=0; j<children.size() ; ++j) {
 			if (children[j]->GetHardwareMode()<=0) {
