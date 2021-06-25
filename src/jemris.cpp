@@ -83,6 +83,26 @@ void do_simu (Simulator* sim) {
 	cout << endl;
 }
 
+void writeProt(string ismrmrd_file, string output_dir, string filename){
+
+	// Writes new protocol file containing only acquisitions with ADCs
+	ISMRMRD::Dataset d_tmp((ismrmrd_file).c_str(), "dataset", false);
+	std::string xml;
+    d_tmp.readHeader(xml);
+
+	std::remove((output_dir + filename + ".h5").c_str());
+	ISMRMRD::Dataset d((output_dir + filename + ".h5").c_str(), "dataset", true);
+	d.writeHeader(xml);
+
+	ISMRMRD::Acquisition acq;
+	for (int n = 0; n < d_tmp.getNumberOfAcquisitions(); ++n){
+		d_tmp.readAcquisition(n, acq);
+		if (!acq.isFlagSet(ISMRMRD::ISMRMRD_ACQ_USER1)) // acquistions with USER1 flag have no ADCs
+			d.appendAcquisition(acq);
+	}
+
+}
+
 int main (int argc, char *argv[]) {
 
 	//print usage
@@ -108,7 +128,7 @@ int main (int argc, char *argv[]) {
 	int status;
 
 	int c;
-	while((c = getopt (argc, argv, "f:o:d:x:r")) != -1)
+	while((c = getopt (argc, argv, "f:o:d:xr")) != -1)
 	{
 		switch (c)
 		{
@@ -148,7 +168,7 @@ int main (int argc, char *argv[]) {
 				cerr << "Option '-o' requires an argument." << endl;
 			if (optopt == 'f')
 				cerr << "Option '-f' requires an argument." << endl;
-			if (optopt == 's')
+			if (optopt == 'd')
 				cerr << "Option '-d' requires an argument." << endl;
 			else if (isprint(optopt))
 				cerr << "Unknown option '-" << (char)optopt << "'." << endl;
@@ -181,18 +201,21 @@ int main (int argc, char *argv[]) {
 			string baseFilename(filename);
 			if(filename == "")
 				filename = "seq";
+			else
+				filename += "_diag";
 			seqTree.Populate();
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
 			seq->SeqDiag(output_dir + filename + ".h5");
-			seq->SeqISMRMRD(output_dir + filename + "_ismrmrd.h5");
+			string ismrmrd_file = output_dir + filename + "_ismrmrd.h5";
+			seq->SeqISMRMRD(ismrmrd_file);
 			seq->DumpTree();
 
 			filename = baseFilename;
 			if (export_seq) {
 				if (filename == "")
-					filename = "external.seq";
-				else
-					filename += ".seq";
+					filename = "external";
+				writeProt(ismrmrd_file, output_dir, filename);
+				filename += ".seq";
 				seq->OutputSeqData(scan_defs, output_dir, filename);
 			}
 			return 0;
