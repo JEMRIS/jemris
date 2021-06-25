@@ -68,9 +68,10 @@ int main (int argc, char *argv[]) {
 
   opterr = 0;
   int status;
+  bool recon = false;
 
   int c;
-  while((c = getopt (argc, argv, "f:o:")) != -1)
+  while((c = getopt (argc, argv, "f:o:r")) != -1)
   {
     switch (c)
     {
@@ -88,6 +89,9 @@ int main (int argc, char *argv[]) {
       case 'f':
         filename = optarg;
         break;
+	  case 'r':
+		recon=true;
+		break;
       case '?':
         if (optopt == 'o')
           cerr << "Option '-o' requires an argument." << endl;
@@ -186,8 +190,32 @@ int main (int argc, char *argv[]) {
 	//finished
 	MPI_Barrier(MPI_COMM_WORLD);
 	double t2 = MPI_Wtime();
-	if ( my_rank == master)
+	if ( my_rank == master){
 		printf ("\n\nActual simulation took %.2f seconds.\n", t2-t1);
+		if (recon){
+			try{
+				printf ("Starting reconstruction.\n");
+				struct timeval begin, end;
+				gettimeofday(&begin, 0);
+				CoilArray* RxCA = psim->GetRxCoilArray();
+				string infile = RxCA->GetSignalOutputDir() + RxCA->GetSignalPrefix() + "_ismrmrd.h5";
+				string outfile = RxCA->GetSignalOutputDir() + RxCA->GetSignalPrefix() + "_ismrmrd_recon.h5";
+				remove(outfile.c_str());
+				string cmd = "client.py -c bart_jemris " + infile + " -o " + outfile + " -G images";
+				int err = system(cmd.c_str());
+				if (err)
+					std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+				gettimeofday(&end, 0);
+				long sec = end.tv_sec - begin.tv_sec;
+				long usec = end.tv_usec - begin.tv_usec;
+				double elapsed = sec + usec*1e-6;
+				printf ("Reconstruction took %.2f seconds.\n", elapsed);
+			}
+			catch (...) {
+
+			}
+		}
+	}
 	MPI_Finalize();
 
 	return 0;

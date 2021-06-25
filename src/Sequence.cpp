@@ -287,9 +287,20 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	for(size_t i=0; i<acqList.size(); ++i)
 		d.appendAcquisition(acqList[i]);
 
-	// Write maximum slice number
+	// Write encoding limits
 	int slices = *max_element(slc_ctr.begin(), slc_ctr.end()) + 1;
+	int shots = pW->m_shotmax;
+	int partitions = pW->m_partitionmax;
+	int contrasts = *max_element(contr_ctr.begin(), contr_ctr.end()) + 1;
+	int sets = *max_element(set_ctr.begin(), set_ctr.end()) + 1;
+	int averages = *max_element(avg_ctr.begin(), avg_ctr.end()) + 1;
+
 	e.encodingLimits.slice = ISMRMRD::Limit(0, slices-1, slices/2);
+	e.encodingLimits.kspace_encoding_step_1 = ISMRMRD::Limit(0, shots-1, shots/2);
+	e.encodingLimits.kspace_encoding_step_2 = ISMRMRD::Limit(0, partitions-1, partitions/2);
+	e.encodingLimits.contrast = ISMRMRD::Limit(0, contrasts-1, contrasts/2);
+	e.encodingLimits.set = ISMRMRD::Limit(0, sets-1, sets/2);
+	e.encodingLimits.average = ISMRMRD::Limit(0, averages-1, averages/2);
 	h.encoding.push_back(e);
 
 	// Serialize header and write it to the data file
