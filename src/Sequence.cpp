@@ -272,7 +272,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			acq.idx().average = avg_ctr[i-1];
 
 			// set last scan in slice
-			if (shot_ctr[i-1] == pW->m_shotmax-1 && part_ctr[i-1] == pW->m_partitionmax-1 && meta[i-1] == 2){ 
+			if (shot_ctr[i-1] == pW->m_shotmax-1 && part_ctr[i-1] == pW->m_partitionmax-1 && (meta[i-1] == 2 || meta[i-1] == 4)){ 
 				if (slc_ctr[last_idx] == slc_ctr[i-1] && set_ctr[last_idx] == set_ctr[i-1] && contr_ctr[last_idx] == contr_ctr[i-1] && avg_ctr[last_idx] == avg_ctr[i-1])
 					acqList[last_adc].clearFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE); // flag is currently only set for last ADC in loop
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
