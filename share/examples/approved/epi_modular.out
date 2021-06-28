@@ -1,7 +1,7 @@
 dump of sequence tree
                             TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
                             ----------------------------------------------------------------- |  ---------------
-sequence-root---------->   CONCAT       CONCATSEQUENCE      EPI   300.000    12288     14040  |  Repetitions = 3, type SLI|PHA|PAR|SET|AVI|AVO = 0|0|0|0|0|0
+sequence-root---------->   CONCAT       CONCATSEQUENCE      EPI   300.000    12288     14040  |  Repetitions = 3, type SLI|PHA|PAR|SET|CON|AVG = 0|0|0|0|0|0
   |_ child 1   -------->  CONTAIN            CONTAINER      SLS     1.910        0       125  | ContainerSequence filename: cs_sls.xml
 >>>>>>>>>>
   |_ CSroot    -------->   CONCAT    CONTAINERSEQUENCE      SLS     1.910        0       125  | 
@@ -18,7 +18,7 @@ sequence-root---------->   CONCAT       CONCATSEQUENCE      EPI   300.000    122
   |_ child 4   -------->  CONTAIN            CONTAINER       ER    79.280     4096      4543  | ContainerSequence filename: cs_epiro.xml
 >>>>>>>>>>
   |_ CSroot    -------->   CONCAT    CONTAINERSEQUENCE      EPI    79.280     4096      4543  | 
-    |_ child 1   ------>   CONCAT       CONCATSEQUENCE        C    79.280     4096      4543  |  Repetitions = 64, type SLI|PHA|PAR|SET|AVI|AVO = 0|0|0|0|0|0
+    |_ child 1   ------>   CONCAT       CONCATSEQUENCE        C    79.280     4096      4543  |  Repetitions = 64, type SLI|PHA|PAR|SET|CON|AVG = 0|0|0|0|0|0
       |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     1.160       64        68  | 
         |_ child 1   -->    PULSE        TRAPGRADPULSE       P1     1.160       64        68  |  Axis = GX  , Area = -1.69646 , FlatTop: (Area,time)= (-1.5708,1)
       |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A2     0.000        0         2  | 
