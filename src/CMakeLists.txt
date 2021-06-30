@@ -68,8 +68,9 @@ target_link_libraries (sanityck ${COMMON_LIBS} core)
 if (MPI_C_FOUND)
   add_executable (pjemris Mpi2Evolution.h
     Mpi2Evolution.cpp mpi_Model.h Model.h Model.cpp pjemris.cpp)
+  find_package(Threads REQUIRED)
   target_link_libraries (pjemris core ${COMMON_LIBS}
-	${MPI_C_LIBRARIES})  
+	${MPI_C_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
   target_compile_definitions (pjemris PRIVATE PARALLEL)
   if (MPI_C_COMPILE_FLAGS)
     set_target_properties(pjemris PROPERTIES
