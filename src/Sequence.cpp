@@ -246,10 +246,15 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			acq.clearAllFlags();
 			readout = i - adc_start;
 			acq.resize(readout, acq.active_channels(), axes);
+
+			// trajectory
 			for (size_t k = 0; k<readout; ++k){
 				acq.traj(0,k) = kx[k+adc_start];
 				acq.traj(1,k) = ky[k+adc_start];
-				acq.traj(2,k) = kz[k+adc_start];
+				if (pW->m_partitionmax > 1)
+					acq.traj(2,k) = kz[k+adc_start];
+				else
+					acq.traj(2,k) = 0;
 			}
 
 			if (meta[i-1] == 1)
@@ -301,6 +306,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	e.encodingLimits.contrast = ISMRMRD::Limit(0, contrasts-1, contrasts/2);
 	e.encodingLimits.set = ISMRMRD::Limit(0, sets-1, sets/2);
 	e.encodingLimits.average = ISMRMRD::Limit(0, averages-1, averages/2);
+	e.encodingLimits.segment = ISMRMRD::Limit(0, 0, 0);
 	h.encoding.push_back(e);
 
 	// Serialize header and write it to the data file
