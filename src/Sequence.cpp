@@ -247,12 +247,12 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			readout = i - adc_start;
 			acq.resize(readout, acq.active_channels(), axes);
 
-			// trajectory
+			// trajectory - scale from [rad/mm] to dimensionless
 			for (size_t k = 0; k<readout; ++k){
-				acq.traj(0,k) = kx[k+adc_start];
-				acq.traj(1,k) = ky[k+adc_start];
+				acq.traj(0,k) = kx[k+adc_start] * P->m_fov_x / (2*M_PI);
+				acq.traj(1,k) = ky[k+adc_start] * P->m_fov_y / (2*M_PI);
 				if (pW->m_partitionmax > 1)
-					acq.traj(2,k) = kz[k+adc_start];
+					acq.traj(2,k) = kz[k+adc_start] * P->m_fov_z / (2*M_PI);
 				else
 					acq.traj(2,k) = 0;
 			}
