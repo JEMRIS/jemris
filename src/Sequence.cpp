@@ -127,9 +127,7 @@ void Sequence::SeqDiag (const string& fname ) {
 /***********************************************************/
 void Sequence::SeqISMRMRD (const string& fname ) {
 
-	/* WIP: - Plot reconstruction results in GUI
-			- Export sequence to Pulseq and implement reconstruction of that data. 
-			  Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file */
+	/* WIP: - Plot reconstruction results in GUI */
 
 	if ( GetNumOfTPOIs()==0  ) return;
 
