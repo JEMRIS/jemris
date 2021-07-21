@@ -71,7 +71,7 @@ inline void  Pulse::SetTPOIs () {
 	if (bitmask == 0) p=-1.0;
 
     for (int i = 0; i < N; i++)
-    	m_tpoi + TPOI::set((i+1)*GetDuration()/(N+1), p, bitmask );
+    	m_tpoi + TPOI::set((i+0.5)*GetDuration()/N, p, bitmask );
 
 //cout << GetName() << " m_adc_flag = " << m_adc_flag;  m_tpoi.PrintMeta(2); cout << endl;
 

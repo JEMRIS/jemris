@@ -127,9 +127,7 @@ void Sequence::SeqDiag (const string& fname ) {
 /***********************************************************/
 void Sequence::SeqISMRMRD (const string& fname ) {
 
-	/* WIP: - Plot reconstruction results in GUI
-			- Export sequence to Pulseq and implement reconstruction of that data. 
-			  Check if the trajectory at the TPOi's is matching the trajectory at the sampling points in the Pulseq file */
+	/* WIP: - Plot reconstruction results in GUI */
 
 	if ( GetNumOfTPOIs()==0  ) return;
 
@@ -246,10 +244,15 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			acq.clearAllFlags();
 			readout = i - adc_start;
 			acq.resize(readout, acq.active_channels(), axes);
+
+			// trajectory - scale from [rad/mm] to dimensionless
 			for (size_t k = 0; k<readout; ++k){
-				acq.traj(0,k) = kx[k+adc_start];
-				acq.traj(1,k) = ky[k+adc_start];
-				acq.traj(2,k) = kz[k+adc_start];
+				acq.traj(0,k) = kx[k+adc_start] * P->m_fov_x / (2*M_PI);
+				acq.traj(1,k) = ky[k+adc_start] * P->m_fov_y / (2*M_PI);
+				if (pW->m_partitionmax > 1)
+					acq.traj(2,k) = kz[k+adc_start] * P->m_fov_z / (2*M_PI);
+				else
+					acq.traj(2,k) = 0;
 			}
 
 			if (meta[i-1] == 1)
@@ -272,7 +275,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			acq.idx().average = avg_ctr[i-1];
 
 			// set last scan in slice
-			if (shot_ctr[i-1] == pW->m_shotmax-1 && part_ctr[i-1] == pW->m_partitionmax-1 && meta[i-1] == 2){ 
+			if (shot_ctr[i-1] == pW->m_shotmax-1 && part_ctr[i-1] == pW->m_partitionmax-1 && (meta[i-1] == 2 || meta[i-1] == 4)){ 
 				if (slc_ctr[last_idx] == slc_ctr[i-1] && set_ctr[last_idx] == set_ctr[i-1] && contr_ctr[last_idx] == contr_ctr[i-1] && avg_ctr[last_idx] == avg_ctr[i-1])
 					acqList[last_adc].clearFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE); // flag is currently only set for last ADC in loop
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
@@ -301,6 +304,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	e.encodingLimits.contrast = ISMRMRD::Limit(0, contrasts-1, contrasts/2);
 	e.encodingLimits.set = ISMRMRD::Limit(0, sets-1, sets/2);
 	e.encodingLimits.average = ISMRMRD::Limit(0, averages-1, averages/2);
+	e.encodingLimits.segment = ISMRMRD::Limit(0, 0, 0);
 	h.encoding.push_back(e);
 
 	// Serialize header and write it to the data file
