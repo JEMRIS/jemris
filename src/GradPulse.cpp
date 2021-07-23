@@ -223,7 +223,7 @@ inline void GradPulse::GenerateEvents(std::vector<Event*> &events) {
 	{
 		double amp = GetGradient((i+0.5)*10.0e-3);
 
-		if (abs(amp)>max_amplitude)
+		if (abs(amp)>abs(max_amplitude))
 			max_amplitude=amp;
 
 		grad->m_samples.push_back(amp);

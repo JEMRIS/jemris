@@ -312,9 +312,9 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 						grad_z->m_samples[i] += Grot[2];
 
 						// Update maximum amplitude
-						grad_x->m_amplitude = (abs(grad_x->m_samples[i]) > grad_x->m_amplitude) ? grad_x->m_samples[i] : grad_x->m_amplitude;
-						grad_y->m_amplitude = (abs(grad_y->m_samples[i]) > grad_y->m_amplitude) ? grad_y->m_samples[i] : grad_y->m_amplitude;
-						grad_z->m_amplitude = (abs(grad_z->m_samples[i]) > grad_z->m_amplitude) ? grad_z->m_samples[i] : grad_z->m_amplitude;
+						grad_x->m_amplitude = (abs(grad_x->m_samples[i]) > abs(grad_x->m_amplitude)) ? grad_x->m_samples[i] : grad_x->m_amplitude;
+						grad_y->m_amplitude = (abs(grad_y->m_samples[i]) > abs(grad_y->m_amplitude)) ? grad_y->m_samples[i] : grad_y->m_amplitude;
+						grad_z->m_amplitude = (abs(grad_z->m_samples[i]) > abs(grad_z->m_amplitude)) ? grad_z->m_samples[i] : grad_z->m_amplitude;
 					}
 				}
 			}
