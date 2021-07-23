@@ -85,7 +85,7 @@ void do_simu (Simulator* sim) {
 
 void writeProt(string ismrmrd_file, string output_dir, string filename){
 
-	// Writes new protocol file containing only acquisitions with ADCs
+	// Writes new ISMRMRD protocol file containing only acquisitions with ADCs
 	ISMRMRD::Dataset d_tmp((ismrmrd_file).c_str(), "dataset", false);
 	std::string xml;
     d_tmp.readHeader(xml);
@@ -193,7 +193,7 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	//CASE 2: try Dump of seq-diagram from Sequence xml-file
+	//CASE 2: try Dump of seq-diagram from Sequence xml-file or write Pulseq sequence & protocol
 	try {
 		SequenceTree seqTree;
 		seqTree.Initialize(input);
@@ -201,20 +201,20 @@ int main (int argc, char *argv[]) {
 			string baseFilename(filename);
 			if(filename == "")
 				filename = "seq";
-			else
-				filename += "_diag";
 			seqTree.Populate();
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
-			seq->SeqDiag(output_dir + filename + ".h5");
-			string ismrmrd_file = output_dir + filename + "_ismrmrd.h5";
-			seq->SeqISMRMRD(ismrmrd_file);
 			seq->DumpTree();
 
-			filename = baseFilename;
-			if (export_seq) {
+			if (!export_seq)
+				seq->SeqDiag(output_dir + filename + ".h5");
+			else{
+				string ismrmrd_tmp = output_dir + filename + "_ismrmrd_tmp.h5";
+				seq->SeqISMRMRD(ismrmrd_tmp);
+				filename = baseFilename;
 				if (filename == "")
 					filename = "external";
-				writeProt(ismrmrd_file, output_dir, filename);
+				writeProt(ismrmrd_tmp, output_dir, filename);
+				std::remove(ismrmrd_tmp.c_str());
 				filename += ".seq";
 				seq->OutputSeqData(scan_defs, output_dir, filename);
 			}
