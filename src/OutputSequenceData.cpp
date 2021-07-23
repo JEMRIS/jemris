@@ -335,7 +335,7 @@ void OutputSequenceData::CompressShape(vector<double> &shape, CompressedShape *o
 	while (idx<shape.size()) {
 		double curr=diff[idx];
 		int count=0;
-		while (idx<shape.size()-1 && fabs(curr-diff[idx+1])<1.0e-10 ) {
+		while (idx<shape.size()-1 && fabs(curr-diff[idx+1])<1.0e-9 ) {
 			count++;
 			idx++;
 		}
