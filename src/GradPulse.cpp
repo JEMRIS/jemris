@@ -209,6 +209,13 @@ void GradPulse::GetValue (double * dAllVal, double const time) {
 
 /*****************************************************************/
 inline void GradPulse::GenerateEvents(std::vector<Event*> &events) {
+
+	// Gradients shorter than 10us lead to Segmentation faults
+	if (GetDuration() < 10e-3){
+		cout << "One of the gradients has a duration shorter than 10us. Aborting." << endl;
+		exit(EXIT_FAILURE);
+	}
+
 	GradEvent *grad = new GradEvent();
 	double max_amplitude = std::numeric_limits<double>::min();
 	int num_samples = round(GetDuration()/10.0e-3);
