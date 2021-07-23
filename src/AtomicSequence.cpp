@@ -271,10 +271,77 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 			p->GenerateEvents(events);
 
 	}
-	seqdata->AddEvents(events, GetDuration());
-	if (m_alpha!=0 || m_theta!=0 || m_phi!=0)
-		seqdata->SetRotationMatrix(m_alpha,m_theta,m_phi);
 
+	if (m_alpha!=0 || m_theta!=0 || m_phi!=0){
+		// special case: for rotated gradients we need new arbitrary gradient events
+		GradEvent *grad_x = new GradEvent();
+		grad_x->m_channel = 0;
+		GradEvent *grad_y = new GradEvent();
+		grad_y->m_channel = 1;
+		GradEvent *grad_z = new GradEvent();
+		grad_z->m_channel = 2;
+		int num_samples = round(GetDuration()/10.0e-3);
+		for (int i=0; i<num_samples; i++){
+			grad_x->m_samples.push_back(0.0);
+			grad_y->m_samples.push_back(0.0);
+			grad_z->m_samples.push_back(0.0);
+		}
+		double t;
+		double gp_dur;
+		GradPulse* gp;
+
+		// Each gradient is rotated on its own at th relative time point, all rotated gradients are added up
+		for (size_t j = 0; j < children.size(); ++j) {
+			p = ((Pulse*)children[j]);
+			d = p->GetInitialDelay();
+			if (p->GetAxis() > 0 && p->GetAxis() <= 3){
+				gp = ((GradPulse*) p);
+				gp_dur = gp->GetDuration();
+				for (int i=0; i<num_samples; i++){
+					t = (i+0.5)*10.0e-3 - d;
+					double Grot[3] = {0,0,0};
+					if (t>=0 && t<=gp_dur){
+						Grot[p->GetAxis()-AXIS_GX] = gp->GetGradient(t);
+						Rotation(&Grot[0]);
+						grad_x->m_samples[i] += Grot[0];
+						grad_y->m_samples[i] += Grot[1];
+						grad_z->m_samples[i] += Grot[2];
+					}
+				}
+			}
+		}
+		// compress shapes & set maximum amplitude
+		double max_val = *max_element(grad_x->m_samples.begin(), grad_x->m_samples.end());
+		double min_val = *min_element(grad_x->m_samples.begin(), grad_x->m_samples.end());
+		double max_amplitude = (abs(max_val) > abs(min_val)) ? max_val : min_val;
+		grad_x->m_amplitude = (abs(max_amplitude) > std::numeric_limits<double>::min()) ? max_amplitude : std::numeric_limits<double>::min();
+		transform( grad_x->m_samples.begin(), grad_x->m_samples.end(), grad_x->m_samples.begin(), bind2nd( divides<double>(), grad_x->m_amplitude ) );
+
+		max_val = *max_element(grad_y->m_samples.begin(), grad_y->m_samples.end());
+		min_val = *min_element(grad_y->m_samples.begin(), grad_y->m_samples.end());
+		max_amplitude = (abs(max_val) > abs(min_val)) ? max_val : min_val;
+		grad_y->m_amplitude = (abs(max_amplitude) > std::numeric_limits<double>::min()) ? max_amplitude : std::numeric_limits<double>::min();
+		transform( grad_y->m_samples.begin(), grad_y->m_samples.end(), grad_y->m_samples.begin(), bind2nd( divides<double>(), grad_y->m_amplitude ) );
+
+		max_val = *max_element(grad_z->m_samples.begin(), grad_z->m_samples.end());
+		min_val = *min_element(grad_z->m_samples.begin(), grad_z->m_samples.end());
+		max_amplitude = (abs(max_val) > abs(min_val)) ? max_val : min_val;
+		grad_z->m_amplitude = (abs(max_amplitude) > std::numeric_limits<double>::min()) ? max_amplitude : std::numeric_limits<double>::min();
+		transform( grad_z->m_samples.begin(), grad_z->m_samples.end(), grad_z->m_samples.begin(), bind2nd( divides<double>(), grad_z->m_amplitude ) );
+
+		// Delete old gradient events to not crowd the sequence file and add new events
+		for(int i = 0; i < events.size(); ++i){
+			GradEvent *grad = dynamic_cast<GradEvent*>(events[i]);
+			if (grad!=NULL && grad->m_channel<3)
+				events.erase(events.begin()+i--);
+		}
+		events.push_back(grad_x);
+		events.push_back(grad_y);
+		events.push_back(grad_z);
+
+	}
+
+	seqdata->AddEvents(events, GetDuration());
 	for(int i = 0; i < events.size(); ++i)
 	   delete events[i];
 
