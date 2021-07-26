@@ -26,6 +26,7 @@
 
 #include "AtomicSequence.h"
 #include "GradPulse.h"
+#include "TrapGradPulse.h"
 #include "EddyPulse.h"
 #include "RFPulse.h"
 
@@ -292,16 +293,20 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 		double t;
 		double gp_dur;
 		GradPulse* gp;
+		double grad_raster_time = 10.0e-3;
 
 		// Each gradient is rotated on its own at the relative time point, all rotated gradients are added up
 		for (size_t j = 0; j < children.size(); ++j) {
 			p = ((Pulse*)children[j]);
-			d = p->GetInitialDelay();
+			t = -1.0 * p->GetInitialDelay();
 			if (p->GetAxis() > 0 && p->GetAxis() <= 3){
 				gp = ((GradPulse*) p);
 				gp_dur = gp->GetDuration();
+				TrapGradPulse *tgp = dynamic_cast<TrapGradPulse*>(gp);
+				if (tgp!=NULL) t -= grad_raster_time/2; // For trapezoidal pulses we have to shift by half a raster time (5us) to maintain correct shape
+
 				for (int i=0; i<num_samples; i++){
-					t = (i+0.5)*10.0e-3 - d;
+					t += grad_raster_time;
 					double Grot[3] = {0,0,0};
 					if (t>=0 && t<=gp_dur){
 						// Rotation
