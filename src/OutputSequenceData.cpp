@@ -336,7 +336,7 @@ void OutputSequenceData::CompressShape(vector<double> &shape, CompressedShape *o
 		double curr=diff[idx];
 		int count=0;
 		// Pulseq sequence has floating point precision
-		while (idx<shape.size()-1 && fabs(curr-diff[idx+1]) <= ( (fabs(curr)<fabs(diff[idx+1]) ? fabs(diff[idx+1]) : fabs(curr)) * std::numeric_limits<float>::epsilon())){
+		while (idx<shape.size()-1 && fabs(curr-diff[idx+1]) <= ( (fabs(curr)<fabs(diff[idx+1]) ? fabs(diff[idx+1]) : fabs(curr)) * 10 * std::numeric_limits<float>::epsilon())){
 			count++;
 			idx++;
 		}
