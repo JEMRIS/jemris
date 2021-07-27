@@ -26,6 +26,7 @@
 
 #include "AtomicSequence.h"
 #include "GradPulse.h"
+#include "TrapGradPulse.h"
 #include "EddyPulse.h"
 #include "RFPulse.h"
 
@@ -276,10 +277,13 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 		// special case: for rotated gradients we need new arbitrary gradient events
 		GradEvent *grad_x = new GradEvent();
 		grad_x->m_channel = 0;
+		grad_x->m_amplitude = std::numeric_limits<double>::min();
 		GradEvent *grad_y = new GradEvent();
 		grad_y->m_channel = 1;
+		grad_y->m_amplitude = std::numeric_limits<double>::min();
 		GradEvent *grad_z = new GradEvent();
 		grad_z->m_channel = 2;
+		grad_z->m_amplitude = std::numeric_limits<double>::min();
 		int num_samples = round(GetDuration()/10.0e-3);
 		for (int i=0; i<num_samples; i++){
 			grad_x->m_samples.push_back(0.0);
@@ -289,44 +293,40 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 		double t;
 		double gp_dur;
 		GradPulse* gp;
+		double grad_raster_time = 10.0e-3;
 
-		// Each gradient is rotated on its own at th relative time point, all rotated gradients are added up
+		// Each gradient is rotated on its own at the relative time point, all rotated gradients are added up
 		for (size_t j = 0; j < children.size(); ++j) {
 			p = ((Pulse*)children[j]);
-			d = p->GetInitialDelay();
+			t = -1.0 * p->GetInitialDelay();
 			if (p->GetAxis() > 0 && p->GetAxis() <= 3){
 				gp = ((GradPulse*) p);
 				gp_dur = gp->GetDuration();
+				TrapGradPulse *tgp = dynamic_cast<TrapGradPulse*>(gp);
+				if (tgp!=NULL) t -= grad_raster_time/2; // For trapezoidal pulses we have to shift by half a raster time (5us) to maintain correct shape
+
 				for (int i=0; i<num_samples; i++){
-					t = (i+0.5)*10.0e-3 - d;
+					t += grad_raster_time;
 					double Grot[3] = {0,0,0};
 					if (t>=0 && t<=gp_dur){
+						// Rotation
 						Grot[p->GetAxis()-AXIS_GX] = gp->GetGradient(t);
 						Rotation(&Grot[0]);
 						grad_x->m_samples[i] += Grot[0];
 						grad_y->m_samples[i] += Grot[1];
 						grad_z->m_samples[i] += Grot[2];
+
+						// Update maximum amplitude
+						grad_x->m_amplitude = (abs(grad_x->m_samples[i]) > abs(grad_x->m_amplitude)) ? grad_x->m_samples[i] : grad_x->m_amplitude;
+						grad_y->m_amplitude = (abs(grad_y->m_samples[i]) > abs(grad_y->m_amplitude)) ? grad_y->m_samples[i] : grad_y->m_amplitude;
+						grad_z->m_amplitude = (abs(grad_z->m_samples[i]) > abs(grad_z->m_amplitude)) ? grad_z->m_samples[i] : grad_z->m_amplitude;
 					}
 				}
 			}
 		}
-		// compress shapes & set maximum amplitude
-		double max_val = *max_element(grad_x->m_samples.begin(), grad_x->m_samples.end());
-		double min_val = *min_element(grad_x->m_samples.begin(), grad_x->m_samples.end());
-		double max_amplitude = (abs(max_val) > abs(min_val)) ? max_val : min_val;
-		grad_x->m_amplitude = (abs(max_amplitude) > std::numeric_limits<double>::min()) ? max_amplitude : std::numeric_limits<double>::min();
+		// compress shapes
 		transform( grad_x->m_samples.begin(), grad_x->m_samples.end(), grad_x->m_samples.begin(), bind2nd( divides<double>(), grad_x->m_amplitude ) );
-
-		max_val = *max_element(grad_y->m_samples.begin(), grad_y->m_samples.end());
-		min_val = *min_element(grad_y->m_samples.begin(), grad_y->m_samples.end());
-		max_amplitude = (abs(max_val) > abs(min_val)) ? max_val : min_val;
-		grad_y->m_amplitude = (abs(max_amplitude) > std::numeric_limits<double>::min()) ? max_amplitude : std::numeric_limits<double>::min();
 		transform( grad_y->m_samples.begin(), grad_y->m_samples.end(), grad_y->m_samples.begin(), bind2nd( divides<double>(), grad_y->m_amplitude ) );
-
-		max_val = *max_element(grad_z->m_samples.begin(), grad_z->m_samples.end());
-		min_val = *min_element(grad_z->m_samples.begin(), grad_z->m_samples.end());
-		max_amplitude = (abs(max_val) > abs(min_val)) ? max_val : min_val;
-		grad_z->m_amplitude = (abs(max_amplitude) > std::numeric_limits<double>::min()) ? max_amplitude : std::numeric_limits<double>::min();
 		transform( grad_z->m_samples.begin(), grad_z->m_samples.end(), grad_z->m_samples.begin(), bind2nd( divides<double>(), grad_z->m_amplitude ) );
 
 		// Delete old gradient events to not crowd the sequence file and add new events
