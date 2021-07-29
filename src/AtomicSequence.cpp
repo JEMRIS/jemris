@@ -303,10 +303,9 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 				gp = ((GradPulse*) p);
 				gp_dur = gp->GetDuration();
 				TrapGradPulse *tgp = dynamic_cast<TrapGradPulse*>(gp);
-				if (tgp!=NULL) t -= grad_raster_time/2; // For trapezoidal pulses we have to shift by half a raster time (5us) to maintain correct shape
+				if (tgp!=NULL) t += grad_raster_time/2; // For trapezoidal pulses we have to shift by half a raster time (5us) to maintain correct shape
 
 				for (int i=0; i<num_samples; i++){
-					t += grad_raster_time;
 					double Grot[3] = {0,0,0};
 					if (t>=0 && t<=gp_dur){
 						// Rotation
@@ -321,6 +320,7 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 						grad_y->m_amplitude = (abs(grad_y->m_samples[i]) > abs(grad_y->m_amplitude)) ? grad_y->m_samples[i] : grad_y->m_amplitude;
 						grad_z->m_amplitude = (abs(grad_z->m_samples[i]) > abs(grad_z->m_amplitude)) ? grad_z->m_samples[i] : grad_z->m_amplitude;
 					}
+					t += grad_raster_time;
 				}
 			}
 		}
