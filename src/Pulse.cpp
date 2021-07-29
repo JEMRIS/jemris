@@ -102,6 +102,7 @@ string          Pulse::GetInfo() {
 	stringstream s;
 	s << ret;
 	if (m_initial_delay>0.0) s << " , InitDelay = " << m_initial_delay;
+	if (m_adc_flag>0 && m_adc>0) s << " , ADCFlag = " << m_adc_flag;
 
 	return s.str();
 

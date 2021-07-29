@@ -12,7 +12,7 @@ sequence-root------>   CONCAT       CONCATSEQUENCE        C   640.000     1024  
     |_ child 2   -->    PULSE        TRAPGRADPULSE     preY     1.000        0         4  |  Axis = GY  , Area = -0.0493458
     |_ child 3   -->    PULSE        TRAPGRADPULSE     rphZ     1.000        0         4  |  Axis = GZ  , Area = -4.14005
   |_ child 4   ---->     ATOM       ATOMICSEQUENCE      Aro     6.420       32        36  | 
-    |_ child 1   -->    PULSE        TRAPGRADPULSE      roX     6.420       32        36  |  Axis = GX  , Area = -1.00203 , FlatTop: (Area,time)= (-1.00047,6.4)
+    |_ child 1   -->    PULSE        TRAPGRADPULSE      roX     6.420       32        36  |  Axis = GX  , ADCFlag = 2 , Area = -1.00203 , FlatTop: (Area,time)= (-1.00047,6.4)
     |_ child 2   -->    PULSE        TRAPGRADPULSE      roY     6.420        0         4  |  Axis = GY  , Area = 0.0986915 , FlatTop: (Area,time)= (0.0985376,6.4)
   |_ child 5   ---->     ATOM       ATOMICSEQUENCE     Arfc     1.000        0         6  | 
     |_ child 1   -->    PULSE        TRAPGRADPULSE     rphX     1.000        0         4  |  Axis = GX  , Area = 0.501016
