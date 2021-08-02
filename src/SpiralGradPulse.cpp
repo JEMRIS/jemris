@@ -161,19 +161,19 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 				m_amps[k] = gy[k] * 2*PI * gammabar/100.;
 			else
 				m_amps[k] = 0;
-			m_area += m_amps[k] * m_grad_raster_time; // WIP: evtl trapezoidal rule?
+			m_area += m_amps[k] * m_grad_raster_time;
     	}
 		
 		// add points at start and end of gradient to avoid slewrate overflow
 		m_amps.insert(m_amps.begin(), m_amps[0]/2.);
 		m_amps.push_back(m_amps.back()/2.);
-		m_area += (m_amps[0]/2. + m_amps.back()/2.) * m_grad_raster_time;
+		m_area += (m_amps[0] + m_amps.back()) * m_grad_raster_time;
 
 		// add one zero in the end to get also the last value in Pulseq output
 		m_amps.push_back(0);
 
 		m_samples = m_amps.size();
-		SetDuration((m_samples - 1) * m_grad_raster_time); // sampling interval is in [ms]
+		SetDuration((m_samples - 1) * m_grad_raster_time); // first sample at t=0s
 
 		if (m_inward){
 			for (size_t k=0; k<(int)m_amps.size()/2; ++k)
