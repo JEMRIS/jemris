@@ -51,6 +51,7 @@ Makefile
 .jemris_progress.out
 seq.h5
 signals.h5
+signals_ismrmrd.h5
 sensmaps.h5
 mod.xml
 mpirun.out
@@ -94,3 +95,19 @@ share/examples/var_dur_signal.h5
 share/examples/trapezoid.h5
 share/examples/trapezoid.out
 share/examples/trapezoid_signal.h5
+share/examples/spiral.h5
+share/examples/spiral.out
+share/examples/spiral_signal.h5
+share/examples/ThreePulses_signal_ismrmrd.h5
+share/examples/analytic_signal_ismrmrd.h5
+share/examples/epi_modular_signal_ismrmrd.h5
+share/examples/epi_signal_ismrmrd.h5
+share/examples/extpulses_signal_ismrmrd.h5
+share/examples/gre_signal_ismrmrd.h5
+share/examples/radial2_signal_ismrmrd.h5
+share/examples/radial_signal_ismrmrd.h5
+share/examples/sli_sel_signal_ismrmrd.h5
+share/examples/trapezoid_signal_ismrmrd.h5
+share/examples/tse_signal_ismrmrd.h5
+share/examples/var_dur_signal_ismrmrd.h5
+share/examples/spiral_signal_ismrmrd.h5

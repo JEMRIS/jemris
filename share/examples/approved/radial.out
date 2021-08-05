@@ -7,7 +7,7 @@ sequence-root------>   CONCAT       CONCATSEQUENCE        C   640.000     1024  
   |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A2     4.460        0         4  |  RotMtx(alpha,theta,phi) = (174.375,0,0)
     |_ child 1   -->    PULSE        TRAPGRADPULSE       P2     4.460        0         4  |  Axis = GX  , Area = -3.45182
   |_ child 3   ---->     ATOM       ATOMICSEQUENCE       A3     9.580       32        36  |  RotMtx(alpha,theta,phi) = (174.375,0,0)
-    |_ child 1   -->    PULSE        TRAPGRADPULSE       P3     9.580       32        36  |  Axis = GX  , Area = 6.90365 , FlatTop: (Area,time)= (6.28319,8)
+    |_ child 1   -->    PULSE        TRAPGRADPULSE       P3     9.580       32        36  |  Axis = GX  , ADCFlag = 2 , Area = 6.90365 , FlatTop: (Area,time)= (6.28319,8)
   |_ child 4   ---->     ATOM       ATOMICSEQUENCE       A4     4.460        0         4  |  RotMtx(alpha,theta,phi) = (174.375,0,0)
     |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     4.460        0         4  |  Axis = GX  , Area = -3.45182
   |_ child 5   ---->     ATOM  DELAYATOMICSEQUENCE       D1     1.400        0         2  |  DelayType = B2E  , StartSeq = A1 , Delay = 20

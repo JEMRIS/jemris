@@ -380,6 +380,7 @@ int main (int argc, char *argv[]) {
 	seq.push_back("analytic.xml");
 	seq.push_back("radial.xml");
 	seq.push_back("radial2.xml");
+	seq.push_back("spiral.xml");
 	seq.push_back("sli_sel.xml");
 	seq.push_back("var_dur.xml");
 	seq.push_back("extpulses.xml");
@@ -392,6 +393,7 @@ int main (int argc, char *argv[]) {
 	outseq.push_back("epi.xml");
 	outseq.push_back("trapezoid.xml");
 	outseq.push_back("sli_sel.xml");
+	outseq.push_back("radial.xml");
 
 	//coils to test
 	vector<string> coils;
