@@ -11,7 +11,7 @@ sequence-root-------->   CONCAT       CONCATSEQUENCE       C1   100.000     4096
     |_ child 1   ---->    PULSE           EMPTYPULSE    eP_D1     3.900        0         2  |  Axis = none 
   |_ child 4   ------>   CONCAT       CONCATSEQUENCE       C2    90.780     4096      4543  |  Repetitions = 64, type SLI|PHA|PAR|SET|CON|AVG = 0|0|0|0|0|0
     |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A3     1.320       64        68  | 
-      |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     1.320       64        68  |  Axis = GX  , ADCFlag = 2 , Area = -1.82212 , FlatTop: (Area,time)= (-1.5708,1)
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     1.320       64        68  |  Axis = GX  , ADC type ADC|IMG|ACS|PC|NOISE = 0|1|0|0|0 , Area = -1.82212 , FlatTop: (Area,time)= (-1.5708,1)
     |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A4     0.000        0         2  | 
       |_ child 1   -->    PULSE        TRAPGRADPULSE       P5     0.000        0         4  |  Axis = GY  , Area = 0
   |_ child 5   ------>     ATOM  DELAYATOMICSEQUENCE       D2     4.560        0         2  |  DelayType = B2E  , StartSeq = A1 , Delay = 100

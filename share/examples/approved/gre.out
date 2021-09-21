@@ -11,7 +11,7 @@ sequence-root-------->   CONCAT       CONCATSEQUENCE        R  1600.000     1024
       |_ child 1   -->    PULSE        TRAPGRADPULSE       P2     1.860        0         4  |  Axis = GX  , Area = -0.863938
       |_ child 2   -->    PULSE        TRAPGRADPULSE       P3     1.720        0         4  |  Axis = GY  , Area = 0.736311
     |_ child 4   ---->     ATOM       ATOMICSEQUENCE       A3     4.800       32        36  | 
-      |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     4.800       32        36  |  Axis = GX  , ADCFlag = 2 , Area = 1.72788 , FlatTop: (Area,time)= (1.5708,4)
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     4.800       32        36  |  Axis = GX  , ADC type ADC|IMG|ACS|PC|NOISE = 0|1|0|0|0 , Area = 1.72788 , FlatTop: (Area,time)= (1.5708,4)
     |_ child 5   ---->     ATOM       ATOMICSEQUENCE       A4     3.600        0         6  | 
       |_ child 1   -->    PULSE        TRAPGRADPULSE       P6     3.600        0         4  |  Axis = GX  , Area = 2.59181
       |_ child 2   -->    PULSE        TRAPGRADPULSE       P7     1.720        0         4  |  Axis = GY  , Area = -0.736311
