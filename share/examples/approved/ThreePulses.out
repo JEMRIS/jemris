@@ -5,12 +5,12 @@ sequence-root------>   CONCAT       CONCATSEQUENCE        C    55.300      700  
   |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     0.100        0         3  | 
     |_ child 1   -->    PULSE          HARDRFPULSE       P1     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (60,0,1e+16,0,0.5) 
   |_ child 2   ---->     ATOM  DELAYATOMICSEQUENCE       D1    10.000      100       102  |  DelayType = B2E  , Delay = 10
-    |_ child 1   -->    PULSE           EMPTYPULSE    eP_D1    10.000      100       102  |  Axis = none  , ADCFlag = 1
+    |_ child 1   -->    PULSE           EMPTYPULSE    eP_D1    10.000      100       102  |  Axis = none  , ADC type ADC|IMG|ACS|PC|NOISE = 1|0|0|0|0
   |_ child 3   ---->     ATOM       ATOMICSEQUENCE       A2     0.100        0         3  | 
     |_ child 1   -->    PULSE          HARDRFPULSE       P2     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,1e+16,0,0.5) 
   |_ child 4   ---->     ATOM  DELAYATOMICSEQUENCE       D2    15.000      200       202  |  DelayType = B2E  , Delay = 15
-    |_ child 1   -->    PULSE           EMPTYPULSE    eP_D2    15.000      200       202  |  Axis = none  , ADCFlag = 1
+    |_ child 1   -->    PULSE           EMPTYPULSE    eP_D2    15.000      200       202  |  Axis = none  , ADC type ADC|IMG|ACS|PC|NOISE = 1|0|0|0|0
   |_ child 5   ---->     ATOM       ATOMICSEQUENCE       A3     0.100        0         3  | 
     |_ child 1   -->    PULSE          HARDRFPULSE       P3     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,1e+16,0,0.5) 
   |_ child 6   ---->     ATOM  DELAYATOMICSEQUENCE       D3    30.000      400       402  |  DelayType = B2E  , Delay = 30
-    |_ child 1   -->    PULSE           EMPTYPULSE    eP_D3    30.000      400       402  |  Axis = none  , ADCFlag = 1
+    |_ child 1   -->    PULSE           EMPTYPULSE    eP_D3    30.000      400       402  |  Axis = none  , ADC type ADC|IMG|ACS|PC|NOISE = 1|0|0|0|0

@@ -173,7 +173,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	for (size_t i = 1; i < meta.size(); ++i)
 		meta[i] = seqdata(i,numaxes);
 
-	// Slice and shot information
+	// Get counters
 	for (size_t i = 1; i < slc_ctr.size(); ++i)
 		slc_ctr[i] = seqdata(i,numaxes+1);
 	for (size_t i = 1; i < shot_ctr.size(); ++i)
@@ -186,6 +186,13 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 		contr_ctr[i] = seqdata(i,numaxes+5);
 	for (size_t i = 1; i < shot_ctr.size(); ++i)
 		avg_ctr[i] = seqdata(i,numaxes+6);
+
+	int slices = *max_element(slc_ctr.begin(), slc_ctr.end()) + 1;
+	int shots = pW->m_shotmax;
+	int partitions = pW->m_partitionmax;
+	int contrasts = *max_element(contr_ctr.begin(), contr_ctr.end()) + 1;
+	int sets = *max_element(set_ctr.begin(), set_ctr.end()) + 1;
+	int averages = *max_element(avg_ctr.begin(), avg_ctr.end()) + 1;
 
 	// Calculate k-space trajectory
 	NDData<double> kx (GetNumOfTPOIs() + 1);
@@ -218,13 +225,13 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	e.trajectory = ISMRMRD::TrajectoryType::OTHER;
 	e.encodedSpace.matrixSize.x = P->m_iNx;
 	e.encodedSpace.matrixSize.y = P->m_iNy;
-	e.encodedSpace.matrixSize.z = P->m_iNz;
+	e.encodedSpace.matrixSize.z = (slices>1) ? 1 : P->m_iNz;
 	e.encodedSpace.fieldOfView_mm.x = P->m_fov_x;
 	e.encodedSpace.fieldOfView_mm.y = P->m_fov_y;
 	e.encodedSpace.fieldOfView_mm.z = P->m_fov_z;
 	e.reconSpace.matrixSize.x = P->m_iNx;
 	e.reconSpace.matrixSize.y = P->m_iNy;
-	e.reconSpace.matrixSize.z = P->m_iNz;
+	e.reconSpace.matrixSize.z = (slices>1) ? 1 : P->m_iNz;
 	e.reconSpace.fieldOfView_mm.x = P->m_fov_x;
 	e.reconSpace.fieldOfView_mm.y = P->m_fov_y;
 	e.reconSpace.fieldOfView_mm.z = P->m_fov_z;
@@ -291,13 +298,6 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 		d.appendAcquisition(acqList[i]);
 
 	// Write encoding limits
-	int slices = *max_element(slc_ctr.begin(), slc_ctr.end()) + 1;
-	int shots = pW->m_shotmax;
-	int partitions = pW->m_partitionmax;
-	int contrasts = *max_element(contr_ctr.begin(), contr_ctr.end()) + 1;
-	int sets = *max_element(set_ctr.begin(), set_ctr.end()) + 1;
-	int averages = *max_element(avg_ctr.begin(), avg_ctr.end()) + 1;
-
 	e.encodingLimits.slice = ISMRMRD::Limit(0, slices-1, slices/2);
 	e.encodingLimits.kspace_encoding_step_1 = ISMRMRD::Limit(0, shots-1, shots/2);
 	e.encodingLimits.kspace_encoding_step_2 = ISMRMRD::Limit(0, partitions-1, partitions/2);

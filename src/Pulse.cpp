@@ -102,8 +102,10 @@ string          Pulse::GetInfo() {
 	stringstream s;
 	s << ret;
 	if (m_initial_delay>0.0) s << " , InitDelay = " << m_initial_delay;
-	if (m_adc_flag>0 && m_adc>0) s << " , ADCFlag = " << m_adc_flag;
-
+	if (m_adc_flag>0 && m_adc>0){
+		s << " , ADC type ADC|IMG|ACS|PC|NOISE = "
+	  	  << m_tpoi.IsADC(2) << "|" << m_tpoi.IsImg(2) << "|"<< m_tpoi.IsACS(2) << "|"<< m_tpoi.IsPC(2) << "|"<< m_tpoi.IsNoise(2);
+	}
 	return s.str();
 
 }
