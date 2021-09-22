@@ -125,9 +125,9 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 		double kmax = 5./m_res;  							// kmax = 1/(2*res) BUT: kmax in 1/cm, res in mm
 		double Gmax = m_max_grad/(2*PI * gammabar/100.);	// rad/mm/ms -> G/cm
 		double Smax = m_slewrate/(2*PI * gammabar/100.);	// rad/mm/ms/ms -> G/cm/ms
-		m_fov /= 10.;										// [mm] >> [cm]
+		double dfov = m_fov/10.;										// [mm] >> [cm]
 
-		double dr = 1./100. * 1./(m_fov/m_intl); 
+		double dr = 1./100. * 1./(dfov/m_intl);
 		long   nr = long(kmax/dr) + 1;
 
 		vector<double> x, y, z;
@@ -141,7 +141,7 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 			double r = k*dr;
 			x[k] = r * cos(theta);
 			y[k] = r * sin(theta);
-			theta += 2.*PI * dr*m_fov / m_intl;
+			theta += 2.*PI * dr*dfov / m_intl;
 		}
 				
 		int n;
