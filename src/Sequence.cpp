@@ -225,13 +225,13 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	e.trajectory = ISMRMRD::TrajectoryType::OTHER;
 	e.encodedSpace.matrixSize.x = P->m_iNx;
 	e.encodedSpace.matrixSize.y = P->m_iNy;
-	e.encodedSpace.matrixSize.z = (slices>1) ? 1 : P->m_iNz;
+	e.encodedSpace.matrixSize.z = (partitions>1) ? P->m_iNz : ((slices>1) ? 1 : P->m_iNz);
 	e.encodedSpace.fieldOfView_mm.x = P->m_fov_x;
 	e.encodedSpace.fieldOfView_mm.y = P->m_fov_y;
 	e.encodedSpace.fieldOfView_mm.z = P->m_fov_z;
 	e.reconSpace.matrixSize.x = P->m_iNx;
 	e.reconSpace.matrixSize.y = P->m_iNy;
-	e.reconSpace.matrixSize.z = (slices>1) ? 1 : P->m_iNz;
+	e.reconSpace.matrixSize.z = (partitions>1) ? P->m_iNz : ((slices>1) ? 1 : P->m_iNz);
 	e.reconSpace.fieldOfView_mm.x = P->m_fov_x;
 	e.reconSpace.fieldOfView_mm.y = P->m_fov_y;
 	e.reconSpace.fieldOfView_mm.z = P->m_fov_z;
