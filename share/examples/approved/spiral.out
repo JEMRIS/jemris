@@ -2,9 +2,9 @@ dump of sequence tree
                           TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
                           ----------------------------------------------------------------- |  ---------------
 sequence-root-------->   CONCAT       CONCATSEQUENCE      Seq   120.000     6000      6210  |  Repetitions = 1, type SLI|PHA|PAR|SET|CON|AVG = 1|0|0|0|0|0
-  |_ child 1   ------>   CONCAT       CONCATSEQUENCE     Intl   120.000     6000      6210  |  Repetitions = 15, type SLI|PHA|PAR|SET|CON|AVG = 0|0|0|0|0|0
+  |_ child 1   ------>   CONCAT       CONCATSEQUENCE     Intl   120.000     6000      6210  |  Repetitions = 15, type SLI|PHA|PAR|SET|CON|AVG = 0|1|0|0|0|0
     |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     0.100        0         3  | 
-      |_ child 1   -->    PULSE          HARDRFPULSE       P1     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (0,0,1e+16,0,0.5) 
+      |_ child 1   -->    PULSE          HARDRFPULSE       P1     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (10,0,1e+16,0,0.5) 
     |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A2     1.490      400       402  |  RotMtx(alpha,theta,phi) = (336,0,0)
       |_ child 1   -->    PULSE      SPIRALGRADPULSE     SPox     1.490      400       402  |  Axis = GX  , ADC type ADC|IMG|ACS|PC|NOISE = 0|1|0|0|0 , Area = 0.717537 , (intl,grad_raster_time,inward)= (15,0.01,0)
       |_ child 2   -->    PULSE      SPIRALGRADPULSE     SPoy     1.490        0         2  |  Axis = GY  , Area = 0.762885 , (intl,grad_raster_time,inward)= (15,0.01,0)
@@ -12,6 +12,6 @@ sequence-root-------->   CONCAT       CONCATSEQUENCE      Seq   120.000     6000
       |_ child 1   -->    PULSE        TRAPGRADPULSE    Rephx     1.700        0         4  |  Axis = GX  , Area = -0.717537
       |_ child 2   -->    PULSE        TRAPGRADPULSE    Rephy     1.760        0         4  |  Axis = GY  , Area = -0.762885
     |_ child 4   ---->     ATOM       ATOMICSEQUENCE       A4     1.000        0         2  | 
-      |_ child 1   -->    PULSE    CONSTANTGRADPULSE  Spoiler     1.000        0         2  |  Axis = GZ  , Area = 12.5664 , Amplitude = 12.5664
+      |_ child 1   -->    PULSE    CONSTANTGRADPULSE  Spoiler     1.000        0         2  |  Axis = GX  , Area = 12.5664 , Amplitude = 12.5664
     |_ child 5   ---->     ATOM  DELAYATOMICSEQUENCE       TR     3.650        0         2  |  DelayType = B2E  , StartSeq = A1 , Delay = 8
       |_ child 1   -->    PULSE           EMPTYPULSE    eP_TR     3.650        0         2  |  Axis = none 

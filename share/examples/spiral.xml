@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Parameters FOVx="192" FOVy="192" FOVz="1" Name="P" Nx="64" Ny="64" Nz="1" TR="8">
    <ConcatSequence LoopFlag="1" Name="Seq" Repetitions="1">
-      <CONCATSEQUENCE Name="Intl" Repetitions="15">
+      <CONCATSEQUENCE LoopFlag="2" Name="Intl" Repetitions="15">
          <ATOMICSEQUENCE Name="A1">
-            <HARDRFPULSE Duration="0.1" FlipAngle="FA" Name="P1" Observe="FA=P1.FlipAngle" Symmetry="0.5"/>
+            <HARDRFPULSE Duration="0.1" FlipAngle="10" Name="P1" Symmetry="0.5"/>
          </ATOMICSEQUENCE>
          <ATOMICSEQUENCE Name="A2" Observe="KMAX=P.KMAXx, R=Intl.Repetitions, DK=P.DKx, IL=Intl.Counter" RotAngle="360*IL/R">
             <SPIRALGRADPULSE ADCFlag="2" ADCs="400" Axis="GX" FOV="FOV" GradRasterTime="0.01" Interleaves="IL" Inward="1" MaxAmpl="10" Name="SPox" Observe="FOV=P.FOVx, NX = P.Nx, IL = Intl.Repetitions" Resolution="FOV/NX" SlewRate="48"/>
@@ -14,7 +14,7 @@
             <TRAPGRADPULSE Area="-A" Axis="GY" Name="Rephy" Observe="A=SPoy.Area"/>
          </ATOMICSEQUENCE>
          <ATOMICSEQUENCE Name="A4">
-            <CONSTANTGRADPULSE Amplitude="4*Pi" Axis="GZ" Duration="1" Name="Spoiler"/>
+            <CONSTANTGRADPULSE Amplitude="4*Pi" Axis="GX" Duration="1" Name="Spoiler"/>
          </ATOMICSEQUENCE>
          <DELAYATOMICSEQUENCE Delay="TR" DelayType="B2E" Name="TR" Observe="TR=P.TR" StartSeq="A1"/>
       </CONCATSEQUENCE>
