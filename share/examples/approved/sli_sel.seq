@@ -9,8 +9,6 @@ revision 1
 [DEFINITIONS]
 Name sli_sel
 Num_Blocks 6
-FOV 0.05 0.1 0
-Slice_Thickness 0
 
 # Format of blocks:
 ##  D RF  GX  GY  GZ ADC

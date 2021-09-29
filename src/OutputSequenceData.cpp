@@ -175,8 +175,10 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 		outfile << it->first << " " << it->second << endl;
 	outfile << "Name " << outFile.substr(0, outFile.find(".", 0)) << endl;
 	outfile << "Num_Blocks " << m_blocks.size() << endl;
-	outfile << "FOV " << P->m_fov_x*1e-3 << " " << P->m_fov_y*1e-3 << " " << P->m_fov_z*1e-3 << endl;
-	outfile << "Slice_Thickness " << P->m_fov_z*1e-3 << endl;
+	if (P->m_fov_x > 0 && P->m_fov_y > 0 && P->m_fov_z > 0){
+		outfile << "FOV " << P->m_fov_x << " " << P->m_fov_y << " " << P->m_fov_z << endl; // FOV in [mm] in Pulseq 1.2.1 ([m] from 1.3.0 on)
+		outfile << "Slice_Thickness " << P->m_fov_z << endl;
+	}
 	if (distanceFromIdentity>1e-6) {
 		outfile << "Rot_Matrix " << setprecision(9)
 		        << m_rot_matrix[0][0] << " " << m_rot_matrix[0][1] << " " << m_rot_matrix[0][2] << " "
