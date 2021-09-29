@@ -4,6 +4,7 @@
 
 #include "OutputSequenceData.h"
 #include "config.h"
+#include "Parameters.h"
 
 #include <cmath>
 #include <iostream>
@@ -168,10 +169,14 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	outfile << endl;
 
 	// Output high level parameters
+	Parameters* P = Parameters::instance();
 	outfile << "[DEFINITIONS]" << endl;
 	for (map<string,string>::iterator it=m_definitions.begin(); it!=m_definitions.end(); ++it)
 		outfile << it->first << " " << it->second << endl;
+	outfile << "Name " << outFile.substr(0, outFile.find(".", 0)) << endl;
 	outfile << "Num_Blocks " << m_blocks.size() << endl;
+	outfile << "FOV " << P->m_fov_x*1e-3 << " " << P->m_fov_y*1e-3 << " " << P->m_fov_z*1e-3 << endl;
+	outfile << "Slice_Thickness " << P->m_fov_z*1e-3 << endl;
 	if (distanceFromIdentity>1e-6) {
 		outfile << "Rot_Matrix " << setprecision(9)
 		        << m_rot_matrix[0][0] << " " << m_rot_matrix[0][1] << " " << m_rot_matrix[0][2] << " "

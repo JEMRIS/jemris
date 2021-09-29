@@ -7,7 +7,10 @@ minor 2
 revision 1
 
 [DEFINITIONS]
+Name gre
 Num_Blocks 192
+FOV 0.128 0.128 0.001
+Slice_Thickness 0.001
 
 # Format of blocks:
 # #  D RF  GX  GY  GZ ADC
