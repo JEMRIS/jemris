@@ -29,18 +29,16 @@
 
 
 SpiralGradPulse::SpiralGradPulse() :
-m_slewrate(0), m_amps(0), m_fov(0), m_intl(0), m_max_grad(0),
-m_grad_raster_time(0), m_samples(0), m_res(0), m_inward(0) {}
+m_amps(0), m_fov(0), m_intl(0), m_grad_raster_time(0), 
+m_samples(0), m_res(0), m_inward(0) {}
 
 
 SpiralGradPulse::SpiralGradPulse (const SpiralGradPulse& sp) :
-m_slewrate(0), m_amps(0), m_fov(0), m_intl(0), m_max_grad(0),
-m_grad_raster_time(0), m_samples(0), m_res(0), m_inward(0){
+m_amps(0), m_fov(0), m_intl(0), m_grad_raster_time(0),
+m_samples(0), m_res(0), m_inward(0){
 
-	m_slew_rate = sp.m_slewrate;
 	m_amps = sp.m_amps;
 	m_fov = sp.m_fov;
-	m_max_grad = sp.m_max_grad;
 	m_grad_raster_time = sp.m_grad_raster_time;
 	m_samples = sp.m_samples;
 	m_res = sp.m_res;
@@ -70,8 +68,6 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
     bool btag = true;
 
     ATTRIBUTE("Interleaves"	, m_intl);
-	ATTRIBUTE("SlewRate"	, m_slewrate);
-	ATTRIBUTE("MaxAmpl"		, m_max_grad);
 	ATTRIBUTE("GradRasterTime", m_grad_raster_time);
 	ATTRIBUTE("FOV"			, m_fov);
 	ATTRIBUTE("Resolution"	, m_res);
@@ -123,8 +119,8 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 		
 		double gammabar = 42.5766;
 		double kmax = 5./m_res;  							// kmax = 1/(2*res) BUT: kmax in 1/cm, res in mm
-		double Gmax = m_max_grad/(2*PI * gammabar/100.);	// rad/mm/ms -> G/cm
-		double Smax = m_slewrate/(2*PI * gammabar/100.);	// rad/mm/ms/ms -> G/cm/ms
+		double Gmax = m_max_ampl/(2*PI * gammabar/100.);	// rad/mm/ms -> G/cm
+		double Smax = m_slew_rate/(2*PI * gammabar/100.);	// rad/mm/ms/ms -> G/cm/ms
 		double dfov = m_fov/10.;										// [mm] >> [cm]
 
 		double dr = 1./100. * 1./(dfov/m_intl);

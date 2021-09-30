@@ -79,8 +79,6 @@ class SpiralGradPulse : public GradPulse {
     virtual string          GetInfo        ();
 
     double  m_intl;              /**< Spiral interleaves */
-    double  m_slewrate;          /**< Maximum slew rate [rad/mm/ms/ms]  */
-    double  m_max_grad;          /**< Maximum gradient amplitude [rad/mm/ms]*/
     double  m_grad_raster_time;  /**< Gradient raster time / sampling interval [ms] */
     double  m_fov;               /**< Field of view [mm] */
     double  m_res;               /**< Resolution [mm] */
