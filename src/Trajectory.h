@@ -30,6 +30,7 @@
 
 #ifndef TRAJECTORY_H_
 #define TRAJECTORY_H_
+#include "TrajectoryInterface.h"
 
 #include <string>
 #include <iostream>
@@ -47,7 +48,10 @@ private:
 public:
 	Trajectory(TrajectoryInterface *strategy):m_strategy(strategy) {}
 
-	void GetValue(double time, double *value);
+	void GetValue(double time, double *value) {
+        m_strategy->GetValue(time, value);
+    }
+
 //MODIF
 	void GetValue(double time, double *value, long currentSpin);
 

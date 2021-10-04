@@ -246,6 +246,8 @@ class SequenceTree {
     map<DOMNode*, Module*>  m_Modules;
     string                  m_seq_file;  /**< path of sequence file  */
 
+	map<DOMNode*, vector<Module*>> m_node2children;
+
 };
 
 #endif /*SEQUENCETREE_H_*/

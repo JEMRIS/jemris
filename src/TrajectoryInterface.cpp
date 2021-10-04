@@ -43,13 +43,6 @@ TrajectoryInterface::TrajectoryInterface() {
 TrajectoryInterface::~TrajectoryInterface() {
 }
 
-void TrajectoryInterface::GetValue(double time, double*value){
-	if (m_time.size()>0 || m_time_full.size()>0)    //MODIF
-		GetValueDerived(time,value);
-
-}
-
-
 /***********************************************************/
 
 int TrajectoryInterface::GetLowerIndex(double t) {

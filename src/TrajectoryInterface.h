@@ -53,7 +53,11 @@ public:
 	/**
 	 * checks if data available; then call GetValueDerived:
 	 */
-	void GetValue(double time, double *value) ;
+    inline
+	void GetValue(double time, double *value) {
+        if (m_time.size()>0 || m_time_full.size()>0)    //MODIF
+            GetValueDerived(time,value);
+    }
 
 	/**
 	 * @brief retrieve value at given time-point
