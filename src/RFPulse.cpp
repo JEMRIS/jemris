@@ -42,9 +42,7 @@ bool RFPulse::Prepare  (const PrepareMode mode) {
 
 	//every RFPulse might have FlipAngle, InitialPhase, Bandwidth, and Frequency offset
 	ATTRIBUTE("FlipAngle"    , m_flip_angle   );
-	ATTRIBUTE("InitialPhase" , m_initial_phase);
 	ATTRIBUTE("Bandwidth"    , m_bw           );
-	ATTRIBUTE("Frequency"    , m_frequency    );
 	ATTRIBUTE("Channel"      , m_channel      );
 	ATTRIBUTE("Refocusing"   , m_refocusing   );
 	ATTRIBUTE("Symmetry"     , m_symmetry     );
@@ -94,6 +92,7 @@ inline void RFPulse::GenerateEvents(std::vector<Event*> &events) {
 	p = fmod( p, 2*PI );
 	p = p<0.0 ? p+2*PI : p;
 	p = round(p*1.0e5)/1.0e5;
+	World::instance()->PhaseLock = p;
 	rf->m_phase_offset = p;
 	rf->m_freq_offset = GetFrequency();
 	rf->m_delay = round(GetInitialDelay()*1.0e3);

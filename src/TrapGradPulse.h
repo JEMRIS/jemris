@@ -33,7 +33,7 @@
 
 //! Prototype of a trapezoidal gradient pulse (e.g. for cartesian k-space imaging)
 
-class TrapGradPulse : public GradPulse, public TxRxPhase {
+class TrapGradPulse : public GradPulse {
 
  public:
 

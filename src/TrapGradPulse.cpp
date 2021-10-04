@@ -83,8 +83,6 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 	ATTRIBUTE("FlatTopArea"         , m_flat_top_area   );
 	ATTRIBUTE("FlatTopTime"         , m_flat_top_time   );
 	ATTRIBUTE("Asymmetric"          , m_asym_sr         );
-	ATTRIBUTE("Frequency"           , m_frequency       );
-	ATTRIBUTE("InitialPhase"        , m_initial_phase   );
 
 	HIDDEN_ATTRIBUTE("Amplitude"    , m_amplitude       );
 	HIDDEN_ATTRIBUTE("RampUpTime"   , m_ramp_up_time    );
@@ -423,6 +421,7 @@ inline void TrapGradPulse::GenerateEvents(std::vector<Event*> &events) {
 		p = fmod( p, 2*PI );
 		p = p<0.0 ? p+2*PI : p;
 		p = round(p*1.0e5)/1.0e5;
+		p += (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
 		adc->m_phase_offset = p;
 		adc->m_freq_offset = GetFrequency();
 

@@ -246,8 +246,13 @@ inline void GradPulse::GenerateEvents(std::vector<Event*> &events) {
 		adc->m_dwell_time = 1e6*GetDuration()/N;
 		adc->m_delay = round(GetInitialDelay()*1.0e3);
 
-		adc->m_phase_offset = 0;
-		adc->m_freq_offset = 0;
+		double p = GetInitialPhase()*PI/180.0;
+		p = fmod( p, 2*PI );
+		p = p<0.0 ? p+2*PI : p;
+		p = round(p*1.0e5)/1.0e5;
+		p += (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
+		adc->m_phase_offset = p;
+		adc->m_freq_offset = GetFrequency();
 
 		events.push_back(adc);
 	}

@@ -38,7 +38,7 @@ class ExternalPulseData;
 
 //! Pulse Super Class. ABC for all RF and gradient pulses
 
-class Pulse :public Module {
+class Pulse :public Module, public TxRxPhase {
 
  friend class AnalyticPulseShape;
  friend class ExternalPulseData;
@@ -59,7 +59,7 @@ class Pulse :public Module {
      * @brief Copy constructor.
      */
     Pulse                  (const Pulse&) :
-    	m_adc(0), m_initial_delay(0), m_axis(AXIS_VOID), m_phase_lock(0), m_adc_flag(1) {};
+    	m_adc(0), m_initial_delay(0), m_axis(AXIS_VOID), m_adc_flag(1) {};
 
     /**
      * See Module::GetValue
@@ -143,21 +143,6 @@ class Pulse :public Module {
      */
     inline double  GetInitialDelay          () {return m_initial_delay; };
 
-	/**
-	 * @brief Set phase lock.
-	 *
-	 * @param val Phase lock.
-	 */
-    inline void  SetPhaseLock     (bool val)         {m_phase_lock = val; };
-
-	/**
-	 * @brief Get phase lock.
-	 *
-	 * @return Phase lock.
-	 */
-    inline bool  GetPhaseLock     ()                 {return m_phase_lock; };
-
-
  protected:
 
     /**
@@ -171,7 +156,6 @@ class Pulse :public Module {
     unsigned int  m_adc;               /**< Number of ADCs */
     int  		  m_adc_flag;          /**< Property of ADCs (see TPOI) */
     double        m_initial_delay;     /**< Time shift at the beginning inside the atom */
-    bool          m_phase_lock;        /**< Lock phase of ADCs to the phase of the last RF pulse event*/
 
 };
 

@@ -49,6 +49,9 @@ bool Pulse::Prepare  (const PrepareMode mode) {
 	ATTRIBUTE ("ADCFlag"     , m_adc_flag     );
 	ATTRIBUTE ("PhaseLock"   , m_phase_lock   );
 	ATTRIBUTE ("InitialDelay", m_initial_delay);
+	ATTRIBUTE ("InitialPhase", m_initial_phase);
+	ATTRIBUTE ("Frequency"   , m_frequency    );
+
 
 	return Module::Prepare(mode);
 
