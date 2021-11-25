@@ -117,9 +117,34 @@ endif(NOT DEFINED HDF5_CXX_LIBRARIES)
 
 include_directories (${HDF5_INCLUDE_DIR})
 
+# ISMRMRD
 find_package(ISMRMRD REQUIRED)
 link_directories(${ISMRMRD_LIBRARY_DIRS})
 include_directories(${ISMRMRD_INCLUDE_DIRS})
+
+# Docker image
+message( NOTICE "Try to pull docker image for reconstruction server.")
+execute_process(COMMAND "docker" "pull" "mavel101/bart-reco-server" RESULT_VARIABLE ret OUTPUT_FILE CMD_OUTPUT)
+if(ret EQUAL "1")
+    message( WARNING "Docker image for reconstruction server cannot be pulled. Docker may not be installed.")
+else()
+    message( NOTICE "Succesfully pulled Docker image.")
+endif()
+
+# Client conda environment
+message( NOTICE "Try to create conda environment for reconstruction client.")
+configure_file(${CMAKE_SOURCE_DIR}/ismrmrd_client.yml ${CMAKE_CURRENT_BINARY_DIR}/ismrmrd_client.yml)
+execute_process(COMMAND "conda" "list" "-n" "ismrmrd_client" RESULT_VARIABLE ret OUTPUT_QUIET ERROR_QUIET)
+if(ret EQUAL "1")
+  execute_process(COMMAND "conda" "env" "create" "-f" "ismrmrd_client.yml" RESULT_VARIABLE ret)
+  if(ret EQUAL "1")
+      message( WARNING "Conda environment for reconstruction client cannot be installed. Python may not be installed.")
+  else()
+      message( NOTICE "Succesfully installed conda environment.")
+  endif()
+else()
+      message( NOTICE "Conda environment already installed.")
+endif()
 
 # Is this here really necessary?
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
