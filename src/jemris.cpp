@@ -262,9 +262,55 @@ int main (int argc, char *argv[]) {
 					string outfile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd_recon.h5";
 					remove(outfile.c_str());
 					string cmd = "client.py -c bart_jemris " + infile + " -o " + outfile + " -G images";
-					int err = system(cmd.c_str());
-					if (err)
-						std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+					string conda_cmd = "conda run -n ismrmrd_client";
+					string docker_cmd = "docker run -d --user $(id -u):$(id -g) -p 9002:9002 mavel101/bart-reco-server";
+					int err;
+
+					// Executing reconstruction
+					printf ("Try to automatically start reconstruction server.\n");
+					err = system(docker_cmd.c_str());
+					if (err){
+						printf ("Automatic start of reconstruction server failed. Try to start reconstruction anyways.\n");
+						printf ("Try to detect conda environment with ISMRMRD client.\n");
+						err = system(conda_cmd.c_str());
+						if (err){
+							std::cout << "Conda environment not detected. Try to start reconstruction anyways." << std::endl;
+							err = system(cmd.c_str());
+							if (err)
+								std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+						}
+						else{
+							std::cout << "Conda environment detected." << std::endl;
+							err = system((conda_cmd+" "+cmd).c_str());
+							if (err)
+								std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+						}
+					}
+					else{
+						printf ("Reconstruction server started.\n");
+						printf ("Try to detect conda environment with ISMRMRD client.\n");
+						string conda_cmd = "conda run -n ismrmrd_client";
+						err = system(conda_cmd.c_str());
+						if (err){
+							std::cout << "Conda environment not detected. Try to start reconstruction anyways." << std::endl;
+							err = system(cmd.c_str());
+							if (err)
+								std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+						}
+						else{
+							std::cout << "Conda environment detected." << std::endl;
+							err = system((conda_cmd+" "+cmd).c_str());
+							if (err)
+								std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+						}
+						string docker_kill_cmd = "docker kill `docker ps -qf \"ancestor=mavel101/bart-reco-server\"`";
+						err = system(docker_kill_cmd.c_str());
+						if (err)
+							std::cout << "Reconstruction server could not be killed." << std::endl;
+						else
+							std::cout << "Reconstruction server killed." << std::endl;
+					}
+
 					gettimeofday(&end, 0);
 					long sec = end.tv_sec - begin.tv_sec;
 					long usec = end.tv_usec - begin.tv_usec;
