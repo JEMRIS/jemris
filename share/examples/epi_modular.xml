@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Parameters FOVx="256" FOVy="256" FOVz="30" GradMaxAmpl="5" GradSlewRate="20" Name="P" Nx="64" Ny="64" Nz="3" TE="50" TR="100">
-   <ConcatSequence Name="EPI" Observe="NZ=P.Nz" Repetitions="NZ">
+   <ConcatSequence LoopFlag="1" Name="EPI" Observe="NZ=P.Nz" Repetitions="NZ">
       <Container Filename="cs_sls.xml" Imp1="C" Imp2="DZ" Imp3="KMZ" Name="SLS" Observe="C=EPI.Counter, DZ=P.Dz, KMZ=P.KMAXz"/>
       <AtomicSequence Name="A1">
          <TrapGradPulse Area="-abs(A)" Axis="GX" Name="P1" Observe="A=ER.Exp1"/>
