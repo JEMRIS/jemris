@@ -1,7 +1,7 @@
 dump of sequence tree
                         TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
                         ----------------------------------------------------------------- |  ---------------
-sequence-root------>   CONCAT       CONCATSEQUENCE        C   640.000     1024      1568  |  Repetitions = 32, type SLI|PHA|PAR|SET|CON|AVG = 0|0|0|0|0|0
+sequence-root------>   CONCAT       CONCATSEQUENCE        C   640.000     1024      1568  |  Repetitions = 32, type SLI|PHA|PAR|SET|CON|AVG = 0|1|0|0|0|0
   |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     0.100        0         3  | 
     |_ child 1   -->    PULSE          HARDRFPULSE       P1     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (50,0,1e+16,0,0.5) 
   |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A2     4.460        0         4  |  RotMtx(alpha,theta,phi) = (174.375,0,0)
