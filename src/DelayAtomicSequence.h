@@ -131,6 +131,7 @@ class DelayAtomicSequence : public AtomicSequence {
     DelayType m_dt;            /**< @brief Type of this delay.                                                  */
 
     int       m_adc;           /**< @brief Number of ADCs                                                       */
+    int       m_adc_flag;      /**< @brief ADC flag                                                             */
     bool      m_phase_lock;    /**< @brief Lock phase of ADCs to the phase of the last RF pulse event           */
 
 };

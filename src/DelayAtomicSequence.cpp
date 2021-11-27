@@ -33,6 +33,7 @@
 DelayAtomicSequence::DelayAtomicSequence  (const DelayAtomicSequence& as) {
 
 	m_adc        = 0;
+	m_adc_flag	 = 1;
 	m_delay_time = 0.0;
 	m_await_time = 0.0;
 	m_phase_lock = false;
@@ -54,6 +55,7 @@ bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
 
     ATTRIBUTE("Delay"    , m_await_time);
     ATTRIBUTE("ADCs"     , m_adc       );
+	ATTRIBUTE ("ADCFlag" , m_adc_flag  );
     ATTRIBUTE("PhaseLock", m_phase_lock);
     ATTRIBUTE("StartSeq" , m_start     );
     ATTRIBUTE("StopSeq"  , m_stop      );
@@ -73,6 +75,7 @@ bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
    	//calculate delay and pass info to the EmptyPulse
    	delay = GetDelay();
    	ep->SetNADC(m_adc);
+   	ep->SetADCFlag(m_adc_flag);
    	ep->SetPhaseLock(m_phase_lock);
    	ep->SetDuration(delay);
 

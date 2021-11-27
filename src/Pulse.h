@@ -132,9 +132,22 @@ class Pulse :public Module, public TxRxPhase {
      * @brief Set number of ADCs
      *
      * @param  nadc
-     * @return      The private member m_ADCs.
      */
-    inline void  SetNADC          (unsigned int nadc) {m_adc = nadc; SetTPOIs();};
+    inline void  SetNADC  (unsigned int nadc) {m_adc = nadc; SetTPOIs();};
+
+    /**
+     * @return Get ADC flag
+     *
+     * @return ADC flag
+     */
+    inline  int  GetADCFlag  () { return m_adc_flag;  };
+
+    /**
+     * @brief Set ADC flag
+     *
+     * @param  nadc
+     */
+    inline void  SetADCFlag  (int adcflag) {m_adc_flag = adcflag; SetTPOIs();};
 
     /**
      * @brief Get delay in respect of the AtomicSequence holding this pulse.
