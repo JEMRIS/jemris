@@ -223,18 +223,18 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	Parameters* P = Parameters::instance();
 	ISMRMRD::Encoding e;
 	e.trajectory = ISMRMRD::TrajectoryType::OTHER;
-	e.encodedSpace.matrixSize.x = P->m_iNx;
-	e.encodedSpace.matrixSize.y = P->m_iNy;
+	e.encodedSpace.matrixSize.x = (P->m_iNx) > 0 ? P->m_iNx: 1;
+	e.encodedSpace.matrixSize.y = (P->m_iNy) > 0 ? P->m_iNy: 1;
 	e.encodedSpace.matrixSize.z = (partitions>1) ? P->m_iNz : ((slices>1) ? 1 : P->m_iNz);
-	e.encodedSpace.fieldOfView_mm.x = P->m_fov_x;
-	e.encodedSpace.fieldOfView_mm.y = P->m_fov_y;
-	e.encodedSpace.fieldOfView_mm.z = P->m_fov_z;
-	e.reconSpace.matrixSize.x = P->m_iNx;
-	e.reconSpace.matrixSize.y = P->m_iNy;
+	e.encodedSpace.fieldOfView_mm.x = (P->m_fov_x > 0) ? P->m_fov_x : 1;
+	e.encodedSpace.fieldOfView_mm.y = (P->m_fov_y > 0) ? P->m_fov_y : 1;
+	e.encodedSpace.fieldOfView_mm.z = (P->m_fov_z > 0) ? P->m_fov_z : 1;
+	e.reconSpace.matrixSize.x = (P->m_iNx) > 0 ? P->m_iNx: 1;
+	e.reconSpace.matrixSize.y = (P->m_iNy) > 0 ? P->m_iNy: 1;
 	e.reconSpace.matrixSize.z = (partitions>1) ? P->m_iNz : ((slices>1) ? 1 : P->m_iNz);
-	e.reconSpace.fieldOfView_mm.x = P->m_fov_x;
-	e.reconSpace.fieldOfView_mm.y = P->m_fov_y;
-	e.reconSpace.fieldOfView_mm.z = P->m_fov_z;
+	e.reconSpace.fieldOfView_mm.x = (P->m_fov_x > 0) ? P->m_fov_x : 1;
+	e.reconSpace.fieldOfView_mm.y = (P->m_fov_y > 0) ? P->m_fov_y : 1;
+	e.reconSpace.fieldOfView_mm.z = (P->m_fov_z > 0) ? P->m_fov_z : 1;
 
 	// Acquisitions
 	std::vector<ISMRMRD::Acquisition> acqList;
@@ -262,15 +262,27 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 					acq.traj(2,k) = 0;
 			}
 
-			if (meta[i-1] == 1)
+			// set ADC flags
+			bool no_flag = true;
+			if (check_bit(meta[i-1], ADC_T)){
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_DUMMYSCAN_DATA); // ADCs with no specific purpose
-			else if (meta[i-1] == 4)
+				no_flag = false;
+			}
+			if (check_bit(meta[i-1], ADC_ACS_T)){
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PARALLEL_CALIBRATION);
-			else if (meta[i-1] == 8)
+				no_flag = false;
+				if (check_bit(meta[i-1], ADC_IMG_T))
+					acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PARALLEL_CALIBRATION_AND_IMAGING);
+			}
+			if (check_bit(meta[i-1], ADC_PC_T)){
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_PHASECORR_DATA);
-			else if (meta[i-1] == 16)
+				no_flag = false;
+			}
+			if (check_bit(meta[i-1], ADC_NOISE_T)){
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_NOISE_MEASUREMENT);
-			else if (meta[i-1] != 2)
+				no_flag = false;
+			}
+			if (!check_bit(meta[i-1], ADC_IMG_T) && no_flag)
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_USER1); // TPOI's without ADCs get user1 flag
 
 			// kspace counters
@@ -282,7 +294,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 			acq.idx().average = avg_ctr[i-1];
 
 			// set last scan in slice
-			if (shot_ctr[i-1] == pW->m_shotmax-1 && part_ctr[i-1] == pW->m_partitionmax-1 && (meta[i-1] == 2 || meta[i-1] == 4)){ 
+			if (shot_ctr[i-1] == pW->m_shotmax-1 && part_ctr[i-1] == pW->m_partitionmax-1 && (check_bit(meta[i-1], ADC_IMG_T) || check_bit(meta[i-1], ADC_ACS_T))){ 
 				if (slc_ctr[last_idx] == slc_ctr[i-1] && set_ctr[last_idx] == set_ctr[i-1] && contr_ctr[last_idx] == contr_ctr[i-1] && avg_ctr[last_idx] == avg_ctr[i-1])
 					acqList[last_adc].clearFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE); // flag is currently only set for last ADC in loop
 				acq.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
