@@ -84,10 +84,10 @@ include_directories (${Xerces_INCLUDE_DIRS})
 find_package(GiNaC REQUIRED)
 include_directories (${GINAC_INCLUDE_DIRS})
 
-# Hmm does not support componetns...
+# Hmm does not support components...
 find_package(Sundials REQUIRED)
 include_directories (${SUNDIALS_INCLUDE_DIR})
-# Handle Nvector sutff... here we need to deal with the actual version
+# Handle Nvector stuff... here we need to deal with the actual version
 if (SUNDIALS_FOUND)
    add_definitions(-DCVODE26 )
    add_definitions(-DHAVE_CVODE_CVODE_H)
@@ -123,7 +123,7 @@ link_directories(${ISMRMRD_LIBRARY_DIRS})
 include_directories(${ISMRMRD_INCLUDE_DIRS})
 
 # Docker image
-message( NOTICE "Try to pull docker image for reconstruction server.")
+message( NOTICE "pulling docker image for reconstruction server...")
 execute_process(COMMAND "docker" "pull" "mavel101/bart-reco-server" RESULT_VARIABLE ret OUTPUT_FILE CMD_OUTPUT)
 if(ret EQUAL "1")
     message( WARNING "Docker image for reconstruction server cannot be pulled. Docker may not be installed.")
@@ -132,7 +132,7 @@ else()
 endif()
 
 # Client conda environment
-message( NOTICE "Try to create conda environment for reconstruction client.")
+message( NOTICE "creating conda environment for reconstruction client.")
 configure_file(${CMAKE_SOURCE_DIR}/ismrmrd_client.yml ${CMAKE_CURRENT_BINARY_DIR}/ismrmrd_client.yml)
 execute_process(COMMAND "conda" "list" "-n" "ismrmrd_client" RESULT_VARIABLE ret OUTPUT_QUIET ERROR_QUIET)
 if(ret EQUAL "1")

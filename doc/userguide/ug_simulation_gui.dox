@@ -13,8 +13,9 @@ If no coils are specified, a uniform B1 sensitivity is assumed.
 
 
 \section ug_JEMRIS_sim_sample Object Properties
-Next, the sample to which the sequence is applied has to be specified. There are three predefined samples: a sphere, two
-interleaved spheres and a brain model. Since 3D simulations are very time consuming, these samples are defined as 2D slices,
+Next, the sample to which the sequence is applied has to be specified. There are five predefined samples: a sphere, two
+interleaved spheres, a 1D column phatom, the Shepp-Logan phatom (requires the Matlab Image Processing Toolbox) and a brain model.
+Since 3D simulations are very time consuming, the samples are defined as 2D slices (except the 1D column),
 while for the brain model the desired slice can be selected using \c "slice" parameter. Here also 3D portions of the brain may
 be simulated by specifying the first and the last slice. For all samples, \c "{dx,dy}" specifies the distance between two
 neighboring spins. For larger distances, less spins need to be calculated and thus the simulation will be faster. However,

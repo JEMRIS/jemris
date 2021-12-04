@@ -189,13 +189,14 @@ There exist several pulses which may be inserted into an AtomicSequence. All pul
  \li \c ADCs: The ADCs specify the number of readout events. These events are equidistantly distributed over the length of the pulse.
         The simulator will save the acquired signal at each of these time points.
 
-\li \c ADCFlag: the type of ADCs. This is mainly important for image reconstruction purposes and has no specific meaning in JEMRIS.
-       Possible values are:
+\li \c ADCFlag: defines the ISMRMD datatype for image reconstruction.
+       Possible values are (the colors in brackets are used for plooting the ADC events in the GUI):
       <ul>
-		<li> \c 1 : a standard ADC. This is the default, if the ADCFlag is not set.
-		<li> \c 2 : an imaging ADC.
-		<li> \c 4 : an auto-calibration scan (ACS) for parallel imaging.
-		<li> \c 8 : a phase correction scan.
+		<li> \c 1 : a standard ADC. This is the default, if the ADCFlag is not set. (black)
+		<li> \c 2 : an imaging ADC - these events define k-space  (red)
+		<li> \c 4 : an auto-calibration scan (ACS) for parallel imaging. (blue)
+		<li> \c 8 : a phase correction scan. (cyan)
+		<li> \c 8 : a noise scan. (magenta)
       </ul>
 	If ADCFlag is a sum of the above numbers, all according flags are set.
 	Finally, ADCFlag can be zero. In this case the time points are not ADC events, but so called TPOIs (Time Points Of Interest),
