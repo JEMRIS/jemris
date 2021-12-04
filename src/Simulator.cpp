@@ -291,6 +291,7 @@ void Simulator::Simulate          (bool bDumpSignal) {
 
 	m_rx_coil_array->InitializeSignals (m_sequence->GetNumOfADCs());
 
+	bool img_adcs = true;
 	if (bDumpSignal) {
 		m_kspace = new KSpace<double,4>();
 		KSpace<double,4>::KPoint p;
@@ -298,7 +299,9 @@ void Simulator::Simulate          (bool bDumpSignal) {
 		CheckRestart();
 
 		// Initialize temporary ISMRMRD file with sequence data
-		m_sequence->SeqISMRMRD(m_rx_coil_array->GetSignalOutputDir() + m_rx_coil_array->GetSignalPrefix() + "_ismrmrd_tmp.h5");
+		img_adcs = m_sequence->SeqISMRMRD(m_rx_coil_array->GetSignalOutputDir() + m_rx_coil_array->GetSignalPrefix() + "_ismrmrd_tmp.h5");
+		if (!img_adcs)
+			remove((m_rx_coil_array->GetSignalOutputDir() + m_rx_coil_array->GetSignalPrefix() + "_ismrmrd_tmp.h5").c_str());
 	}
 
 	m_model->Solve();
@@ -306,7 +309,8 @@ void Simulator::Simulate          (bool bDumpSignal) {
 	if (bDumpSignal) {
 		m_rx_coil_array->DumpSignals();
 		m_kspace->Write(m_rx_coil_array->GetSignalOutputDir() + m_rx_coil_array->GetSignalPrefix() + ".h5", "kspace", "/");
-		m_rx_coil_array->DumpSignalsISMRMRD("_ismrmrd", true);
+		if (img_adcs)
+			m_rx_coil_array->DumpSignalsISMRMRD("_ismrmrd", true);
 		DeleteTmpFiles();
 	}
 

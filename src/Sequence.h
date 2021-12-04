@@ -84,7 +84,7 @@ public:
      *
      * @param fname File name
      */
-    void  SeqISMRMRD  (const string& fname = "seq.h5");
+    bool  SeqISMRMRD  (const string& fname = "seq.h5");
 
 
     /**

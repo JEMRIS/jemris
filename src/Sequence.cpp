@@ -125,11 +125,11 @@ void Sequence::SeqDiag (const string& fname ) {
 }
 
 /***********************************************************/
-void Sequence::SeqISMRMRD (const string& fname ) {
+bool Sequence::SeqISMRMRD (const string& fname ) {
 
 	/* WIP: - Plot reconstruction results in GUI */
 
-	if ( GetNumOfTPOIs()==0  ) return;
+	if ( GetNumOfTPOIs()==0  ) return false;
 
 	Prepare(PREP_INIT);
 
@@ -246,6 +246,9 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 	size_t last_adc = 0; // helper variable for last scan in slice
 	size_t last_idx = 0; // helper variable for last scan in slice
 
+	// Check if imaging ADCs exist
+	bool img_adcs = false;
+
 	for (size_t i = 1; i < meta.size(); ++i){
 		if (meta[i] != meta[i-1] || i == meta.size()-1){
 			acq.clearAllFlags();
@@ -261,6 +264,9 @@ void Sequence::SeqISMRMRD (const string& fname ) {
 				else
 					acq.traj(2,k) = 0;
 			}
+			// Check if imaging ADCs exist
+			if(check_bit(meta[i-1], ADC_IMG_T))
+				img_adcs = true;
 
 			// set ADC flags
 			bool no_flag = true;
@@ -325,6 +331,7 @@ void Sequence::SeqISMRMRD (const string& fname ) {
     std::string xml_header = str.str();
 	d.writeHeader(xml_header);
 
+	return img_adcs;
 }
 /***********************************************************/
 void Sequence::OutputSeqData (map<string,string> &scanDefs, const string& outDir, const string& outFile ) {

@@ -209,7 +209,9 @@ int main (int argc, char *argv[]) {
 				seq->SeqDiag(output_dir + filename + ".h5");
 			else{
 				string ismrmrd_tmp = output_dir + filename + "_ismrmrd_tmp.h5";
-				seq->SeqISMRMRD(ismrmrd_tmp);
+				bool img_adcs = seq->SeqISMRMRD(ismrmrd_tmp);
+				if (!img_adcs)
+					cout << "Warning: No Imaging ADCs in sequence - export ISMRMRD file anyways." << endl;
 				filename = baseFilename;
 				if (filename == "")
 					filename = "external";
