@@ -38,7 +38,7 @@ and type \c JEMRIS_seq to start the %sequence GUI.  The following
 picture shows a screenshot of the GUI with the EPI sequence loaded
 into it:
 
-\image html pics/epi_jemris_screenshot.png
+\image html pics/epi_jemris_screenshot.png width=800px
 \image latex pics/epi_jemris_screenshot.eps
 
 The Sequence GUI allows to interactively build the sequence tree. The
@@ -58,14 +58,14 @@ visualize the %sequence diagram:
 
 \li The <b>"interval [ms]"</b> dialog changes the time axis for all pulses, whereas the
 <b>"zoom"</b> button allows to interactively zoom into a specific axis.
-\image html pics/epi_jemsdg_screenshot.png
+\image html pics/epi_jemsdg_screenshot.png width=800px
 \image latex pics/epi_jemsdg_screenshot.eps
 
 \li The <b>"draw moment"</b> flag draws the gradient moments, i.e. the time integral along
 the gradient axes, instead of the gradient waveforms. The moment is set to zero
 after each RF pulse, however, it is inverted for 180° pulses. Thus, it shows the
 correct k-space position encoding for gradient echo and spin echo sequences.
-\image html pics/epi_jemsmo_screenshot.png
+\image html pics/epi_jemsmo_screenshot.png width=800px
 \image latex pics/epi_jemsmo_screenshot.eps
 
 \li A different view of the gradient moments is given by switching the <b>"k-space
@@ -73,7 +73,7 @@ trajectory" </b> flag: it draws the k-space trajectory. Once it is
 drawn, it is possible to further add the ADC events to this plot by
 another check box or have a look at the travelling order by the
 activation of the <b>''Continous''</b> flag.
-\image html pics/epi_jemksp_screenshot.png
+\image html pics/epi_jemksp_screenshot.png width=800px
 \image latex pics/epi_jemksp_screenshot.eps
 
 By clicking on a module, its individual attributes are displayed in
@@ -92,10 +92,12 @@ This section briefly summarizes all %sequence building modules and its attribute
 The interaction of these modules is explained in the next section \ref ug_JEMRIS_seq_ginac.
 
 \subsection ug_JEMRIS_seq_intro_para The Parameters Module
-The parameter module (orange circle) is always present in a %sequence. It
-is not a part of the sequence tree but exists only once. The module
+The parameter module (orange circle) is always present in a %sequence. It is not a part of the sequence tree but exists only once. The module
 contains global attributes such as field of view \f$ FOV_{x/y/z} \f$,
-the size of the image matrix, the gradient slew rate etc.
+the size of the image matrix, the gradient slew rate etc. The parameter module defines several hidden attributes such as k-space dimensions, which 
+are useful for parametrization of other modules (see \ref ug_JEMRIS_seq_ginac_hidden). It is possible to design a valid imaging sequence without using
+the information of the parameter module. However, the ISMRMRD output uses the settings of the parameter module. FOV and matrix size
+need to be defined for image reconstruction based on ISMRMRD data. 
 
 \subsection ug_JEMRIS_seq_intro_seqmod Sequence Modules
 So far, there exist five modules which are of type sequence:
@@ -109,7 +111,8 @@ So far, there exist five modules which are of type sequence:
 	 </ol>
 	 The attributes \c "aux1,aux2,aux3" define  auxiliary variables. These values are not used in the calculation of the ConcatSequence.
    However they can be observed by other modules, thus lengthy expressions can be displayed in a more structured way.
-	 The attribute  \c "LoopFlag" defines the function of this loop. This information might be needed for image reconstruction and is stored to ISMRMD output.
+	 The attribute  \c "LoopFlag" defines the function of this loop. This information might be needed for image reconstruction and is stored to
+	 ISMRMD output. It is not required for JEMRIS-internal functionality.
 	 Possible values are:
    <ul>
       <li> \c 0  : no specific functionality (default)
@@ -117,10 +120,11 @@ So far, there exist five modules which are of type sequence:
       <li> \c 2  : phase-encoding loop
       <li> \c 4  : partition loop
       <li> \c 8  : set loop (various purposes)
-      <li> \c 16 : inner averaging loop
-      <li> \c 32 : outer averaging loop
+      <li> \c 16 : contrast loop
+      <li> \c 32 : averaging loop
    </ul>
-   A loop can have multiple functionalities by providing the sum of the above flags.
+   A loop can have multiple functionalities by providing the sum of the above flags. A phase-encoding loop flag (2) is required to initiate
+   image reconstruction from ISMRMRD raw data. The slice, set, or contrast flags (1,8,16) are required for the reconstruction of multiple images.
 
     <li> The <b> AtomicSequence </b> module (purple circles) contains the actual pulses. Each AtomicSequence can contain multiple
          pulses which are then applied simultaneously.  Additionally, the attributes \c "Inclination", \c "Azimut", \c "RotAngle" define
@@ -189,19 +193,19 @@ There exist several pulses which may be inserted into an AtomicSequence. All pul
  \li \c ADCs: The ADCs specify the number of readout events. These events are equidistantly distributed over the length of the pulse.
         The simulator will save the acquired signal at each of these time points.
 
-\li \c ADCFlag: defines the ISMRMD datatype for image reconstruction.
-       Possible values are (the colors in brackets are used for plooting the ADC events in the GUI):
+\li \c ADCFlag: defines the ISMRMD datatype for image reconstruction. An ADCFlag>0 has no JEMRIS-internal functionality.
+       Possible values are (the colors in brackets are used for plotting these ADC events in the GUI):
       <ul>
 		<li> \c 1 : a standard ADC. This is the default, if the ADCFlag is not set. (black)
 		<li> \c 2 : an imaging ADC - these events define k-space  (red)
 		<li> \c 4 : an auto-calibration scan (ACS) for parallel imaging. (blue)
 		<li> \c 8 : a phase correction scan. (cyan)
-		<li> \c 8 : a noise scan. (magenta)
+		<li> \c 16 : a noise scan. (magenta)
       </ul>
 	If ADCFlag is a sum of the above numbers, all according flags are set.
 	Finally, ADCFlag can be zero. In this case the time points are not ADC events, but so called TPOIs (Time Points Of Interest),
 	at which the pulse is evaluated but no signal acquired. This is good for a) better visualization
-	of certain pulse shapes and b) force the simulator to evaluate the solution at these time points. However, keep in mind that many
+	of certain pulse shapes in the GUI and b) force the simulator to evaluate the solution at these time points. However, keep in mind that 
 	TPOIs (or ADCs) will slow down the simulation.  It is also possible to specify a <b> negative number of ADCs </b>, which has the same
 	meaning, i.e. ADCFlag=0. This is for backward compatibility and should not be used for new sequences. (Instead, use ADCFlag=0.)
 

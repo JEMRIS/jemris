@@ -87,12 +87,15 @@ void Model::Solve() {
 
         int m_ncoprops =  (m_world->GetNoOfSpinProps () - 4) / m_world->GetNoOfCompartments();
         //start with equilibrium solution
+		m_accuracy_factor  = m_world->Values[3]; // requested solver accuracy scales with M0 
 		for (int i = 0; i < m_world->GetNoOfCompartments(); i++) {
 			//start with equilibrium solution
 			m_world->solution[0+i*3]=0.0;
 			m_world->solution[1+i*3]=0.0;
 			m_world->solution[2+i*3]=1.0*m_world->Values[i*m_ncoprops+3]; // Values in world [0] to [2] are the x,y,z coordinates, followed by the M0, R1, R2, DB for each pool
-			m_accuracy_factor  = m_world->Values[i*m_ncoprops+3];		  // requested solver accuracy scales with M0 in case of small equilibrium magnetization
+			double M0 = m_world->Values[i*m_ncoprops+3];
+			m_accuracy_factor  = (M0<m_accuracy_factor ) ? M0 : m_accuracy_factor ; // use smallest M0 for solver acccuracy
+			m_world->LargestM0 = (M0>m_world->LargestM0) ? M0 : m_world->LargestM0; // use largest M0 for boise scaling (in CoilArray::DumpSignals) 
 		//	cout <<"im Model solution initatilsation" << " Mz "<< m_world->solution[2+i*3]<<" Mx " << m_world->solution[0+i*3]<< " My "<< m_world->solution[1+i*3]<< endl;
 		}
 

@@ -708,6 +708,9 @@ AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
 AM_DEFAULT_V
 AM_V
+CSCOPE
+ETAGS
+CTAGS
 am__untar
 am__tar
 AMTAR
@@ -3415,6 +3418,20 @@ am__tar='$${TAR-tar} chof - "$$tardir"' am__untar='$${TAR-tar} xf -'
 
 
 
+# Variables for tags utilities; see am/tags.am
+if test -z "$CTAGS"; then
+  CTAGS=ctags
+fi
+
+if test -z "$ETAGS"; then
+  ETAGS=etags
+fi
+
+if test -z "$CSCOPE"; then
+  CSCOPE=cscope
+fi
+
+
 
 # POSIX will say in a future version that running "rm -f" with no argument
 # is OK; and we want to be able to make that assumption in our Makefile
@@ -3484,10 +3501,10 @@ fi
 
 
 
-printf "%s\n" "#define GIT_COMMIT \"e6c74683\"" >>confdefs.h
+printf "%s\n" "#define GIT_COMMIT \"5c446601\"" >>confdefs.h
 
 
-printf "%s\n" "#define GIT_COMMIT_DATE \"Mon Nov 9 15:09:34 2020 +0100\"" >>confdefs.h
+printf "%s\n" "#define GIT_COMMIT_DATE \"\"" >>confdefs.h
 
 
 # copyright notice
@@ -5319,6 +5336,8 @@ printf "%s\n" "$ax_cv_cxx_compiler_vendor" >&6; }
 
 
 # Check standard headers
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
 ac_header= ac_cache=
 for ac_item in $ac_header_cxx_list
 do
@@ -5416,9 +5435,6 @@ fi
 printf "%s\n" "$ac_cv_path_GREP" >&6; }
  GREP="$ac_cv_path_GREP"
 
-
-# Autoupdate added the next two lines to ensure that your configure
-# script's behavior did not change.  They are probably safe to remove.
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for egrep" >&5
 printf %s "checking for egrep... " >&6; }
@@ -6792,7 +6808,7 @@ fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for GiNaC library" >&5
 printf %s "checking for GiNaC library... " >&6; }
 OLD_LIBS=$LIBS
-LIBS="${LIBS} -lginac -lcln -lgmp -lismrmrd"
+LIBS="${LIBS} -lginac -lcln -lgmp"
 
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -7146,6 +7162,39 @@ printf "%s\n" "#define HAVE_HDF5 1" >>confdefs.h
 
    HDF5="-lhdf5_cpp -lhdf5"
 
+fi
+
+#check for ismrmrd after hdf5
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for ISMRMD library" >&5
+printf %s "checking for ISMRMD library... " >&6; }
+OLD_LIBS=$LIBS
+LIBS="${LIBS} -lismrmrd"
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <ismrmrd/dataset.h>
+int
+main (void)
+{
+ISMRMRD::Dataset* ds("ismrmrd.h5", "dataset", false);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ismrmrd" >&5
+printf "%s\n" "ismrmrd" >&6; }
+   ismrmrd_found=yes
+else $as_nop
+  LIBS=$OLD_LIBS
+   as_fn_error $? "cannot find libismrmrd, bailing out" "$LINENO" 5
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+
+if test -z $ismrmrd_found; then
+    LIBS="${LIBS} -lismrmrd"
 fi
 
 case "$target" in

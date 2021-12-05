@@ -174,27 +174,27 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 		Repository* repository = m_coils[c]->GetSignal()->Repo();
 		RNG*        rng        = m_coils[c]->GetSignal()->Noise();
 
-		for (long i = 0; i < repository->Samples(); i++) {
-			
-			if (normalize) {
+		if (normalize) {
 				
-				for (int j = 0; j < repository->NProps(); j++) 
+			for (int j = 0; j < repository->NProps(); j++) {
+
+				for (long i = 0; i < repository->Samples(); i++) {	
+
 					(*repository)[i*repository->NProps() + j] /= World::instance()->TotalSpinNumber;
 				
-				//dwelltime-weighted random noise
-				if (World::instance()->RandNoise > 0.0) {
+					//dwelltime-weighted random noise
+					if (World::instance()->RandNoise > 0.0) {
 					
-					double dt =  1.0;
+						double dt =  1.0;
 					
-					if      (i                    > 0) dt = repository->TP(i  ) - repository->TP(i-1);
-					else if (repository->Samples() > 1) dt = repository->TP(i+1) - repository->TP(i  );
+						if      (i                    > 0) dt = repository->TP(i  ) - repository->TP(i-1);
+						else if (repository->Samples() > 1) dt = repository->TP(i+1) - repository->TP(i  );
 					
-					//definition: Gaussian has std-dev World::instance()->RandNoise at a dwell-time of 0.01 ms
-					for (int j = 0; j < repository->Compartments(); j++) {
-						(*repository)[i*repository->NProps() + j*3 + 0] += World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
-						(*repository)[i*repository->NProps() + j*3 + 1] += World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
+						//definition: Gaussian has std-dev World::instance()->RandNoise at a dwell-time of 0.01 ms
+						//for (int j = 0; j < repository->Compartments(); j++) {
+						(*repository)[i*repository->NProps() + j*3 + 0] += World::instance()->LargestM0*World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
+						(*repository)[i*repository->NProps() + j*3 + 1] += World::instance()->LargestM0*World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
 					}
-					
 				}
 
 			}

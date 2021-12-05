@@ -58,6 +58,7 @@ World* World::instance() {
         m_instance->deltaB              =  0.0;
         m_instance->GMAXoverB0          =  0.0;
         m_instance->NonLinGradField     =  0.0;
+        m_instance->LargestM0           =  0.0;
         m_instance->RandNoise           =  0.0;
         m_instance->saveEvolStepSize    =  0;
         m_instance->saveEvolFileName    =  "";

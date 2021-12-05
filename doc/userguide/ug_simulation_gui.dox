@@ -4,7 +4,7 @@
 To start the simulator GUI, open \c "JEMRIS_sim" as before in the path where the sequence *.xml files are stored.
 In the following screenshot, the epi-sequence has been loaded into the GUI and was simulated for a brain phantom:
 
-\image html pics/sim_gui.jpg
+\image html pics/sim_gui.png
 \image latex pics/sim_gui.eps
 \n
 Before the simulation, the sequence file has to be selected via "File->open Sequence".
@@ -14,24 +14,25 @@ If no coils are specified, a uniform B1 sensitivity is assumed.
 
 \section ug_JEMRIS_sim_sample Object Properties
 Next, the sample to which the sequence is applied has to be specified. There are five predefined samples: a sphere, two
-interleaved spheres, a 1D column phatom, the Shepp-Logan phatom (requires the Matlab Image Processing Toolbox) and a brain model.
+interleaved spheres, a 1D column phatom, the Shepp-Logan phantom (requires the Matlab Image Processing Toolbox) and a brain model.
 Since 3D simulations are very time consuming, the samples are defined as 2D slices (except the 1D column),
 while for the brain model the desired slice can be selected using \c "slice" parameter. Here also 3D portions of the brain may
 be simulated by specifying the first and the last slice. For all samples, \c "{dx,dy}" specifies the distance between two
 neighboring spins. For larger distances, less spins need to be calculated and thus the simulation will be faster. However,
 artifacts are likely if too few spins are used in the simulation. The following physical properties of the object,
 the sample parameters, can be specified (one value per parameter in case of a sphere, two values per parameter in case of
-two spheres, and one factor per parameter in case of the brain phantom):
+two spheres or the 1D column phantom, and one factor per parameter in case of the brain phantom or the Shepp-Logan phantom):
 
 \li <b>T1:</b> longitudinal relaxation time. Units: [ms].
 \li <b>T2:</b> transverse relaxation time. Units: [ms].
-\li <b>T2*:</b> effective transverse relaxation time (including a reversible decay). Units: [ms]. If not specified, no such
-                reversible components are simulated. If specified, remember that a high spin density per voxel is needed to
-		correctly simulate T2*-induced de- and rephasing effects.
+\li <b>T2*:</b> effective transverse relaxation time (including a reversible decay). Units: [ms]. If T2* is zero, or equals T2, or is not specified,
+                then no such reversible components are simulated. If specified, a high spin density per voxel may be needed to
+		  correctly simulate T2*-induced intravoxel de- and rephasing.
 \li <b>M0:</b> equilibrium magnetization. Units: arbitrary.
 \li <b>CS :</b> chemical shift. Units: [rad/sec].
-\li <b>Radius (Sphere) / Slice (Brain):</b> The radius (radii) of the sphere(s), or the slice index in case of the
-       brain phantom. 
+\li <b>Radius:</b> The radius (radii) of the sphere(s). This parameter changes to the slice index for the
+       brain phantom, the matrix size for the Shepp-Logan phantom, or length and number of blocks for a 1D column phantom
+       (odd/even blocks have the parameters of the first/second value for each ). 
 
 In case of the brain phantom, the parameters T1,T2,T2*,M0, and CS are tissue parameters at 1.5 Tesla. The user may change
 them individually by specifying a constant factor. Setting T2*=0 will also omit any reversible signal decay. Further, for the
@@ -44,28 +45,40 @@ in Jemris' matlab installation directory (default /usr/local/share/jemris/matlab
 \section ug_JEMRIS_sim_start Starting the Simulation
 After specifying the sample and the sequence, the \c "start simu" button calls JEMRIS. Its output is displayed in the
 "simulation message dump". After the simulation has finished, the results will be displayed in the lower right of the GUI.
+Besides the signal, the k-space and the image space can be displayed. K-space is only shown, if the sequence contained imaging
+ADCs (i.e. ADCFlag=2, see \ref ug_JEMRIS_seq_intro_pulse). Images are only shown, if image reconstruction was performed (see next section).
 
-Besides the signal, the k-space and the image space can be displayed. However, the GUI capabilities for image reconstruction
-are very limited. Only 2D FFT of standard acquisition k-space acquisition order will result in the expected image.
-Other reconstructions have to be done by the user. For this purpose it is possible to store the simulated data with
-the "File->Save Signal mat-File" dialogue. This will store the vector "t", the temporal sampling, and a signal matrix "M" 
-with three columns representing x,y, and z component of the bulk magnetization. Additionally, an index vector "I" is stored
-indicating the start of a line in k-space (or, more precise, indicating changes of time differences in the temporal sampling). 
-
-\section ug_JEMRIS_sim_add Additional parameters
+\subsection ug_JEMRIS_sim_add Additional parameters
 On the right hand side there are three additional parameters controlling the simulation:
 
-\li <b> "increment to store M(t)":</b> The signal is the sum over all simulated spins. However, the information of each
+\li <b> "increment to store M(t) (time evolution)":</b> The signal is the sum over all simulated spins. However, the information of each
 individual spin is present in the simulation and can be returned by JEMRIS. If this parameter is set to i, the
-magnetization of each individual spin is stored for every i-th readout event. <b>Caution:</b> if the increment is one than the
+magnetization of each individual spin is stored for every i-th readout event. <b>Caution:</b> if increment=1, then the
 complete magnetization is stored at every sampling point which may result in huge output files.
 
 \li <b>"concomitant fields":</b> account for concomitant fields introduced by the gradient field
 
-\li <b>"random noise":</b> adds random noise to the signal data. This is done by the GUI itself, thus in contrast to the other three parameters the noise may be specified  \em after the simulation.
+\li <b>"random noise":</b> adds Gaussian random noise to the signal during the simulation. Note: The noise level is given in percent of 
+the maximum equilibrium Magnetization in the sample. Furthermore, it scales with the bandwidth (inverse dwell time) of the sequence.
 
-\section ug_JEMRIS_sim_par Parallelization
-Since no interaction of the spins are considered, the MR simulation is an inherently parallel problem. Thus to speed up the calculation JEMRIS can make use of multiple CPUs, either of a computer cluster or of a multi-core processor on a single workstation. The desired mode can be selected from the "Settings" dialog. To utilize multiple CPU cores on a single workstation the GUI must be able to log into the system without supplying a password, thus an ssh-key has to be installed in the system (see \ref ug_install_key). 
+Addtionally, there are settings for simulation of motion, flow, and diffusion, which are not yet well documented. However, more explanation on these
+topics may be found on in the <a href="https://groups.google.com/forum/?hl=en-gb#!forum/jemris"><b>JEMRIS discussion group on Google</b></a>.
+
+\subsection ug_JEMRIS_sim_par Parallelization
+To speed up the simuation JEMRIS can make use of multiple CPUs, either of a computer cluster or of a multi-core processor on a single workstation. 
+The desired mode can be selected from the "Settings" dialog. To utilize multiple CPU cores on a single workstation the GUI must be able to log into
+the system without supplying a password, thus an ssh-key has to be installed in the system. 
+
+\section ug_JEMRIS_reco_start Starting the Image Reconstruction
+If an imaging sequence was implemented, the simuation will generate an ISMRMRD raw data file (\c "signals_ismrmrd.h5"). Then, the \c
+"start reco" button calls an automated image reconstruction pipeline as a docker service (if it was installed, 
+see Installation of the \ref ug_install_imgreco). This will automatically start the required Docker server, send the ISMRMRD data to it,
+perform image reconstruction with the <a href="https://mrirecon.github.io/bart">BART</a> toolbox,  and finally terminate the server.
+Ouput is again displayed in the "simulation message dump". Usually image reconstruction is much faster than the simulation.
+The reconstruction supports arbitrary k-space trajecotries and Parallel Imaging (PI), i.e. using a receive array. By default PI will use the
+true coil sensitivity maps for reconstruction, i.e. the same which were used during the simulation. If however ADC data was acquired with the
+sequence (ADCFlag=4), those will be used to estimate the coil sensitivities.
+
 
 
 back to \ref toc.

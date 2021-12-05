@@ -1,9 +1,9 @@
-AC_PREREQ(2.61)
-AC_INIT([jemris], [2.8.4], [tony.stoecker@dzne.de], [jemris])
+AC_PREREQ([2.71])
+AC_INIT([jemris],[2.8.4],[tony.stoecker@dzne.de],[jemris])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_HEADER([src/config.h])
+AC_CONFIG_HEADERS([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
@@ -27,7 +27,15 @@ AC_LANG(C++)
 AX_COMPILER_VENDOR
 
 # Check standard headers
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro `STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  ISO C90 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 
 # Check for the host type
 AC_CANONICAL_HOST
@@ -130,12 +138,9 @@ AC_MSG_CHECKING([for GiNaC library])
 OLD_LIBS=$LIBS
 LIBS="${LIBS} -lginac -lcln -lgmp"
 
-AC_TRY_LINK([#include <ginac/ginac.h>],
-   [GiNaC::ex* mex = new GiNaC::ex();],
-   [AC_MSG_RESULT([ginac])]
-   ginac_found=yes,
-   [LIBS=$OLD_LIBS]
-   [AC_MSG_ERROR([cannot find libginac, bailing out])])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <ginac/ginac.h>]], [[GiNaC::ex* mex = new GiNaC::ex();]])],[AC_MSG_RESULT([ginac])
+   ginac_found=yes],[LIBS=$OLD_LIBS
+   AC_MSG_ERROR([cannot find libginac, bailing out])])
 
 if test -z $ginac_found; then
     LIBS="${LIBS} -lginac -lcln -lgmp"
@@ -149,11 +154,8 @@ else
   LIBS="-lxerces-c ${LIBS}"
 fi
 
-AC_TRY_LINK([#include <xercesc/util/PlatformUtils.hpp>],
-   [XERCES_CPP_NAMESPACE_USE XMLPlatformUtils::Initialize(); return 0; ],
-   [AC_MSG_RESULT([xerces-c])]
-   xerceslib_found=yes,
-   [LIBS=$OLD_LIBS])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <xercesc/util/PlatformUtils.hpp>]], [[XERCES_CPP_NAMESPACE_USE XMLPlatformUtils::Initialize(); return 0; ]])],[AC_MSG_RESULT([xerces-c])
+   xerceslib_found=yes],[LIBS=$OLD_LIBS])
 
 if test -z $xerceslib_found; then
   if test -z xerces_lib_base; then
@@ -162,22 +164,18 @@ if test -z $xerceslib_found; then
     LIBS="-L${xerces_lib_base}/lib -lxerces-c ${LIBS}"
   fi
 
-  AC_TRY_LINK([#include <xercesc/util/PlatformUtils.hpp>],
-     [XERCES_CPP_NAMESPACE_USE XMLPlatformUtils::Initialize(); return 0; ],
-     [AC_MSG_RESULT([xerces-c])]
-     xerceslib_found=yes,
-     [AC_MSG_RESULT([unable to determine])]
-     [AC_MSG_ERROR([cannot link to Xerces library])])
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <xercesc/util/PlatformUtils.hpp>]], [[XERCES_CPP_NAMESPACE_USE XMLPlatformUtils::Initialize(); return 0; ]])],[AC_MSG_RESULT([xerces-c])
+     xerceslib_found=yes],[AC_MSG_RESULT([unable to determine])
+     AC_MSG_ERROR([cannot link to Xerces library])])
 fi
 
 # Find out some properties of the version of Xerces we have
 
 AC_MSG_CHECKING([whether Xerces XMLFormatter requires a version])
 
-AC_TRY_COMPILE([#include <xercesc/framework/XMLFormatter.hpp>
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <xercesc/framework/XMLFormatter.hpp>
 	#include <xercesc/util/XercesDefs.hpp>
-	#include <xercesc/util/XMLUniDefs.hpp>],
-	[using namespace XERCES_CPP_NAMESPACE;
+	#include <xercesc/util/XMLUniDefs.hpp>]], [[using namespace XERCES_CPP_NAMESPACE;
 	  XMLCh s_encoding[] = {
 		chLatin_U, chLatin_T, chLatin_F, chDash, chDigit_8, chNull
 	  };
@@ -186,72 +184,55 @@ AC_TRY_COMPILE([#include <xercesc/framework/XMLFormatter.hpp>
 		NULL, 
 		XMLFormatter::NoEscapes, 
 		XMLFormatter::UnRep_CharRef);
-	],
-	[AC_MSG_RESULT([yes])]
-	[AC_DEFINE([XSEC_XERCES_REQUIRES_MEMMGR],[],[Description])]
-	[AC_DEFINE([XSEC_XERCES_FORMATTER_REQUIRES_VERSION],[],[Description])],
-	[AC_MSG_RESULT([no])])
+	]])],[AC_MSG_RESULT([yes])
+	AC_DEFINE([XSEC_XERCES_REQUIRES_MEMMGR],[],[Description])
+	AC_DEFINE([XSEC_XERCES_FORMATTER_REQUIRES_VERSION],[],[Description])],[AC_MSG_RESULT([no])])
 	
 AC_MSG_CHECKING([whether Xerces XMLString has ::release])
 
-AC_TRY_COMPILE([#include <xercesc/util/XMLString.hpp>],
-	[using namespace XERCES_CPP_NAMESPACE;
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <xercesc/util/XMLString.hpp>]], [[using namespace XERCES_CPP_NAMESPACE;
 		XMLCh * tst;
 		XMLString::release(&tst);
-	],
-	[AC_MSG_RESULT([yes])]
-	[AC_DEFINE([XSEC_XERCES_XMLSTRING_HAS_RELEASE],[],[Description])],
-	[AC_MSG_RESULT([no])])
+	]])],[AC_MSG_RESULT([yes])
+	AC_DEFINE([XSEC_XERCES_XMLSTRING_HAS_RELEASE],[],[Description])],[AC_MSG_RESULT([no])])
 
 AC_MSG_CHECKING([whether Xerces XMLElement has ::setIdAttribute(XMLCh*)])
 
-AC_TRY_COMPILE([#include <xercesc/dom/DOM.hpp>],
-	[using namespace XERCES_CPP_NAMESPACE;
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <xercesc/dom/DOM.hpp>]], [[using namespace XERCES_CPP_NAMESPACE;
 		DOMElement * elt;
 		elt->setIdAttribute(NULL);
-	],
-	[AC_MSG_RESULT([yes])]
+	]])],[AC_MSG_RESULT([yes])
     xerces_has_setidattribute=yes
-	[AC_DEFINE([XSEC_XERCES_HAS_SETIDATTRIBUTE],[],[Description])],
-	[AC_MSG_RESULT([no])])
+	AC_DEFINE([XSEC_XERCES_HAS_SETIDATTRIBUTE],[],[Description])],[AC_MSG_RESULT([no])])
 
 if test -z $xerces_has_setidattribute; then
 
   AC_MSG_CHECKING([whether Xerces XMLElement has ::setIdAttribute(XMLCh*, bool)])
-  AC_TRY_COMPILE([#include <xercesc/dom/DOM.hpp>],
-	  [using namespace XERCES_CPP_NAMESPACE;
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <xercesc/dom/DOM.hpp>]], [[using namespace XERCES_CPP_NAMESPACE;
 		  DOMElement * elt;
 		  elt->setIdAttribute(NULL, false);
-	  ],
-	  [AC_MSG_RESULT([yes])]
+	  ]])],[AC_MSG_RESULT([yes])
       xerces_has_setidattribute=yes
-	  [AC_DEFINE([XSEC_XERCES_HAS_BOOLSETIDATTRIBUTE],[],[Description])],
-	  [AC_MSG_RESULT([no])])
+	  AC_DEFINE([XSEC_XERCES_HAS_BOOLSETIDATTRIBUTE],[],[Description])],[AC_MSG_RESULT([no])])
 
 fi
 
 # For Xerces 3.x we now have a stricter DOM L3 implementation
 AC_MSG_CHECKING([whether Xerces DOMImplementationLS has DOMLSSerializer])
 
-AC_TRY_COMPILE([#include <xercesc/dom/DOM.hpp>],
-    [using namespace XERCES_CPP_NAMESPACE;
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <xercesc/dom/DOM.hpp>]], [[using namespace XERCES_CPP_NAMESPACE;
         DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(NULL);
         DOMLSSerializer *ls = ((DOMImplementationLS*)impl)->createLSSerializer();
-    ],
-    [AC_MSG_RESULT([yes])]
-    [AC_DEFINE(XSEC_XERCES_DOMLSSERIALIZER,[],[Description])],
-    [AC_MSG_RESULT([no])])
+    ]])],[AC_MSG_RESULT([yes])
+    AC_DEFINE(XSEC_XERCES_DOMLSSERIALIZER,[],[Description])],[AC_MSG_RESULT([no])])
 
 AC_MSG_CHECKING([whether Xerces DOMEntity uses getInputEncoding()])
 
-AC_TRY_COMPILE([#include <xercesc/dom/DOM.hpp>],
-    [using namespace XERCES_CPP_NAMESPACE;
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <xercesc/dom/DOM.hpp>]], [[using namespace XERCES_CPP_NAMESPACE;
         DOMEntity *t;
         t->getInputEncoding();
-    ],
-    [AC_MSG_RESULT([yes])]
-    [AC_DEFINE(XSEC_XERCES_DOMENTITYINPUTENCODING,[],[Description])],
-    [AC_MSG_RESULT([no])])
+    ]])],[AC_MSG_RESULT([yes])
+    AC_DEFINE(XSEC_XERCES_DOMENTITYINPUTENCODING,[],[Description])],[AC_MSG_RESULT([no])])
 
 
 # HDF5. Not mandatory. 
@@ -280,16 +261,26 @@ esac
 AC_MSG_CHECKING([for H5File in -lhdf5_cpp -lhdf5])
 OLD_LIBS=$LIBS
 LIBS="${LIBS} -lhdf5_cpp -lhdf5 -ldl"
-AC_TRY_LINK([#include <H5Cpp.h>],
-   [H5::H5File f ("t.h5", H5F_ACC_RDONLY);],
-   [AC_MSG_RESULT([yes])]
-   hdf5_found=yes,
-   [LIBS=$OLD_LIBS]
-   [AC_MSG_RESULT([no. Cannot find libhdf5_cpp, hdf5 dump/read not available.])])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <H5Cpp.h>]], [[H5::H5File f ("t.h5", H5F_ACC_RDONLY);]])],[AC_MSG_RESULT([yes])
+   hdf5_found=yes],[LIBS=$OLD_LIBS
+   AC_MSG_RESULT([no. Cannot find libhdf5_cpp, hdf5 dump/read not available.])])
 if test "$hdf5_found" = yes; then
    AC_DEFINE([HAVE_HDF5], [1], [HDF5 found])
    HDF5="-lhdf5_cpp -lhdf5"
    AC_SUBST(HDF5)
+fi
+
+#check for ismrmrd after hdf5
+AC_MSG_CHECKING([for ISMRMD library])
+OLD_LIBS=$LIBS
+LIBS="${LIBS} -lismrmrd"
+
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <ismrmrd/dataset.h>]], [[ISMRMRD::Dataset* ds("ismrmrd.h5", "dataset", false);]])],[AC_MSG_RESULT([ismrmrd])
+   ismrmrd_found=yes],[LIBS=$OLD_LIBS
+   AC_MSG_ERROR([cannot find libismrmrd, bailing out])])
+
+if test -z $ismrmrd_found; then
+    LIBS="${LIBS} -lismrmrd"
 fi
 
 case "$target" in 
@@ -307,7 +298,19 @@ AC_STRUCT_TM
 
 # Checks for library functions.
 AC_FUNC_ERROR_AT_LINE
-AC_TYPE_SIGNAL
+m4_warn([obsolete],
+[your code may safely assume C89 semantics that RETSIGTYPE is void.
+Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
+AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
+[AC_LANG_PROGRAM([#include <sys/types.h>
+#include <signal.h>
+],
+		 [return *(signal (0, 0)) (0) == 1;])],
+		   [ac_cv_type_signal=int],
+		   [ac_cv_type_signal=void])])
+AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
+		    (`int' or `void').])
+
 AC_CHECK_FUNCS([floor pow sqrt round])
 
 AC_ARG_ENABLE([mpi],
