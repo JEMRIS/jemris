@@ -453,13 +453,9 @@ function start_reco_Callback(hObject, eventdata, handles)
  docker_id_cmd = 'docker ps -qf "ancestor=mavel101/bart-reco-server"';
  [w,docker_id]=system(docker_id_cmd);
  docker_id = docker_id(1:end-1);
- if not(isempty(docker_id))
-   docker_stop_cmd = ['docker kill ', docker_id];
-   [w,s3]=system(docker_stop_cmd);
-   if w,warning('Killing reconstruction server failed.'),end
- else
-   warning('No active reconstruction server found.')
- end
+ docker_stop_cmd = ['docker kill ', docker_id];
+ [w,s3]=system(docker_stop_cmd);
+ if w,warning('Killing reconstruction server failed.'),end
  s3=['docker reconstruction server sucessfully terminated: ', s3];
  set(handles.sim_dump,'String',[s1,s2,s3],'FontName','monospaced','FontSize',8);
  
