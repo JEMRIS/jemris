@@ -516,7 +516,7 @@ function setT1_Callback(hObject, eventdata, handles)
 handles.sample.T1=str2num(get(hObject,'String'));
 if strcmp(handles.sample.name,'brain')
  handles.UserSample=brainSample(handles);
-elseelement
+else
  handles.UserSample=[];
 end
 write_simu_xml(handles,1);
