@@ -107,7 +107,7 @@ if WHAT==3 || WHAT==4
       IMG=h5read('gui-reco.h5',sprintf('/images/images_%1d/data',WHAT-4+2*(NCH>1)));
       IMG=squeeze(IMG(:,:,CCH,1,:));
       if WHAT==5            
-            TTL='magntiude image';
+            TTL='magnitude image';
       else
             TTL='phase image';
       end
