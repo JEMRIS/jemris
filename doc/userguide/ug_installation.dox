@@ -33,7 +33,7 @@ Should you want to exploit more than one CPU core, you will need an implementati
 Automated image reconstruction of JEMRIS simulations requires a dedicated Docker container. The container provides several tools including the
  <a href="https://mrirecon.github.io/bart">BART</a> toolbox for image reconstruction. JEMRIS comunicates with the Docker container via a Python client,
  which is  installed as Conda environment. The installation process requires Docker and Conda-Python installed:
-\li <a href="https://www.docker.com/">Docker</a> Containerized application service 
+\li <a href=" https://docs.docker.com/engine">Docker</a> Containerized application service 
 \li <a href="https://docs.conda.io/">Conda</a> Python package manager 
 
 If one of them is missing, JEMRIS compilation and installation may still work but the image reconstruction features will not.

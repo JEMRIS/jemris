@@ -63,11 +63,16 @@ if WHAT==2
  hold on
   for i=1:length(I)-1
    J=[I(i)+1:I(i+1)];
-   plot(t(J),M(J,:),'linewidth',2)
+   if numel(J)>1
+        plot(t(J),M(J,:),'linewidth',2)
+   else
+        plot(t(J),M(J,:),'.','markersize',15)
+   end 
    if ~verLessThan('matlab', '8.4'),set(gca, 'ColorOrderIndex', 1),end %correct line colors in new Matlab (R2015)
   end
  hold off
- set(gca,'xlim',[min(t) max(t)],'box','on')
+ xl=[min(t) max(t)]; if(xl(1)==xl(2)),xl(2)=1.01*xl(1);xl(1)=0.99*xl(1);end
+ set(gca,'xlim',xl,'box','on')
  xlabel('time [msec]','fontsize',12,'fontweight','bold')
  %ylabel('signal','fontsize',12,'fontweight','bold')
  h=legend('Mx','My','Mz'); set(h,'textcolor',[0 0 0]);

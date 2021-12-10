@@ -1,6 +1,26 @@
 /**
 ***************************************************
 * \page ug_JEMRIS_sim %MRI Simulation tool: JEMRIS_sim
+
+JEMRIS simulations can be started from the Simulation GUI JEMRIS_sim, which provides several predefined objects
+for simulation and some functionality to view the simulation results.
+
+
+\ref ug_JEMRIS_sim_intro
+
+\ref ug_JEMRIS_sim_sample
+
+\ref ug_JEMRIS_sim_start
+       \li \ref ug_JEMRIS_sim_add
+       \li \ref ug_JEMRIS_sim_par
+
+\ref ug_JEMRIS_reco_start
+
+\n 
+\n 
+
+\section ug_JEMRIS_sim_intro Introduction to the simulation GUI JEMRIS_sim
+
 To start the simulator GUI, open \c "JEMRIS_sim" as before in the path where the sequence *.xml files are stored.
 In the following screenshot, the epi-sequence has been loaded into the GUI and was simulated for a brain phantom:
 
@@ -10,8 +30,8 @@ In the following screenshot, the epi-sequence has been loaded into the GUI and w
 Before the simulation, the sequence file has to be selected via "File->open Sequence".
 Additionally, coil array loops for transmit and receive may be loaded via the File menu (see \ref ug_JEMRIS_txrx).
 If no coils are specified, a uniform B1 sensitivity is assumed.
-
-
+\n
+\n
 \section ug_JEMRIS_sim_sample Object Properties
 Next, the sample to which the sequence is applied has to be specified. There are five predefined samples: a sphere, two
 interleaved spheres, a 1D column phatom, the Shepp-Logan phantom (requires the Matlab Image Processing Toolbox) and a brain model.
@@ -40,13 +60,13 @@ brain phantom a realistic susceptibility-induced field variation may be included
 
 Finally, it is also possible to specify a user-defined object as a Matlab mat-file. An example file "userSample.mat" is located
 in Jemris' matlab installation directory (default /usr/local/share/jemris/matlab).
-
-
+\n
+\n
 \section ug_JEMRIS_sim_start Starting the Simulation
-After specifying the sample and the sequence, the \c "start simu" button calls JEMRIS. Its output is displayed in the
+After specifying the sample and the sequence, the <b>\c "start simu"</b> button calls JEMRIS. Its output is displayed in the
 "simulation message dump". After the simulation has finished, the results will be displayed in the lower right of the GUI.
 Besides the signal, the k-space and the image space can be displayed. K-space is only shown, if the sequence contained imaging
-ADCs (i.e. ADCFlag=2, see \ref ug_JEMRIS_seq_intro_pulse). Images are only shown, if image reconstruction was performed (see next section).
+ADCs (i.e. \c ADCFlag=2, see \ref ug_JEMRIS_seq_intro_pulse). Images are only shown, if image reconstruction was performed (see next section).
 
 \subsection ug_JEMRIS_sim_add Additional parameters
 On the right hand side there are three additional parameters controlling the simulation:
@@ -61,27 +81,39 @@ complete magnetization is stored at every sampling point which may result in hug
 \li <b>"random noise":</b> adds Gaussian random noise to the signal during the simulation. Note: The noise level is given in percent of 
 the maximum equilibrium Magnetization in the sample. Furthermore, it scales with the bandwidth (inverse dwell time) of the sequence.
 
-Addtionally, there are settings for simulation of motion, flow, and diffusion, which are not yet well documented. However, more explanation on these
+Addtionally, there are settings for simulation of motion, flow, and diffusion, which are not yet well documented. More explanation on these
 topics may be found on in the <a href="https://groups.google.com/forum/?hl=en-gb#!forum/jemris"><b>JEMRIS discussion group on Google</b></a>.
 
 \subsection ug_JEMRIS_sim_par Parallelization
 To speed up the simuation JEMRIS can make use of multiple CPUs, either of a computer cluster or of a multi-core processor on a single workstation. 
 The desired mode can be selected from the "Settings" dialog. To utilize multiple CPU cores on a single workstation the GUI must be able to log into
 the system without supplying a password, thus an ssh-key has to be installed in the system. 
-
+\n
+\n
 \section ug_JEMRIS_reco_start Starting the Image Reconstruction
-If an imaging sequence was implemented, the simuation will generate an ISMRMRD raw data file (\c "signals_ismrmrd.h5"). Then, the \c
-"start reco" button calls an automated image reconstruction pipeline as a docker service (if it was installed, 
-see Installation of the \ref ug_install_imgreco). This will automatically start the required Docker server, send the ISMRMRD data to it,
-perform image reconstruction with the <a href="https://mrirecon.github.io/bart">BART</a> toolbox,  and finally terminate the server.
-Ouput is again displayed in the "simulation message dump". Usually image reconstruction is much faster than the simulation.
-The reconstruction supports arbitrary k-space trajecotries and Parallel Imaging (PI), i.e. using a receive array. By default PI will use the
-true coil sensitivity maps for reconstruction, i.e. the same which were used during the simulation. If however ADC data was acquired with the
-sequence (ADCFlag=4), those will be used to estimate the coil sensitivities.
+If an imaging sequence was implemented using \c ADCFlag=2 for k-space encoding (cf. \ref ug_JEMRIS_seq_intro_pulse), 
+ the simuation will generate the ISMRMRD raw data file "signals_ismrmrd.h5".  Then, the \c
+<b>\c "start reco"</b> button calls an automated image reconstruction pipeline as a docker service (if it was installed, 
+see Installation of the \ref ug_install_imgreco). This will start the required Docker server, send the ISMRMRD data to it,
+perform image reconstruction with the <a href="https://mrirecon.github.io/bart">BART</a> toolbox, save the images to the file \c gui-reco.h5,
+and finally terminate the server. Ouput is again displayed in the "simulation message dump". Usually image reconstruction is much faster than the simulation.
+\n
+\n
+The python reconstruction pipeline for JEMRIS is designed to run fully automatically. Details of are given on the
+project's <a href=" https://github.com/mrphysics-bonn/python-ismrmrd-reco"><b>github page</b></a>.
+Here is a short list of features:
+
+ \li By default a fast non-uniform Fourier Transform  (bart nufft) is used for reconstruction, which supports arbitrary k-space trajectories.
+
+ \li If a receive array is used in the simulations, then Parallel Imaging reconstruction (bart pics) is applied. By default it will use the
+true coil sensitivities for reconstruction. 
+
+\li If ADC data was acquired with the sequence (\c ADCFlag=4), those will be used to estimate the coil sensitivities instead of using the 
+true coil sensitivities.
+
+\li Currently, the reonstruction does not use phase correction scans of the sequence (\c ADCFlag=8), but noise scans (\c ADCFlag=16) are considered.
 
 
-
-back to \ref toc.
 ***************************************************
 */
 

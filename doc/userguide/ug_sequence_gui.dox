@@ -8,13 +8,20 @@ JEMRIS sequence development does not require any programming. The sequence is de
 through an XML tree structure. A dedicated GUI allows to construct the tree structure for arbitrary
 complex MRI sequences.
 
-\n
+\ref ug_JEMRIS_seq_treestruct
 
-Sections:
-\li \ref ug_JEMRIS_seq_treestruct
-\li \ref ug_JEMRIS_seq_intro
-\li \ref ug_JEMRIS_seq_modules
-\li \ref ug_JEMRIS_seq_ginac
+\ref ug_JEMRIS_seq_intro
+
+\ref ug_JEMRIS_seq_modules
+	\li \ref ug_JEMRIS_seq_intro_para 
+	\li \ref ug_JEMRIS_seq_intro_seqmod 
+	\li \ref ug_JEMRIS_seq_intro_pulse 
+
+\ref ug_JEMRIS_seq_ginac
+	\li \ref ug_JEMRIS_seq_ginac_obs 
+	\li \ref ug_JEMRIS_seq_ginac_hidden 
+	\li \ref ug_JEMRIS_seq_expressions 
+	\li \ref ug_JEMRIS_seq_spec 
 
 \n
 
@@ -43,7 +50,8 @@ into it:
 
 The Sequence GUI allows to interactively build the sequence tree. The
 tools for this are given in the top panel. The <b>"File"</b> dialog
-allows to load and save sequences (XML format). The <b>"write XML"</b>
+allows to load and save sequences (XML format), and to export sequences to Pulseq
+format for execution on a real MR-scanner (cf. \ref ug_command_line_jemris_export). The <b>"write XML"</b>
 button overwrites the current sequence file according to the changes
 made.
 
