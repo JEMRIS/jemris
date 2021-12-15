@@ -307,6 +307,10 @@ bool Sequence::SeqISMRMRD (const string& fname ) {
 				last_adc = acqList.size();
 				last_idx = i-1;
 			}
+
+			// set ADC dwelltime (support ISMRMRD-Viewer)
+			acq.sample_time_us() = 1e3 * (t[i-1] - t[i-2]);
+
 			acqList.push_back(acq);
 			adc_start = i;
 		}
