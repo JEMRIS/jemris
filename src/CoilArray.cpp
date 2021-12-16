@@ -265,6 +265,8 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 			acq.traj(2,0) = dims[2];
 			acq.user_int()[0] = m_coils[i]->GetExtent();
 			acq.setFlag(ISMRMRD::ISMRMRD_ACQ_IS_SURFACECOILCORRECTIONSCAN_DATA);
+			acq.sample_time_us() = 1;
+			acq.scan_counter() = 0;
 			d.appendAcquisition(acq);
 		}
 	}

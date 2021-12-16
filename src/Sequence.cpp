@@ -245,6 +245,7 @@ bool Sequence::SeqISMRMRD (const string& fname ) {
 	size_t adc_start = 0;
 	size_t last_adc = 0; // helper variable for last scan in slice
 	size_t last_idx = 0; // helper variable for last scan in slice
+	size_t scan_ctr = 0; 
 
 	// Check if imaging ADCs exist
 	bool img_adcs = false;
@@ -308,9 +309,12 @@ bool Sequence::SeqISMRMRD (const string& fname ) {
 				last_idx = i-1;
 			}
 
-			// set ADC dwelltime (support ISMRMRD-Viewer)
+			// set ADC dwelltime & scan counter (support ISMRMRD-Viewer)
 			acq.sample_time_us() = 1e3 * (t[i-1] - t[i-2]);
-
+			acq.scan_counter() = scan_ctr;
+			if (!acq.isFlagSet(ISMRMRD::ISMRMRD_ACQ_USER1))
+				scan_ctr += 1;
+				
 			acqList.push_back(acq);
 			adc_start = i;
 		}

@@ -143,7 +143,8 @@ if(ret EQUAL "1")
       message( NOTICE "Succesfully installed conda environment.")
   endif()
 else()
-      message( NOTICE "Conda environment already installed.")
+      message( NOTICE "Conda environment already installed. Environment will be updated if necessary.")
+      execute_process(COMMAND "conda" "run" "-n" "ismrmrd_client" "conda" "env" "update" "--file" "ismrmrd_client.yml" RESULT_VARIABLE ret)
 endif()
 
 # Is this here really necessary?
