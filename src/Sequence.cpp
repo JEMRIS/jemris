@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include "BinaryContext.h"
 #include "EddyPulse.h"
+#include "SequenceTree.h"
 
 /***********************************************************/
 bool    Sequence::Prepare(const PrepareMode mode){
@@ -212,12 +213,19 @@ bool Sequence::SeqISMRMRD (const string& fname ) {
 	// Header
 	ISMRMRD::IsmrmrdHeader h;
 	ISMRMRD::AcquisitionSystemInformation sys;
+	ISMRMRD::MeasurementInformation measInfo;
+	ISMRMRD::ExperimentalConditions expCond;
 
-	// Set system info to not crash reco
+	// Set system info and sequence name
 	sys.systemVendor.set("JEMRIS");
 	sys.systemModel.set("v2.8.4");
 	sys.systemFieldStrength_T.set(0);
 	h.acquisitionSystemInformation.set(sys);
+	string seq_name = pW->pSeqTree->GetSequenceFilename();
+	measInfo.protocolName.set(seq_name);
+	h.measurementInformation.set(measInfo);
+	expCond.H1resonanceFrequency_Hz = 0;
+	h.experimentalConditions = expCond;
 
 	// Encoding
 	Parameters* P = Parameters::instance();
@@ -314,7 +322,7 @@ bool Sequence::SeqISMRMRD (const string& fname ) {
 			acq.scan_counter() = scan_ctr;
 			if (!acq.isFlagSet(ISMRMRD::ISMRMRD_ACQ_USER1))
 				scan_ctr += 1;
-				
+
 			acqList.push_back(acq);
 			adc_start = i;
 		}

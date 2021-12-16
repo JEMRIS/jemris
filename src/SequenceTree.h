@@ -219,6 +219,14 @@ class SequenceTree {
      string  GetSequenceDirectory();
 
      /**
+      * Get the filename of the sequence file
+      *
+      * @return the filename
+      */
+
+     string GetSequenceFilename();
+
+     /**
       * Write xml file containing all modules of the sequence framework.
       */
      void          SerializeModules(string xml_file);

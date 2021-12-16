@@ -209,6 +209,8 @@ int main (int argc, char *argv[]) {
 				seq->SeqDiag(output_dir + filename + ".h5");
 			else{
 				string ismrmrd_tmp = output_dir + filename + "_ismrmrd_tmp.h5";
+				World* pW = World::instance();
+				pW->pSeqTree = &seqTree;
 				bool img_adcs = seq->SeqISMRMRD(ismrmrd_tmp);
 				if (!img_adcs)
 					cout << "Warning: No Imaging ADCs in sequence - export ISMRMRD file anyways." << endl;
