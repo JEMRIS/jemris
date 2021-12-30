@@ -200,9 +200,9 @@ I=i1:i2;
 
 %plot remaining axes
 for i=1:5
- cla(hax{i+1},'reset');axes(hax{i+1}),plot(t(I),A(I,Iax(i)),'linewidth',2),grid
+ cla(hax{i+1},'reset');axes(hax{i+1}),plot(t(I),A(I,Iax(i)),'linewidth',2,'color',[0 0.4470 0.7410]),grid
  ylabel(YL{i+1},'fontsize',14,'fontweight','bold')
- set(gca,'xlim',[ax(1) ax(2)])
+ set(gca,'xlim',[ax(1) ax(2)]);
  ay=get(gca,'ylim');
  if abs(ay(1)-ay(2))<1e-10,set(gca,'ylim',100*ay);end
  if (i==2 || i==5),xlabel('t [msec]','fontsize',12),else set(gca,'xticklabel',[]),end

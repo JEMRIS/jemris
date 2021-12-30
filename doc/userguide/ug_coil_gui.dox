@@ -1,14 +1,38 @@
 /**
 ***************************************************
 * \page ug_JEMRIS_txrx Coil array layout tool: JEMRIS_txrx
+
+\n
+
 The GUI for coil array configuration allows to construct receiver and/or transmitter arrays with dedicated spatial
-sensitivity patterns. A coil array consists of several coils in a specified order, the channel number. The order is just given
+sensitivity patterns. 
+
+\ref ug_JEMRIS_coil_intro
+    \li \ref ug_coil_gui_Menu
+
+\ref ug_coil_gui_Panels
+    \li \ref ug_coil_gui_xml
+    \li \ref ug_coil_gui_sens
+    \li \ref ug_coil_gui_array
+
+\ref ug_coil_gui_coil
+       \li \ref ug_coil_gui_biot
+       \li \ref ug_coil_gui_analytic
+       \li \ref ug_coil_gui_external
+
+
+\n 
+\n 
+\section ug_JEMRIS_coil_intro Introduction to the coil array layout GUI JEMRIS_txrx
+
+A coil array consists of several coils in a specified order, the channel number. The order is just given
 by the order of creation of the coils. In case of a receive coil array, one signal file per coil is generated in
 the simulation. In case of a transmit coil array, the RF pulses of the MR sequence have to specify which channel they use. If no
 channel is specified, the RF is transmitted via all available channels.
 
 The command "JEMRIS_txrx" opens in Matlab the GUI for coil array configuration.
-\section ug_coil_gui_Menu GUI Menus
+
+\subsection ug_coil_gui_Menu GUI Menus
 
 \li File Menu \n
 To start, open a new or an existing coil array from the File Menu. The File Menu also contains a submenu "Figure" from which
@@ -21,17 +45,13 @@ distribution on a cylinder is possible. Using this feature will delete all coils
 them with a new configuration. A distribution on a sphere will be made available soon (after publication of results).
 
 \section ug_coil_gui_Panels GUI Panels
-The GUI is devided in four different panels comprising all functionality:
-\li \ref ug_coil_gui_xml
-\li \ref ug_coil_gui_sens
-\li \ref ug_coil_gui_array
-\li \ref ug_coil_gui_coil 
+The GUI is devided in four different panels comprising all functionality: \ref ug_coil_gui_xml, \ref ug_coil_gui_sens, \ref ug_coil_gui_array, \ref ug_coil_gui_coil 
 
 \image html pics/txrx_gui.jpg
 \image latex pics/txrx_gui.eps
 
 
-\section ug_coil_gui_xml XML File Panel
+\subsection ug_coil_gui_xml XML File Panel
 On this panel the name of the current XML coil array file is displayed in red. There are two buttons: 
 
 \li <b>"write XML"</b> As with the sequence GUI, this button overwrites the current XML coil file according to the
@@ -44,7 +64,7 @@ Additionally, the output of the external jemris call is dumped below.
 
 \n
 
-\section ug_coil_gui_sens Sensitivity Map Panel
+\subsection ug_coil_gui_sens Sensitivity Map Panel
 On this panel the sensitivity map is plotted. Note that the magnitude senstivity for each individual coil is normalized to 
 one within the FOV of the coil (see below for a defintion of the coil FOV). Therefore, the superposition of the sensitivity
 may has values larger than one.
@@ -69,7 +89,7 @@ currently selected coil in the \ref ug_coil_gui_array.
 \n 
 
 
-\section ug_coil_gui_array Coil Array Panel
+\subsection ug_coil_gui_array Coil Array Panel
 
 On the Coil Array Panel all coils of the array are displayed by green circles with their name. Click a coil to make it active for
 manipulation of its attributes on the \ref ug_coil_gui_coil. The active coil is marked with a surrounding red circle.
