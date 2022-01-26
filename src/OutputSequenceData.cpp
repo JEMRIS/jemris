@@ -5,6 +5,7 @@
 #include "OutputSequenceData.h"
 #include "config.h"
 #include "Parameters.h"
+#include "md5.h"
 
 #include <cmath>
 #include <iostream>
@@ -150,10 +151,11 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	const double FREQ_TO_EXTERNAL = 1.0e3/(TWOPI);
 
 	ofstream outfile (filePath.c_str(), ofstream::out);
+	stringstream output;
 
 	// Header
-	outfile << "# Pulseq sequence format" << endl;
-	outfile << "# Created by JEMRIS " << VERSION << endl << endl;
+	output << "# Pulseq sequence format" << endl;
+	output << "# Created by JEMRIS " << VERSION << endl << endl;
 
 	// Determine if rotation matrix is not identity
 	double distanceFromIdentity = 0.0;
@@ -162,30 +164,30 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	distanceFromIdentity += fabs(m_rot_matrix[2][0]) + fabs(m_rot_matrix[2][1]) + fabs(m_rot_matrix[2][2]-1.);
 
 	// Output Pulseq Version
-	outfile << "[VERSION]" << endl;
-	outfile << "major 1" << endl;
-	outfile << "minor 2" << endl;
-	outfile << "revision 1" << endl;
-	outfile << endl;
+	output << "[VERSION]" << endl;
+	output << "major 1" << endl;
+	output << "minor 2" << endl;
+	output << "revision 1" << endl;
+	output << endl;
 
 	// Output high level parameters
 	Parameters* P = Parameters::instance();
-	outfile << "[DEFINITIONS]" << endl;
+	output << "[DEFINITIONS]" << endl;
 	for (map<string,string>::iterator it=m_definitions.begin(); it!=m_definitions.end(); ++it)
-		outfile << it->first << " " << it->second << endl;
-	outfile << "Name " << outFile.substr(0, outFile.find(".", 0)) << endl;
-	outfile << "Num_Blocks " << m_blocks.size() << endl;
+		output << it->first << " " << it->second << endl;
+	output << "Name " << outFile.substr(0, outFile.find(".", 0)) << endl;
+	output << "Num_Blocks " << m_blocks.size() << endl;
 	if (P->m_fov_x > 0 && P->m_fov_y > 0 && P->m_fov_z > 0){
-		outfile << "FOV " << P->m_fov_x << " " << P->m_fov_y << " " << P->m_fov_z << endl; // FOV in [mm] in Pulseq 1.2.1 ([m] from 1.3.0 on)
-		outfile << "Slice_Thickness " << P->m_fov_z << endl;
+		output << "FOV " << P->m_fov_x << " " << P->m_fov_y << " " << P->m_fov_z << endl; // FOV in [mm] in Pulseq 1.2.1 ([m] from 1.3.0 on)
+		output << "Slice_Thickness " << P->m_fov_z << endl;
 	}
 	if (distanceFromIdentity>1e-6) {
-		outfile << "Rot_Matrix " << setprecision(9)
+		output << "Rot_Matrix " << setprecision(9)
 		        << m_rot_matrix[0][0] << " " << m_rot_matrix[0][1] << " " << m_rot_matrix[0][2] << " "
 		        << m_rot_matrix[1][0] << " " << m_rot_matrix[1][1] << " " << m_rot_matrix[1][2] << " "
 		        << m_rot_matrix[2][0] << " " << m_rot_matrix[2][1] << " " << m_rot_matrix[2][2] << endl;
 	}
-	outfile << endl;
+	output << endl;
 
 	// Determine width of block ID fields for right align
 	int blockIdWidth;
@@ -195,38 +197,38 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 
 	// Output blocks
 	// ============================================================
-	outfile << "# Format of blocks:" << endl;
-	outfile << "#" << setw(blockIdWidth-1) << "#";
-	outfile << "  D RF  GX  GY  GZ ADC" << endl;
+	output << "# Format of blocks:" << endl;
+	output << "#" << setw(blockIdWidth-1) << "#";
+	output << "  D RF  GX  GY  GZ ADC" << endl;
 	int eventWidths[] = {2,2,3,3,3,2};
-	outfile << "[BLOCKS]" << endl;
+	output << "[BLOCKS]" << endl;
 
 	for (int iB=0; iB<m_blocks.size(); iB++)
 	{
 		SeqBlock & block = m_blocks[iB];
-		outfile << setw(blockIdWidth) << iB+1;
+		output << setw(blockIdWidth) << iB+1;
 		for (int iE=0; iE<SeqBlock::NUM_EVENTS; iE++)
-			outfile << " " << setw(eventWidths[iE]) << block.events[iE];
-		outfile << endl;
+			output << " " << setw(eventWidths[iE]) << block.events[iE];
+		output << endl;
 	}
-	outfile << endl;
+	output << endl;
 
 	// Output events
 	// ============================================================
 
 	// RF events
 	if (m_rf_library.size()>0) {
-		outfile << "# Format of RF events:" << endl;
-		outfile << "# id amplitude mag_id phase_id delay freq phase" << endl;
-		outfile << "# ..        Hz   ....     ....    us   Hz   rad" << endl;
-		outfile << "[RF]" << endl;
+		output << "# Format of RF events:" << endl;
+		output << "# id amplitude mag_id phase_id delay freq phase" << endl;
+		output << "# ..        Hz   ....     ....    us   Hz   rad" << endl;
+		output << "[RF]" << endl;
 		for (int iE=0; iE<m_rf_library.size(); iE++) {
 			RFEvent &rf = m_rf_library[iE];
-			outfile << iE+1 << " " <<  setw(12) << FREQ_TO_EXTERNAL*rf.m_amplitude
+			output << iE+1 << " " <<  setw(12) << FREQ_TO_EXTERNAL*rf.m_amplitude
 			        << " " << rf.m_mag_shape << " " << rf.m_phase_shape << " " << setw(3) << rf.m_delay
 			        << " " << FREQ_TO_EXTERNAL*rf.m_freq_offset << " " << rf.m_phase_offset << endl;
 		}
-		outfile << endl;
+		output << endl;
 	}
 
 	// Count types of gradient events
@@ -239,75 +241,86 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 
 	// Arbitrary gradient events
 	if (numArbGrad>0) {
-		outfile << "# Format of arbitrary gradients:" << endl;
-		outfile << "# id amplitude shape_id delay" << endl;
-		outfile << "# ..      Hz/m     ....    us" << endl;
-		outfile << "[GRADIENTS]" << endl;
+		output << "# Format of arbitrary gradients:" << endl;
+		output << "# id amplitude shape_id delay" << endl;
+		output << "# ..      Hz/m     ....    us" << endl;
+		output << "[GRADIENTS]" << endl;
 		for (int iE=0; iE<m_grad_library.size(); iE++) {
 			GradEvent &grad = m_grad_library[iE];
 			if (grad.m_shape>0)
-				outfile << iE+1 << " " << setw(12) << GRAD_TO_EXTERNAL*grad.m_amplitude << " " << grad.m_shape << " " << setw(3) << grad.m_delay << endl;
+				output << iE+1 << " " << setw(12) << GRAD_TO_EXTERNAL*grad.m_amplitude << " " << grad.m_shape << " " << setw(3) << grad.m_delay << endl;
 		}
-		outfile << endl;
+		output << endl;
 	}
 
 	// Trapezoid gradient events
 	if (numTrapGrad>0) {
-		outfile << "# Format of trapezoid gradients:" << endl;
-		outfile << "# id amplitude rise flat fall delay" << endl;
-		outfile << "# ..      Hz/m   us   us   us    us" << endl;
-		outfile << "[TRAP]" << endl;
+		output << "# Format of trapezoid gradients:" << endl;
+		output << "# id amplitude rise flat fall delay" << endl;
+		output << "# ..      Hz/m   us   us   us    us" << endl;
+		output << "[TRAP]" << endl;
 		for (int iE=0; iE<m_grad_library.size(); iE++) {
 			GradEvent &grad = m_grad_library[iE];
 			if (grad.m_shape<0)
-				outfile << setw(2) << iE+1 << " " <<  setprecision(7) << setw(13) << GRAD_TO_EXTERNAL*grad.m_amplitude << " " << setw(3) << grad.m_ramp_up_time
+				output << setw(2) << iE+1 << " " <<  setprecision(7) << setw(13) << GRAD_TO_EXTERNAL*grad.m_amplitude << " " << setw(3) << grad.m_ramp_up_time
 				        << " " << setw(4) << grad.m_flat_time << " " << setw(3) << grad.m_ramp_down_time << " " << setw(3) << grad.m_delay << endl;
 		}
-		outfile << endl;
+		output << endl;
 	}
 
 	// ADC events
 	if (m_adc_library.size()>0) {
-		outfile << "# Format of ADC events:" << endl;
-		outfile << "# id num dwell delay freq phase" << endl;
-		outfile << "# ..  ..    ns    us   Hz   rad" << endl;
-		outfile << "[ADC]" << endl;
+		output << "# Format of ADC events:" << endl;
+		output << "# id num dwell delay freq phase" << endl;
+		output << "# ..  ..    ns    us   Hz   rad" << endl;
+		output << "[ADC]" << endl;
 		for (int iE=0; iE<m_adc_library.size(); iE++) {
 			ADCEvent &adc = m_adc_library[iE];
-			outfile << setw(2) << iE+1 << " " << setw(3) << adc.m_num_samples << " " << setw(6) << adc.m_dwell_time
+			output << setw(2) << iE+1 << " " << setw(3) << adc.m_num_samples << " " << setw(6) << adc.m_dwell_time
 			        << " " << setw(3) << adc.m_delay << " " << adc.m_freq_offset*1.0e3/(2.0*PI) << " " << adc.m_phase_offset << endl;
 		}
-		outfile << endl;
+		output << endl;
 	}
 
 	// Delay events
 	if (m_delay_library.size()>0) {
-		outfile << "# Format of delays:" << endl;
-		outfile << "# id delay (us)" << endl;
-		outfile << "[DELAYS]" << endl;
+		output << "# Format of delays:" << endl;
+		output << "# id delay (us)" << endl;
+		output << "[DELAYS]" << endl;
 		for (int iE=0; iE<m_delay_library.size(); iE++) {
 			DelayEvent &delay = m_delay_library[iE];
-			outfile << iE+1 << " " << delay.m_delay << endl;
+			output << iE+1 << " " << delay.m_delay << endl;
 		}
-		outfile << endl;
+		output << endl;
 	}
 
 	// Output shapes
 	// ============================================================
 
-	outfile << "# Sequence Shapes" << endl << endl;
-	outfile << "[SHAPES]" << endl << endl;
+	output << "# Sequence Shapes" << endl << endl;
+	output << "[SHAPES]" << endl << endl;
 
 	for (int iS=0; iS<m_shape_library.size(); iS++)
 	{
 		CompressedShape &shape = m_shape_library[iS];
-		outfile << "shape_id " <<  iS+1 << endl;
-		outfile << "num_samples " << shape.m_num_uncompressed_samples << endl;
+		output << "shape_id " <<  iS+1 << endl;
+		output << "num_samples " << shape.m_num_uncompressed_samples << endl;
 		for (int k=0; k<shape.m_samples.size(); k++)
-			outfile << setprecision(std::numeric_limits<float>::digits10) << shape.m_samples[k] << endl; // Pulseq sequence has floating point preicision
-		outfile << endl;
+			output << setprecision(std::numeric_limits<float>::digits10) << shape.m_samples[k] << endl; // Pulseq sequence has floating point preicision
+		output << endl;
 	}
-	outfile << endl;
+	output << endl;
+
+	// Write stringstream to file
+	outfile << output.rdbuf();
+
+	// Add MD5 signature
+	string output_str = output.str();
+	string signature = md5(output_str);
+	outfile << "[SIGNATURE]" << endl;
+	outfile << "Type " << "md5" << endl;
+	outfile << "Hash " << signature << endl;
+
 	outfile.close();
 
 }

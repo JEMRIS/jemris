@@ -15,13 +15,13 @@ list (APPEND CORE_SRC AnalyticCoil.cpp AnalyticCoil.h
   ExternalCoil.h ExternalGradPulse.cpp ExternalGradPulse.h
   ExternalRFPulse.cpp ExternalRFPulse.h ExternalPulseData Event.h GaussianRFPulse.cpp
   GaussianRFPulse.h GradPulse.cpp GradPulse.h HardRFPulse.cpp
-  HardRFPulse.h HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h KSpace.h
+  HardRFPulse.h HDF5IO.cpp HDF5IO.h IdealCoil.cpp IdealCoil.h KSpace.h md5.cpp md5.h
   Microstructure.cpp Microstructure.h MicrostructureBoxes.cpp
   MicrostructureBoxes.h MicrostructureCrossingFiber.cpp
   MicrostructureCrossingFiber.h MicrostructureKissingFiber.cpp
   MicrostructureKissingFiber.h MicrostructureSingleFiber.cpp
   MicrostructureSingleFiber.h Module.cpp Module.h
-  ModulePrototypeFactory.cpp ModulePrototypeFactory.h NDData.h
+  ModulePrototypeFactory.cpp ModulePrototypeFactory.h mtg_functions.h NDData.h
   OutputSequenceData.h OutputSequenceData.cpp Parameters.cpp Parameters.h 
   Prototype.cpp Prototype.h
   PrototypeFactory.cpp PrototypeFactory.h Pulse.cpp Pulse.h RFPulse.cpp
