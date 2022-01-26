@@ -213,6 +213,8 @@ class World {
     int 			  m_partition;          /**< @brief partition number */
     int 			  m_partitionmax;       /**< @brief total number of partitions */
 
+    string            m_seqSignature;        /**< @brief Sequence signature (md5 sum of Pulseq sequence file) */
+
  private:
 
     /**

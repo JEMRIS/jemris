@@ -101,6 +101,7 @@ void writeProt(string ismrmrd_file, string output_dir, string filename){
 			d.appendAcquisition(acq);
 	}
 
+	std::remove(ismrmrd_file.c_str());
 }
 
 int main (int argc, char *argv[]) {
@@ -198,29 +199,29 @@ int main (int argc, char *argv[]) {
 		SequenceTree seqTree;
 		seqTree.Initialize(input);
 		if (seqTree.GetStatus()) {
-			string baseFilename(filename);
-			if(filename == "")
-				filename = "seq";
 			seqTree.Populate();
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
 			seq->DumpTree();
 
-			if (!export_seq)
+			if (!export_seq){
+				if(filename == "")
+					filename = "seq";
 				seq->SeqDiag(output_dir + filename + ".h5");
+			}
 			else{
+				if (filename == "")
+					filename = "external";
+				// Pulseq sequence file
+				seq->OutputSeqData(scan_defs, output_dir, filename + ".seq");
+
+				// ISMRMRD file
 				string ismrmrd_tmp = output_dir + filename + "_ismrmrd_tmp.h5";
 				World* pW = World::instance();
 				pW->pSeqTree = &seqTree;
 				bool img_adcs = seq->SeqISMRMRD(ismrmrd_tmp);
 				if (!img_adcs)
-					cout << "Warning: No Imaging ADCs in sequence - export ISMRMRD file anyways." << endl;
-				filename = baseFilename;
-				if (filename == "")
-					filename = "external";
+					cout << "Warning: No Imaging ADCs in sequence - export ISMRMRD file anyways." << endl;			
 				writeProt(ismrmrd_tmp, output_dir, filename);
-				std::remove(ismrmrd_tmp.c_str());
-				filename += ".seq";
-				seq->OutputSeqData(scan_defs, output_dir, filename);
 			}
 			return 0;
 		}

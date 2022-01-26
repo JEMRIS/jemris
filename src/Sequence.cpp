@@ -215,6 +215,8 @@ bool Sequence::SeqISMRMRD (const string& fname ) {
 	ISMRMRD::AcquisitionSystemInformation sys;
 	ISMRMRD::MeasurementInformation measInfo;
 	ISMRMRD::ExperimentalConditions expCond;
+	ISMRMRD::UserParameters usrParams;
+	ISMRMRD::UserParameterString usrString;
 
 	// Set system info and sequence name
 	sys.systemVendor.set("JEMRIS");
@@ -226,6 +228,12 @@ bool Sequence::SeqISMRMRD (const string& fname ) {
 	h.measurementInformation.set(measInfo);
 	expCond.H1resonanceFrequency_Hz = 0;
 	h.experimentalConditions = expCond;
+
+	// save md5 signature in user string
+	usrString.name = "seq_signature";
+	usrString.value = pW->m_seqSignature;
+	usrParams.userParameterString.push_back(usrString);
+	h.userParameters.set(usrParams);
 
 	// Encoding
 	Parameters* P = Parameters::instance();

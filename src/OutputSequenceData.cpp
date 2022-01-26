@@ -315,11 +315,12 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	outfile << output.rdbuf();
 
 	// Add MD5 signature
+	World* pW = World::instance();
 	string output_str = output.str();
-	string signature = md5(output_str);
+	pW->m_seqSignature = md5(output_str);
 	outfile << "[SIGNATURE]" << endl;
 	outfile << "Type " << "md5" << endl;
-	outfile << "Hash " << signature << endl;
+	outfile << "Hash " << pW->m_seqSignature << endl;
 
 	outfile.close();
 

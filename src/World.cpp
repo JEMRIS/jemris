@@ -85,6 +85,8 @@ World* World::instance() {
         m_instance->m_partition         = 0;
         m_instance->m_partitionmax      = 1;
 
+        m_instance->m_seqSignature      = "";
+
     }
 
     XMLPlatformUtils::Initialize ();
