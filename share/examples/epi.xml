@@ -9,9 +9,9 @@
          <TrapGradPulse Area="KMY" Axis="GY" Name="P3" Observe="KMY=P.KMAXy"/>
       </AtomicSequence>
       <DelayAtomicSequence Delay="TE" DelayType="C2C" Name="D1" Observe="TE=P.TE" StartSeq="A1" StopSeq="C2"/>
-      <ConcatSequence Name="C2" Observe="NY=P.Ny" Repetitions="NY">
+      <ConcatSequence LoopFlag="2" Name="C2" Observe="NY=P.Ny" Repetitions="NY">
          <AtomicSequence Name="A3">
-            <TrapGradPulse ADCs="NX" Axis="GX" FlatTopArea="2*KMX*(-1)^C" FlatTopTime="1" Name="P4" Observe="KMX=P.KMAXx, C=C2.Counter, NX=P.Nx"/>
+            <TrapGradPulse ADCFlag="2" ADCs="NX" Axis="GX" FlatTopArea="2*KMX*(-1)^C" FlatTopTime="1" Name="P4" Observe="KMX=P.KMAXx, C=C2.Counter, NX=P.Nx"/>
          </AtomicSequence>
          <AtomicSequence Name="A4">
             <TrapGradPulse Area="ite(1+C,R,0,-DKY)" Axis="GY" Name="P5" Observe="DKY=P.DKy, C=C2.Counter, R=C2.Repetitions"/>

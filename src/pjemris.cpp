@@ -68,9 +68,10 @@ int main (int argc, char *argv[]) {
 
   opterr = 0;
   int status;
+  bool recon = false;
 
   int c;
-  while((c = getopt (argc, argv, "f:o:")) != -1)
+  while((c = getopt (argc, argv, "f:o:r")) != -1)
   {
     switch (c)
     {
@@ -88,6 +89,9 @@ int main (int argc, char *argv[]) {
       case 'f':
         filename = optarg;
         break;
+	  case 'r':
+		recon=true;
+		break;
       case '?':
         if (optopt == 'o')
           cerr << "Option '-o' requires an argument." << endl;
@@ -151,6 +155,12 @@ int main (int argc, char *argv[]) {
 			// set output name
 			RxCA->SetSignalPrefix(filename);
 		RxCA->DumpSignals();
+		// Initialize temporary ISMRMRD file with sequence information, afterwards dump signals
+		bool img_adcs = psim->GetSequence()->SeqISMRMRD(RxCA->GetSignalOutputDir() + RxCA->GetSignalPrefix() + "_ismrmrd_tmp.h5");
+		if (img_adcs)
+			RxCA->DumpSignalsISMRMRD("_ismrmrd", true);
+		else
+			remove((RxCA->GetSignalOutputDir() + RxCA->GetSignalPrefix() + "_ismrmrd_tmp.h5").c_str());
 		psim->DeleteTmpFiles();
 	}
 
@@ -183,8 +193,78 @@ int main (int argc, char *argv[]) {
 	//finished
 	MPI_Barrier(MPI_COMM_WORLD);
 	double t2 = MPI_Wtime();
-	if ( my_rank == master)
+	if ( my_rank == master){
 		printf ("\n\nActual simulation took %.2f seconds.\n", t2-t1);
+		if (recon){
+			try{
+				printf ("Starting reconstruction.\n");
+				struct timeval begin, end;
+				gettimeofday(&begin, 0);
+				CoilArray* RxCA = psim->GetRxCoilArray();
+				string infile = RxCA->GetSignalOutputDir() + RxCA->GetSignalPrefix() + "_ismrmrd.h5";
+				string outfile = RxCA->GetSignalOutputDir() + RxCA->GetSignalPrefix() + "_ismrmrd_recon.h5";
+				remove(outfile.c_str());
+				string cmd = "client.py -c bart_jemris " + infile + " -o " + outfile + " -G images";
+				string conda_cmd = "conda run -n ismrmrd_client";
+				string docker_cmd = "docker run -d --user $(id -u):$(id -g) -p 9002:9002 mavel101/bart-reco-server";
+				int err;
+
+				// Executing reconstruction
+				printf ("Try to automatically start reconstruction server.\n");
+				err = system(docker_cmd.c_str());
+				if (err){
+					printf ("Automatic start of reconstruction server failed. Try to start reconstruction anyways.\n");
+					printf ("Try to detect conda environment with ISMRMRD client.\n");
+					err = system(conda_cmd.c_str());
+					if (err){
+						std::cout << "Conda environment not detected. Try to start reconstruction anyways." << std::endl;
+						err = system(cmd.c_str());
+						if (err)
+							std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+					}
+					else{
+						std::cout << "Conda environment detected." << std::endl;
+						err = system((conda_cmd+" "+cmd).c_str());
+						if (err)
+							std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+					}
+				}
+				else{
+					printf ("Reconstruction server started.\n");
+					printf ("Try to detect conda environment with ISMRMRD client.\n");
+					string conda_cmd = "conda run -n ismrmrd_client";
+					err = system(conda_cmd.c_str());
+					if (err){
+						std::cout << "Conda environment not detected. Try to start reconstruction anyways." << std::endl;
+						err = system(cmd.c_str());
+						if (err)
+							std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+					}
+					else{
+						std::cout << "Conda environment detected." << std::endl;
+						err = system((conda_cmd+" "+cmd).c_str());
+						if (err)
+							std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+					}
+					string docker_kill_cmd = "docker kill `docker ps -qf \"ancestor=mavel101/bart-reco-server\"`";
+					err = system(docker_kill_cmd.c_str());
+					if (err)
+						std::cout << "Reconstruction server could not be killed." << std::endl;
+					else
+						std::cout << "Reconstruction server killed." << std::endl;
+				}
+
+				gettimeofday(&end, 0);
+				long sec = end.tv_sec - begin.tv_sec;
+				long usec = end.tv_usec - begin.tv_usec;
+				double elapsed = sec + usec*1e-6;
+				printf ("Reconstruction took %.2f seconds.\n", elapsed);
+			}
+			catch (...) {
+
+			}
+		}
+	}
 	MPI_Finalize();
 
 	return 0;

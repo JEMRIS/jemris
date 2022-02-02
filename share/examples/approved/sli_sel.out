@@ -1,11 +1,11 @@
 dump of sequence tree
                         TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
                         ----------------------------------------------------------------- |  ---------------
-sequence-root------>   CONCAT       CONCATSEQUENCE       C1     6.900       22       304  |  Repetitions = 2
-  |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     2.790        5       142  | 
-    |_ child 1   -->    PULSE          SINCRFPULSE       P1     2.667     -100       134  |  Axis = RF  , InitDelay = 0.06 , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,3,0,0.5)  , (Zero-crossings,Apodization) = (4,0.5)
-    |_ child 2   -->    PULSE        TRAPGRADPULSE       P2     2.790        5         9  |  Axis = GX  , Area = 1.54185 , FlatTop: (Area,time)= (1.50796,2.67)
+sequence-root------>   CONCAT       CONCATSEQUENCE       C1     6.900       22       296  |  Repetitions = 2, type SLI|PHA|PAR|SET|CON|AVG = 0|0|0|0|0|0
+  |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     2.790        5       138  | 
+    |_ child 1   -->    PULSE          SINCRFPULSE       P1     2.667     -100       134  |  Axis = RF  , InitDelay = 0.06 , ADC type ADC|IMG|ACS|PC|NOISE = 0|0|0|0|0 , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,3,0,0.5)  , (Zero-crossings,Apodization) = (4,0.5)
+    |_ child 2   -->    PULSE        TRAPGRADPULSE       P2     2.790        5         9  |  Axis = GX  , ADC type ADC|IMG|ACS|PC|NOISE = 0|1|0|0|0 , Area = 1.54185 , FlatTop: (Area,time)= (1.50796,2.67)
   |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A2     0.560        5         7  | 
-    |_ child 1   -->    PULSE        TRAPGRADPULSE       P3     0.560        5         9  |  Axis = GX  , Area = -0.770926
+    |_ child 1   -->    PULSE        TRAPGRADPULSE       P3     0.560        5         9  |  Axis = GX  , ADC type ADC|IMG|ACS|PC|NOISE = 0|1|0|0|0 , Area = -0.770926
   |_ child 3   ---->     ATOM  DELAYATOMICSEQUENCE       D1     0.100        1         3  |  DelayType = B2E  , Delay = 0.1
-    |_ child 1   -->    PULSE           EMPTYPULSE    eP_D1     0.100        1         3  |  Axis = none 
+    |_ child 1   -->    PULSE           EMPTYPULSE    eP_D1     0.100        1         3  |  Axis = none  , ADC type ADC|IMG|ACS|PC|NOISE = 1|0|0|0|0

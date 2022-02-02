@@ -30,8 +30,9 @@
 #include <cmath>
 
 #include "GradPulse.h"
+#include "mtg_functions.h"
 
-//! Prototype of a spiral gradient as described by Pauly et al.
+// Spiral Gradient calculated with time optimal gradients (Lustig et. al.)
 
 class SpiralGradPulse : public GradPulse {
 	
@@ -71,23 +72,19 @@ class SpiralGradPulse : public GradPulse {
 
  protected:
     /**
-     * Get informations on this trapezoidal gradient
+     * Get informations on this Spiral gradient
      *
-     * @return GradPulse::GetInfo plus m_pitch and m_alpha
+     * @return GradPulse::GetInfo
      */
     virtual string          GetInfo        ();
 
-    double  m_arms;          /**< Acceleration factor */
-    double  m_slewrate;      /**< Maximum slew rate override  */
-    double  m_max_grad;      /**< Maximum gradient amplitude override*/
-    double  m_grad_samp_int; /**< Gradient samping interval */
-    double  m_fov;           /**< Field of view override */
-    double  m_bw;            /**< Bandwidth */
-    double  m_pitch;         /**< Spiral pitch */
-    double  m_beta;          /**< Beta */
-	int     m_inward;        /**< Spiral in? */
-	long    m_samples;       /**< Number of samples */
-	std::vector<double> m_amps;          /**< Gradient amplitudes */
+    double  m_intl;              /**< Spiral interleaves */
+    double  m_grad_raster_time;  /**< Gradient raster time / sampling interval [ms] */
+    double  m_fov;               /**< Field of view [mm] */
+    double  m_res;               /**< Resolution [mm] */
+	 int     m_inward;            /**< Spiral in? */
+	 size_t  m_samples;           /**< Number of samples */
+	std::vector<double> m_amps;   /**< Gradient amplitudes [rad/mm/ms] */
 
 };
 

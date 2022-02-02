@@ -30,7 +30,9 @@
 /***********************************************************/
 ConcatSequence::ConcatSequence  (const ConcatSequence& cs ) {
     m_repetitions = 1;
-    m_counter = 0;
+    m_counter     = 0;
+    m_loop_flag   = 0;
+    m_mask        = 0;
 }
 
 /***********************************************************/
@@ -39,11 +41,15 @@ bool    ConcatSequence::Prepare (const PrepareMode mode){
 	m_type = MOD_CONCAT;
 
 	ATTRIBUTE("Repetitions", m_repetitions);
-	HIDDEN_ATTRIBUTE("Counter", m_counter);
-	if (mode != PREP_UPDATE) GetDuration();
+	ATTRIBUTE("LoopFlag", m_loop_flag);
 
-	if (mode != PREP_UPDATE)
+	HIDDEN_ATTRIBUTE("Counter", m_counter);
+
+	if (mode != PREP_UPDATE) {
+		GetDuration();
 		SetRepCounter( 0);
+		if (HasDOMattribute("LoopFlag") ) m_mask = m_loop_flag;
+	}
 
 	    return Sequence::Prepare(mode);
 }
@@ -136,23 +142,44 @@ long  ConcatSequence::GetNumOfADCs () {
 /***********************************************************/
 string          ConcatSequence::GetInfo() {
 	stringstream s;
-	s << " Repetitions = " << m_repetitions;
+	s << " Repetitions = " << m_repetitions << ", type SLI|PHA|PAR|SET|CON|AVG = "
+	  << IsSliceLoop() << "|" << IsPhaseLoop() << "|"<< IsPartitionLoop() << "|"<< IsSetLoop() << "|"<< IsContrastLoop() << "|" << IsAvgLoop() ;
 	return s.str();
 }
 
 /***********************************************************/
 void ConcatSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& offset) {
 
+	World* pW = World::instance();
+
 	vector<Module*> children = GetChildren();
 
-	for (RepIter r=begin(); r<end(); ++r)
+	for (RepIter r=begin(); r<end(); ++r){
+
+		if ( IsPhaseLoop() ){
+			pW->m_shot = GetMyRepCounter();
+			pW->m_shotmax = GetMyRepetitions();
+		}
+		if ( IsPartitionLoop() ){
+			pW->m_partition = GetMyRepCounter();
+			pW->m_partitionmax = GetMyRepetitions();
+		}
+		if ( IsSliceLoop() )
+			pW->m_slice = GetMyRepCounter();
+		if ( IsSetLoop() )
+			pW->m_set = GetMyRepCounter();
+		if ( IsContrastLoop() )
+			pW->m_contrast = GetMyRepCounter();
+		if ( IsAvgLoop() )
+			pW->m_average = GetMyRepCounter();
+
 		for (unsigned int j=0; j<children.size() ; ++j) {
 			if (children[j]->GetHardwareMode()<=0) {
 				((Sequence*) children[j])->GetDuration(); // triggers duration notification
 				((Sequence*) children[j])->CollectSeqData(seqdata, t, offset);
 			}
 		}
-
+	}
 }
 
 /***********************************************************/

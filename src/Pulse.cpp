@@ -32,6 +32,7 @@ Pulse::Pulse  () {
 
 	m_axis              = AXIS_VOID;
 	m_adc               = 0;
+	m_adc_flag			= 1;
 	m_initial_delay     = 0.0;
 	m_phase_lock        = false;
 
@@ -45,8 +46,12 @@ bool Pulse::Prepare  (const PrepareMode mode) {
 	//every Pulse might has Axis, Duration, ADCs, and an initial delay
 	ATTRIBUTE ("Axis"        , m_axis         );
 	ATTRIBUTE ("ADCs"        , m_adc          );
+	ATTRIBUTE ("ADCFlag"     , m_adc_flag     );
 	ATTRIBUTE ("PhaseLock"   , m_phase_lock   );
 	ATTRIBUTE ("InitialDelay", m_initial_delay);
+	ATTRIBUTE ("InitialPhase", m_initial_phase);
+	ATTRIBUTE ("Frequency"   , m_frequency    );
+
 
 	return Module::Prepare(mode);
 
@@ -58,17 +63,20 @@ inline void  Pulse::SetTPOIs () {
 
     m_tpoi.Reset();
 
-    m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0);
-    m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
+    m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0, 0);
+    m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0, 0);
 
+    int    N = abs(GetNADC());
+    size_t bitmask = m_adc_flag;
     double p = (m_phase_lock?World::instance()->PhaseLock:0.0);
 
-    int N = abs(GetNADC());
-    size_t bitmask = BIT(ADC_T);
-    if ( GetNADC() < 0 ) { p = -1.0; bitmask = 0; }
+    if (GetNADC()<0)  bitmask = 0;  //backwards compatibility - adc_flag ignored if ADC number is negative!
+	if (bitmask == 0) p=-1.0;
 
     for (int i = 0; i < N; i++)
-    	m_tpoi + TPOI::set((i+1)*GetDuration()/(N+1), p, bitmask );
+    	m_tpoi + TPOI::set((i+0.5)*GetDuration()/N, p, bitmask );
+
+//cout << GetName() << " m_adc_flag = " << m_adc_flag;  m_tpoi.PrintMeta(2); cout << endl;
 
 }
 
@@ -97,7 +105,10 @@ string          Pulse::GetInfo() {
 	stringstream s;
 	s << ret;
 	if (m_initial_delay>0.0) s << " , InitDelay = " << m_initial_delay;
-
+	if (m_adc_flag>0 && m_adc>0){
+		s << " , ADC type ADC|IMG|ACS|PC|NOISE = "
+	  	  << m_tpoi.IsADC(2) << "|" << m_tpoi.IsImg(2) << "|"<< m_tpoi.IsACS(2) << "|"<< m_tpoi.IsPC(2) << "|"<< m_tpoi.IsNoise(2);
+	}
 	return s.str();
 
 }

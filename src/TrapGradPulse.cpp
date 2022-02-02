@@ -83,8 +83,6 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 	ATTRIBUTE("FlatTopArea"         , m_flat_top_area   );
 	ATTRIBUTE("FlatTopTime"         , m_flat_top_time   );
 	ATTRIBUTE("Asymmetric"          , m_asym_sr         );
-	ATTRIBUTE("Frequency"           , m_frequency       );
-	ATTRIBUTE("InitialPhase"        , m_initial_phase   );
 
 	HIDDEN_ATTRIBUTE("Amplitude"    , m_amplitude       );
 	HIDDEN_ATTRIBUTE("RampUpTime"   , m_ramp_up_time    );
@@ -95,6 +93,8 @@ bool TrapGradPulse::Prepare  (PrepareMode mode) {
 
 	if ( mode != PREP_UPDATE )
 	{
+		if (!HasDOMattribute("ADCFlag") && m_adc>0) m_adc_flag = 2;   // assume imaging ADCs if no ADCFLag provided
+
 		//XML error checking
     	m_has_flat_top_time = HasDOMattribute("FlatTopTime"); // these conditions have to be known
     	m_has_flat_top_area = HasDOMattribute("FlatTopArea"); // also during PREP_UPDATE, therefore
@@ -327,7 +327,7 @@ inline void  TrapGradPulse::SetTPOIs () {
 	double p0 = (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
 	p0 += GetInitialPhase()*PI/180.0;
 
-	size_t bitmask = GetNADC() < 0 ? 0 : BIT(ADC_T);
+	size_t bitmask = GetNADC() < 0 ? 0 : m_adc_flag;
 
 	if ( m_has_flat_top_time || m_has_flat_top_area)
 	{
@@ -366,6 +366,8 @@ inline void  TrapGradPulse::SetTPOIs () {
 	//add TPOIs at nonlinear points of the trapezoid
 	m_tpoi + TPOI::set(m_ramp_up_time	   , -1.0);
 	m_tpoi + TPOI::set(m_ramp_up_time+m_ft , -1.0);
+
+    //cout << GetName() << " m_adc_flag = " << m_adc_flag;  m_tpoi.PrintMeta(2); cout << endl;
 
 }
 
@@ -407,7 +409,7 @@ inline void TrapGradPulse::GenerateEvents(std::vector<Event*> &events) {
 		ADCEvent *adc = new ADCEvent();
 		adc->m_num_samples = N;
 		// If flat top time is set, no ramp sampling will be used
-		if (m_flat_top_time>0) {
+		if (m_has_flat_top_time || m_has_flat_top_area) {
 			adc->m_dwell_time = 1e6*m_flat_top_time/N;
 			adc->m_delay = round(GetInitialDelay()*1.0e3) + round(m_ramp_up_time*1e3);
 		}
@@ -419,6 +421,7 @@ inline void TrapGradPulse::GenerateEvents(std::vector<Event*> &events) {
 		p = fmod( p, 2*PI );
 		p = p<0.0 ? p+2*PI : p;
 		p = round(p*1.0e5)/1.0e5;
+		p += (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
 		adc->m_phase_offset = p;
 		adc->m_freq_offset = GetFrequency();
 

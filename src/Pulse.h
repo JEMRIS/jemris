@@ -38,7 +38,7 @@ class ExternalPulseData;
 
 //! Pulse Super Class. ABC for all RF and gradient pulses
 
-class Pulse :public Module {
+class Pulse :public Module, public TxRxPhase {
 
  friend class AnalyticPulseShape;
  friend class ExternalPulseData;
@@ -59,7 +59,7 @@ class Pulse :public Module {
      * @brief Copy constructor.
      */
     Pulse                  (const Pulse&) :
-    	m_adc(0), m_initial_delay(0), m_axis(AXIS_VOID), m_phase_lock(0) {};
+    	m_adc(0), m_initial_delay(0), m_axis(AXIS_VOID), m_adc_flag(1) {};
 
     /**
      * See Module::GetValue
@@ -125,16 +125,29 @@ class Pulse :public Module {
      *
      * @return Number of ADCs
      */
-    inline  int  GetNADC  () { return m_adc;  };
+    inline  int  GetNADC  () { return m_adc * (m_adc_flag>0?1:0) ;  };
 
 
     /**
      * @brief Set number of ADCs
      *
      * @param  nadc
-     * @return      The private member m_ADCs.
      */
-    inline void  SetNADC          (unsigned int nadc) {m_adc = nadc; SetTPOIs();};
+    inline void  SetNADC  (unsigned int nadc) {m_adc = nadc; SetTPOIs();};
+
+    /**
+     * @return Get ADC flag
+     *
+     * @return ADC flag
+     */
+    inline  int  GetADCFlag  () { return m_adc_flag;  };
+
+    /**
+     * @brief Set ADC flag
+     *
+     * @param  nadc
+     */
+    inline void  SetADCFlag  (int adcflag) {m_adc_flag = adcflag; SetTPOIs();};
 
     /**
      * @brief Get delay in respect of the AtomicSequence holding this pulse.
@@ -142,21 +155,6 @@ class Pulse :public Module {
      * @return Delay in respect to start of the AtomicSequence.
      */
     inline double  GetInitialDelay          () {return m_initial_delay; };
-
-	/**
-	 * @brief Set phase lock.
-	 *
-	 * @param val Phase lock.
-	 */
-    inline void  SetPhaseLock     (bool val)         {m_phase_lock = val; };
-
-	/**
-	 * @brief Get phase lock.
-	 *
-	 * @return Phase lock.
-	 */
-    inline bool  GetPhaseLock     ()                 {return m_phase_lock; };
-
 
  protected:
 
@@ -169,8 +167,8 @@ class Pulse :public Module {
 
     PulseAxis     m_axis;              /**< The axis of this pulse*/
     unsigned int  m_adc;               /**< Number of ADCs */
+    int  		  m_adc_flag;          /**< Property of ADCs (see TPOI) */
     double        m_initial_delay;     /**< Time shift at the beginning inside the atom */
-    bool          m_phase_lock;        /**< Lock phase of ADCs to the phase of the last RF pulse event*/
 
 };
 

@@ -209,14 +209,23 @@ void GradPulse::GetValue (double * dAllVal, double const time) {
 
 /*****************************************************************/
 inline void GradPulse::GenerateEvents(std::vector<Event*> &events) {
+
+	double grad_raster_time = 10.0e-3;
+
+	// Gradients shorter than 10us lead to Segmentation faults
+	if (GetDuration() < grad_raster_time){
+		cout << "One of the gradients has a duration shorter than 10us. Aborting." << endl;
+		exit(EXIT_FAILURE);
+	}
+
 	GradEvent *grad = new GradEvent();
 	double max_amplitude = std::numeric_limits<double>::min();
-	int num_samples = round(GetDuration()/10.0e-3);
+	int num_samples = round(GetDuration()/grad_raster_time);
 	for (int i=0; i<num_samples; i++)
 	{
-		double amp = GetGradient((i+1)*10.0e-3);
+		double amp = GetGradient(i*grad_raster_time);
 
-		if (amp>max_amplitude)
+		if (abs(amp)>abs(max_amplitude))
 			max_amplitude=amp;
 
 		grad->m_samples.push_back(amp);
@@ -237,8 +246,13 @@ inline void GradPulse::GenerateEvents(std::vector<Event*> &events) {
 		adc->m_dwell_time = 1e6*GetDuration()/N;
 		adc->m_delay = round(GetInitialDelay()*1.0e3);
 
-		adc->m_phase_offset = 0;
-		adc->m_freq_offset = 0;
+		double p = GetInitialPhase()*PI/180.0;
+		p = fmod( p, 2*PI );
+		p = p<0.0 ? p+2*PI : p;
+		p = round(p*1.0e5)/1.0e5;
+		p += (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
+		adc->m_phase_offset = p;
+		adc->m_freq_offset = GetFrequency();
 
 		events.push_back(adc);
 	}

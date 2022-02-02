@@ -113,6 +113,12 @@ class CoilArray  {
 	IO::Status DumpSignals       (string tmp_prefix = "", bool normalize = true);
 
     /**
+     * @brief Dump all signals
+     * Dump the signals from all coils to ISMRMRD file.
+     */
+	IO::Status DumpSignalsISMRMRD       (string prefix = "_ismrmrd", bool normalize = true);
+
+    /**
      * @brief Dump all sensitivities
      * Dump the sensitivities from all coils to discrete files.
      */
@@ -192,6 +198,7 @@ class CoilArray  {
     Parameters*           m_params;        /**< @brief My parameters   */
     XMLIO*                m_xio;           /**< @brief My XML IO module   */
 
+    bool                  m_normalized=false; /**< @brief WIP parameter to check if data was already normalized by DumpSignals(). */
 
 };
 

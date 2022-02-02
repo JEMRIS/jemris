@@ -26,6 +26,7 @@
 
 #include "AtomicSequence.h"
 #include "GradPulse.h"
+#include "TrapGradPulse.h"
 #include "EddyPulse.h"
 #include "RFPulse.h"
 
@@ -189,7 +190,7 @@ void AtomicSequence::CollectTPOIs() {
 				m_tpoi	+ TPOI::set(d + p->GetTPOIs()->GetTime(i),
 						p->GetTPOIs()->GetPhase(i), p->GetTPOIs()->GetMask(i));
 
-				//one TPOI prior to the pulse in case of intial delay phase == -2.0 -> ReInit CVode
+				//one TPOI prior to the pulse in case of initial delay phase == -2.0 -> ReInit CVode
 				if (d>TIME_ERR_TOL)
 					m_tpoi + TPOI::set(d-TIME_ERR_TOL/2, -2.0, 0);
 
@@ -234,6 +235,17 @@ void AtomicSequence::CollectSeqData(NDData<double>& seqdata, double& t, long& of
 		if (pW->pStaticAtom != NULL) pW->pStaticAtom->GetValue( &seqdata(2,offset+i+1), m_tpoi.GetTime(i) + t );
         GetValueLingeringEddyCurrents(&seqdata(2,offset+i+1), m_tpoi.GetTime(i));
 		seqdata(MAX_SEQ_VAL+1+2,offset+i+1) = m_tpoi.GetMask(i);
+
+		if (seqdata.Dim(0) > MAX_SEQ_VAL+1+3){
+			// set kspace counters
+			seqdata(MAX_SEQ_VAL+1+3,offset+i+1) = pW->m_slice;
+			seqdata(MAX_SEQ_VAL+1+4,offset+i+1) = pW->m_shot;
+			seqdata(MAX_SEQ_VAL+1+5,offset+i+1) = pW->m_partition;
+			seqdata(MAX_SEQ_VAL+1+6,offset+i+1) = pW->m_set;
+			seqdata(MAX_SEQ_VAL+1+7,offset+i+1) = pW->m_contrast;
+			seqdata(MAX_SEQ_VAL+1+8,offset+i+1) = pW->m_average;
+		}
+
 	}
 
 	UpdateEddyCurrents();
@@ -261,10 +273,76 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 			p->GenerateEvents(events);
 
 	}
-	seqdata->AddEvents(events, GetDuration());
-	if (m_alpha!=0 || m_theta!=0 || m_phi!=0)
-		seqdata->SetRotationMatrix(m_alpha,m_theta,m_phi);
 
+	if (m_alpha!=0 || m_theta!=0 || m_phi!=0){
+		// special case: for rotated gradients we need new arbitrary gradient events
+		GradEvent *grad_x = new GradEvent();
+		grad_x->m_channel = 0;
+		grad_x->m_amplitude = std::numeric_limits<double>::min();
+		GradEvent *grad_y = new GradEvent();
+		grad_y->m_channel = 1;
+		grad_y->m_amplitude = std::numeric_limits<double>::min();
+		GradEvent *grad_z = new GradEvent();
+		grad_z->m_channel = 2;
+		grad_z->m_amplitude = std::numeric_limits<double>::min();
+		int num_samples = round(GetDuration()/10.0e-3);
+		for (int i=0; i<num_samples; i++){
+			grad_x->m_samples.push_back(0.0);
+			grad_y->m_samples.push_back(0.0);
+			grad_z->m_samples.push_back(0.0);
+		}
+		double t;
+		double gp_dur;
+		GradPulse* gp;
+		double grad_raster_time = 10.0e-3;
+
+		// Each gradient is rotated on its own at the relative time point, all rotated gradients are added up
+		for (size_t j = 0; j < children.size(); ++j) {
+			p = ((Pulse*)children[j]);
+			t = -1.0 * p->GetInitialDelay();
+			if (p->GetAxis() > 0 && p->GetAxis() <= 3){
+				gp = ((GradPulse*) p);
+				gp_dur = gp->GetDuration();
+				TrapGradPulse *tgp = dynamic_cast<TrapGradPulse*>(gp);
+				if (tgp!=NULL) t += grad_raster_time/2; // For trapezoidal pulses we have to shift by half a raster time (5us) to maintain correct shape
+
+				for (int i=0; i<num_samples; i++){
+					double Grot[3] = {0,0,0};
+					if (t>=0 && t<=gp_dur){
+						// Rotation
+						Grot[p->GetAxis()-AXIS_GX] = gp->GetGradient(t);
+						Rotation(&Grot[0]);
+						grad_x->m_samples[i] += Grot[0];
+						grad_y->m_samples[i] += Grot[1];
+						grad_z->m_samples[i] += Grot[2];
+
+						// Update maximum amplitude
+						grad_x->m_amplitude = (abs(grad_x->m_samples[i]) > abs(grad_x->m_amplitude)) ? grad_x->m_samples[i] : grad_x->m_amplitude;
+						grad_y->m_amplitude = (abs(grad_y->m_samples[i]) > abs(grad_y->m_amplitude)) ? grad_y->m_samples[i] : grad_y->m_amplitude;
+						grad_z->m_amplitude = (abs(grad_z->m_samples[i]) > abs(grad_z->m_amplitude)) ? grad_z->m_samples[i] : grad_z->m_amplitude;
+					}
+					t += grad_raster_time;
+				}
+			}
+		}
+		// compress shapes
+		transform( grad_x->m_samples.begin(), grad_x->m_samples.end(), grad_x->m_samples.begin(), bind2nd( divides<double>(), grad_x->m_amplitude ) );
+		transform( grad_y->m_samples.begin(), grad_y->m_samples.end(), grad_y->m_samples.begin(), bind2nd( divides<double>(), grad_y->m_amplitude ) );
+		transform( grad_z->m_samples.begin(), grad_z->m_samples.end(), grad_z->m_samples.begin(), bind2nd( divides<double>(), grad_z->m_amplitude ) );
+
+		// Delete old gradient events to not crowd the sequence file and add new events
+		for(int i = 0; i < events.size(); ++i){
+			GradEvent *grad = dynamic_cast<GradEvent*>(events[i]);
+			if (grad!=NULL && grad->m_channel<3)
+				events.erase(events.begin()+i--);
+		}
+		events.push_back(grad_x);
+		events.push_back(grad_y);
+		events.push_back(grad_z);
+
+	}
+
+	seqdata->AddEvents(events, GetDuration());
 	for(int i = 0; i < events.size(); ++i)
 	   delete events[i];
 

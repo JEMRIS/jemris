@@ -29,23 +29,19 @@
 
 
 SpiralGradPulse::SpiralGradPulse() :
-m_slewrate(0), m_amps(0), m_beta(0), m_fov(0), m_arms(0), m_max_grad(0),
-m_grad_samp_int(0), m_pitch(0), m_samples(0), m_bw(0), m_inward(0) {}
+m_amps(0), m_fov(0), m_intl(0), m_grad_raster_time(0), 
+m_samples(0), m_res(0), m_inward(0) {}
 
 
 SpiralGradPulse::SpiralGradPulse (const SpiralGradPulse& sp) :
-m_slewrate(0), m_amps(0), m_beta(0), m_fov(0), m_arms(0), m_max_grad(0),
-m_grad_samp_int(0), m_pitch(0), m_samples(0), m_bw(0), m_inward(0){
+m_amps(0), m_fov(0), m_intl(0), m_grad_raster_time(0),
+m_samples(0), m_res(0), m_inward(0){
 
-	m_slew_rate = sp.m_slewrate;
 	m_amps = sp.m_amps;
-	m_beta = sp.m_beta;
 	m_fov = sp.m_fov;
-	m_max_grad = sp.m_max_grad;
-	m_grad_samp_int = sp.m_grad_samp_int;
-	m_pitch = sp.m_pitch;
+	m_grad_raster_time = sp.m_grad_raster_time;
 	m_samples = sp.m_samples;
-	m_bw = sp.m_bw;
+	m_res = sp.m_res;
 	m_inward = sp.m_inward;
 
 }
@@ -54,8 +50,15 @@ m_grad_samp_int(0), m_pitch(0), m_samples(0), m_bw(0), m_inward(0){
 /***********************************************************/
 double            SpiralGradPulse::GetGradient (double const time)  {
 
-	size_t index (floor (time / m_grad_samp_int));
-	return (m_inward) ? -m_amps[index] : m_amps[index]; 
+	// linear interpolation
+	size_t ilo (floor (time / m_grad_raster_time));
+	double tlo = ilo * m_grad_raster_time;
+	double val = (time - tlo) * (m_amps[ilo + 1] - m_amps[ilo]) / m_grad_raster_time + m_amps[ilo];
+	return (m_inward) ? -val : val;
+
+	// nearest neighbour
+	// 	size_t index (round (time / m_grad_raster_time));
+	// 	return (m_inward) ? -m_amps[index] : m_amps[index]; 
 
 }
 
@@ -63,41 +66,49 @@ double            SpiralGradPulse::GetGradient (double const time)  {
 bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 
     bool btag = true;
-	m_inward  = 0;
 
-    ATTRIBUTE("Arms"       , m_arms);
-	ATTRIBUTE("MaxSlew"    , m_slewrate);
-	ATTRIBUTE("MaxGrad"    , m_max_grad);
-	ATTRIBUTE("GradSampInt", m_grad_samp_int);
-	ATTRIBUTE("FOV"        , m_fov);
-	ATTRIBUTE("BandWidth"  , m_bw);
-	ATTRIBUTE("Inward"     , m_inward);
-	
+    ATTRIBUTE("Interleaves"	, m_intl);
+	ATTRIBUTE("GradRasterTime", m_grad_raster_time);
+	ATTRIBUTE("FOV"			, m_fov);
+	ATTRIBUTE("Resolution"	, m_res);
+	ATTRIBUTE("SpiralIn"	, m_inward);
+
     if ( mode == PREP_VERBOSE) {
 
-        if (!HasDOMattribute("Arms"))    {
+        if (!HasDOMattribute("Interleaves"))    {
             btag = false;
-            cout << GetName() << "::Prepare() error: Arms required!!\n";
+            cout << GetName() << "::Prepare() error: Number of spiral interleavevs required.\n";
+			return false;
         }
 
-        if (!HasDOMattribute("MaxSlew"))    {
+        if (!HasDOMattribute("SlewRate"))    {
             btag = false;
-            cout << GetName() << "::Prepare() error: MaxSlew required!!\n";
+            cout << GetName() << "::Prepare() error: SlewRate [rad/mm/ms/ms] required.\n";
+			return false;
         }
 
-        if (!HasDOMattribute("MaxGrad"))    {
+        if (!HasDOMattribute("MaxAmpl"))    {
             btag = false;
-            cout << GetName() << "::Prepare() error: MaxGrad required!!\n";
+            cout << GetName() << "::Prepare() error: MaxAmpl [rad/mm/ms] required.\n";
+			return false;
         }
 
         if (!HasDOMattribute("FOV"))    {
             btag = false;
-            cout << GetName() << "::Prepare() error: FOV required!!\n";
+            cout << GetName() << "::Prepare() error: FOV [mm] required.\n";
+			return false;
         }
 
-        if (!HasDOMattribute("BandWidth"))    {
+        if (!HasDOMattribute("Resolution"))    {
             btag = false;
-            cout << GetName() << "::Prepare() error: BandWidth required!!\n";
+            cout << GetName() << "::Prepare() error: Resolution [mm] required.\n";
+			return false;
+        }
+
+		if (!HasDOMattribute("GradRasterTime"))    {
+            btag = false;
+            cout << GetName() << ":Warning: GradRasterTime [ms] not defined.\n";
+			return false;
         }
 
     }
@@ -106,112 +117,75 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 
 	if (mode == PREP_VERBOSE) {
 		
-		double gamma          = 42576000.0;
+		double gammabar = 42.5766;
+		double kmax = 5./m_res;  							// kmax = 1/(2*res) BUT: kmax in 1/cm, res in mm
+		double Gmax = m_max_ampl/(2*PI * gammabar/100.);	// rad/mm/ms -> G/cm
+		double Smax = m_slew_rate/(2*PI * gammabar/100.);	// rad/mm/ms/ms -> G/cm/ms
+		double dfov = m_fov/10.;										// [mm] >> [cm]
 
-		double samp_int       = 1.0 / m_bw;
+		double dr = 1./100. * 1./(dfov/m_intl);
+		long   nr = long(kmax/dr) + 1;
 
-		double max_grad_samp  = 1000 / (gamma * m_fov * samp_int); 
+		vector<double> x, y, z;
+		x.resize(nr, 0.);
+		y.resize(nr, 0.);
+		z.resize(nr, 0.);
 
-		m_pitch               = 1000 * m_arms / (2.0 * PI * m_fov);
-		m_beta                = gamma * m_slewrate / m_pitch;
-		
-		if (m_max_grad/1000 > max_grad_samp) { // Nyquist limit exceeded
-			cout << "\n warning in Prepare(1) of KVSPIRAL " << GetName() << endl;
-			cout << "Nyquist limit (" << max_grad_samp << ") exceeded." << endl;
+		// calculate parametrized curve
+		double theta = 0.;
+		for (size_t k=0; k<nr; k++) {
+			double r = k*dr;
+			x[k] = r * cos(theta);
+			y[k] = r * sin(theta);
+			theta += 2.*PI * dr*dfov / m_intl;
 		}
-		
-		double time_of_switch = 0.0;
-		
-		m_samples             = GetDuration() / m_grad_samp_int;
-		
-		double time           = 0.0;
-		double phi            = 0.0;
-		double max_phi        = 0.0;
-		
-		double klast[3];
-		double k    [3];
-		double g    [3];
-		double gabs           = 0.0;
+				
+		int n;
+		double g0   = 0.; // gradient will start at 0.
+		double gfin = 0.; // and end at 0.
+		double *gx; double *gy; double *gz;
 
-		m_amps.resize(m_samples+1);
-		
-		k[XC]                 = 0.0;
-		k[YC]                 = 0.0;
-		k[ZC]                 = 0.0;
-		klast[XC]             = 0.0;
-		klast[YC]             = 0.0;
-		klast[ZC]             = 0.0;
-		g[XC]                 = 0.0;
-		g[YC]                 = 0.0;
-		g[ZC]                 = 0.0;
-		
-		m_amps[0]             = 0.0;
-		
+		minTimeGradientRIV(&x[0], &y[0], &z[0], nr, g0, gfin, Gmax, Smax, m_grad_raster_time, gx, gy, gz, n, -0.5, gammabar/10.);
+		m_amps.resize(n);
+
+		// gradient [G/cm] -> [rad/mm/ms]
 		m_area = 0.;
-
-		for (long i = 0; i <= m_samples; i++) {
-			
-			time = (double) i * m_grad_samp_int / 1000.;
-			
-			if ( time_of_switch == 0.0 ) // Limited slewrate
-				phi = m_beta * pow (time, 2.0) / (2.0 + 2.0 * pow(2.0*m_beta/3.0, 1.0/6.0) * pow(time, 1.0/3.0) + pow(2*m_beta/3, 2.0/3.0) * pow(time, 4.0/3.0));
-			else                         // Limited gradient
-				phi = sqrt ( pow(max_phi, 2.0) + 2.0 * (time-time_of_switch) * gamma * m_max_grad / m_pitch * PI / 1000);
-			
-			k[XC]  = m_pitch * phi * sin(phi);
-			k[YC]  = m_pitch * phi * cos(phi);
-			k[ZC]  = m_pitch * phi * sin (phi/3/PI*4) * cos (phi/3/PI*4) * 2;
-			
-			if (i > 0) {
-				
-				g[XC]  = 10000000. * (k[XC] - klast[XC]) / m_fov * 2. * PI / (gamma * m_grad_samp_int);
-				g[YC]  = 10000000. * (k[YC] - klast[YC]) / m_fov * 2. * PI / (gamma * m_grad_samp_int);
-				g[ZC]  = 10000000. * (k[ZC] - klast[ZC]) / m_fov * 2. * PI / (gamma * m_grad_samp_int);
-				
-				if (m_axis == AXIS_GX) {
-					m_amps[i] = g[XC];
-					m_area += g[XC] * m_grad_samp_int;
-				} else if (m_axis == AXIS_GY) {
-					m_amps[i] = g[YC];
-					m_area += g[YC] * m_grad_samp_int;
-				} else {
-					m_amps[i] = g[ZC];
-				}
-
-				gabs   = sqrt (pow(g[XC],2.) + pow(g[YC],2.) + pow(g[ZC],2.));
-				
-			}
-			
-			klast[XC] = k[XC];
-			klast[YC] = k[YC];
-			klast[ZC] = k[ZC];
-			
-			// Maximum gradient reached?
-			if (gabs >= m_max_grad && time_of_switch == 0.0) { 
-				m_max_grad     = gabs;
-				time_of_switch = time;
-				max_phi        = phi;
-			}
-			
-
-		}
+		for (size_t k=0; k<n; ++k) {
+			if(m_axis == AXIS_GX)
+				m_amps[k] = gx[k] * 2*PI * gammabar/100.;
+			else if(m_axis == AXIS_GY)
+				m_amps[k] = gy[k] * 2*PI * gammabar/100.;
+			else
+				m_amps[k] = 0;
+			m_area += m_amps[k] * m_grad_raster_time;
+    	}
 		
+		// add points at start and end of gradient to avoid slewrate overflow
+		m_amps.insert(m_amps.begin(), m_amps[0]/2.);
+		m_amps.push_back(m_amps.back()/2.);
+		m_area += (m_amps[0] + m_amps.back()) * m_grad_raster_time;
 
-		if (m_inward)  {
-			
-			double* tmp = (double*) malloc ((m_samples+1)*sizeof(double)); 
-			std::reverse_copy (&m_amps[0], &m_amps[m_samples], &tmp[0]);
-			memcpy (&m_amps[0], &tmp[0], sizeof(double)*m_samples);
-			m_amps[m_samples] = 0.0;
-			free (tmp);
+		// add one zero in the end to get also the last value in Pulseq output
+		m_amps.push_back(0);
 
+		m_samples = m_amps.size();
+		SetDuration((m_samples - 1) * m_grad_raster_time); // first sample at t=0s
+
+		if (m_inward){
+			for (size_t k=0; k<(int)m_amps.size()/2; ++k)
+				swap(m_amps[k],m_amps[m_amps.size()-1-k]);
 		}
-		
+
 	}
-	
+
     if (!btag && mode == PREP_VERBOSE)
-        cout << "\n warning in Prepare(1) of KVSPIRAL " << GetName() << endl;
+        cout << "\n warning in Prepare(1) of SPIRAL " << GetName() << endl;
 	
+	if (mode != PREP_UPDATE){
+		HideAttribute ("Duration");
+		HideAttribute ("Area");
+	}
+
     return btag;
 }
 
@@ -220,7 +194,7 @@ bool              SpiralGradPulse::Prepare     (const PrepareMode mode)   {
 string          SpiralGradPulse::GetInfo() {
 
 	stringstream s;
-	s << GradPulse::GetInfo() << " , (beta,pitch,sampint,inward)= (" << m_beta << "," << m_pitch << "," << m_inward << ")";
+	s << GradPulse::GetInfo() << " , (intl,grad_raster_time,inward)= (" << m_intl << "," << m_grad_raster_time << "," << m_inward << ")";
 
 	return s.str();
 

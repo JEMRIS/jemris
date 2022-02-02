@@ -58,6 +58,7 @@ World* World::instance() {
         m_instance->deltaB              =  0.0;
         m_instance->GMAXoverB0          =  0.0;
         m_instance->NonLinGradField     =  0.0;
+        m_instance->LargestM0           =  0.0;
         m_instance->RandNoise           =  0.0;
         m_instance->saveEvolStepSize    =  0;
         m_instance->saveEvolFileName    =  "";
@@ -74,6 +75,17 @@ World* World::instance() {
         m_instance->m_useLoadBalancing  = true;
         m_instance->m_no_processes      = 1;  /* default: serial jemris */
         m_instance->m_startSpin         = 0;
+
+        m_instance->m_slice             = 0;
+        m_instance->m_set               = 0;
+        m_instance->m_contrast          = 0;
+        m_instance->m_average           = 0;
+        m_instance->m_shot              = 0;
+        m_instance->m_shotmax           = 1;
+        m_instance->m_partition         = 0;
+        m_instance->m_partitionmax      = 1;
+
+        m_instance->m_seqSignature      = "";
 
     }
 

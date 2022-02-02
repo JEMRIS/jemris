@@ -159,6 +159,8 @@ class Coil : public Prototype {
 
 	int GetPoints ();
 
+	int GetExtent ();
+
 	unsigned GetNDim ();
 
 	double GetNorm (){return m_norm;};

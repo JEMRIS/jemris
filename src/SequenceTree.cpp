@@ -89,6 +89,11 @@ string  SequenceTree::GetSequenceDirectory() {
 }
 
 /***********************************************************/
+string  SequenceTree::GetSequenceFilename() {
+	return m_seq_file.substr(m_seq_file.find_last_of("\\/")+1);
+}
+
+/***********************************************************/
 DOMNode*            SequenceTree::GetParentNode (DOMNode*     node) {
 
     return node->getParentNode();

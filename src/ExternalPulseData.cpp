@@ -67,7 +67,7 @@ void  ExternalPulseData::SetTPOIs () {
     m_pulse->Pulse::SetTPOIs();
 
     for (unsigned int i=0; i<m_times.size(); ++i)
-	m_pulse->m_tpoi + TPOI::set(m_times.at(i), -1.0);
+	m_pulse->m_tpoi + TPOI::set(m_times.at(i), -1.0, 0);
 
 };
 

@@ -48,7 +48,7 @@ bool TriangleGradPulse::Prepare  (const PrepareMode mode) {
 
 	if ( mode != PREP_UPDATE) {
 		if (!HasDOMattribute("Duration") ) {
-			m_duration  = ( fabs(m_amplitude)>0.0 ? fabs(m_amplitude)/m_slew_rate : 1e-5 );
+			m_duration  = ( fabs(m_amplitude)>0.0 ? fabs(m_amplitude)/m_slew_rate : 1e-3 );
 		} else {
 			if (m_duration  < (m_amplitude/m_slew_rate) && mode == PREP_VERBOSE)
 				cout << "Warning in in TRIANGLEGRADPULSE " << GetName()

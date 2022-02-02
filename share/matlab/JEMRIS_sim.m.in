@@ -58,8 +58,6 @@ hax{3}=handles.axes3; hax{4}=handles.axes4;
 hax{5}=handles.axes5; hax{6}=handles.axes6;
 for i=1:6; set(hax{i},'color',[1 1 1],'visible','off'); end
 handles.hax=hax;
-handles.epil=0;
-handles.epir=0;
 handles.CWD=pwd;
 handles.win=(strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64'));
 if (handles.win)
@@ -86,14 +84,17 @@ else
     [s,w]=system('setenv');
   if s==0 % a TCSH
     handles.JemrisCall  = ['setenv LD_LIBRARY_PATH ""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
-    handles.PJemrisCall = ['setenv LD_LIBRARY_PATH ""; @MPIRUN@  @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
+    handles.PJemrisCall = ['setenv LD_LIBRARY_PATH ""; mpirun  -np 4 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
   else    % a BASH
     handles.JemrisCall  = ['LD_LIBRARY_PATH=""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
-    handles.PJemrisCall = ['LD_LIBRARY_PATH=""; @MPIRUN@  @MPIRUN_PROC_OPT@ 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
+    handles.PJemrisCall = ['LD_LIBRARY_PATH=""; mpirun  -np 4 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
   end
   %CLUSTER call works only, if the CWD belongs to cluster
   cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/srv/data/',cwd(n:end)];
   handles.ClusterCall=sprintf('ssh mrcluster "cd %s; qsub /vol/share/jemris/matlab/pbs_script.sh"',cwd);
+  %excetuables for reconstruction - if empty, they will be guessed in function start_reco
+  handles.ClientCall  = []; %call to client.py, e.g. '/opt/anaconda/bin/client.py'
+  handles.PythonCall  = []; %call to python, e.g. '/opt/anaconda/bin/python'
 end
 %default is sequential computing
 set(handles.LocCompTag,'Checked','on');
@@ -142,14 +143,12 @@ C={'Signal','k-Space','k-Space (Phase)','Image','Image (phase)','Evolution'};
 set(handles.showRight,'String',C);
 C={'2D sphere','2D 2-spheres','1D column','shepp-logan','brain','user defined'};
 set(handles.Sample,'String',C);
-set(handles.EPI_L,'Visible','off');
-set(handles.EPI_R,'Visible','off');
 set(handles.ImageL,'Visible','off');
 set(handles.ImageR,'Visible','off');
-if (handles.win == false)
-  set(handles.ChannelSelection,'Visible','off');
-  set(handles.ChanSelString,'Visible','off');
-end
+set(handles.ChannelSelectionL,'Visible','off');
+set(handles.ChanSelStringL,'Visible','off');
+set(handles.ChannelSelectionR,'Visible','off');
+set(handles.ChanSelStringR,'Visible','off');
 set(handles.SusceptTag,'Value',0,'Visible','off');
 set(handles.gamBoTag,'Visible','off');
 set(handles.gamBoText,'Visible','off');
@@ -265,7 +264,7 @@ MotionTrajectoryVariable_Callback(handles.MotionTrajectoryVariable, [], handles)
     cla(handles.hax{i},'reset');
     set(handles.hax{i},'color',[1 1 1],'visible','off');
   end
-  plotsim(handles,1);
+  plotsim(1,handles.hax,handles.sample.file,handles.img_num,handles.channel);
   set(handles.showLeft,'Value',1);
  end
 
@@ -419,7 +418,47 @@ pause(1)
  guidata(hObject, handles);
  showLeft_Callback(hObject, eventdata, handles);
  showRight_Callback(hObject, eventdata, handles);
+ 
+ % generate seq.h5 for k-space plotting 
+ [w,s]=system([handles.JemrisPath,'/jemris ',handles.seqfile]);
+return
 
+
+ % --- Executes on button press in start_reco.
+function start_reco_Callback(hObject, eventdata, handles)
+ if exist('gui-reco.h5','file'), delete('gui-reco.h5'), end
+
+ % check if conda environment is installed
+ bashrc_cmd = '. ~/.bashrc > /dev/null && . ~/.bash_profile > /dev/null';
+ conda_cmd = 'conda run -n ismrmrd_client';
+ conda_env_check = ['bash -c "',bashrc_cmd,' && ',conda_cmd,'"'];
+ w=system(conda_env_check);
+ if w
+   warning('Conda environment with client not installed.')
+   return 
+ end
+ 
+ % start docker server
+ docker_start_cmd = 'docker run -d --user $(id -u):$(id -g) -p 9002:9002 mavel101/bart-reco-server';
+ [w,s1]=system(docker_start_cmd);
+ if w,warning('Launching reconstruction server failed.'),end
+ s1=sprintf('docker reconstruction server started\n\n');
+ % run bart reco
+ client_cmd = 'client.py -c bart_jemris -o gui-reco.h5 -G images signals_ismrmrd.h5';
+ reco_cmd=['bash -c "',bashrc_cmd,' && ',conda_cmd,' ',client_cmd,'"'];
+ [w,s2]=system(reco_cmd);
+ if w,warning('bart reco not successful - check gui dump for error message'),end
+ 
+ % kill docker server
+ docker_id_cmd = 'docker ps -qf "ancestor=mavel101/bart-reco-server"';
+ [w,docker_id]=system(docker_id_cmd);
+ docker_id = docker_id(1:end-1);
+ docker_stop_cmd = ['docker kill ', docker_id];
+ [w,s3]=system(docker_stop_cmd);
+ if w,warning('Killing reconstruction server failed.'),end
+ s3=['docker reconstruction server sucessfully terminated: ', s3];
+ set(handles.sim_dump,'String',[s1,s2,s3],'FontName','monospaced','FontSize',8);
+ 
 % --------------------------------------------------------------------
 function FileTag_Callback(hObject, eventdata, handles)
 
@@ -473,7 +512,7 @@ function setT1_Callback(hObject, eventdata, handles)
 handles.sample.T1=str2num(get(hObject,'String'));
 if strcmp(handles.sample.name,'brain')
  handles.UserSample=brainSample(handles);
-elseelement
+else
  handles.UserSample=[];
 end
 write_simu_xml(handles,1);
@@ -647,17 +686,45 @@ end
 
 % --- Executes on selection change in showLeft.
 function showLeft_Callback(hObject, eventdata, handles)
+if get(hObject,'Value')~=5 && get(hObject,'Value')~=6 && handles.channel < 0;
+   handles.channel=1;
+   set(handles.ChannelSelectionL,'Value',1);
+end
 axes(handles.hax{1});
 for i=[1 3 4 5 6]
     cla(handles.hax{i},'reset');
     set(handles.hax{i},'color',[1 1 1],'visible','off');
 end
-Nimg=plotsim(handles,get(hObject,'Value'));
-if get(hObject,'Value')<3,bvis='off';else;bvis='on';end
-set(handles.EPI_L,'Visible',bvis);
-if (Nimg==1),bvis='off';
-else;bvis='on';for i=1:Nimg;C{i}=['# ',num2str(i)];end;set(handles.ImageL,'String',C);end
+
+Nimg=plotsim(get(hObject,'Value'),handles.hax,handles.sample.file,handles.img_num,handles.channel);
+C={};
+if (Nimg==1 || get(hObject,'Value')<3)
+    bvis='off';
+else
+    bvis='on';
+    for i=1:Nimg;C{i}=['# ',num2str(i)];end;
+    set(handles.ImageL,'String',C)
+end
 set(handles.ImageL,'Visible',bvis);
+% check for multiple channels:
+info=h5info('signals.h5');
+chan=numel(info.Groups(1).Groups(1).Datasets);
+C={};
+for i=1:chan; C{end+1}=['# ',num2str(i,'%02i')]; end
+if chan>1 && get(hObject,'Value')~=1
+    if (get(handles.showLeft,'Value')==5 || get(handles.showLeft,'Value')==6) %combined PI image only for images
+        C{end+1}=['comb.']; 
+    end
+    set(handles.ChannelSelectionL,'String',C);
+    set(handles.ChannelSelectionL,'Visible','on');
+    set(handles.ChanSelStringL,'Visible','on');
+else
+    set(handles.ChannelSelectionL,'Value',1);
+    set(handles.ChannelSelectionL,'Visible','off');
+    set(handles.ChanSelStringL,'Visible','off');
+end;
+
+    
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -670,34 +737,43 @@ end
 % --- Executes on selection change in showRight.
 function showRight_Callback(hObject, eventdata, handles)
 %check for channel selection:
-if (get(hObject,'Value')~=4) && handles.channel < 0;
+if get(hObject,'Value')~=4 && get(hObject,'Value')~=5 && handles.channel < 0;
    handles.channel=1;
-   set(handles.ChannelSelection,'Value',1);
+   set(handles.ChannelSelectionR,'Value',1);
 end
 axes(handles.hax{2});
 cla(handles.hax{2},'reset');
 set(handles.hax{2},'color',[1 1 1],'visible','off');
-tmp=handles.epil;handles.epil=handles.epir;
-Nimg=plotsim(handles,1+get(hObject,'Value'));
-handles.epil=tmp;
-if get(hObject,'Value')==1,bvis='off';else;bvis='on';end
-set(handles.EPI_R,'Visible',bvis);
-if (Nimg==1),bvis='off';handles.img_num=1;
-else;bvis='on';for i=1:Nimg;C{i}=['# ',num2str(i)];end;set(handles.ImageR,'Value',handles.img_num),set(handles.ImageR,'String',C);end
+
+Nimg=plotsim(1+get(hObject,'Value'),handles.hax,handles.sample.file,handles.img_num,handles.channel);
+C={};
+if (Nimg==1 || get(handles.showRight,'Value')<2)
+    bvis='off';
+    handles.img_num=1;
+else
+    bvis='on';
+    for i=1:Nimg;C{i}=['# ',num2str(i)];end
+    set(handles.ImageR,'Value',handles.img_num)
+    set(handles.ImageR,'String',C);
+end
 set(handles.ImageR,'Visible',bvis);
+
 % check for multiple channels:
 info=h5info('signals.h5');
 chan=numel(info.Groups(1).Groups(1).Datasets);
 C={};
 for i=1:chan; C{end+1}=['# ',num2str(i,'%02i')]; end
-if chan>1;
-    if (get(hObject,'Value')==4), C{end+1}=['SumOfSqu'];end %SOS only for images
-    set(handles.ChannelSelection,'String',C);
-    set(handles.ChannelSelection,'Visible','on');
-    set(handles.ChanSelString,'Visible','on');
+if chan>1 
+    if (get(handles.showRight,'Value')==4 || get(handles.showRight,'Value')==5) %combined PI image only for images
+        C{end+1}=['comb.']; 
+    end 
+    set(handles.ChannelSelectionR,'String',C);
+    set(handles.ChannelSelectionR,'Visible','on');
+    set(handles.ChanSelStringR,'Visible','on');
 else
-    set(handles.ChannelSelection,'Value',1);
-    set(handles.ChannelSelection,'Visible','off');
+    set(handles.ChannelSelectionR,'Value',1);
+    set(handles.ChannelSelectionR,'Visible','off');
+    set(handles.ChanSelStringR,'Visible','off');
 end;
 guidata(hObject, handles);
 
@@ -707,36 +783,20 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-% --- Executes on button press in EPI_R.
-function EPI_R_Callback(hObject, eventdata, handles)
-handles.epir=get(hObject,'Value');
-set(hObject,'Value',get(handles.showRight,'Value'));
-showRight_Callback(hObject, eventdata, handles);
-set(hObject,'Value',handles.epir);
-guidata(hObject, handles);
-
-% --- Executes on button press in EPI_L.
-function EPI_L_Callback(hObject, eventdata, handles)
-handles.epil=get(hObject,'Value');
-set(hObject,'Value',get(handles.showLeft,'Value'));
-showLeft_Callback(hObject, eventdata, handles);
-set(hObject,'Value',handles.epil);
-guidata(hObject, handles);
-
 
 % --- Executes on button press in zoomflag.
 function zoomflag_Callback(hObject, eventdata, handles)
-if get(hObject,'Value')
-    zoom(gcf,'on')
-else
- set(hObject,'Value',get(handles.showRight,'Value'));
- showRight_Callback(hObject, eventdata, handles);
- set(hObject,'Value',get(handles.showLeft,'Value'));
- showLeft_Callback(hObject, eventdata, handles);
- set(hObject,'Value',0);
- guidata(hObject, handles);
- zoom(gcf,'off')
-end
+ if get(hObject,'Value')
+     zoom(gcf,'on')
+ else
+  set(hObject,'Value',get(handles.showRight,'Value'));
+  showRight_Callback(hObject, eventdata, handles);
+  set(hObject,'Value',get(handles.showLeft,'Value'));
+  showLeft_Callback(hObject, eventdata, handles);
+  set(hObject,'Value',0);
+  guidata(hObject, handles);
+  zoom(gcf,'off')
+ end
 
 
 % --- Executes on selection change in ImageL.
@@ -769,6 +829,46 @@ function ImageR_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+% --- Executes on selection change in ChannelSelectionR.
+function ChannelSelectionR_Callback(hObject, eventdata, handles)
+content=get(hObject,'String');
+chan   =get(hObject,'Value');
+if numel(content)==chan && (get(handles.showRight,'Value')==4 || get(handles.showRight,'Value')==5) % plot combined image (PI reco)
+        handles.channel=-numel(content)+1;
+else
+    handles.channel=chan;
+end
+set(hObject,'Value',get(handles.showRight,'Value'));
+showRight_Callback(hObject, eventdata, handles);
+set(hObject,'Value',chan);
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function ChannelSelectionR_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% --- Executes on selection change in ChannelSelectionL.
+function ChannelSelectionL_Callback(hObject, eventdata, handles)
+content=get(hObject,'String');
+chan   =get(hObject,'Value');
+if numel(content)==chan && (get(handles.showLeft,'Value')==5 || get(handles.showLeft,'Value')==6) % plot combined image (PI reco)
+        handles.channel=-numel(content)+1;
+else
+    handles.channel=chan;
+end
+showLeft_Callback(handles.showLeft, eventdata, handles);
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function ChannelSelectionL_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
 
 function setROI_Callback(hObject, eventdata, handles)
 r=str2num(get(hObject,'String'));
@@ -880,16 +980,13 @@ function loadSigTag_Callback(hObject, eventdata, handles)
   h5write ('signals.h5',sprintf('/signal/channels/%02i',i-1),A);
   if i>1
      handles.channel=1;
-     set(handles.ChannelSelection,'Value',1);
+     set(handles.ChannelSelectionR,'Value',1);
   end
  end
  cla(handles.hax{2},'reset');
  set(handles.hax{2},'color',[1 1 1],'visible','off');
- set(handles.EPI_R,'Visible','off');
  set(handles.ImageR,'Visible','off');
- tmp=handles.epil; handles.epil=handles.epir;
- plotsim(handles,2);
- handles.epil=tmp;
+ plotsim(2,handles.hax,handles.sample.file,handles.img_num,handles.channel);
  set(handles.showRight,'Value',1);
  guidata(hObject, handles);
 % --------------------------------------------------------------------
@@ -906,43 +1003,13 @@ function saveSigTag_Callback(hObject, eventdata, handles)
  end
  d=diff(diff(t));d(d<1e-5)=0;I=[0;find(d)+1;length(t)];
  save(FileName,'t','M','I');
-% --------------------------------------------------------------------
+
+ % --------------------------------------------------------------------
 function saveMagEvolTag_Callback(hObject, eventdata, handles)
  [FileName,PathName] = uiputfile('*.mat');
  if FileName==0,return;end
  [M,t]=readEvol(handles.sample.file,'evol',0);
  save(FileName,'t','M');
-
-
-
-% --- Executes on selection change in ChannelSelection.
-function ChannelSelection_Callback(hObject, eventdata, handles)
-% hObject    handle to ChannelSelection (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-content=get(hObject,'String');
-chan   =get(hObject,'Value');
-if numel(content)==chan && get(handles.showRight,'Value')==4 % SOS image
-        handles.channel=-numel(content)+1;
-else
-    handles.channel=chan;
-end
-
-guidata(hObject, handles);
-showRight_Callback(handles.showRight, eventdata, handles);
-
-
-% --- Executes during object creation, after setting all properties.
-function ChannelSelection_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to ChannelSelection (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 
 function MotionTrajectoryVariable_Callback(hObject, eventdata, handles)

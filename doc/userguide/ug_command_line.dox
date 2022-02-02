@@ -6,14 +6,21 @@ executables to compute the data, and finally read and visualise the result. Of c
 the executables without running Matlab. For this, the XML configuration files might be directly manipulated to set up
 the numerical experiments.
 
-This section presents example XML files and explains how to start the simulation from the command line:
+This section presents example XML files and explains how to use the JEMRIS from the command line:
 \n
+\n 
+\ref ug_command_line_XML 
+   \li \ref ug_seq_xml
+   \li \ref ug_trx_xml
+   \li \ref ug_sim_xml
 
-\li \ref ug_command_line_XML
+\ref ug_command_line_jemris
+   \li \ref ug_command_line_jemris_seq
+   \li \ref ug_command_line_jemris_sense
+   \li \ref ug_command_line_jemris_sim
+   \li \ref ug_command_line_pjemris
+   \li \ref ug_command_line_jemris_export
 
-\li \ref ug_command_line_jemris
-
-\li \ref ug_command_line_pjemris
 \n
  <HR>
 
@@ -104,7 +111,7 @@ Executing jemris on the command line without arguments shows the possible option
 \code
 me@my_box:~$ jemris
 
-jemris 2.8 (d55bf728)
+jemris 2.8.4 (5c44660)
 
 
   Usage:
@@ -120,8 +127,9 @@ jemris 2.8 (d55bf728)
   Parameters:
      -o <output_dir>: Output directory
      -f <filename>:   Output filename (without extension)
-     -x: Output sequence file for execution
-     -d <def>=<val>:  Define custom sequence variable
+     -x: Output Pulseq sequence file format (.seq)
+     -r: Start reconstruction after simulation (running recon server is required).
+     -d <def>=<val>:  Define custom sequence variable for Pulseq file
 
 \endcode
 The special case 'modlist' is used by the \ref ug_JEMRIS_seq to generate
@@ -236,58 +244,14 @@ for i = 1:8
  S(:,:,i) = h5read('signals.h5', sprintf('/signal/channels/%02i',i-1));
 end
 \endcode
-\n
-\n
-\subsection ug_command_line_jemris_export Exporting a Sequence to an MRI Scanner with Pulseq
-Running jemris with the -x option exports the sequence in Pulseq format
-(http://pulseq.github.io) for execution on a real MRI scanner,
+If an imaging sequence was simulated, image reconstruction can be started directly after the simulation using the switch \c -r 
 \code
-me@my_box:~$ jemris -x -d id=1 -f epi /usr/local/share/jemris/examples/epi.xml
-me@my_box:~$ head -n 20 epi.seq
-# Pulseq sequence format
-# Created by JEMRIS 2.8.3
-
-[VERSION]
-major 1
-minor 2
-revision 1
-
-[DEFINITIONS]
-id 1
-Num_Blocks 132
-
-# Format of blocks:
-# #  D RF  GX  GY  GZ ADC
-[BLOCKS]
-  1  0  1   0   0   0  0
-  2  0  0   1   2   0  0
-  3  1  0   0   0   0  0
-  4  0  0   3   0   0  1
-  5  0  0   0   4   0  0
+me@my_box:~$ jemris -r simu.xml
 \endcode
-This creates a file suitable to run on a scanner.
-The -x option indicates export, -d allows for custom definitions
-(such as scan ID), and the .seq file is named according to the -f option (default: external.seq).
-\n \n
-<b>Caution:</b> read the Pulseq manual carefully before running sequences created with JEMRIS on the scanner!
-Creating valid Pulseq files requires some experience.
-Here is a brief and incomplete list of things which may be taken into account when creating Pulseq files with JEMRIS:
-\li For trapezoidal gradients (TrapGradPulse): ramp sampling is not used if FlatTopTime and FlatTopArea are set.
-    Otherwise, ramp sampling is always enabled (as displayed in the \ref ug_JEMRIS_seq )
-\li All other gradient forms are exported as arbitrary gradients.
-\li ADCs which are specified from a DelayAtomicSequence are not exported!
-\li The EmptyPulse can be used as a delay. Here, ADCs are exported to the Pulseq file.
-\li For all ADC events, the dwell time is defined as Duration / number of ADCs
-
-Additionally, some hardware-specific restrictions may have to be considered (see the Pulseq Manual for more details).
-\li In Pulseq's "strict timing mode", the RF pulse requires a simultaneous GradPulse or EmptyPulse in the same AtomicSequence.
-    Otherwise the Strict Duration Check may fail due to missing dead times before and/or after the RF pulse.
-\li The number of ADCs should be chosen such that the dwell time is compatible with the hardware RF raster time.
-\li Sequence blocks should not end with an ADC, for example a delay can be set parallel to the ADC.
-\li For large numbers of ADCs it might be necessary to segment ADCs events, which match gradient raster time
-
- <HR>
-\section ug_command_line_pjemris Invoking the parallel version of JEMRIS
+Assuming that the recon server is installed, this will run the python image reconstruction pipeline and store the images to the file \c signals_ismrmrd_recon.h5.
+See section \ref ug_JEMRIS_reco_start for more information about the image reconstruction pipeline.
+\n
+\subsection ug_command_line_pjemris Invoking the parallel version of JEMRIS
 Running the parallel version requires a working MPI environment (see \ref ug_install).
 
 The following command runs the parallel version with 5 parallel processes:
@@ -319,4 +283,59 @@ The program performs load balancing and first estimates the number of spins whic
 every 5 seconds checkpoints are stored to temporary hidden binary files the ".spins_state.dat" and ".tmp_sig01.bin" which are removed
 after successful completion. If however the simulation is unexpectedly stopped, a restart will continue at the last checkpoint.
 This is useful for huge simulations lasting several hours (or even days) where sudden crash e.g. due to power breakdown may occur.
+\n
+\subsection ug_command_line_jemris_export Exporting a Sequence to an MRI Scanner with Pulseq
+Running jemris with the -x option exports the sequence in Pulseq format
+(http://pulseq.github.io) for execution on a real MRI scanner,
+\code
+me@my_box:~$ jemris -x -d id=1 -f epi /usr/local/share/jemris/examples/epi.xml
+me@my_box:~$ head -n 20 epi.seq
+# Pulseq sequence format
+# Created by JEMRIS 2.8.3
+
+[VERSION]
+major 1
+minor 2
+revision 1
+
+[DEFINITIONS]
+id 1
+Num_Blocks 132
+
+# Format of blocks:
+# #  D RF  GX  GY  GZ ADC
+[BLOCKS]
+  1  0  1   0   0   0  0
+  2  0  0   1   2   0  0
+  3  1  0   0   0   0  0
+  4  0  0   3   0   0  1
+  5  0  0   0   4   0  0
+\endcode
+This creates a file suitable to run on a scanner. The -x option indicates export, -d allows for custom definitions
+(such as scan ID), and the .seq file is named according to the -f option (default: external.seq).
+In addition, an ISMRMD file is generated (epi.h5 in the example above, default: external.h5 ), which
+contains sequence meta information (trajectory etc.) which can be used for image reonstruction.
+This file can be merged with the ISMRD raw data file resulting from scanner execution and then fed 
+into the Python reconstruction pipeline, wich is also used for image reconstruction of JEMRIS simulations.
+The workflow is described in detail on the project's <a href=" https://github.com/mrphysics-bonn/python-ismrmrd-reco"><b>github page</b></a>.
+\n \n
+<b>Caution:</b> read the Pulseq manual carefully before running sequences created with JEMRIS on the scanner!
+Creating valid Pulseq files requires some experience.
+Here is a brief and incomplete list of things which may be taken into account when creating Pulseq files with JEMRIS:
+\li For trapezoidal gradients (TrapGradPulse): ramp sampling is not used if FlatTopTime and FlatTopArea are set.
+    Otherwise, ramp sampling is always enabled (as displayed in the \ref ug_JEMRIS_seq )
+\li All other gradient forms are exported as arbitrary gradients.
+\li ADCs which are specified from a DelayAtomicSequence are not exported!
+\li The EmptyPulse can be used as a delay. Here, ADCs are exported to the Pulseq file.
+\li For all ADC events, the dwell time is defined as Duration / number of ADCs
+
+Additionally, some hardware-specific restrictions may have to be considered (see the Pulseq Manual for more details).
+\li In Pulseq's "strict timing mode", the RF pulse requires a simultaneous GradPulse or EmptyPulse in the same AtomicSequence.
+    Otherwise the Strict Duration Check may fail due to missing dead times before and/or after the RF pulse.
+\li The number of ADCs should be chosen such that the dwell time is compatible with the hardware RF raster time.
+\li Sequence blocks should not end with an ADC, for example a delay can be set parallel to the ADC.
+\li For large numbers of ADCs it might be necessary to segment ADCs events, which match gradient raster time
+
+ <HR>
+
 */

@@ -29,6 +29,17 @@
 
 #include "Sequence.h"
 #include "RepIter.h"
+#include "TPOI.h"
+
+
+// LOOP counter bitmask (for recon purposes)
+static const size_t SLICE_L      (0);	//  1 : slice loop
+static const size_t PHASE_L      (1);	//  2 : phase encoding loop
+static const size_t PARTITION_L  (2);	//  4 : partition loop
+static const size_t SET_L        (3);	//  8 : set loop
+static const size_t CONTRAST_L   (4);	// 16 : contrast loop
+static const size_t AVERAGE_L    (5);	// 32 : average loop
+
 
 /**
  * @brief Concat sequence prototype
@@ -115,6 +126,15 @@ class ConcatSequence : public Sequence {
      */
     inline unsigned int    GetMyRepCounter  () {return m_counter;};
 
+
+    bool IsSliceLoop     () const {return check_bit (m_mask, SLICE_L);     }
+    bool IsPhaseLoop     () const {return check_bit (m_mask, PHASE_L);     }
+    bool IsPartitionLoop () const {return check_bit (m_mask, PARTITION_L); }
+    bool IsSetLoop       () const {return check_bit (m_mask, SET_L);       }
+    bool IsContrastLoop  () const {return check_bit (m_mask, CONTRAST_L);  }
+    bool IsAvgLoop       () const {return check_bit (m_mask, AVERAGE_L);   }
+
+
     /**
      * Get the initial iterator for counting repetitions.
      *
@@ -168,6 +188,8 @@ class ConcatSequence : public Sequence {
 
     unsigned int m_repetitions; /**< @brief The number of repetitions for this container */
     unsigned int m_counter;     /**< @brief Current value of the repetition counter for this container */
+    int      m_loop_flag;         /**< Property of loop counter */
+    size_t   m_mask;              /**< loop bitmask */
 };
 
 #endif /*CONCATSEQUENCE_H_*/

@@ -83,7 +83,24 @@ void TPOI::Sort ()        {
 
 }
 
+/***********************************************************/
+void TPOI::Print () const {
+	 for (size_t i = 0; i < m_time.size(); ++i)
+		 cout << m_time[i] << "\t" << m_phase[i] << "\t" << m_mask[i] << std::endl;
+	 cout << std::endl;
+ }
 
+/***********************************************************/
+void TPOI::PrintMeta (const size_t pos) const {
+	cout       	 << " | IsADC : " << IsADC(pos)
+    	    	 << " | IsImg : " << IsImg(pos)
+    	    	 << " | IsACS : " << IsACS(pos)
+    	    	 << " | IsPC : "  << IsPC(pos)
+				 << " | IsNoise : " << IsNoise(pos)
+    	    	 << " | IsExcitation : " << IsExcitation(pos)
+    	    	 << " | IsRefocussing : " << IsRefocussing(pos);
+
+ }
 /***********************************************************/
 void TPOI::Purge ()        { 
 

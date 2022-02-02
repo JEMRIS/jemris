@@ -32,6 +32,12 @@
 #include "NDData.h"
 #include "OutputSequenceData.h"
 
+#include "ismrmrd/ismrmrd.h"
+#include "ismrmrd/xml.h"
+#include "ismrmrd/dataset.h"
+#include "ismrmrd/version.h"
+
+
 //! Super class for all sequence (non-pulse) modules
 
 class Sequence : public Module {
@@ -72,6 +78,14 @@ public:
      * @param fname File name
      */
     void  SeqDiag  (const string& fname = "seq.h5");
+
+   /**
+     * New Sequence Diag via ISMRMRD
+     *
+     * @param fname File name
+     */
+    bool  SeqISMRMRD  (const string& fname = "seq.h5");
+
 
     /**
      * @brief Recursively collect sequence data (for plotting the sequence diagram)

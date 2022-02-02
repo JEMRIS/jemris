@@ -40,21 +40,22 @@ using namespace std;
 
 //const double TIME_ERR_TOL = 1e-6; // Avoid CVODE warnings. Doesn't affect physics.
 
-//! Time points of interest of all modules
+//! bitmask for JEMRIS TPOIs (Time points of interest of all modules)
 
-template<class T> inline T
-BIT (const T& x) { return T(1) << x; }
+template<class T> inline T BIT (const T& x) { return T(1) << x; }
 
-static const size_t JTPOI_T (0);
-static const size_t ADC_T (1);
-static const size_t EXCITE_T (2);
-static const size_t REFOCUS_T (3);
+//static const size_t JTPOI_T   (0);	//standard JEMRIS TPOI (never used!?)
+static const size_t ADC_T       (0);	//  1 : ADC
+static const size_t ADC_IMG_T   (1);	//  2 : an imaging ADC (for ismrmrd output)
+static const size_t ADC_ACS_T   (2);	//  4 : auto-calibration scan (for ismrmrd output)
+static const size_t ADC_PC_T    (3);	//  8 : phase correction scan (for ismrmrd output)
+static const size_t ADC_NOISE_T (4);	// 16 : noise scan (for ismrmrd output)
+static const size_t EXCITE_T    (5);	// 32 : excitation pulse
+static const size_t REFOCUS_T   (6);	// 64 : refocusing pulse
 
-template<class T, class S> inline bool
-check_bit (const T& x, const S& y) { return 0 != (x & BIT(y)); }
+template<class T, class S> inline bool check_bit (const T& x, const S& y) { return 0 != (x & BIT(y)); }
 
-template<class T, class S> inline void
-set_bit (T& x, const S& y) { x |= T(1) << y; }
+template<class T, class S> inline void set_bit (T& x, const S& y) { x |= T(1) << y; }
 
 
 class TPOI {
@@ -66,8 +67,8 @@ class TPOI {
 
 
         double dtime;    /**< particular time point of this set.*/
-        double dphase;   /**< particular corresponding reciever phase.*/
-        size_t bmask; /**< Qualifier bit mask */
+        double dphase;   /**< particular corresponding phase.*/
+        size_t bmask;    /**< Qualifier bit mask */
 
         /**
          * @brief Constructor
@@ -75,8 +76,7 @@ class TPOI {
          * @param time    The time from start of the pulse 0.
          * @param phase   Phase lock, if this TPOI is an ADC.
          */
-        inline set (const double time, const double phase = -1.,
-        		const size_t mask = 0) : dtime(time), dphase (phase), bmask(mask) {}
+        inline set (const double time, const double phase = -1., const size_t mask = 0) : dtime(time), dphase (phase), bmask(mask) {}
 
     };
 
@@ -145,11 +145,9 @@ class TPOI {
      int GetSize () const ;
 
 
-     void Print (std::ostream& os) const {
-    	 for (size_t i = 0; i < m_time.size(); ++i)
-    		 os << m_time[i] << "\t" << m_phase[i] << "\t" << m_mask[i] << std::endl;
-    	 os << std::endl;
-     }
+     void Print () const ;
+
+     void PrintMeta (const size_t pos) const ;
 
     /**
      * Get the time of a pos-th point
@@ -167,9 +165,13 @@ class TPOI {
       */
      inline double GetPhase (const size_t pos) const {return m_phase[pos]; }
 
-     bool IsADC (const size_t pos) {return check_bit (m_mask[pos], 0); }
-     bool IsExcitation (const size_t pos) {return check_bit (m_mask[pos], 1); }
-     bool IsRefocussing (const size_t pos) {return check_bit (m_mask[pos], 2); }
+     bool IsADC (const size_t pos) const {return check_bit (m_mask[pos], ADC_T); }
+     bool IsImg (const size_t pos) const {return check_bit (m_mask[pos], ADC_IMG_T); }
+     bool IsACS (const size_t pos) const {return check_bit (m_mask[pos], ADC_ACS_T); }
+     bool IsPC (const size_t pos) const {return check_bit (m_mask[pos], ADC_PC_T); }
+     bool IsNoise (const size_t pos) const {return check_bit (m_mask[pos], ADC_NOISE_T); }
+     bool IsExcitation (const size_t pos) const {return check_bit (m_mask[pos], EXCITE_T); }
+     bool IsRefocussing (const size_t pos) const {return check_bit (m_mask[pos], REFOCUS_T); }
 
      inline size_t GetMask (const size_t pos) const {return m_mask[pos];}
 
@@ -193,9 +195,5 @@ class TPOI {
 
 
 
-inline std::ostream& operator<< (std::ostream& os, const TPOI& tpoi) {
-	tpoi.Print(os);
-	return os;
-}
 
 #endif

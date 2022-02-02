@@ -62,8 +62,9 @@ void usage () {
 	cout   << "  Parameters:" << endl;
 	cout   << "     -o <output_dir>: Output directory" << endl;
 	cout   << "     -f <filename>:   Output filename (without extension)"  << endl;
-	cout   << "     -x: Output sequence file for execution"  << endl;
-	cout   << "     -d <def>=<val>:  Define custom sequence variable"  << endl;
+	cout   << "     -x: Output Pulseq sequence file format (.seq)"  << endl;
+	cout   << "     -r: Start reconstruction after simulation (running recon server is required). "  << endl;
+	cout   << "     -d <def>=<val>:  Define custom sequence variable for Pulseq file"  << endl;
 }
 
 void do_simu (Simulator* sim) {
@@ -80,6 +81,27 @@ void do_simu (Simulator* sim) {
 	sim->Simulate();
 	cout << endl;
 	cout << endl;
+}
+
+void writeProt(string ismrmrd_file, string output_dir, string filename){
+
+	// Writes new ISMRMRD protocol file containing only acquisitions with ADCs
+	ISMRMRD::Dataset d_tmp((ismrmrd_file).c_str(), "dataset", false);
+	std::string xml;
+    d_tmp.readHeader(xml);
+
+	std::remove((output_dir + filename + ".h5").c_str());
+	ISMRMRD::Dataset d((output_dir + filename + ".h5").c_str(), "dataset", true);
+	d.writeHeader(xml);
+
+	ISMRMRD::Acquisition acq;
+	for (int n = 0; n < d_tmp.getNumberOfAcquisitions(); ++n){
+		d_tmp.readAcquisition(n, acq);
+		if (!acq.isFlagSet(ISMRMRD::ISMRMRD_ACQ_USER1)) // acquistions with USER1 flag have no ADCs
+			d.appendAcquisition(acq);
+	}
+
+	std::remove(ismrmrd_file.c_str());
 }
 
 int main (int argc, char *argv[]) {
@@ -102,11 +124,12 @@ int main (int argc, char *argv[]) {
 	std::size_t pos;
 	map<string,string> scan_defs;
 	bool export_seq=false;
+	bool recon=false;
 	opterr = 0;
 	int status;
 
 	int c;
-	while((c = getopt (argc, argv, "f:o:d:x")) != -1)
+	while((c = getopt (argc, argv, "f:o:d:xr")) != -1)
 	{
 		switch (c)
 		{
@@ -127,6 +150,9 @@ int main (int argc, char *argv[]) {
 		case 'x':
 			export_seq=true;
 			break;
+		case 'r':
+			recon=true;
+			break;
 		case 'd':
 			definition = optarg;
 			pos = definition.find("=");
@@ -143,7 +169,7 @@ int main (int argc, char *argv[]) {
 				cerr << "Option '-o' requires an argument." << endl;
 			if (optopt == 'f')
 				cerr << "Option '-f' requires an argument." << endl;
-			if (optopt == 's')
+			if (optopt == 'd')
 				cerr << "Option '-d' requires an argument." << endl;
 			else if (isprint(optopt))
 				cerr << "Unknown option '-" << (char)optopt << "'." << endl;
@@ -168,28 +194,34 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	//CASE 2: try Dump of seq-diagram from Sequence xml-file
+	//CASE 2: try Dump of seq-diagram from Sequence xml-file or write Pulseq sequence & protocol
 	try {
 		SequenceTree seqTree;
 		seqTree.Initialize(input);
 		if (seqTree.GetStatus()) {
-			string baseFilename(filename);
-			if(filename == "")
-				filename = "seq.h5";
-			else
-				filename += ".h5";
 			seqTree.Populate();
 			ConcatSequence* seq = seqTree.GetRootConcatSequence();
-			seq->SeqDiag(output_dir + filename);
 			seq->DumpTree();
 
-			filename = baseFilename;
-			if (export_seq) {
+			if (!export_seq){
+				if(filename == "")
+					filename = "seq";
+				seq->SeqDiag(output_dir + filename + ".h5");
+			}
+			else{
 				if (filename == "")
-					filename = "external.seq";
-				else
-					filename += ".seq";
-				seq->OutputSeqData(scan_defs, output_dir, filename);
+					filename = "external";
+				// Pulseq sequence file
+				seq->OutputSeqData(scan_defs, output_dir, filename + ".seq");
+
+				// ISMRMRD file
+				string ismrmrd_tmp = output_dir + filename + "_ismrmrd_tmp.h5";
+				World* pW = World::instance();
+				pW->pSeqTree = &seqTree;
+				bool img_adcs = seq->SeqISMRMRD(ismrmrd_tmp);
+				if (!img_adcs)
+					cout << "Warning: No Imaging ADCs in sequence - export ISMRMRD file anyways." << endl;			
+				writeProt(ismrmrd_tmp, output_dir, filename);
 			}
 			return 0;
 		}
@@ -224,6 +256,76 @@ int main (int argc, char *argv[]) {
 			do_simu(&sim);
 			runtime = clock() - runtime;
 			printf ("Actual simulation took %.2f seconds.\n", runtime / 1000000.0);
+
+			// Recon, if available
+			if (recon){
+				try{
+					printf ("Starting reconstruction.\n");
+					struct timeval begin, end;
+					gettimeofday(&begin, 0);
+					string infile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd.h5";
+					string outfile = sim.GetRxCoilArray()->GetSignalOutputDir() + sim.GetRxCoilArray()->GetSignalPrefix() + "_ismrmrd_recon.h5";
+					remove(outfile.c_str());
+					string cmd = "client.py -c bart_jemris " + infile + " -o " + outfile + " -G images";
+					string conda_cmd = "conda run -n ismrmrd_client";
+					string docker_cmd = "docker run -d --user $(id -u):$(id -g) -p 9002:9002 mavel101/bart-reco-server";
+					int err;
+
+					// Executing reconstruction
+					printf ("Try to automatically start reconstruction server.\n");
+					err = system(docker_cmd.c_str());
+					if (err){
+						printf ("Automatic start of reconstruction server failed. Try to start reconstruction anyways.\n");
+						printf ("Try to detect conda environment with ISMRMRD client.\n");
+						err = system(conda_cmd.c_str());
+						if (err){
+							std::cout << "Conda environment not detected. Try to start reconstruction anyways." << std::endl;
+							err = system(cmd.c_str());
+							if (err)
+								std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+						}
+						else{
+							std::cout << "Conda environment detected." << std::endl;
+							err = system((conda_cmd+" "+cmd).c_str());
+							if (err)
+								std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+						}
+					}
+					else{
+						printf ("Reconstruction server started.\n");
+						printf ("Try to detect conda environment with ISMRMRD client.\n");
+						string conda_cmd = "conda run -n ismrmrd_client";
+						err = system(conda_cmd.c_str());
+						if (err){
+							std::cout << "Conda environment not detected. Try to start reconstruction anyways." << std::endl;
+							err = system(cmd.c_str());
+							if (err)
+								std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+						}
+						else{
+							std::cout << "Conda environment detected." << std::endl;
+							err = system((conda_cmd+" "+cmd).c_str());
+							if (err)
+								std::cout << "Reconstruction failed. Check if ISMRMRD client is installed and if reconstruction server is running." << std::endl;
+						}
+						string docker_kill_cmd = "docker kill `docker ps -qf \"ancestor=mavel101/bart-reco-server\"`";
+						err = system(docker_kill_cmd.c_str());
+						if (err)
+							std::cout << "Reconstruction server could not be killed." << std::endl;
+						else
+							std::cout << "Reconstruction server killed." << std::endl;
+					}
+
+					gettimeofday(&end, 0);
+					long sec = end.tv_sec - begin.tv_sec;
+					long usec = end.tv_usec - begin.tv_usec;
+					double elapsed = sec + usec*1e-6;
+					printf ("Reconstruction took %.2f seconds.\n", elapsed);
+				}
+				catch (...) {
+
+				}
+			}
 			return 0;
 		}
 	} catch (...) {

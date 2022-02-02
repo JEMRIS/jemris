@@ -33,7 +33,7 @@
 
 //! Super class for all RF pulses
 
-class RFPulse : public Pulse, public TxRxPhase {
+class RFPulse : public Pulse {
 
  public:
 

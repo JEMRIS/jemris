@@ -5,8 +5,10 @@ function [SeqTree,ax]=plotseq(handles,moment_flag,kspace_flag)
 %output: Sequence tree and axes limts for the seuqence diagram
 
 %
-%  JEMRIS Copyright (C) 2007-2010  Tony St??cker, Kaveh Vahedipour
-%                                  Forschungszentrum J??lich, Germany
+%  JEMRIS Copyright (C)
+%                        2006-2019  Tony Stoecker
+%                        2007-2015  Kaveh Vahedipour
+%                        2009-2019  Daniel Pflugfelder
 %
 %  This program is free software; you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
@@ -74,21 +76,38 @@ KX =h5read('seq.h5','/seqdiag/KX');
 KY =h5read('seq.h5','/seqdiag/KY');
 KZ =h5read('seq.h5','/seqdiag/KZ');
 B  =h5read('seq.h5','/seqdiag/META'); 
-J=find(B>2);
+J=find(B==32); % TPOIs of excitation pulses
 
 A=[TXM TXP GX GY GZ KX KY KZ]; A(:,2)=A(:,2)*180/pi;
 %t=t(1:end-2); A=A(1:end-2,:);RXP=RXP(1:end-2);
 
-%t=[0;t]; A=[0 0 0 0 0 0 0 0;A]; RXP=[-1;RXP];
-%[t,I]=sort(t);
-%A=A(I,:);
-Iadc=find(RXP>=0);
-Tadc=t(Iadc);
-Rec_Phs=RXP(Iadc)*180/pi;
+%find all ADC events from bitmask META (jemris ADCFlag)
+%   1 : ADC
+%   2 : an imaging ADC (for ismrmrd output)
+%   4 : auto-calibration scan (for ismrmrd output)
+%   8 : phase correction scan (for ismrmrd output)
+%  16 : noise scan (for ismrmrd output)
+% (32 : excitation pulse)
+% (64 : refocusing pulse)
+for i=1:5;
+ Iadc{i}=find(bitget(B,i));
+ Tadc{i}=t(Iadc{i});
+ Rec_Phs{i}=RXP(Iadc{i})*180/pi;
+end
+
+%shift receiver phases of multiple ADC events for better visivilty 
+for i=1:5
+    for j=1:5 
+        if i>j
+            [~,~,Ib]=intersect(Iadc{i},Iadc{j});
+            Rec_Phs{i}(Ib)=Rec_Phs{i}(Ib)+10;
+        end
+    end
+end
 
 if length(ax)==1;ax=[min(t) max(t)];end
 
-DO_2D = ( max(diff(KZ(Iadc)))<1e-8 );
+DO_2D = ( max(diff(KZ))<1e-8 );
 [~,i1]=min(abs(t-ax(1)));
 [~,i2]=min(abs(t-ax(2)));
 
@@ -126,9 +145,9 @@ if kspace_flag
         %add ADCs
         if kspace_flag==2;
             if DO_2D
-                plot(A(Iadc,6),A(Iadc,7),'.g')
+                plot(A(Iadc{2},6),A(Iadc{2},7),'.g')
             else
-                plot3(A(Iadc,6),A(Iadc,7),A(Iadc,8),'.g')
+                plot3(A(Iadc{2},6),A(Iadc{2},7),A(Iadc{2},8),'.g')
             end
         end 
         
@@ -153,28 +172,37 @@ end
 %plot sequence diagram
 
 Iax=[1 2 3 4 5];
+YL={'ADC{\phi}','|RF|','RF{\phi}','GX','GY','GZ'};
 if moment_flag
     Iax=[1 2 6 7 8];
 end
 
-J=find(Tadc>ax(1) & Tadc<ax(2));
-Tadc=Tadc(J);
-Rec_Phs=Rec_Phs(J);
+%plot ADCs
+cla(hax{1},'reset');axes(hax{1})
+ADCCOLOR={'k','r','b','c','m'};
+for i=1:5
+ J=find(Tadc{i}>ax(1) & Tadc{i}<ax(2));
+ TA=Tadc{i}(J);
+ RP=Rec_Phs{i}(J);
+ Irp=find(RP>180);RP(Irp)=RP(Irp)-360;
+ hold on, hadc=plot(TA,RP,'.'); hold off
+ save tmp hadc
+ set(hadc,'color',ADCCOLOR{i});
+end
+set(gca,'xticklabel',[])
+set(gca,'box','on')
+set(gca,'xlim',[ax(1) ax(2)],'ylim',[-180 180]),grid('on')
+ylabel(YL{1},'fontsize',14,'fontweight','bold')
 
 if i1>1,i1=i1-1;end
 if i2<length(t),i2=i2+1;end
 I=i1:i2;
 
-YL={'ADC{\phi}','|RF|','RF{\phi}','GX','GY','GZ'};
-RP=Rec_Phs;Irp=find(RP>180);RP(Irp)=RP(Irp)-360;
-cla(hax{1},'reset');axes(hax{1}),plot(Tadc,RP,'.r'),set(gca,'xticklabel',[])
-set(gca,'xlim',[ax(1) ax(2)],'ylim',[-180 180]),grid
-ylabel(YL{1},'fontsize',14,'fontweight','bold')
-
+%plot remaining axes
 for i=1:5
- cla(hax{i+1},'reset');axes(hax{i+1}),plot(t(I),A(I,Iax(i)),'linewidth',2),grid
+ cla(hax{i+1},'reset');axes(hax{i+1}),plot(t(I),A(I,Iax(i)),'linewidth',2,'color',[0 0.4470 0.7410]),grid
  ylabel(YL{i+1},'fontsize',14,'fontweight','bold')
- set(gca,'xlim',[ax(1) ax(2)])
+ set(gca,'xlim',[ax(1) ax(2)]);
  ay=get(gca,'ylim');
  if abs(ay(1)-ay(2))<1e-10,set(gca,'ylim',100*ay);end
  if (i==2 || i==5),xlabel('t [msec]','fontsize',12),else set(gca,'xticklabel',[]),end

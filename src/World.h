@@ -169,8 +169,8 @@ class World {
     double            phase;                /**< @brief Receiver phase taken from the TPOIs*/
     double            PhaseLock;            /**< @brief Locked Phase (the phase set by the last RF pulse)*/
     double            deltaB;               /**< @brief Any off-resonance terms*/
-    std::vector<double> solution;          /**< @brief Solution [M_r, phi, M_z] at the current time point*/
-
+    std::vector<double> solution;           /**< @brief Solution [M_r, phi, M_z] at the current time point*/
+    double            LargestM0;            /**< @brief largest equilibrium magnetization for noise scaling*/
     double            RandNoise;            /**< @brief percentage of random noise added to the signal */
     double            GMAXoverB0;           /**< @brief Constant for the concomitant field term */
     double            NonLinGradField;      /**< @brief Non-linear contribution to B_z from gradients */
@@ -203,6 +203,17 @@ class World {
 	//double*           helper;             /** @brief Any additional data necessary for solving the model. (i.e. Global MT exchange matrix) */
 	
 	multimap<EddyPulse*,double>	m_eddies; /**< @brief map of remaining eddies still to be played out (duration,pointer) */
+
+    int 			  m_slice;              /**< @brief slice number */
+    int 			  m_set;                /**< @brief set number */
+    int 			  m_contrast;           /**< @brief contrast number */
+    int 			  m_average;            /**< @brief average number */
+    int 			  m_shot;               /**< @brief shot number */
+    int 			  m_shotmax;            /**< @brief total number of shots */
+    int 			  m_partition;          /**< @brief partition number */
+    int 			  m_partitionmax;       /**< @brief total number of partitions */
+
+    string            m_seqSignature;        /**< @brief Sequence signature (md5 sum of Pulseq sequence file) */
 
  private:
 
