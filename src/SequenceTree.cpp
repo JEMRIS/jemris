@@ -294,6 +294,22 @@ vector<Module*>       SequenceTree::GetChildren  (DOMNode* node)         {
     return m_node2children[node];
 }
 
+/***********************************************************/
+vector<Module*>       SequenceTree::GetChildrenDynamic  (DOMNode* node)         {
+
+	vector<Module*> children;
+
+	DOMNodeList* dnl = node->getChildNodes();
+
+	for (unsigned int i = 0; i < dnl->getLength(); i++) {
+		if (dnl->item(i)->getNodeType() == DOMNode::ELEMENT_NODE)
+			children.push_back( m_Modules.find(dnl->item(i))->second );
+	}
+
+	return children;
+
+}
+
 
 /***********************************************************/
 Module*               SequenceTree::GetChild     (DOMNode* node, unsigned int position) {

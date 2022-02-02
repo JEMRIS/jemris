@@ -141,6 +141,12 @@ class SequenceTree {
      */
 	vector<Module*>       GetChildren  (DOMNode* node);
 
+/**
+     * Get vector of chilren Dynamic (old non-cached version for dynamic events such as eddy currents)
+     *
+	 * @param node The node referred to.
+     */
+	vector<Module*>       GetChildrenDynamic  (DOMNode* node);
 
     /**
      * Get child at position
