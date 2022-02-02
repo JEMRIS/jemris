@@ -141,6 +141,12 @@ class SequenceTree {
      */
 	vector<Module*>       GetChildren  (DOMNode* node);
 
+/**
+     * Get vector of chilren Dynamic (old non-cached version for dynamic events such as eddy currents)
+     *
+	 * @param node The node referred to.
+     */
+	vector<Module*>       GetChildrenDynamic  (DOMNode* node);
 
     /**
      * Get child at position
@@ -245,6 +251,8 @@ class SequenceTree {
     XMLIO*                  m_xio;
     map<DOMNode*, Module*>  m_Modules;
     string                  m_seq_file;  /**< path of sequence file  */
+
+	map<DOMNode*, vector<Module*>> m_node2children;
 
 };
 

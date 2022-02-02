@@ -267,6 +267,36 @@ Module*               SequenceTree::GetParent    (DOMNode* node)         {
 /***********************************************************/
 vector<Module*>       SequenceTree::GetChildren  (DOMNode* node)         {
 
+    if ( m_node2children.find(node) == m_node2children.end() ||
+         m_node2children[node].size() == 0 )
+    {
+        vector<Module*> children;
+
+        DOMNodeList* dnl = node->getChildNodes();
+
+        if  ( dnl->getLength() == 0 ) return children;
+
+        for (unsigned int i = 0; i < dnl->getLength(); i++) {
+            if (dnl->item(i)->getNodeType() == DOMNode::ELEMENT_NODE)
+                children.push_back( m_Modules.find(dnl->item(i))->second );
+        }
+
+        if ( children.size() == 0 )
+        {
+            cout << "WARN: cached children's size is zero. " << endl;
+        }
+
+        m_node2children[node] = children;
+
+        return children;
+    }
+
+    return m_node2children[node];
+}
+
+/***********************************************************/
+vector<Module*>       SequenceTree::GetChildrenDynamic  (DOMNode* node)         {
+
 	vector<Module*> children;
 
 	DOMNodeList* dnl = node->getChildNodes();

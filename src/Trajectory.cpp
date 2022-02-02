@@ -31,10 +31,6 @@
 #include "Trajectory.h"
 #include "TrajectoryInterface.h"
 
-void Trajectory::GetValue(double time, double *value){
-	m_strategy->GetValue(time, value);
-}
-
 //MODIF
 void Trajectory::GetValue(double time, double *value, long currentSpin) {
 	if( m_strategy->getCurrentTraj() != currentSpin )

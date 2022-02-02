@@ -95,6 +95,14 @@ vector<Module*> Module::GetChildren () const {
 }
 
 /***********************************************************/
+vector<Module*> Module::GetChildrenDynamic () const {
+
+	if (m_seq_tree==NULL || m_node==NULL) return vector<Module*>() ;
+	return m_seq_tree->GetChildrenDynamic(m_node);
+
+}
+
+/***********************************************************/
 Module*         Module::GetChild (unsigned int position) const {
 
 	if (m_seq_tree==NULL || m_node==NULL) return NULL;

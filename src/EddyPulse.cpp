@@ -89,7 +89,7 @@ bool EddyPulse::Prepare  (PrepareMode mode) {
 bool  EddyPulse::Convolve () {
 
 	// Check if this eddy convolution has to be recalculated, assuming that nothing
-	// has to be done if area is set and are of generating pulse is unchanged.
+	// has to be done if area is set and area of generating pulse is unchanged.
 	double gp_area = m_gen_pulse->GetAreaNumeric(1000);
 	if (fabs(m_area) > 0.0 && m_area_gen_pulse == gp_area) return true;
 

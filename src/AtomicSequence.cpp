@@ -80,7 +80,8 @@ inline void      AtomicSequence::GetValue (double * dAllVal, double const time) 
     if (time < 0.0 || time > m_duration) { return ; }
 
     if (m_non_lin_grad) World::instance()->NonLinGradField = 0.0;
-    vector<Module*> children = GetChildren();
+    vector<Module*> children;
+	children = ( m_eddy ? GetChildrenDynamic() : GetChildren() );
 
     for (unsigned int j=0; j<children.size() ; ++j) {
 
@@ -320,7 +321,7 @@ void AtomicSequence::PrepareEddyCurrents() {
 
 	World* pW = World::instance();
 	multimap<EddyPulse*,double>::iterator iter;
-	vector<Module*> children = GetChildren();
+	vector<Module*> children = GetChildrenDynamic();
 
 	// find my eddies
 	for (unsigned int j=0; j<children.size() ; ++j) {
@@ -343,7 +344,7 @@ void AtomicSequence::UpdateEddyCurrents() {
 
 	// set linger time for my eddies
 	if (!m_eddy) return;
-	vector<Module*> children = GetChildren();
+	vector<Module*> children = GetChildrenDynamic();
 
 	for (unsigned int j=0; j<children.size() ; ++j) {
 		PulseAxis ax = ((Pulse*) children[j])->GetAxis();
