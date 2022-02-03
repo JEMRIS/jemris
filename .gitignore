@@ -111,3 +111,5 @@ share/examples/trapezoid_signal_ismrmrd.h5
 share/examples/tse_signal_ismrmrd.h5
 share/examples/var_dur_signal_ismrmrd.h5
 share/examples/spiral_signal_ismrmrd.h5
+share/examples/eddycurrents.h5
+share/examples/eddycurrents_signal.h5

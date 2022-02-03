@@ -247,7 +247,7 @@ bool CheckSigs(string path, vector<string> seq){
 		sim.GetModel()->SetDumpProgress(false);
 		sim.Simulate();
 
-		printf("%18s (sig-simu)",binfile.c_str());
+		printf("%20s (sig-simu) ",binfile.c_str());
 
 		double d = compare_hdf5_fields(path+binfile+".h5",path+"approved/"+binfile+".h5","/signal/times") ;
 
