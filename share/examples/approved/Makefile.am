@@ -1,1 +1,0 @@
-EXTRA_DIST = 1chext.h5 8chheadcyl.h5 ThreePulses.h5 ThreePulses.out analytic.h5 analytic.out epi.h5 epi.out gre.h5 gre.out mpi_simu.xml radial.h5 radial.out sample.h5 simu.xml sli_sel.h5 sli_sel.out tse.h5 tse.out uniform.xml extpulses.h5 ThreePulses_signal.h5 epi_signal.h5 gre_signal.h5 tse_signal.h5 analytic_signal.h5 radial_signal.h5 sli_sel_signal.h5 extpulses_signal.h5

@@ -1,4 +1,13 @@
 
+jemris (2.9-0) stable; urgency=low
+  * Major added image reconstruction and ismrmrd support
+  * Major added deformable motion simulation
+  * Major simulation performance improvement
+  * Minor bug fixes
+  * Minor updated documentation
+
+ -- Tony Stoecker <tony.stoecker@dzne.de>  Thu, 03 Feb 2022 11:56:45 +0200
+
 jemris (2.8-2) stable; urgency=low
   * Major added flow simulation
   * Minor bug fixes

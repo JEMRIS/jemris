@@ -10,6 +10,7 @@ Prerequisites
  - HDF5		library for storing and managing data >=1.8	http://www.hdfgroup.org/HDF5
  - CLN		library for Numbers version >=1.2.X		http://ginac.de/CLN
  - GiNaC	library for symbolic mathematics >=1.4.X	http://ginac.de
+ - ISMRMRD	ISMRM Raw Data Format >=1.5.0			https://ismrmrd.github.io/apidocs/1.5.0
 
 
 Please provide all the above packages. 
@@ -21,7 +22,7 @@ If provided with an MPI implementation with C++ bindings, a parallel version of
 JEMRIS is built. Indicate the location of mpi.h with the appropriate configure 
 flags. Currently JEMRIS is tested with the MPICH implementation of MPI:
 
-- MPICH		library for parallelization >= 3.0.1		http://www.mpich.org/
+- Open MPI	library for parallelization >= 4.1.0		https://www.open-mpi.org/
 
 If povided with the boost C++ libraries, a loop coil obeying to the Biot-Savart law will be built.
 
@@ -31,13 +32,6 @@ Installation
 ------------
 
 Run the following commands:
-
-# ./configure
-# make 
-# make check
-# make install
-
-Alternatively, use cmake:
 
 # mkdir build ; cd build
 # cmake ..
