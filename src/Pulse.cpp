@@ -66,17 +66,14 @@ inline void  Pulse::SetTPOIs () {
     m_tpoi + TPOI::set(TIME_ERR_TOL, -1.0, 0);
     m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0, 0);
 
-    int    N = abs(GetNADC());
-    size_t bitmask = m_adc_flag;
     double p = (m_phase_lock?World::instance()->PhaseLock:0.0);
 
-    if (GetNADC()<0)  bitmask = 0;  //backwards compatibility - adc_flag ignored if ADC number is negative!
-	if (bitmask == 0) p=-1.0;
+	if (m_adc_flag == 0) p=-1.0;
 
-    for (int i = 0; i < N; i++)
-    	m_tpoi + TPOI::set((i+0.5)*GetDuration()/N, p, bitmask );
+    for (int i = 0; i < m_adc; i++)
+    	m_tpoi + TPOI::set((i+0.5)*GetDuration()/m_adc, p, m_adc_flag );
 
-//cout << GetName() << " m_adc_flag = " << m_adc_flag;  m_tpoi.PrintMeta(2); cout << endl;
+	//cout << GetName() << " m_adc_flag = " << m_adc_flag << ", N = " << m_adc << endl; m_tpoi.PrintMeta(2); cout << endl;
 
 }
 

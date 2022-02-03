@@ -323,11 +323,8 @@ inline void  TrapGradPulse::SetTPOIs () {
 	m_tpoi + TPOI::set(TIME_ERR_TOL              , -1.0);
 	m_tpoi + TPOI::set(GetDuration()-TIME_ERR_TOL, -1.0);
 
-	int N = abs(GetNADC());
 	double p0 = (Pulse::m_phase_lock ? World::instance()->PhaseLock : 0.0);
 	p0 += GetInitialPhase()*PI/180.0;
-
-	size_t bitmask = GetNADC() < 0 ? 0 : m_adc_flag;
 
 	if ( m_has_flat_top_time || m_has_flat_top_area)
 	{
@@ -337,29 +334,29 @@ inline void  TrapGradPulse::SetTPOIs () {
 
 
 		//add ADCs only on the flat top
-		for (int i = 0; i < N; i++) {
+		for (int i = 0; i < m_adc; i++) {
 			// Calculate phase due to frequency offset
-			double time = (i+0.5)*m_ft/N;
+			double time = (i+0.5)*m_ft/m_adc;
 			double p = p0 + GetFrequency()*(time - m_ft/2);
 			p = fmod( p, 2*PI );
 			p = p<0.0 ? p+2*PI : p;
-			p = GetNADC() < 0 ? -1.0 : p;
+			p = m_adc_flag == 0 ? -1.0 : p;
 
 			// Sample to maintain logical dwell time (e.g. for a 3.2ms FlatTopTime
 			// with 32 ADCs, the dwell time is 100us) This is required for hardware implementation
-			m_tpoi + TPOI::set(m_ramp_up_time + time, p, bitmask );
+			m_tpoi + TPOI::set(m_ramp_up_time + time, p, m_adc_flag );
 		}
 	}
 	else { 		//set ADCs over total duration (standard)
-		for (int i = 0; i < N; i++) {
+		for (int i = 0; i < m_adc; i++) {
 			// Calculate phase due to frequency offset
-			double time = (i+0.5)*GetDuration()/N;
+			double time = (i+0.5)*GetDuration()/m_adc;
 			double p = p0 + GetFrequency()*(time - GetDuration()/2);
 			p = fmod( p, 2*PI );
 			p = p<0.0 ? p+2*PI : p;
-			p = GetNADC() < 0 ? -1.0 : p;
+			p = m_adc_flag == 0 ? -1.0 : p;
 
-			m_tpoi + TPOI::set(time, p, bitmask);
+			m_tpoi + TPOI::set(time, p, m_adc_flag);
 		}
 	}
 
@@ -367,7 +364,7 @@ inline void  TrapGradPulse::SetTPOIs () {
 	m_tpoi + TPOI::set(m_ramp_up_time	   , -1.0);
 	m_tpoi + TPOI::set(m_ramp_up_time+m_ft , -1.0);
 
-    //cout << GetName() << " m_adc_flag = " << m_adc_flag;  m_tpoi.PrintMeta(2); cout << endl;
+	//cout << GetName() << " m_adc_flag = " << m_adc_flag << ", m_adc = " << m_adc << endl;  m_tpoi.PrintMeta(2); cout << endl;
 
 }
 

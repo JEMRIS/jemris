@@ -6,7 +6,7 @@ sequence-root---------->   CONCAT       CONCATSEQUENCE      EPI   300.000    122
 >>>>>>>>>>
   |_ CSroot    -------->   CONCAT    CONTAINERSEQUENCE      SLS     1.910        0       125  | 
     |_ child 1   ------>     ATOM       ATOMICSEQUENCE       A1     1.910        0       125  | 
-      |_ child 1   ---->    PULSE          SINCRFPULSE       P1     1.667     -100       122  |  Axis = RF  , InitDelay = 0.12 , ADC type ADC|IMG|ACS|PC|NOISE = 0|0|0|0|0 , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,3,0,0.5)  , (Zero-crossings,Apodization) = (2.5,0.5)
+      |_ child 1   ---->    PULSE          SINCRFPULSE       P1     1.667        0       122  |  Axis = RF  , InitDelay = 0.12 , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,3,0,0.5)  , (Zero-crossings,Apodization) = (2.5,0.5)
       |_ child 2   ---->    PULSE        TRAPGRADPULSE       P2     1.910        0         4  |  Axis = GZ  , Area = 4.0408 , FlatTop: (Area,time)= (3.76991,1.67)
 <<<<<<<<<<
   |_ child 2   -------->     ATOM       ATOMICSEQUENCE       A1     0.660        0         8  | 

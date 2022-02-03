@@ -204,6 +204,7 @@ There exist several pulses which may be inserted into an AtomicSequence. All pul
 \li \c ADCFlag: defines the ISMRMD datatype for image reconstruction. An ADCFlag>0 has no JEMRIS-internal functionality.
        Possible values are (the colors in brackets are used for plotting these ADC events in the GUI):
       <ul>
+		<li> \c 0 : no ADC. Ssometimes useful for visualiztion, see below.
 		<li> \c 1 : a standard ADC. This is the default, if the ADCFlag is not set. (black)
 		<li> \c 2 : an imaging ADC - these events define k-space  (red)
 		<li> \c 4 : an auto-calibration scan (ACS) for parallel imaging. (blue)
@@ -211,11 +212,10 @@ There exist several pulses which may be inserted into an AtomicSequence. All pul
 		<li> \c 16 : a noise scan. (magenta)
       </ul>
 	If ADCFlag is a sum of the above numbers, all according flags are set.
-	Finally, ADCFlag can be zero. In this case the time points are not ADC events, but so called TPOIs (Time Points Of Interest),
+	Finally, the <b>ADCFlag can be zero</b>. In this case the time points are not ADC events, but so called TPOIs (Time Points Of Interest),
 	at which the pulse is evaluated but no signal acquired. This is good for a) better visualization
 	of certain pulse shapes in the GUI and b) force the simulator to evaluate the solution at these time points. However, keep in mind that 
-	TPOIs (or ADCs) will slow down the simulation.  It is also possible to specify a <b> negative number of ADCs </b>, which has the same
-	meaning, i.e. ADCFlag=0. This is for backward compatibility and should not be used for new sequences. (Instead, use ADCFlag=0.)
+	TPOIs (or ADCs) will slow down the simulation.
 
  \li \c Phaselock: Locks the phase of the ADCs inside the module to the phase of the last RF pulse. Can be \c 1 (true) or \c 0 (false).
 

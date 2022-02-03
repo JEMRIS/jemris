@@ -2,7 +2,7 @@
 <Parameters FOVx="50" Name="P" Nx="2">
    <ConcatSequence Name="C1" Observe="NX=P.Nx" Repetitions="NX">
       <ATOMICSEQUENCE Name="A1">
-         <SINCRFPULSE ADCs="-100" Apodization="0.5" Bandwidth="3" FlipAngle="90" Frequency="C*DX*A" InitialDelay="RUT" Name="P1" Observe="C=C1.Counter, DX=P.Dx, A=P2.Amplitude, RUT=P2.RampUpTime" Zeros="4"/>
+         <SINCRFPULSE ADCs="100" ADCFlag="0" Apodization="0.5" Bandwidth="3" FlipAngle="90" Frequency="C*DX*A" InitialDelay="RUT" Name="P1" Observe="C=C1.Counter, DX=P.Dx, A=P2.Amplitude, RUT=P2.RampUpTime" Zeros="4"/>
          <TRAPGRADPULSE ADCs="5" Axis="GX" FlatTopArea="4*BW*KMX" FlatTopTime="D" MaxAmpl="5" Name="P2" Observe="D=P1.Duration, BW=P1.Bandwidth, KMX=P.KMAXx" SlewRate="10"/>
       </ATOMICSEQUENCE>
       <ATOMICSEQUENCE Name="A2">

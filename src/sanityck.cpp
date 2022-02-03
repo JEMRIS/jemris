@@ -171,14 +171,14 @@ bool CheckSeqs(string path, vector<string> seq){
 
 			seqTree.Populate();
 			ConcatSequence* CS = seqTree.GetRootConcatSequence();
-			printf("%02d. %15s | ",i+1,seq[i].c_str());
+			printf("%02d. %18s | ",i+1,seq[i].c_str());
 
 			//sequence-diagram
 			string binfile = seq[i];
 			binfile.replace(binfile.find("xml",0),3,"h5");
 			CS->SeqDiag(path+binfile);
 
-			printf("%15s (seq-diag) ",binfile.c_str());
+			printf("%18s (seq-diag) ",binfile.c_str());
 			double d = compare_hdf5_fields(path+binfile,path+"approved/"+binfile,"/seqdiag/T") ;
 
 			if ( d < 0.0 ) {
@@ -202,7 +202,7 @@ bool CheckSeqs(string path, vector<string> seq){
 			string outfile = seq[i];
 			outfile.replace(outfile.find("xml",0),3,"out");
 			CS->DumpTree(path+outfile);
-			printf("%15s (tree-dump) ",outfile.c_str());
+			printf("%18s (tree-dump) ",outfile.c_str());
 
 			if (compare_text_files(path+outfile,path+"approved/"+outfile))
 				cout << "is ok " << endl;
@@ -237,7 +237,7 @@ bool CheckSigs(string path, vector<string> seq){
 			cout << "can not initialize Simulator. exit.\n";
 			return false;
 		}
-		printf("%02d. %15s | ",i+1,seq[i].c_str());
+		printf("%02d. %18s | ",i+1,seq[i].c_str());
 
 		sim.SetSequence(path+seq[i]);
 		string binfile = seq[i];
@@ -386,6 +386,7 @@ int main (int argc, char *argv[]) {
 	seq.push_back("extpulses.xml");
 	seq.push_back("epi_modular.xml");
 	seq.push_back("trapezoid.xml");
+	seq.push_back("eddycurrents.xml");
 
 	//sequences to output for scanner execution
 	vector<string> outseq;

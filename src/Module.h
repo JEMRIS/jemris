@@ -146,7 +146,7 @@ class Module : public Prototype {
     vector<Module*> GetChildren () const;
 
 /**
-     * @brief Get Children dynamic (old not-chached version)
+     * @brief Get Children dynamic (old non-cached version for dynamic events such as eddy currents)
      *
      * @return Vector of child modules.
      */
