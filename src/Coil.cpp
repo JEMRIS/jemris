@@ -148,6 +148,10 @@ double  Coil::GetPhase (const double time) {
 //MODIF
     dv->m_Flow->GetValue(time,position);
 //MODIF***
+    dv->m_Respiration->GetValue(time,position);
+//Mod
+
+//
 
     if (m_interpolate)
 		return ( m_phase + (m_conjugate?-1.0:1.0) * InterpolateSensitivity(position,false));
@@ -167,6 +171,10 @@ double  Coil::GetSensitivity (const double time) {
 //MODIF
     dv->m_Flow->GetValue(time,position);
 //MODIF***
+    dv->m_Respiration->GetValue(time,position);
+//Mod
+
+//
 
 	if (m_interpolate) {
 		return m_scale*InterpolateSensitivity(position);

@@ -38,6 +38,9 @@ using namespace std;
 //MODIF
 class TrajectoryFlow;
 //MODIF***
+//Mod
+class TrajectoryRespiration;
+//
 class TrajectoryMotion;
 class TrajectoryT2s;
 class Trajectory1D;
@@ -88,6 +91,10 @@ class DynamicVariables {
 //MODIF
     Trajectory* m_Flow;
 //MODIF***
+
+//Mod
+    Trajectory* m_Respiration;
+//
     Trajectory* m_Motion;
     Trajectory* m_T2prime;
 
@@ -119,6 +126,9 @@ class DynamicVariables {
 //MODIF
     TrajectoryFlow* stub_flow;
 //MODIF***
+//Mod
+    TrajectoryRespiration* stub_respiration;
+//
     TrajectoryMotion* stub_motion;
     TrajectoryT2s* stub_T2s;
     Trajectory1D* stub_r1;
