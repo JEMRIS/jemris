@@ -35,7 +35,7 @@ list (APPEND CORE_SRC AnalyticCoil.cpp AnalyticCoil.h
   Trajectory1D.cpp Trajectory1D.h TrajectoryDiffusion.cpp
   TrajectoryDiffusion.h TrajectoryEmpty.h TrajectoryInterface.cpp
   TrajectoryInterface.h TrajectoryMotion.cpp TrajectoryMotion.h
-  TrajectoryFlow.cpp TrajectoryFlow.h
+  TrajectoryFlow.cpp TrajectoryFlow.h TrajectoryRespiration.cpp TrajectoryRespiration.h
   TrajectoryT2s.cpp TrajectoryT2s.h TrapGradPulse.cpp TrapGradPulse.h
   TriangleGradPulse.cpp TriangleGradPulse.h TxRxPhase.cpp TxRxPhase.h
   World.cpp World.h XMLIO.cpp XMLIO.h config.h ginac_functions.h list.h
@@ -68,8 +68,9 @@ target_link_libraries (sanityck ${COMMON_LIBS} core)
 if (MPI_C_FOUND)
   add_executable (pjemris Mpi2Evolution.h
     Mpi2Evolution.cpp mpi_Model.h Model.h Model.cpp pjemris.cpp)
+  find_package(Threads REQUIRED)
   target_link_libraries (pjemris core ${COMMON_LIBS}
-	${MPI_C_LIBRARIES})  
+	${MPI_C_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
   target_compile_definitions (pjemris PRIVATE PARALLEL)
   if (MPI_C_COMPILE_FLAGS)
     set_target_properties(pjemris PROPERTIES
