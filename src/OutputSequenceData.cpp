@@ -306,7 +306,7 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 		output << "shape_id " <<  iS+1 << endl;
 		output << "num_samples " << shape.m_num_uncompressed_samples << endl;
 		for (int k=0; k<shape.m_samples.size(); k++)
-			output << setprecision(std::numeric_limits<float>::digits10) << shape.m_samples[k] << endl; // Pulseq sequence has floating point preicision
+			output << setprecision(7) << shape.m_samples[k] << endl;
 		output << endl;
 	}
 	output << endl;
@@ -344,7 +344,7 @@ void OutputSequenceData::CompressShape(vector<double> &shape, CompressedShape *o
 	out->m_samples.clear();
 	out->m_num_uncompressed_samples=shape.size();
 
-	double *diff = new double[shape.size()];
+	float *diff = new float[shape.size()]; // Pulseq interpreter has floating point precision
 	diff[0]=shape[0];
 	for (int i=1; i<shape.size(); i++) {
 		diff[i]=shape[i]-shape[i-1];
@@ -354,10 +354,9 @@ void OutputSequenceData::CompressShape(vector<double> &shape, CompressedShape *o
 
 	int idx=0;
 	while (idx<shape.size()) {
-		double curr=diff[idx];
+		float curr=diff[idx];
 		int count=0;
-		// Pulseq sequence has floating point precision
-		while (idx<shape.size()-1 && fabs(curr-diff[idx+1]) <= ( (fabs(curr)<fabs(diff[idx+1]) ? fabs(diff[idx+1]) : fabs(curr)) * 10 * std::numeric_limits<float>::epsilon())){
+		while (idx<shape.size()-1 && fabs(curr-diff[idx+1])<1.0e-6 ){
 			count++;
 			idx++;
 		}
