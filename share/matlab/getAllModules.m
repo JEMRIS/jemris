@@ -6,7 +6,7 @@ function [modules,params]=getAllModules(Jcall,Jpath)
 
 %
 %  JEMRIS Copyright (C) 
-%                        2006-2019  Tony Stoecker
+%                        2006-2022  Tony Stoecker
 %                        2007-2015  Kaveh Vahedipour
 %                        2009-2019  Daniel Pflugfelder
 %                                  

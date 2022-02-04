@@ -8,7 +8,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2020  Tony Stoecker
+ *                        2006-2022  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
  *                        2009-2019  Daniel Pflugfelder
  *                                  

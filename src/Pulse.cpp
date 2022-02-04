@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2020  Tony Stoecker
+ *                        2006-2022  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
  *                        2009-2019  Daniel Pflugfelder
  *                                  
@@ -52,8 +52,14 @@ bool Pulse::Prepare  (const PrepareMode mode) {
 	ATTRIBUTE ("InitialPhase", m_initial_phase);
 	ATTRIBUTE ("Frequency"   , m_frequency    );
 
+	bool btag = Module::Prepare(mode);
 
-	return Module::Prepare(mode);
+	if (mode == PREP_VERBOSE && m_adc<0) 
+		   cout << "\n warning in Prepare(1) of PULSE " << GetName() << ": negative ADCs are no longer supported and will be ignored" << endl;
+
+	m_adc=abs(m_adc);
+
+	return btag;
 
 }
 
@@ -73,7 +79,7 @@ inline void  Pulse::SetTPOIs () {
     for (int i = 0; i < m_adc; i++)
     	m_tpoi + TPOI::set((i+0.5)*GetDuration()/m_adc, p, m_adc_flag );
 
-	//cout << GetName() << " m_adc_flag = " << m_adc_flag << ", N = " << m_adc << endl; m_tpoi.PrintMeta(2); cout << endl;
+	// cout << GetName() << " m_adc_flag = " << m_adc_flag << ", N = " << m_adc << endl; m_tpoi.PrintMeta(2); cout << endl;
 
 }
 

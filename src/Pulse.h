@@ -4,7 +4,7 @@
 
 /*
  *  JEMRIS Copyright (C) 
- *                        2006-2019  Tony Stoecker
+ *                        2006-2022  Tony Stoecker
  *                        2007-2018  Kaveh Vahedipour
  *                        2009-2019  Daniel Pflugfelder
  *                                  
@@ -133,7 +133,7 @@ class Pulse :public Module, public TxRxPhase {
      *
      * @param  nadc
      */
-    inline void  SetNADC  (unsigned int nadc) {m_adc = nadc; SetTPOIs();};
+    inline void  SetNADC  (int nadc) {m_adc = abs(nadc); m_adc_flag = ( nadc<0 ? 0 : m_adc_flag );  SetTPOIs();};
 
     /**
      * @return Get ADC flag
@@ -166,8 +166,8 @@ class Pulse :public Module, public TxRxPhase {
     virtual string          GetInfo        ();
 
     PulseAxis     m_axis;              /**< The axis of this pulse*/
-    unsigned int  m_adc;               /**< Number of ADCs */
-    int  		  m_adc_flag;          /**< Property of ADCs (see TPOI) */
+    int           m_adc;               /**< Number of ADCs */
+    int  		   m_adc_flag;          /**< Property of ADCs (see TPOI) */
     double        m_initial_delay;     /**< Time shift at the beginning inside the atom */
 
 };
