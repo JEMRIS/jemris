@@ -279,12 +279,15 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 		GradEvent *grad_x = new GradEvent();
 		grad_x->m_channel = 0;
 		grad_x->m_amplitude = std::numeric_limits<double>::min();
+		grad_x->m_delay = 0; // delay is done with zero-filling in arbitrary shape
 		GradEvent *grad_y = new GradEvent();
 		grad_y->m_channel = 1;
 		grad_y->m_amplitude = std::numeric_limits<double>::min();
+		grad_y->m_delay = 0;
 		GradEvent *grad_z = new GradEvent();
 		grad_z->m_channel = 2;
 		grad_z->m_amplitude = std::numeric_limits<double>::min();
+		grad_z->m_delay = 0;
 		int num_samples = round(GetDuration()/10.0e-3);
 		for (int i=0; i<num_samples; i++){
 			grad_x->m_samples.push_back(0.0);
@@ -325,7 +328,7 @@ void AtomicSequence::CollectSeqData(OutputSequenceData *seqdata) {
 				}
 			}
 		}
-		// compress shapes
+		// scale samples to maximum amplitude
 		transform( grad_x->m_samples.begin(), grad_x->m_samples.end(), grad_x->m_samples.begin(), bind2nd( divides<double>(), grad_x->m_amplitude ) );
 		transform( grad_y->m_samples.begin(), grad_y->m_samples.end(), grad_y->m_samples.begin(), bind2nd( divides<double>(), grad_y->m_amplitude ) );
 		transform( grad_z->m_samples.begin(), grad_z->m_samples.end(), grad_z->m_samples.begin(), bind2nd( divides<double>(), grad_z->m_amplitude ) );

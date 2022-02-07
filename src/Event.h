@@ -90,8 +90,8 @@ public:
 	 * @see Event::operator==()
 	 */
 	bool operator==(const RFEvent &other) const {
-	    return (this->m_amplitude==other.m_amplitude && this->m_mag_shape==other.m_mag_shape && this->m_phase_shape==other.m_phase_shape && this->m_delay==other.m_delay &&
-	    		this->m_freq_offset==other.m_freq_offset && this->m_phase_offset==other.m_phase_offset);
+	    return (long(1e9*this->m_amplitude)==long(1e9*other.m_amplitude) && this->m_mag_shape==other.m_mag_shape && this->m_phase_shape==other.m_phase_shape && this->m_delay==other.m_delay &&
+	    		long(1e9*this->m_freq_offset)==long(1e9*other.m_freq_offset) && long(1e9*this->m_phase_offset)==long(1e9*other.m_phase_offset));
 	}
 public:
 	double m_amplitude;                  /**< @brief Amplitude (rad/ms) */
@@ -125,7 +125,7 @@ public:
 			ok = (this->m_shape==other.m_shape);
 		else                     // Trapezoidal gradient
 			ok = (this->m_ramp_up_time==other.m_ramp_up_time && this->m_flat_time==other.m_flat_time && this->m_ramp_down_time==other.m_ramp_down_time);
-		return (ok && this->m_amplitude==other.m_amplitude && this->m_channel==other.m_channel && this->m_delay==other.m_delay);
+		return (ok && long(1e9*this->m_amplitude)==long(1e9*other.m_amplitude) && this->m_delay==other.m_delay);
 	}
 public:
 	int  m_channel;                      /**< @brief Channel (0, 1 or 2 for X,Y,Z) */
@@ -161,7 +161,7 @@ public:
 	 */
 	bool operator==(const ADCEvent &other) const {
 	    return (this->m_num_samples==other.m_num_samples && this->m_dwell_time==other.m_dwell_time && this->m_delay==other.m_delay &&
-	    		this->m_freq_offset==other.m_freq_offset && this->m_phase_offset==other.m_phase_offset);
+	    		long(1e9*this->m_freq_offset)==long(1e9*other.m_freq_offset) && long(1e9*this->m_phase_offset)==long(1e9*other.m_phase_offset));
 	}
 public:
 	int m_num_samples;          /**< @brief Number of samples */
