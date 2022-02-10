@@ -55,7 +55,7 @@ Download the latest stable version of JEMRIS. (Alternativaly, source code of the
                 <li> md5sum: M5ZZZ
                 <li> shasum: SHZZZ
                  \n<b>Note:</b>\n
-                <li> Parallel jemris requires the MPICH library from <a href="https://brew.sh/">Homebrew</a>
+                <li> Parallel jemris requires the open-mpi library from <a href="https://brew.sh/">Homebrew</a>
              </ul>
 
         <li> <b> Windows Binary </b>
