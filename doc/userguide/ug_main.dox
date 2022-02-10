@@ -223,7 +223,7 @@ Framework design, parallel TX/RX, supercomputer implementation. \n
 Over the years JEMRIS improved a lot through feedback and bug reports from the user community. Thanks a lot for your contributions!
 Some projects extended JEMRIS and added new functionality to the software. Here is a list of the major contributions over the past years.
 \n\n
-<b> 2021b</b>\n 
+<b> 2022</b>\n 
 Marten Veldmann implemented the <b> ISMRMRD data format </b> into JEMRIS. With this feature, the simulation data can be feeded into image reconstuction 
 software which is compatible with ISMRMRD. Marten also implemented a fully <b> automated image reconstruction pipeline </b> as a Docker service
 for JEMRIS. The pipeline is installed during JEMRIS installation (see \ref ug_install). Furthermore, Marten updated and extended the Pulseq support 
@@ -232,6 +232,11 @@ Pulseq sequences. More information on the pipeline can be found on <a href=" htt
 The complete process - sequence development, acquisition, and image reconstuction - was presented at the ISMRM 2021 conference:
 <i>	Open-Source MR Imaging Workflow. Veldmann M, Ehses P, Chow K, Zaitsev M, Stöcker T, ISMRM 2021, #0729</i>
 
+<b> 2021b</b>\n 
+2021: Ben Hoshino and Xin Chen from Canon Medical Research significantly improved JEMRIS simulation performance (since version 2.9.0).
+This was mainly realized by introducing “Children Caching” for recursive retrieval of events from the JEMRIS sequence tree.
+This results in up to 3x faster simulations! (Depending on the complexity of the sequence.)
+ 
 <b> 2021a</b>\n 
 Hanna Hanson and Benny Rowland implemented <b> motion of deformable phantoms </b> into JEMRIS, which can e.g. be used for realistic simulations of cardiac MRI or respiration.
 An example can be found on  <a href=" https://github.com/hmhanson/4DPhantomMRI"><b>Hanna's github page</b></a>. Read this paper for more information:

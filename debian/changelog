@@ -3,6 +3,7 @@ jemris (2.9-0) stable; urgency=low
   * Major added image reconstruction and ismrmrd support
   * Major added deformable motion simulation
   * Major simulation performance improvement
+  * Major revived multi-pool MRI simulations based on the Bloch-McConnel equations 
   * Minor bug fixes
   * Minor updated documentation
 

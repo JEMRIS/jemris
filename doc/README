@@ -3,7 +3,7 @@ Create local JEMRIS documentation with the command
 
 >> doxygen doxy.conf
 
-Then point your browser to [jemris-install-dir]/doc/html/index.shtml
+Then point your browser to [jemris-install-dir]/doc/html/index.html
 
 
 

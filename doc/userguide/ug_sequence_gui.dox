@@ -48,7 +48,7 @@ into it:
 \image html pics/epi_jemris_screenshot.png width=800px
 \image latex pics/epi_jemris_screenshot.eps
 
-The Sequence GUI allows to interactively build the sequence tree. The
+The %Sequence GUI allows to interactively build the sequence tree. The
 tools for this are given in the top panel. The <b>"File"</b> dialog
 allows to load and save sequences (XML format), and to export sequences to Pulseq
 format for execution on a real MR-scanner (cf. \ref ug_command_line_jemris_export). The <b>"write XML"</b>
@@ -164,7 +164,7 @@ So far, there exist five modules which are of type sequence:
          by the ContainerSequence module (see below). Thus, the Container module itself does not define sequence events. It only
          defines the ContainerSequence and it is responsible for I/O of attributes between the main sequence and the building block.
          For that, the Container may observe several other modules (see section \ref ug_JEMRIS_seq_ginac) in the sequence tree which are then
-	 atuomatically passed to the ContainerSequence - this is concept of importing attributes to the ContainerSequence. Further, it is possible
+	 atuomatically passed to the ContainerSequence - this is the concept of importing attributes to the ContainerSequence. Further, it is possible
          to observe attributes of other modules within the ContainerSequence - this is the concept of exporting attributes from the ContainerSequence.
          The attribute \c "Filename" specifies the xml-file of the ContainerSequence. Further, the Container has the following additional attributes:
 	 <ol>
@@ -194,7 +194,8 @@ So far, there exist five modules which are of type sequence:
 
 There exist several pulses which may be inserted into an AtomicSequence. All pulses have several attributes in common:
 
- \li \c Duration: Every pulse has a duration, which is explicitly set. (In some cases, it is however calculated from other attributes.)
+\subsubsection ug_common_pulse_attributes Attributes common to all pulses
+ \li \c Duration: Every pulse has a duration, which is either explicitly set or calculated from other attributes.
 
  \li \c InitialDelay: A pulse may start at a later time within the atom, e.g. an RF pulse may wait for the ramp-up time of a gradient pulse.
 
@@ -232,8 +233,10 @@ The most simple pulse-shape module is the
 	 </ol>
 </ul>
 
-All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pulses, respectively. The following
-<b> RF pulse Modules</b> are defined in JEMRIS:
+All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pulses, respectively. 
+
+\subsubsection ug_rf_pulses RF Pulse Modules
+The following <b> RF pulse Modules</b> are defined in JEMRIS:
 <ul>
 	<li> <b> \c HardRFPulse</b>: A nonselective rectangular RF pulse. It has the following specific attributes
 	 <ol>
@@ -283,8 +286,9 @@ All other pulses subdived into two main pulse classes, RF Pulses and Gradient Pu
 Note that in terms of numerical efficiency the built-in RF pulses (HardRFPulse,GaussianRFPulse,SincRFPulse) perform best, the
 evaluation of an AnalyticRFPulse is slower, and an ExternalRFPulse is slowest, if it is specified through many data points.
 
+\subsubsection ug_grad_pulses Gradient Pulse Modules
 
-Next, there exist several <b> Gradient Pulse Modules</b> in JEMRIS. All gradients can induce eddy currents, for which three additional attributes
+There exist several modules to define gradient events in JEMRIS. All gradients can induce eddy currents, for which three additional attributes
 are in common for these pulses:
 
  \li \c EddyCurrents: An analytic expression, similar to the Shape attribute of AnalyticGradPulse (see section \ref ug_JEMRIS_seq_spec). It specifies the
