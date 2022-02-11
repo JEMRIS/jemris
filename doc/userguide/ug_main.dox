@@ -34,6 +34,12 @@ Additionally, you can clone the JEMRIS project from <a href="https://github.com/
 \n
 Download the latest stable version of JEMRIS. (Alternativaly, source code of the most recent developer version is on <a href="https://github.com/JEMRIS/jemris">GitHub</a>.)
 \n
+\n
+<b> Image Reconstruction Pipeline: </b> \n
+JEMRIS binaries do not include  image reconstruction. For these features the image reconstruction server needs to be installed as explained on the project's 
+<a href=" https://github.com/mrphysics-bonn/python-ismrmrd-reco"><b>github page</b></a>. \n
+(Installing JEMRIS from source code will automatically install the server, see \ref ug_install.)
+\n
 <ul>
         <li> <b> Sources </b>
              <ul>
@@ -42,7 +48,7 @@ Download the latest stable version of JEMRIS. (Alternativaly, source code of the
                 <li> shasum: SHXXX
              </ul>
 
-        <li> <b> Ubuntu 18.04 Binary </b>
+        <li> <b> Ubuntu 20.04 Binary </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z-Linux.deb">jemris-X.Y.Z-Linux.deb</a>
                 <li> md5sum: M5YYY
@@ -54,19 +60,20 @@ Download the latest stable version of JEMRIS. (Alternativaly, source code of the
                 <li> <a href="../get/jemris-X.Y.Z.mpkg.zip">jemris-X.Y.Z.mpkg.zip</a>
                 <li> md5sum: M5ZZZ
                 <li> shasum: SHZZZ
-                 \n<b>Note:</b>\n
-                <li> Parallel jemris requires the open-mpi library from <a href="https://brew.sh/">Homebrew</a>
+                <li> <b>Note:</b> Parallel jemris requires the open-mpi library from <a href="https://brew.sh/">Homebrew</a>
              </ul>
 
         <li> <b> Windows Binary </b>
              <ul>
-                <li> <a href="../get/jemris-X.Y.Z.msi">jemris-X.Y.Z.msi</a>
+                <li> <a href="../get/jemris-2.8.3.msi">jemris-2.8.3.msi</a>
                 <li> md5sum: M5WWW
-                <li> shasum: SHWWW
-                 \n<b>Note:</b>\n
-                 <li> Parallel jemris requires <a href="http://www.mcs.anl.gov/research/projects/mpich2/downloads/tarballs/1.4.1p1/mpich2-1.4.1p1-win-ia32.msi">MPICH2 IA32 1.4.1p1</a>.<br/>
-                 <li> <a href="ug_mpiwin.html">Install guide</a> for Windows Vista, 7 &amp; 8.
+                <li> shasum: SHWWW                
+                <li> <b>Note:</b> Parallel jemris requires <a href="http://www.mcs.anl.gov/research/projects/mpich2/downloads/tarballs/1.4.1p1/mpich2-1.4.1p1-win-ia32.msi">MPICH2 IA32 1.4.1p1</a>. See also the <a href="ug_mpiwin.html">Install guide</a>. 
              </ul>
+         Windows binaries are no longer supported since JEMRIS version 2.9.0. Some of the new features are not compatible with our approach for cross compiling.
+         It might be possbile to use <b>WSL</b> (<a href=" https://docs.microsoft.com/en-us/windows/wsl/">Windows Subsystem for Linux</a>) to compile and run the
+         newest JEMRIS version on Windows. WSL worked with previous JEMRIS versions, but we have not tested it yet with version 2.9.0.
+
 </ul>
 
 */

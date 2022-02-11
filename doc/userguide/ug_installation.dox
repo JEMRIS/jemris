@@ -15,7 +15,7 @@ Binary packages for Linux, Windows and Mac OS X, are available in the section \r
 \li <a href="http://www.hdfgroup.org/HDF5/">HDF5</a> a file format for storing and managing data >=1.8
 \li <a href="http://www.ginac.de/CLN">CLN</a> library for Numbers version >=1.2.X
 \li <a href="http://www.ginac.de">GiNaC</a> library for symbolic mathematics >=1.4.X
-\li <a href="https://ismrmrd.github.io/">ISMRMRD</a> ISMRM Raw Data Format >=1.5.0
+\li <a href="https://ismrmrd.github.io/">ISMRMRD</a> ISMRM Raw Data Format >=1.4.X
 
 Some Linux distributions have the some of the above packages prebuilt and included in their package management.
 
