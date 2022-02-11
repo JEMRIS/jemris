@@ -64,7 +64,7 @@ installed.
 After adding <b>/usr/local/share/jemris/matlab</b> to the Matlab path, you can run the JEMRIS Matlab GUIs for sequence design and simulation
 (see \ref ug_JEMRIS_seq and \ref ug_JEMRIS_sim).
 
-Here, you may start by loading one of the example sequences in the directory \c <b>"/usr/local/share/jemris/exmaples"</b>.
+You may start by loading one of the example sequences in the directory \c <b>"/usr/local/share/jemris/exmaples"</b>.
 
 **************************************************
 */
