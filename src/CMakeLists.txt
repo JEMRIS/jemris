@@ -50,40 +50,26 @@ if (LINUX)
 endif()
 
 list (APPEND COMMON_LIBS ${HDF5_CXX_LIBRARIES} ${Xerces_LIBRARY} ${GINAC_LIBRARIES} ${SUNDIALS_LIBRARIES} ${ISMRMRD_LIBRARIES})
-set(STATIC_LIB_DIR /usr/local/lib)
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libcln.a )
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libginac.a )
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libhdf5.a )
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libhdf5_cpp.a )
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libismrmrd.a )
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libxerces-c.a )
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libsundials_cvode.a )
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libsundials_cvodes.a )
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libsundials_nvecserial.a )
-list (APPEND STATIC_LIBS ${STATIC_LIB_DIR}/libgmp.a )
-
-#set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} "-lcurl")
-set (CMAKE_EXE_LINKER_FLAGS "-lz -ldl -lm -framework CoreFoundation -framework CoreServices -lcurl -lsz")
 
 add_library (core ${CORE_SRC})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  target_link_libraries (core ${STATIC_LIBS} )
+  target_link_libraries (core ${COMMON_LIBS} )
 endif()
 add_executable (jemris Model.h Model.cpp jemris.cpp)
-target_link_libraries (jemris ${STATIC_LIBS} core) 
+target_link_libraries (jemris ${COMMON_LIBS} core) 
 
 # Install the binary to bin
 install (TARGETS jemris DESTINATION "bin")
 
 add_executable (sanityck Model.h Model.cpp sanityck.cpp)
-target_link_libraries (sanityck ${STATIC_LIBS} core) 
+target_link_libraries (sanityck ${COMMON_LIBS} core) 
 
 if (MPI_C_FOUND)
   add_executable (pjemris Mpi2Evolution.h
     Mpi2Evolution.cpp mpi_Model.h Model.h Model.cpp pjemris.cpp)
   find_package(Threads REQUIRED)
-  target_link_libraries (pjemris core ${STATIC_LIBS}
+  target_link_libraries (pjemris core ${COMMON_LIBS}
 	${MPI_C_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
   target_compile_definitions (pjemris PRIVATE PARALLEL)
   if (MPI_C_COMPILE_FLAGS)
