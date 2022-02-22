@@ -390,7 +390,8 @@ void compile_ex(const ex& expr, const symbol& sym1, const symbol& sym2, const sy
 		        FUNCP_4P& fp, const std::string filename = "") {
 
 	symbol x("x"), y("y"), z("z"), g("g");
-	ex expr_with_xyzg = expr.subs(lst(sym1==x, sym2==y, sym3==z, sym4==g));
+  std::initializer_list<ex> vec = {sym1==x, sym2==y, sym3==z, sym4==g};
+	ex expr_with_xyzg = expr.subs(lst(vec));
 
 	std::ofstream ofs;
 	std::string unique_filename = filename;
