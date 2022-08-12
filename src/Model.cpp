@@ -215,6 +215,7 @@ void Model::RunSequenceTree (double& dTimeShift, long& lIndexShift, Module* modu
 			}
 
 			//if numerical error occurs in calculation, repeat the current atom with increased accuracy
+
 			if (!Calculate(next_tStop)) {
 				//remove wrong contribution to the signal(s)
 				iadc=0;

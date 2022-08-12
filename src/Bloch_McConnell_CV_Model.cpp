@@ -271,7 +271,7 @@ Bloch_McConnell_CV_Model::Bloch_McConnell_CV_Model     () {
     m_ropt[HMAX]   = 10000.0;// the maximum stepsize in msec of the integrator*/
     m_reltol       = RTOL;
 
-   m_cvode_mem = CVodeCreate(CV_ADAMS,CV_FUNCTIONAL);
+   m_cvode_mem = CVodeCreate(CV_ADAMS);
 
     // cvode allocate memory.
     // do CVodeMalloc with dummy values y0,abstol once here;

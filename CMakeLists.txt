@@ -92,6 +92,7 @@ if (SUNDIALS_FOUND)
    add_definitions(-DCVODE26 )
    add_definitions(-DHAVE_CVODE_CVODE_H)
    add_definitions(-DHAVE_NVECTOR_NVECTOR_SERIAL_H)
+   add_definitions(-DHAVE_CVODE_DIAG_H)
 endif(SUNDIALS_FOUND)
 
 find_package(MPI)
@@ -123,13 +124,13 @@ link_directories(${ISMRMRD_LIBRARY_DIRS})
 include_directories(${ISMRMRD_INCLUDE_DIRS})
 
 # Docker image
-message( NOTICE "pulling docker image for reconstruction server...")
-execute_process(COMMAND "docker" "pull" "mavel101/bart-reco-server" RESULT_VARIABLE ret OUTPUT_FILE CMD_OUTPUT)
-if(ret EQUAL "1")
-    message( WARNING "Docker image for reconstruction server cannot be pulled. Docker may not be installed.")
-else()
-    message( NOTICE "Succesfully pulled Docker image.")
-endif()
+#message( NOTICE "pulling docker image for reconstruction server...")
+#execute_process(COMMAND "docker" "pull" "mavel101/bart-reco-server" RESULT_VARIABLE ret OUTPUT_FILE CMD_OUTPUT)
+#if(ret EQUAL "1")
+    #message( WARNING "Docker image for reconstruction server cannot be pulled. Docker may not be installed.")
+#else()
+    #message( NOTICE "Succesfully pulled Docker image.")
+#endif()
 
 # Client conda environment
 message( NOTICE "creating conda environment for reconstruction client.")

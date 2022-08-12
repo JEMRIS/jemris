@@ -199,8 +199,9 @@ Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
 
     //cvode2.5:
     // create cvode memory pointer; no mallocs done yet.
-    m_cvode_mem = CVodeCreate (CV_ADAMS, CV_FUNCTIONAL);
+    m_cvode_mem = CVodeCreate (CV_ADAMS);
 
+ 
     // cvode allocate memory.
     // do CVodeMalloc with dummy values y0,abstol once here;
     // -> CVodeReInit can later be used
@@ -236,25 +237,19 @@ Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
     }
     //MODIF***
 
-#ifndef CVODE26
-    if(CVodeMalloc(m_cvode_mem,bloch,0,y0,CV_SV,m_reltol,abstol) != CV_SUCCESS ) {
-    	cout << "CVodeMalloc failed! aborting..." << endl;exit (-1);
-    }
-    if(CVodeSetFdata(m_cvode_mem, (void *) m_world) !=CV_SUCCESS) {
+    if(CVodeSetUserData(m_cvode_mem, (void *) m_world) !=CV_SUCCESS) {
     	cout << "CVode function data could not be set. Panic!" << endl;exit (-1);
     }
-
-#else
     if(CVodeInit(m_cvode_mem,bloch,0,y0) != CV_SUCCESS ) {
     	cout << "CVodeInit failed! aborting..." << endl;exit (-1);
     }
     if(CVodeSVtolerances(m_cvode_mem, m_reltol, abstol)!= CV_SUCCESS){
     	cout << "CVodeSVtolerances failed! aborting..." << endl;exit (-1);
     }
-    if(CVodeSetUserData(m_cvode_mem, (void *) m_world) !=CV_SUCCESS) {
-    	cout << "CVode function data could not be set. Panic!" << endl;exit (-1);
+    if(CVDiag(m_cvode_mem) != CV_SUCCESS){
+    	cout << "CVDiag failed! aborting..." << endl;exit (-1);
     }
-#endif
+ 
 
     N_VDestroy_Serial(y0);
     N_VDestroy_Serial(abstol);
@@ -285,12 +280,7 @@ void Bloch_CV_Model::InitSolver    () {
 
 //cvode2.5:
     int flag;
-#ifndef CVODE26
-    flag = CVodeReInit(m_cvode_mem,bloch,0,((nvec*) (m_world->solverSettings))->y,CV_SV,m_reltol,
-                       ((nvec*) (m_world->solverSettings))->abstol);
-#else
     flag = CVodeReInit(m_cvode_mem,0,((nvec*) (m_world->solverSettings))->y);
-#endif
     if(flag != CV_SUCCESS ) {
     	cout << "CVodeReInit failed! aborting..." << endl;
     	if (flag == CV_MEM_NULL) cout << "MEM_NULL"<<endl;
@@ -321,25 +311,16 @@ bool Bloch_CV_Model::Calculate(double next_tStop){
 	CVodeSetStopTime(m_cvode_mem, next_tStop);
 
 	int flag;
-#ifndef CVODE26
-	flag = CVode(m_cvode_mem, m_world->time, ((nvec*) (m_world->solverSettings))->y, &m_tpoint, CV_NORMAL_TSTOP);
-#else
 	do {
 		flag=CVode(m_cvode_mem, m_world->time, ((nvec*) (m_world->solverSettings))->y, &m_tpoint, CV_NORMAL);
 	} while ((flag==CV_TSTOP_RETURN) && (m_world->time-TIME_ERR_TOL > m_tpoint ));
 
-#endif
 
 	if(flag < 0) { m_world->solverSuccess=false; }
 
 	//reinit needed?
 	if (m_world->phase == -2.0 && m_world->solverSuccess) {
-#ifndef CVODE26
-		CVodeReInit (m_cvode_mem,bloch,m_world->time + TIME_ERR_TOL,((nvec*) (m_world->solverSettings))->y,
-                     CV_SV,m_reltol,((nvec*) (m_world->solverSettings))->abstol);
-#else
 		CVodeReInit(m_cvode_mem,m_world->time + TIME_ERR_TOL,((nvec*) (m_world->solverSettings))->y);
-#endif
 		// avoiding warnings: (no idea why initial guess of steplength does not work right here...)
 		CVodeSetInitStep(m_cvode_mem,m_world->pAtom->GetDuration()/1e9);
 	}

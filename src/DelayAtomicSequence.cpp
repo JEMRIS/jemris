@@ -50,7 +50,7 @@ DelayAtomicSequence::DelayAtomicSequence  (const DelayAtomicSequence& as) {
 /***********************************************************/
 bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
 
-    bool b=true;
+    bool a=true,b=true;
     double delay = 0.;
 
     ATTRIBUTE("Delay"    , m_await_time);
@@ -69,7 +69,7 @@ bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
    	//prepare delay calculation
    	if (mode != PREP_UPDATE)	{
    		ep->SetName("eP_"+GetName());
-   		b  = ( PrepareDelay(mode) && b);
+   		a  = PrepareDelay(mode);
    	}
 
    	//calculate delay and pass info to the EmptyPulse
@@ -80,7 +80,7 @@ bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
    	ep->SetDuration(delay);
 
 	//call Prepare of base class
-    b = ( AtomicSequence::Prepare(mode) && (delay >= 0.0) && b);
+    b = AtomicSequence::Prepare(mode) ;
 
     // Hide XML attributes which were set by AtomicSequence::Prepare()
     // delay atoms don't need a rot-matrix.
@@ -90,7 +90,7 @@ bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
 		HideAttribute("Azimuth",false);
     }
 
-    if (!b && mode == PREP_VERBOSE)
+    if ( (!a || !b || (delay<0.0)) && mode == PREP_VERBOSE)
 		cout << "Preparation of DelayAtomicSequence '" << GetName() << "' not successful. Delay = " << delay << " ms" << endl;
 
     return b;
