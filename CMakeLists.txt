@@ -89,10 +89,9 @@ find_package(Sundials REQUIRED)
 include_directories (${SUNDIALS_INCLUDE_DIR})
 # Handle Nvector stuff... here we need to deal with the actual version
 if (SUNDIALS_FOUND)
-   add_definitions(-DCVODE26 )
    add_definitions(-DHAVE_CVODE_CVODE_H)
    add_definitions(-DHAVE_NVECTOR_NVECTOR_SERIAL_H)
-   add_definitions(-DHAVE_CVODE_DIAG_H)
+   add_definitions(-DHAVE_CVODE_CVODE_DIAG_H)
 endif(SUNDIALS_FOUND)
 
 find_package(MPI)

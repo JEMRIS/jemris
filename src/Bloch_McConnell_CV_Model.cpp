@@ -189,7 +189,7 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
     		NV_Ith_S(ydot,ZC+i) = 0.0;
 
 			
-    	} else if ((Mx[pool]*Mx[pool] + My[pool]*My[pool]) < ATOL1 * m0 && d_SeqVal[RF_AMP]<BEPS) {
+    	} else if ((Mx[pool]*Mx[pool] + My[pool]*My[pool]) < ATOL1 * m0 && d_SeqVal[RF_AMP]==0.0) {
         	//trivial case: no transv. magnetization AND no excitation
     		NV_Ith_S(y,   XC+i) = 0.0;
     		NV_Ith_S(y,   YC+i) = 0.0;
@@ -292,25 +292,19 @@ Bloch_McConnell_CV_Model::Bloch_McConnell_CV_Model     () {
     	NV_Ith_S(abstol,AMPL+i) = ATOL1; NV_Ith_S(abstol,PHASE+i) = ATOL2; NV_Ith_S(abstol,ZC+i) = ATOL3;
     }
 	
-#ifndef CVODE26
-    if(CVodeMalloc(m_cvode_mem,bloch,0,y0,CV_SV,m_reltol,abstol) != CV_SUCCESS ) {
-    	cout << "CVodeMalloc failed! aborting..." << endl;exit (-1);
-    }
-    if(CVodeSetFdata(m_cvode_mem, (void *) m_world) !=CV_SUCCESS) {
+
+    if(CVodeSetUserData(m_cvode_mem, (void *) m_world) !=CV_SUCCESS) {
     	cout << "CVode function data could not be set. Panic!" << endl;exit (-1);
     }
-
-#else
     if(CVodeInit(m_cvode_mem,bloch,0,y0) != CV_SUCCESS ) {
     	cout << "CVodeInit failed! aborting..." << endl;exit (-1);
     }
     if(CVodeSVtolerances(m_cvode_mem, m_reltol, abstol)!= CV_SUCCESS){
     	cout << "CVodeSVtolerances failed! aborting..." << endl;exit (-1);
     }
-    if(CVodeSetUserData(m_cvode_mem, (void *) m_world) !=CV_SUCCESS) {
-    	cout << "CVode function data could not be set. Panic!" << endl;exit (-1);
+if	(CVDiag(m_cvode_mem) != CV_SUCCESS){
+    	cout << "CVDiag failed! aborting..." << endl;exit (-1);
     }
-#endif
 
 	/*    int flag;
 	int blub = (3*pools);
@@ -398,11 +392,9 @@ void Bloch_McConnell_CV_Model::InitSolver    () {
     }
 	
     int flag;
-#ifndef CVODE26
-    flag = CVodeReInit(m_cvode_mem,bloch,0,((bmnvec*) (m_world->solverSettings))->y,CV_SV,m_reltol,((bmnvec*) (m_world->solverSettings))->abstol);
-#else
+
     flag = CVodeReInit(m_cvode_mem,0,((bmnvec*) (m_world->solverSettings))->y);
-#endif
+
     if(flag != CV_SUCCESS ) {
     	cout << "CVodeReInit failed! aborting..." << endl;
     	if (flag == CV_MEM_NULL) cout << "MEM_NULL"<<endl;
@@ -432,25 +424,18 @@ bool Bloch_McConnell_CV_Model::Calculate(double next_tStop){
 	//cout<<NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->y,ZC ) << " "<< NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->y,ZC+3 )<<endl;
 	
 	int flag;
-#ifndef CVODE26
-	flag = CVode(m_cvode_mem, m_world->time, ((bmnvec*) (m_world->solverSettings))->y, &m_tpoint, CV_NORMAL_TSTOP);
-#else
+
 	do {
 		flag=CVode(m_cvode_mem, m_world->time, ((bmnvec*) (m_world->solverSettings))->y, &m_tpoint, CV_NORMAL);
 	} while ((flag==CV_TSTOP_RETURN) && (m_world->time-TIME_ERR_TOL > m_tpoint ));
 	
-#endif
 	if(flag < 0) 
 		m_world->solverSuccess=false;
 	
 	//reinit needed?
 	if ( m_world->phase == -2.0 && m_world->solverSuccess ) {
 
-#ifndef CVODE26
-		CVodeReInit(m_cvode_mem,bloch,m_world->time + TIME_ERR_TOL,((bmnvec*) (m_world->solverSettings))->y,CV_SV,m_reltol,((bmnvec*) (m_world->solverSettings))->abstol);
-#else
 		CVodeReInit(m_cvode_mem,m_world->time + TIME_ERR_TOL,((bmnvec*) (m_world->solverSettings))->y);
-#endif
 		// avoiding warnings: (no idea why initial guess of steplength does not work right here...)
 		CVodeSetInitStep(m_cvode_mem,m_world->pAtom->GetDuration()/1e9);
 

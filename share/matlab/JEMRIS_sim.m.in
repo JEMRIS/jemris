@@ -84,10 +84,10 @@ else
     [s,w]=system('setenv');
   if s==0 % a TCSH
     handles.JemrisCall  = ['setenv LD_LIBRARY_PATH ""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
-    handles.PJemrisCall = ['setenv LD_LIBRARY_PATH ""; mpirun  -np 4 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
+    handles.PJemrisCall = ['setenv LD_LIBRARY_PATH ""; mpirun --oversubscribe -np 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
   else    % a BASH
     handles.JemrisCall  = ['LD_LIBRARY_PATH=""; ',handles.JemrisPath,'/jemris simu.xml > .sim.out &'];
-    handles.PJemrisCall = ['LD_LIBRARY_PATH=""; mpirun  -np 4 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
+    handles.PJemrisCall = ['LD_LIBRARY_PATH=""; mpirun --oversubscribe -np 9 ',handles.JemrisPath,'/pjemris simu.xml > .sim.out &'];
   end
   %CLUSTER call works only, if the CWD belongs to cluster
   cwd=pwd;[w,s]=system('whoami');n=strfind(cwd,s(1:end-1));cwd=['/srv/data/',cwd(n:end)];

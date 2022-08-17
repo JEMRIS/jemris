@@ -51,18 +51,15 @@ struct BMAux {
 
 
 
-//CVODE2.5 includes:
+//CVODE includes:
 #ifdef HAVE_CVODE_CVODE_H
     #include "cvode/cvode.h"
-#endif
-#ifdef HAVE_CVODE_H
-    #include "cvode.h"
 #endif
 #ifdef HAVE_NVECTOR_NVECTOR_SERIAL_H
     #include "nvector/nvector_serial.h"
 #endif
-#ifdef HAVE_NVECTOR_SERIAL_H
-    #include "nvector_serial.h"
+#ifdef HAVE_CVODE_CVODE_DIAG_H
+    #include "cvode/cvode_diag.h"         /* prototypes for CVODE diagonal solver (required since CVODE 5.x) */
 #endif
 
 #define NEQ   3                   // number of equations
@@ -78,7 +75,9 @@ struct BMAux {
 #ifndef ATOL3
 	#define ATOL3 1e-8
 #endif
-#define BEPS  1e-10
+#ifndef BEPS
+    #define BEPS  1e-12
+#endif
 
 //! Structure keeping the vectors for cvode
 struct bmnvec {

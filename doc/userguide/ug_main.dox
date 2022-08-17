@@ -48,7 +48,7 @@ JEMRIS binaries do not include  image reconstruction. For these features the ima
                 <li> shasum: SHXXX
              </ul>
 
-        <li> <b> Ubuntu 20.04 Binary </b>
+        <li> <b> Ubuntu 22.04 Binary </b>
              <ul>
                 <li> <a href="../get/jemris-X.Y.Z-Linux.deb">jemris-X.Y.Z-Linux.deb</a>
                 <li> md5sum: M5YYY

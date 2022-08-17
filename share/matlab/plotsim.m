@@ -200,14 +200,9 @@ function [KX,KY,DATA, Nimg]=read_imsrmrd(NCH,CCH,img_num)
   end
   %check if ismrmrd is available
   if isempty(strfind(path,'ismrmrd'))
-      if exist('/usr/local/share/ismrmrd/matlab','dir')
-          addpath('/usr/local/share/ismrmrd/matlab')
-          disp('ismrmrd added to Matlab path')
-      else
-        warning('ismrmrd matlab reader not avaiable')
-        KX=[]; KY=[]; DATA=[]; Nimg=1;
-        return
-      end
+      warning('ismrmrd matlab reader not found in MATLABPATH')
+      KX=[]; KY=[]; DATA=[]; Nimg=1;
+      return
   end
   
   dset = ismrmrd.Dataset(file);
@@ -226,12 +221,12 @@ function [KX,KY,DATA, Nimg]=read_imsrmrd(NCH,CCH,img_num)
     flags(end+1) = acq.head.flagIsSet('ACQ_IS_SURFACECOILCORRECTIONSCAN_DATA');
     if not(any(flags))
         sld = max([sld acq.head.idx.slice]);
-        cnd = max([sld acq.head.idx.contrast]);
-        sed = max([sld acq.head.idx.set]);
+        cnd = max([cnd acq.head.idx.contrast]);
+        sed = max([sed acq.head.idx.set]);
     end
   end
   dim=dim+sld+cnd+sed; %combined ismrmrd loop dimensions: slice,contrast, set
-  DATA=zeros(NRO*(nacq-NCH)/dim,NCH,dim);
+  DATA=zeros(NRO*(nacq-NCH)/dim,NCH,dim); 
   KX = zeros(NRO*(nacq-NCH)/dim,1);
   KY = zeros(NRO*(nacq-NCH)/dim,1);
   

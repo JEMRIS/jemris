@@ -10,7 +10,7 @@ Binary packages for Linux, Windows and Mac OS X, are available in the section \r
 
 <b>JEMRIS</b> relies on several libraries, which need to be downloaded and installed prior to its compilation:
 
-\li <a href="http://computation.llnl.gov/casc/sundials">CVODE</a> variable time stepping ODE solver >=2.5
+\li <a href="http://computation.llnl.gov/casc/sundials">CVODE</a> variable time stepping ODE solver >=5.x
 \li <a href="http://xerces.apache.org/xerces-c">Xerces-C++</a> XML parser >=2.8
 \li <a href="http://www.hdfgroup.org/HDF5/">HDF5</a> a file format for storing and managing data >=1.8
 \li <a href="http://www.ginac.de/CLN">CLN</a> library for Numbers version >=1.2.X

@@ -145,7 +145,7 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
 
     //avoid CVODE warnings (does not change physics!)
     //trivial case: no transv. magnetisation AND no excitation
-    if (Mxy<ATOL1*m0 && d_SeqVal[RF_AMP]<BEPS) {
+    if (Mxy<ATOL1*m0 && d_SeqVal[RF_AMP]==0.0) {
 
         NV_Ith_S(ydot,AMPL) = 0;
         NV_Ith_S(ydot,PHASE) = 0;
@@ -197,8 +197,7 @@ Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
     m_ropt[HMAX]   = 100000.0;// the maximum stepsize in msec of the integrator*/
     m_reltol       = RTOL;
 
-    //cvode2.5:
-    // create cvode memory pointer; no mallocs done yet.
+     // create cvode memory pointer; no mallocs done yet.
     m_cvode_mem = CVodeCreate (CV_ADAMS);
 
  

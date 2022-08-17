@@ -15,6 +15,12 @@ configure_file (
         @ONLY
 )
 
+configure_file (
+        "${PROJECT_SOURCE_DIR}/share/matlab/JEMRIS_ContainerSequence.m.in"
+        "${PROJECT_BINARY_DIR}/share/matlab/JEMRIS_ContainerSequence.m"
+        @ONLY
+)
+
 install(DIRECTORY "${PROJECT_BINARY_DIR}/share/matlab"
         DESTINATION share/jemris
         FILES_MATCHING

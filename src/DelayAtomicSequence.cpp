@@ -93,7 +93,7 @@ bool DelayAtomicSequence::Prepare (const PrepareMode mode) {
     if ( (!a || !b || (delay<0.0)) && mode == PREP_VERBOSE)
 		cout << "Preparation of DelayAtomicSequence '" << GetName() << "' not successful. Delay = " << delay << " ms" << endl;
 
-    return b;
+    return (a && b && (delay>=0.0));
 
 }
 

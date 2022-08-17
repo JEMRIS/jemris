@@ -37,8 +37,8 @@
 #ifdef HAVE_NVECTOR_NVECTOR_SERIAL_H
     #include "nvector/nvector_serial.h"
 #endif
-#ifdef HAVE_CVODE_CVODE_H
-    #include "cvode/cvode_diag.h"         /* prototypes for CVODE diagonal solver */
+#ifdef HAVE_CVODE_CVODE_DIAG_H
+    #include "cvode/cvode_diag.h"         /* prototypes for CVODE diagonal solver (required since CVODE 5.x) */
 #endif
 
 
@@ -47,7 +47,7 @@
 #define ATOL1 1e-8                // vector absolute tolerance components
 #define ATOL2 1e-8
 #define ATOL3 1e-8
-#define BEPS  1e-10
+#define BEPS  1e-12
 
 //! Structure keeping the vectors for cvode
 struct nvec {

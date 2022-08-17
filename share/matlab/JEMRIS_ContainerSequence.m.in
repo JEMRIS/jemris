@@ -379,6 +379,24 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function SOEtag21_Callback(hObject, eventdata, handles)
+common_SOEtags(hObject,handles)
+
+% --- Executes during object creation, after setting all properties.
+function SOEtag21_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function SOEtag22_Callback(hObject, eventdata, handles)
+common_SOEtags(hObject,handles)
+
+% --- Executes during object creation, after setting all properties.
+function SOEtag22_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
 % --- Executes on selection change in HiddenAttr.
 function HiddenAttr_Callback(hObject, eventdata, handles)
 set(handles.HiddenAttr,'Value',1);
