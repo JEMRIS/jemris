@@ -47,7 +47,6 @@
 #define ATOL1 1e-8                // vector absolute tolerance components
 #define ATOL2 1e-8
 #define ATOL3 1e-8
-#define BEPS  1e-12
 
 //! Structure keeping the vectors for cvode
 struct nvec {

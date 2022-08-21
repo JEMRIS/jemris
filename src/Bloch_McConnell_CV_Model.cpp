@@ -25,9 +25,6 @@
 
 #include "Bloch_McConnell_CV_Model.h"
 
-#define EPS		1e-10								//small number to avoid division by 0
-
-
 /* MT functions ***************************************************/
 
 // exchange of magnetisation between all pools, happens all the time
@@ -217,15 +214,6 @@ static int bloch (realtype t, N_Vector y, N_Vector ydot, void *pWorld) {
 				Mz_dot[pool] =   By*Mx[pool]              	       			      - Bx*My[pool] ;
     		}
 
-    		//compute bloch equations old version
-    		//      Mx_dot = -pW->Values[R2]*Mx + Bz*My                                              - By*Mz;
-    		//      My_dot = -Bz*Mx             - pW->Values[R2]*My                                  + Bx*Mz;
-    		//      Mz_dot =  By*Mx             - Bx*My ;
-
-    		//compute derivatives in cylindrical coordinates
-
-    		//NV_Ith_S(ydot,AMPL+eqpool)   = c[pool]*Mx_dot[pool] + s[pool]*My_dot[pool];
-    		//NV_Ith_S(ydot,PHASE+eqpool)  = (c[pool]*My_dot[pool] - s[pool]*Mx_dot[pool]) / (Mxy[pool]>BEPS?Mxy[pool]:BEPS); //avoid division by zero
     		NV_Ith_S(ydot,XC+i)  = Mx_dot[pool];
     		NV_Ith_S(ydot,YC+i)  = My_dot[pool];
 
@@ -375,7 +363,7 @@ void Bloch_McConnell_CV_Model::InitSolver    () {
     // loop over pools, stepsize NEQ
     for ( int i = 0, pool=0; i< m_ncomp*NEQ; i+=NEQ, pool++ ){
 
-    	if (fabs(m_world->Values[ncoprops*pool+M0])<BEPS){
+    	if (fabs(m_world->Values[ncoprops*pool+M0])<ATOL3){
 
     		NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,XC+i )  = ATOL1;
 			NV_Ith_S( ((bmnvec*) (m_world->solverSettings))->abstol,ZC+i )  = ATOL3;
@@ -451,7 +439,7 @@ bool Bloch_McConnell_CV_Model::Calculate(double next_tStop){
 		
     	m_world->solution[AMPL+i]  = sqrt(solution_dummy_x*solution_dummy_x + solution_dummy_y*solution_dummy_y);
 		
-       	if (m_world->solution[AMPL+i] < EPS)
+       	if (m_world->solution[AMPL+i] < ATOL1)
     		m_world->solution[PHASE+i] = 0;
     	else
     		if (solution_dummy_y < 0 )

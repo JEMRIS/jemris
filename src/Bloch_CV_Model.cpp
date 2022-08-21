@@ -143,46 +143,24 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
     phi = NV_Ith_S(y,PHASE);
     Mz  = NV_Ith_S(y,ZC);
 
-    //avoid CVODE warnings (does not change physics!)
-    //trivial case: no transv. magnetisation AND no excitation
-    if (Mxy<ATOL1*m0 && d_SeqVal[RF_AMP]==0.0) {
+    // cartesian components of transverse magnetization
+    c = cos(phi);
+    s = sin(phi);
+    Mx = c*Mxy;
+    My = s*Mxy;
 
-        NV_Ith_S(ydot,AMPL) = 0;
-        NV_Ith_S(ydot,PHASE) = 0;
+    // bloch equations
+    Mx_dot =   Bz*My - By*Mz - r2*Mx;
+    My_dot = - Bz*Mx + Bx*Mz - r2*My;
+    Mz_dot =   By*Mx - Bx*My ;
 
-        //further, longit. magnetisation already fully relaxed
-        if (fabs(m0 - Mz)<ATOL3) {
-        	NV_Ith_S(ydot,ZC) = 0;
-            return 0;
-        }
-
-    } else {
-
-        //compute cartesian components of transversal magnetization
-        c = cos(phi);
-        s = sin(phi);
-        Mx = c*Mxy;
-        My = s*Mxy;
-
-        //compute bloch equations
-        Mx_dot =   Bz*My - By*Mz - r2*Mx;
-        My_dot = - Bz*Mx + Bx*Mz - r2*My;
-        Mz_dot =   By*Mx - Bx*My ;
-
-    	//compute derivatives in cylindrical coordinates
-    	NV_Ith_S(ydot,AMPL)  =  c*Mx_dot + s*My_dot;
-    	NV_Ith_S(ydot,PHASE) = (c*My_dot - s*Mx_dot) / (Mxy>BEPS?Mxy:BEPS); //avoid division by zero
-    }
+    // derivatives in cylindrical coordinates
+    NV_Ith_S(ydot,AMPL)  =  c*Mx_dot + s*My_dot;
+    NV_Ith_S(ydot,PHASE) = (c*My_dot - s*Mx_dot) / (Mxy>ATOL1?Mxy:ATOL1); //avoid division by zero
 
     //longitudinal relaxation
     Mz_dot +=  r1*(m0 - Mz);
     NV_Ith_S(ydot,ZC) = Mz_dot;
-
-//MODIF
-/*  NV_Ith_S(ydot,AMPL) = 0;
-    NV_Ith_S(ydot,PHASE) = 0;
-    NV_Ith_S(ydot,ZC) = 0;*/
-//MODIF***
 
     return 0;
 
@@ -249,6 +227,7 @@ Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
     	cout << "CVDiag failed! aborting..." << endl;exit (-1);
     }
  
+    CVodeSetErrFile(m_cvode_mem, NULL);
 
     N_VDestroy_Serial(y0);
     N_VDestroy_Serial(abstol);
@@ -277,7 +256,6 @@ void Bloch_CV_Model::InitSolver    () {
 
     m_reltol = RTOL*m_accuracy_factor;
 
-//cvode2.5:
     int flag;
     flag = CVodeReInit(m_cvode_mem,0,((nvec*) (m_world->solverSettings))->y);
     if(flag != CV_SUCCESS ) {
@@ -312,8 +290,14 @@ bool Bloch_CV_Model::Calculate(double next_tStop){
 	int flag;
 	do {
 		flag=CVode(m_cvode_mem, m_world->time, ((nvec*) (m_world->solverSettings))->y, &m_tpoint, CV_NORMAL);
+        
 	} while ((flag==CV_TSTOP_RETURN) && (m_world->time-TIME_ERR_TOL > m_tpoint ));
 
+
+    //give up if mxstep reached. Return success and hope for the best.
+    if (flag == CV_TOO_MUCH_WORK)   {
+        return m_world->solverSuccess; 
+    }
 
 	if(flag < 0) { m_world->solverSuccess=false; }
 

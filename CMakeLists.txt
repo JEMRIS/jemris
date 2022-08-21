@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 2.8)
 project (jemris) 
 set (jemris_VERSION_MAJOR 2)
 set (jemris_VERSION_MINOR 9)
-set (jemris_VERSION_PATCH 0)
+set (jemris_VERSION_PATCH 1)
 set (jemris_VERSION "${jemris_VERSION_MAJOR}.${jemris_VERSION_MINOR}.${jemris_VERSION_PATCH}")
 
 set(CMAKE_BUILD_TYPE "Release")
