@@ -52,3 +52,7 @@ install(DIRECTORY "angio_simu"
         DESTINATION share/jemris
 	PATTERN "Makefile*" EXCLUDE)
 
+install(DIRECTORY "standalone_guis"
+	USE_SOURCE_PERMISSIONS
+        DESTINATION share/jemris)
+
