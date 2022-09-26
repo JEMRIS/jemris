@@ -115,7 +115,7 @@ class SequenceTree {
      *
      * Populate sequence with the given XML by cloning all needed objects.
      */
-    unsigned int          Populate      ();
+    unsigned int          Populate      (bool verbose = true);
 
     /**
      * A static function to create modules. Called by SequenceTree::Populate() as

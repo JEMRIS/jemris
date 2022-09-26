@@ -91,8 +91,8 @@ bool ContainerSequence::Prepare (const PrepareMode mode) {
     	            for(unsigned int i = 0; i < m_obs_attrib_keyword.size(); i++)
     	                if ( m_obs_attrib_keyword.at(i) == formula ) m_obs_attrib_keyword.erase(m_obs_attrib_keyword.begin()+i);
     	            m_obs_attrib_keyword.push_back(formula);
-    	            if (m_obs_attribs.size() != m_obs_attrib_keyword.size())
-    	            cout << "!!! " << GetName() << ": " << m_obs_attribs.size() << " , " << m_obs_attrib_keyword.size() << endl;
+    	            if (m_obs_attribs.size() != m_obs_attrib_keyword.size()) // should never happen
+    	            	cout << "ERROR in " << GetName() << ": observed attribs and keywords do not match (" << m_obs_attribs.size() << " != " << m_obs_attrib_keyword.size() << ")" << endl;
     	    		b = ( imp->second->SetMember(formula, m_obs_attribs, m_obs_attrib_keyword, mode == PREP_VERBOSE) && b);
     	    	}
     	    }
@@ -112,6 +112,7 @@ bool ContainerSequence::Prepare (const PrepareMode mode) {
     HideAttribute ("Aux1",false);
     HideAttribute ("Aux2",false);
     HideAttribute ("Aux3",false);
+    HideAttribute ("LoopFlag",false);
 
     return b;
 

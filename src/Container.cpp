@@ -69,7 +69,7 @@ bool Container::Prepare (const PrepareMode mode) {
     	string seq_directory = m_seq_tree->GetSequenceDirectory();
     	m_container_seqtree = new SequenceTree;
     	m_container_seqtree->Initialize(seq_directory + m_container_seq_name);
-    	m_container_seqtree->Populate();
+    	m_container_seqtree->Populate(false); //seqtree preparation not verbose. this is done later.  
     	m_container_seq = m_container_seqtree->GetContainerSequence();
     	m_container_seq->SetContainer(this);
     	//cout << "Info: Container '" << GetName() << "' inserted ContainerSequence '"

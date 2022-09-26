@@ -133,7 +133,7 @@ unsigned int        SequenceTree::AddModule    (string       name) {
 }
 
 /***********************************************************/
-unsigned int        SequenceTree::Populate     ()  {
+unsigned int        SequenceTree::Populate     (bool verbose)  {
 
 	DOMNode* topnode;
 	if (!(topnode = m_dom_doc->getFirstChild())) return EMPTY_DOCUMENT;
@@ -171,7 +171,8 @@ unsigned int        SequenceTree::Populate     ()  {
 	m_root_seq->Prepare(PREP_INIT);
 
 	//verbose Prepare call : errors have to be reported
-	m_root_seq->Prepare(PREP_VERBOSE);
+	if (verbose)
+		m_root_seq->Prepare(PREP_VERBOSE);
 
 	//prep. static atom, if exists
 	World* pW = World::instance();
