@@ -57,8 +57,6 @@ How to report bugs
 If you have identified a bug in JEMRIS you are welcome to send a detailed
 bug report to <tony.stoecker@dzne.de>. Please include
 
-* 
-
 * Information about your system
 
    - Which operating system and version (uname -a)
