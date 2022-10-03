@@ -1,102 +1,22 @@
-JEMRIS_seq Executable
+JEMRIS MATLAB GUIs Standalone Executables
 
-1. Prerequisites for Deployment 
+1. the standalone execuatable are only available for linux 
 
-Verify that version 9.7 (R2019b) of the MATLAB Runtime is installed.   
-If not, you can run the MATLAB Runtime installer.
-To find its location, enter
-  
-    >>mcrinstaller
-      
-at the MATLAB prompt.
+2. Install version 9.7 (R2019b) of the MATLAB Runtime in the default directory: /usr/local/MATLAB/MATLAB_Runtime
 
-Alternatively, download and install the Linux version of the MATLAB Runtime for R2019b 
-from the following link on the MathWorks website:
+3. the exectuables are installed under /usr/local/share/jemris/standalone_guis/apps
+   - change to your preferred jemris working directory, then run the sequence GUIs with the commands
+     >> /usr/local/share/jemris/standalone_guis/apps/run_JEMRIS_seq.sh /usr/local/MATLAB/MATLAB_Runtime/v97
+     >> /usr/local/share/jemris/standalone_guis/apps/run_JEMRIS_sim.sh /usr/local/MATLAB/MATLAB_Runtime/v97
+     >> /usr/local/share/jemris/standalone_guis/apps/run_JEMRIS_txrx.sh /usr/local/MATLAB/MATLAB_Runtime/v97
 
-    https://www.mathworks.com/products/compiler/mcr/index.html
-   
-For more information about the MATLAB Runtime and the MATLAB Runtime installer, see 
-"Distribute Applications" in the MATLAB Compiler documentation  
-in the MathWorks Documentation Center.
-
-2. Files to Deploy and Package
-
-Files to Package for Standalone 
-================================
--JEMRIS_seq 
--run_JEMRIS_seq.sh (shell script for temporarily setting environment variables and 
-                    executing the application)
-   -to run the shell script, type
-   
-       ./run_JEMRIS_seq.sh <mcr_directory> <argument_list>
-       
-    at Linux or Mac command prompt. <mcr_directory> is the directory 
-    where version 9.7 of the MATLAB Runtime is installed or the directory where 
-    MATLAB is installed on the machine. <argument_list> is all the 
-    arguments you want to pass to your application. For example, 
-
-    If you have version 9.7 of the MATLAB Runtime installed in 
-    /mathworks/home/application/v97, run the shell script as:
-    
-       ./run_JEMRIS_seq.sh /mathworks/home/application/v97
-       
-    If you have MATLAB installed in /mathworks/devel/application/matlab, 
-    run the shell script as:
-    
-       ./run_JEMRIS_seq.sh /mathworks/devel/application/matlab
--MCRInstaller.zip
-    Note: if end users are unable to download the MATLAB Runtime using the
-    instructions in the previous section, include it when building your 
-    component by clicking the "Runtime included in package" link in the
-    Deployment Tool.
--This readme file 
-
-
-
-3. Definitions
-
-For information on deployment terminology, go to
-https://www.mathworks.com/help and select MATLAB Compiler >
-Getting Started > About Application Deployment >
-Deployment Product Terms in the MathWorks Documentation
-Center.
-
-4. Appendix 
-
-A. Linux systems:
-In the following directions, replace MR/v97 by the directory on the target machine where 
-   MATLAB is installed, or MR by the directory where the MATLAB Runtime is installed.
-
-(1) Set the environment variable XAPPLRESDIR to this value:
-
-MR/v97/X11/app-defaults
-
-
-(2) If the environment variable LD_LIBRARY_PATH is undefined, set it to the following:
-
-MR/v97/runtime/glnxa64:MR/v97/bin/glnxa64:MR/v97/sys/os/glnxa64:MR/v97/sys/opengl/lib/glnxa64
-
-If it is defined, set it to the following:
-
-${LD_LIBRARY_PATH}:MR/v97/runtime/glnxa64:MR/v97/bin/glnxa64:MR/v97/sys/os/glnxa64:MR/v97/sys/opengl/lib/glnxa64
-
-    For more detailed information about setting the MATLAB Runtime paths, see Package and 
-   Distribute in the MATLAB Compiler documentation in the MathWorks Documentation Center.
-
-
-     
-        NOTE: To make these changes persistent after logout on Linux 
-              or Mac machines, modify the .cshrc file to include this  
-              setenv command.
-        NOTE: The environment variable syntax utilizes forward 
-              slashes (/), delimited by colons (:).  
-        NOTE: When deploying standalone applications, you can
-              run the shell script file run_JEMRIS_seq.sh 
-              instead of setting environment variables. See 
-              section 2 "Files to Deploy and Package".    
-
-
-
-
-
+4. Shortcuts for Ubuntu desktop
+   - copy the files /usr/local/share/jemris/standalone_guis/*.desktop to your Desktop folder
+   - right-click each shortcut symbol on the Desktop and allow launching
+   - double click will launch the GUIs (be patient, first start might be slow since MATLAB Runtime needs to be started)
+   - all GUIs will run in the folder $HOME/jemris_workspace (will be created if not existent)
+   - if the "start recon" button is not working in the JEMRIS_sim GUI: 
+        - check if recon works from the command line (i.e. docker is installed and conda environment is active)
+        - remove the section "# If not running interactively, don't do anything" in $HOME/.bash_profile 
+        - this will ensure that the conda environment is activated for the GUI sessions
 

@@ -2,6 +2,7 @@
  -- Tony Stoecker <tony.stoecker@dzne.de>  Thu, 21 Aug 2022 11:56:45 +0200
 jemris (2.9-1) stable; urgency=low
   * Major support of sundials cvode library 5.8 (no backward compatibility with older versions < 5.x)
+  * Minor added linux matlab standalone GUIs 
   * Minor bug fixes
   * Minor updated documentation
 

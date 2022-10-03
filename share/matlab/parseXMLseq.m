@@ -159,8 +159,7 @@ try
                             idxAtt=length(attributes)+1;
                             attributes(idxAtt).Name = ['Imp' num2str(i)];
                         end
-                        attributes(idxAtt).DispName = SeqContainer.Attributes(idxInfo).Value;
-
+                        attributes(idxAtt).DispName = ['Imp',num2str(i) '=',SeqContainer.Attributes(idxInfo).Value];
                     end
                 end
                 for i=1:5

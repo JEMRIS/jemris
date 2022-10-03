@@ -57,28 +57,23 @@ How to report bugs
 If you have identified a bug in JEMRIS you are welcome to send a detailed
 bug report to <tony.stoecker@dzne.de>. Please include
 
-* Information about your build configuration
-
-   - Contents of the config.log file.
+* 
 
 * Information about your system
 
    - Which operating system and version (uname -a)
    - Which C compiler and version (gcc --version)
-   - For Linux, which version of the C library
-
+   
   And anything else you think is relevant.
 
 * Information about your version of JEMRIS
 
    - Version and release number
-   - Which options GiNaC was configured with
-
+   
 * How to reproduce the bug
 
    - If it is a systematical bug in JEMRIS please provide the
      sequence, the sample, the coils and the outputs from sequence or
-     simulation GUI to help us to reproduce the bug quickly.
+     simulation GUI to help us to reproduce the bug.
 
-Patches are most welcome.  If possible please make them with diff -c and
-include ChangeLog entries.
+Patches are most welcome.  If possible please provide a pull request on github.
