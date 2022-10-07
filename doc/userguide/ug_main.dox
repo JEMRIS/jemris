@@ -128,8 +128,11 @@ Should you want to connect multiple computers running Windows to perform HPC com
 
 /**
  \page ug_uis User Interfaces
-JEMRIS was developed in C++ to achieve usability as well as performance. It can be used from the command line, where  the configuration of the MR-simulation is done via several XML files. Additionally, three Matlab GUIs were developed for interactively designing the MRI sequence, defining the coil configuration, and execution of
-the simulations, respectively. \n
+<b>Matlab Graphical User Interfaces</b>
+\n
+JEMRIS was developed in C++ to achieve usability as well as performance. It can be used from the command line, 
+where  the configuration of the MR-simulation is done via several XML files. Additionally, three Matlab GUIs were developed 
+for interactively designing the MRI sequence, defining the coil configuration, and execution of the simulations, respectively. \n
 \n
 All Matlab GUIs follow the same procedure: construct a valid XML file from the user input, then call the external
 JEMRIS executables to compute the data, and finally read and visualise the result.
@@ -140,12 +143,15 @@ JEMRIS executables to compute the data, and finally read and visualise the resul
  <tr><td> \li \subpage ug_JEMRIS_txrx  <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for layout design of transmit and receive arrays
  <tr><td> \li \subpage ug_command_line <td>  &emsp;&emsp;&emsp;&emsp; <td> Learn how to control jemris for batch submission etc.
 </table>
-\n
-Before starting the Matlab GUIs, the directory in which the JEMRIS m-files are located has to be added to
-the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>dir=/usr/local/share/jemris/matlab</I> in a standard linux installation.
 
+Before starting the Matlab GUIs, the directory in which the JEMRIS m-files are located has to be added to
+the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>"<dir>=/usr/local/share/jemris/matlab"</I> is the default installation directory.
 \n
 \n
+<b>Standalone GUI Apps</b>
+\n
+We also provide the JEMRIS GUIs as Matlab Standalone Applications which do not require a Matlab license. The Standalone Apps are only available for linux.
+The apps as well as installation instructions can be found under <I>/usr/local/share/jemris/standalone_guis</I>
 \n
 \n
  */
