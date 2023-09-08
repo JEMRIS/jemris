@@ -77,7 +77,7 @@ class Model {
 	/**
  	 *  @brief Solve differential equations.
 	 */
-	void Solve();
+	void Solve(bool bSolve=true);
 
 	/**
 	 * @brief Save time evolution to disk.

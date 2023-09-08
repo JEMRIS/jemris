@@ -108,7 +108,7 @@ class Simulator {
 	/**
 	 * @brief Start the simulation after every necessary credentials have been set
 	 */
-	void        Simulate     (bool bDumpSignal = true);
+	void        Simulate     (bool bDumpSignal = true, bool bSolve = true);
 
 	/**
 	 * @brief Set my sample from XML

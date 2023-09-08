@@ -59,7 +59,7 @@ void Model:: Prepare (CoilArray* pRxCoilArray, CoilArray* pTxCoilArray, ConcatSe
 }
 
 /**************************************************/
-void Model::Solve() {
+void Model::Solve(bool bSolve) {
 
     //problem size
 	m_world->SetNoOfCompartments(m_sample->GetNoSpinCompartments());
@@ -99,7 +99,10 @@ void Model::Solve() {
 		//	cout <<"im Model solution initatilsation" << " Mz "<< m_world->solution[2+i*3]<<" Mx " << m_world->solution[0+i*3]<< " My "<< m_world->solution[1+i*3]<< endl;
 		}
 
-     //off-resonance from the sample
+		//stop here, if no solution was requested
+		if (!bSolve) return;
+
+     	//off-resonance from the sample
         m_world->deltaB = m_sample->GetDeltaB();
 
         //update progress counter

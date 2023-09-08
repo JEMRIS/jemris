@@ -176,11 +176,12 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 
 		if (normalize) {
 				
-			for (int j = 0; j < repository->NProps(); j++) {
 
 				for (long i = 0; i < repository->Samples(); i++) {	
 
-					(*repository)[i*repository->NProps() + j] /= World::instance()->TotalSpinNumber;
+					for (int j = 0; j < repository->NProps(); j++) 
+						(*repository)[i*repository->NProps() + j] /= World::instance()->TotalSpinNumber;
+					
 				
 					//dwelltime-weighted random noise
 					if (World::instance()->RandNoise > 0.0) {
@@ -191,7 +192,7 @@ IO::Status CoilArray::DumpSignals (string prefix, bool normalize) {
 						else if (repository->Samples() > 1) dt = repository->TP(i+1) - repository->TP(i  );
 					
 						//definition: Gaussian has std-dev World::instance()->RandNoise at a dwell-time of 0.01 ms
-						//for (int j = 0; j < repository->Compartments(); j++) {
+						for (int j = 0; j < repository->Compartments(); j++) {
 						(*repository)[i*repository->NProps() + j*3 + 0] += World::instance()->LargestM0*World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
 						(*repository)[i*repository->NProps() + j*3 + 1] += World::instance()->LargestM0*World::instance()->RandNoise*rng->normal()*0.1/sqrt(dt);
 					}
@@ -341,7 +342,7 @@ IO::Status CoilArray::DumpSignalsISMRMRD (string prefix, bool normalize) {
 
 	}
 
-	// Write acquistions from acqList
+	// Write acquisitions from acqList
 	for(int n = 0; n< acqList.size(); ++n)
 		d.appendAcquisition(acqList[n]);
 

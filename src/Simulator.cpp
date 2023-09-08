@@ -295,7 +295,7 @@ DOMElement* Simulator::GetElem    (string name) {
 }
 
 /**********************************************************/
-void Simulator::Simulate          (bool bDumpSignal) {
+void Simulator::Simulate          (bool bDumpSignal, bool bSolve) {
 
 	m_rx_coil_array->InitializeSignals (m_sequence->GetNumOfADCs());
 
