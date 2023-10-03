@@ -119,12 +119,6 @@ int main (int argc, char *argv[]) {
 	Simulator* psim;
 	if ( my_rank == master)	psim = new Simulator(input);
 	else			psim = new Simulator(input,"NoSample");
-
-	if ( my_rank == master)	{
-		World* world = World::instance();
-		cout << "!!! RandNoise = " << world->RandNoise << endl;
-		cout << "!!! LargestM0 = " << world->LargestM0 << endl;
-	}
 	
 	if ( !psim->GetStatus() ) {
 		delete psim;
