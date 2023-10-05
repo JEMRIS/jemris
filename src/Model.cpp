@@ -59,7 +59,7 @@ void Model:: Prepare (CoilArray* pRxCoilArray, CoilArray* pTxCoilArray, ConcatSe
 }
 
 /**************************************************/
-void Model::Solve(bool bSolve) {
+void Model::Solve() {
 
     //problem size
 	m_world->SetNoOfCompartments(m_sample->GetNoSpinCompartments());
@@ -99,8 +99,7 @@ void Model::Solve(bool bSolve) {
 		//	cout <<"im Model solution initatilsation" << " Mz "<< m_world->solution[2+i*3]<<" Mx " << m_world->solution[0+i*3]<< " My "<< m_world->solution[1+i*3]<< endl;
 		}
 
-		//stop here, if no solution was requested
-		if (!bSolve) return;
+		//skip rest, if no solution was requested
 
      	//off-resonance from the sample
         m_world->deltaB = m_sample->GetDeltaB();
@@ -110,7 +109,7 @@ void Model::Solve(bool bSolve) {
 		 	UpdateProcessCounter(lSpin);
 
        //Solve while running down the sequence tree
-        RunSequenceTree(dTime, lIndex, m_concat_sequence);
+		RunSequenceTree(dTime, lIndex, m_concat_sequence);
 
        //dump restart info:
         DumpRestartInfo(lSpin);

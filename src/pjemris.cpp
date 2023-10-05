@@ -154,7 +154,17 @@ int main (int argc, char *argv[]) {
 		if (filename != "")
 			// set output name
 			RxCA->SetSignalPrefix(filename);
-		psim->Simulate(false,false); //no simulation, just find the largest M0 for correct noise scaling during signal dump
+		//set largest M0 for correct noise scaling
+		World* world = World::instance();
+		for (long lSpin=world->m_startSpin; lSpin<world->TotalSpinNumber ; lSpin++) {
+				psim->GetSample()->GetValues(lSpin, world->Values);
+				int m_ncoprops =  (world->GetNoOfSpinProps () - 4) / world->GetNoOfCompartments();
+				for (int i = 0; i < world->GetNoOfCompartments(); i++) {
+					double M0 = world->Values[i*m_ncoprops+3];
+					world->LargestM0 = (M0>world->LargestM0) ? M0 : world->LargestM0; // use largest M0 for boise scaling (in CoilArray::DumpSignals) 
+				}
+		}
+		// dum signals
 		RxCA->DumpSignals();
 		// Initialize temporary ISMRMRD file with sequence information, afterwards dump signals
 		bool img_adcs = psim->GetSequence()->SeqISMRMRD(RxCA->GetSignalOutputDir() + RxCA->GetSignalPrefix() + "_ismrmrd_tmp.h5");
