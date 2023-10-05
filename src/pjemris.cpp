@@ -137,12 +137,24 @@ int main (int argc, char *argv[]) {
              <<"\n\n";
 		cout << "Model    : " << psim->GetAttr(psim->GetElem("model"),  "name")<< "\t  , solver = "
 		     << psim->GetAttr(psim->GetElem("model"), "type")  << endl;
-		cout << "Sample   : " << psim->GetAttr(psim->GetElem("sample"), "name")<< "\t  , spins  = " << World::instance()->TotalSpinNumber;
+		cout << "Sample   : " << psim->GetAttr(psim->GetElem("sample"), "name")<< "\t  , spins  = " << pW->TotalSpinNumber;
 		if (pW->m_noofspincompartments > 1) cout << ", pools = " << pW->m_noofspincompartments;
 		cout  << endl;
 		cout << "TxArray  : " << psim->GetAttr(psim->GetElem("TXcoilarray"), "uri") << endl;
 		cout << "RxArray  : " << psim->GetAttr(psim->GetElem("RXcoilarray"), "uri") << endl;
 		cout << "Sequence : " << psim->GetAttr(psim->GetElem("sequence"),"uri")<< endl;
+		//set largest M0 for correct noise scaling
+		double* data = new double[100];		
+		for (long lSpin=pW->m_startSpin; lSpin<pW->TotalSpinNumber ; lSpin++) {	
+				psim->GetSample()->GetValues(lSpin, data);
+				int m_ncoprops =  (pW->GetNoOfSpinProps() - 4) / pW->GetNoOfCompartments();
+				for (int i = 0; i < pW->GetNoOfCompartments(); i++) {
+					double M0 = data[i*m_ncoprops+3];
+					pW->LargestM0 = (M0>pW->LargestM0) ? M0 : pW->LargestM0;  
+				}
+		}
+		delete[] data;
+		//init signals and check for restart of simulation
 		CoilArray* RxCA = psim->GetRxCoilArray();
 		RxCA->InitializeSignals( psim->GetSequence()->GetNumOfADCs() );
 		psim->CheckRestart();
@@ -154,17 +166,7 @@ int main (int argc, char *argv[]) {
 		if (filename != "")
 			// set output name
 			RxCA->SetSignalPrefix(filename);
-		//set largest M0 for correct noise scaling
-		World* world = World::instance();
-		for (long lSpin=world->m_startSpin; lSpin<world->TotalSpinNumber ; lSpin++) {
-				psim->GetSample()->GetValues(lSpin, world->Values);
-				int m_ncoprops =  (world->GetNoOfSpinProps () - 4) / world->GetNoOfCompartments();
-				for (int i = 0; i < world->GetNoOfCompartments(); i++) {
-					double M0 = world->Values[i*m_ncoprops+3];
-					world->LargestM0 = (M0>world->LargestM0) ? M0 : world->LargestM0; // use largest M0 for boise scaling (in CoilArray::DumpSignals) 
-				}
-		}
-		// dum signals
+		// dump signals
 		RxCA->DumpSignals();
 		// Initialize temporary ISMRMRD file with sequence information, afterwards dump signals
 		bool img_adcs = psim->GetSequence()->SeqISMRMRD(RxCA->GetSignalOutputDir() + RxCA->GetSignalPrefix() + "_ismrmrd_tmp.h5");
