@@ -28,6 +28,9 @@ jobs:
       - name: Install dependencies
         run: sudo apt update && sudo apt install libxerces-c-dev libsundials-dev libginac-dev libhdf5-dev libismrmrd-dev mpi-default-bin libboost-all-dev
 
+      - name: Copy ginac excompiler # This is highly fragile
+        run: cp /lib/*/ginac/ginac-excompiler /usr/bin/ginac-excompiler
+
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
