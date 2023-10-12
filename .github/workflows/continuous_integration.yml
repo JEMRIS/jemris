@@ -57,8 +57,9 @@ jobs:
       #   with:
       #     report_paths: '${{github.workspace}}/build/test.xml'
       - name: Publish Test Results
+        working-directory: ${{github.workspace}}/build
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: |
-            '${{github.workspace}}/build/test.xml'
+            './test.xml'
