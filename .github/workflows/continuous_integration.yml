@@ -39,8 +39,9 @@ jobs:
 
       - name: Test
         env:
-          OMPI_ALLOW_RUN_AS_ROOT: 1
-          OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: 1
+          OMPI_ALLOW_RUN_AS_ROOT: 1 # allows running mpi as root
+          OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: 1 # allows running mpi as root
+          OMPI_MCA_rmaps_base_oversubscribe: true # allows oversubscription for mpi test
         working-directory: ${{github.workspace}}/build
         #run: chmod u+x ./sanityck && ./sanityck ../share/examples 2
         # Execute tests defined by the CMake configuration.
