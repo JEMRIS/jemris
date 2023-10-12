@@ -2,6 +2,10 @@
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
 name: CMake on a single platform
 
+permissions:
+    contents: read
+    checks: write
+
 on:
   push:
     branches: [ "master" ]
@@ -43,6 +47,7 @@ jobs:
       run: ctest -C ${{env.BUILD_TYPE}} --output-junit test.xml
     
     - name: Publish Test Report
+      working-directory: ${{github.workspace}}/build
       uses: mikepenz/action-junit-report@v4
       if: success() || failure() # always run even if the previous step fails
       with:
