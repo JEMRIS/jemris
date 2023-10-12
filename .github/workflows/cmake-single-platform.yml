@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Install dependencies
-      run: sudo apt update && sudo apt install libxerces-c-dev libsundials-dev libginac-dev libhdf5-dev libismrmrd-dev
+      run: sudo apt update && sudo apt install libxerces-c-dev libsundials-dev libginac-dev libhdf5-dev libismrmrd-dev mpi-default-bin
 
 
     - name: Configure CMake
