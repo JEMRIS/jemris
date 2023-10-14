@@ -96,7 +96,7 @@ add_test (
 add_test (
   NAME signals 
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/share/examples
-  COMMAND sanityck . 2)
+  COMMAND sanityck . 2 0.2)
 add_test (
   NAME coils 
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/share/examples
