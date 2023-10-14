@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Parameters Name="P">
-   <ConcatSequence Name="C1">
-      <ATOMICSEQUENCE Name="A1">
-         <EXTERNALGRADPULSE ADCs="100" Axis="GX" Dataname="/gradient/gx" Filename="ext_gx.h5" InitialDelay="1" Interpolate="1" Name="P1"/>
-         <EXTERNALRFPULSE ADCs="100" Filename="ext_rf.h5" Name="P2" Scale="4"/>
-      </ATOMICSEQUENCE>
-   </ConcatSequence>
-</Parameters>

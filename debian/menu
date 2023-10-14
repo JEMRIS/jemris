@@ -1,1 +1,0 @@
-?package(jemris):needs="text|wm" section="Applications/Science" title="jemris" command="/usr/bin/jemris"

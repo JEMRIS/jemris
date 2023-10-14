@@ -1,9 +1,0 @@
-/**
-***************************************************
-* \page ug_example_ktblast %Example 3: Movement Artifacts in kt-BLAST Reconstruction 
-*  The kt-blast simulations shown in the JEMRIS paper can be repeated with these script files: <a href="../get/JEMRIS_kt_blast.tar.gz"> JEMRIS_kt_blast.tar.gz </a>. For more information see the file 'do_simu.m'. 
-
-
-***************************************************
-*/
-
