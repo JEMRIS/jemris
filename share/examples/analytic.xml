@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters Name="P">
+   <ConcatSequence Name="C1" Repetitions="1">
+      <ATOMICSEQUENCE Name="A1">
+         <ANALYTICRFPULSE ADCs="50" ADCFlag="1" Duration="10" Name="P1" Shape="exp(-0.2*(T-5)^2+I*0.005*T^2)" TPOIs="50"/>
+      </ATOMICSEQUENCE>
+      <ATOMICSEQUENCE Name="A3">
+         <ANALYTICGRADPULSE ADCs="512" ADCFlag="1" Axis="GX" Diff="1" Duration="30" Name="P3" Shape="T*cos(3*T)"/>
+         <ANALYTICGRADPULSE Axis="GY" Diff="1" Duration="30" Name="P4" Shape="T*sin(3*T)"/>
+      </ATOMICSEQUENCE>
+   </ConcatSequence>
+</Parameters>

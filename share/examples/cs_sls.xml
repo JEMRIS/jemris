@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContainerSequence Exp1="A/2" Info_Exp1="SliceRephArea" Info_Imp1=" SliceCounter"
+                   Info_Imp2="SliceThickness"
+                   Info_Imp3=" GzFlatTopArea"
+                   Name="SLS"
+                   NumImpAttribs="4"
+                   Observe="A=P2.Area">
+   <ATOMICSEQUENCE Name="A1">
+      <SINCRFPULSE ADCFlag="0" Apodization="0.5" Bandwidth="1" FlipAngle="90" Frequency="SC*DZ*GA"
+                   InitialDelay="RUT"
+                   Name="P1"
+                   Observe="SC=SLS.Imp1, DZ=SLS.Imp2, GA=P2.Amplitude, RUT=P2.RampUpTime"
+                   Zeros="2"/>
+      <TRAPGRADPULSE Axis="GZ" FlatTopArea="4*BW*FTA" FlatTopTime="DUR" Name="P2"
+                     Observe="DUR=P1.Duration, BW=P1.Bandwidth, FTA=SLS.Imp3"/>
+   </ATOMICSEQUENCE>
+</ContainerSequence>

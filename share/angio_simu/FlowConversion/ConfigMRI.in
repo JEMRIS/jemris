@@ -1,0 +1,7 @@
+SequenceDuration(ms)		252
+FOV(mm,ReadoutAndPhase)		9
+FOVthickness(mm)		9
+VoxelSize(mm)			0.6
+SliceThickness(mm)		9
+InterSlice(mm,2D-only)		0
+SliceOrientation(tra,cor,sag)	tra

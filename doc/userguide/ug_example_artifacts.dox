@@ -1,0 +1,212 @@
+/**
+***************************************************
+* \page ug_example_artifacts %Example 1: Simulation of common MRI artifacts
+
+This section provides the details for reproducing the results in Figure 3 of the manuscript: 
+
+Stoecker T, Vahedipour K, Pflugfelder D, Shah NJ. High Performance Computer MRI Simulations. Magnetic Resonance in Medicine. 2010, 64(1), 186 - 193.
+
+\n
+
+Four different MRI artifact simulations are presented:
+
+\li \ref ug_example_artifacts_cs_epi
+\li \ref ug_example_artifacts_nlg_gre
+\li \ref ug_example_artifacts_band_trufi
+\li \ref ug_example_artifacts_long_se
+
+Remarks:
+\li These simulations may take several minutes to hours depending on how much CPUs you are using. See
+    the above reference for more information.
+\li As some simulation parameters of the original examples mysteriously disappeared, the
+    results slightly differ to the paper, however, qualitatively they show the same artifact properties.
+    Results look nicer, if the spin densitiy ({dx,dy}) is increased on the simulation GUI. See examples below and 
+    choose values which are acceptable for your hardware.
+
+\n
+
+\section ug_example_artifacts_cs_epi Chemical shift artifact in EPI
+To start, copy the EPI sequence from the jemris installation (usually /usr/local/share/jemris/examples/epi.xml) to
+your favorite working directory and modify it in the following way: 
+\li change the resolution of the PARAMETER node: Nx=96, Ny=96;
+\li In the same node, change the echo time (TE) and repetition time (TR) to 100 ms and 200 ms;
+\li change the flat-top time of the readout gradient (PULSE node P4) to 1.5 ms;
+\li in order to have the same orientation as in the manuscript example, all X and Y gradient have to be switched which is
+    most easy to achieve by a 90 degree rotation of all gradients: change "RotAngle" of the ATOMICSEQUENCE nodes A2, A3, and A4 to 90 degree.
+
+This is the resulting XML code:
+\code
+<Parameters FOVx="256" FOVy="256" GradMaxAmpl="2" GradSlewRate="10" Name="P" Nx="96" Ny="96" TE="100" TR="200">
+   <ConcatSequence Name="C1">
+      <AtomicSequence Name="A1">
+         <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" Name="P1"/>
+      </AtomicSequence>
+      <AtomicSequence Name="A2" RotAngle="90">
+         <TrapGradPulse Area="0.5*a1" Axis="GX" Name="P2" Observe="P4,Area"/>
+         <TrapGradPulse Area="a1" Axis="GY" Name="P3" Observe="P,KMAXy"/>
+      </AtomicSequence>
+      <DelayAtomicSequence Delay="a1" DelayType="C2C" Name="D1" Observe="P,TE" StartSeq="A1" StopSeq="C2"/>
+      <ConcatSequence Name="C2" Observe="P,Ny" Repetitions="a1">
+         <AtomicSequence Name="A3" RotAngle="90">
+            <TrapGradPulse ADCs="a3" Axis="GX" FlatTopArea="2*a1*(-1)^a2" FlatTopTime="1.5" Name="P4" Observe="P,KMAXx/C2,Counter/P,Nx"/>
+         </AtomicSequence>
+         <AtomicSequence Name="A4" RotAngle="90">
+            <TrapGradPulse Area="-a1" Axis="GY" Name="P5" Observe="P,DKy/C2,Counter/C2,Repetitions"/>
+         </AtomicSequence>
+      </ConcatSequence>
+      <DelayAtomicSequence Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>
+   </ConcatSequence>
+\endcode
+
+
+Now start the matlab simultion GUI and change to the "brain sample"; choose "slice" 45 to get a lower slice in which
+more fat is present. Further, choose T2*=0 in order to neglect local spin dephasing.
+Running the simulation then yields the expected result:
+
+\image html pics/ex_art_csepi1.jpg 
+\image latex pics/ex_art_csepi1.eps width=12cm
+
+\n
+
+Note that further increasing the spatial shift of the fat may be either achieved by a slower EPI echo train (as in reality),
+or simply by increasing the chemical shift in the simulation GUI. 
+
+\n
+
+\section ug_example_artifacts_nlg_gre Distortion due to a nonlinear gradient encoding field
+
+To start, copy the GRE sequence from the jemris installation (usually /usr/local/share/jemris/examples/gre.xml) to
+your favorite working directory and modify it in the following way: 
+\li change the resolution setting in the PARAMETER node: FOVx=256, FOVy=256 and Nx=128, Ny=128;  
+\li change TE=10 and TR=500, also in the PARAMETER node
+\li The GRE sequence came without a phase encode rewinder: to get one, copy the modified pulse P5 to a new pulse, name it P6, change its Axis to "GY", 
+    change the second "Observe" argument from "P4,Area" to "P3,Area", and change the Area to "-a1".
+\li use nonlinear gradients with a small cubic term for the reaout gradient (PULSE node P3): NLG_field="G*X+0.0001*X^3".
+
+
+This is the resulting XML code:
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters FOVx="256" FOVy="256" FOVz="1" Name="P" Nx="128" Ny="128" Nz="1" TE="10" TR="500">
+   <ConcatSequence Name="R">
+      <ConcatSequence Name="C" Observe="P,Ny" Repetitions="a1">
+         <ATOMICSEQUENCE Name="A1">
+            <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="80" Name="P1"/>
+         </ATOMICSEQUENCE>
+         <DELAYATOMICSEQUENCE Delay="a1" DelayType="C2C" Name="D1" Observe="P,TE" StartSeq="A1" StopSeq="A3"/>
+         <ATOMICSEQUENCE Name="A2">
+            <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P2" Observe="P4,Area"/>
+            <TRAPGRADPULSE Area="a1-a2*a3" Axis="GY" Name="P3" Observe="P,KMAXy/C,Counter/P,DKy"/>
+         </ATOMICSEQUENCE>
+         <ATOMICSEQUENCE Name="A3">
+            <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="-2*a1" FlatTopTime="4" NLG_field="G*X+0.0001*G*X^3" Name="P4" Observe="P,KMAXx/P,Nx"/>
+            <TRAPGRADPULSE Area="a1/2" Axis="GX" InitialDelay="a2" Name="P5" Observe="P4,Area/P4,EndOfFlatTop"/>
+            <TRAPGRADPULSE Area="-a1" Axis="GY" InitialDelay="a2" Name="P6" Observe="P3,Area/P4,EndOfFlatTop"/>
+         </ATOMICSEQUENCE>
+         <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>
+      </ConcatSequence>
+   </ConcatSequence>
+</Parameters>
+\endcode
+
+Run the simulation with the default brain slice: 
+
+\image html pics/ex_art_nlg_gre.jpg 
+\image latex pics/nlg_gre.eps width=12cm
+
+\n
+
+\section ug_example_artifacts_band_trufi Banding artifacts in a trueFISP sequence
+Save the gradient echo sequence of the provious example to the new file "trufi.xml" and remove the NLG_field attribute of the readout gradient pulse (P4). To change it into a
+trueFISP sequence (fully balanced SSFP) several steps are needed:
+\li Shift and revert the dephaser gradient (PULSE P5): change the second "Observe" argument from "P4,EndOfFlatTop" to "P4,Duration" (then the pulse starts
+after the readourt gradient) and change the sign of the "Area" Attribute.
+\li To have an alternating RF phase, let the RF pulse P1 observe the loop counter, i.e. Observe="C,Counter", and change the InitialPhase to "90+90*(-1)^a1".
+    You may also want to increase FlipAngle to 70 degree.
+\li Set Phaselock to "1" in the readout gradient P4 to ensure a rotated acquisition according to the RF pulse phase.
+\li To reach ther steady state, prepend another loop consisting of only the RF pulse and the TR delay (most easy to achieve with copying objects).
+
+Further, we modified TE,TR, and the readout length to manipulate the banding artifacts. The final XML file is:
+
+\code
+<Parameters FOVx="256" FOVy="256" FOVz="1" GradMaxAmpl="2" GradSlewRate="10" Name="P" Nx="128" Ny="128" Nz="1" TE="6" TR="12">
+   <ConcatSequence Name="R">
+      <ConcatSequence Name="Cp" Repetitions="192">
+         <ATOMICSEQUENCE Name="A1p">
+            <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="70" InitialPhase="90+(-1)^a1*90" Name="P1p" Observe="Cp,Counter/Cp,Repetitions"/>
+         </ATOMICSEQUENCE>
+         <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D2p" Observe="P,TR" StartSeq="A1p"/>
+      </ConcatSequence>
+      <ConcatSequence Name="C" Observe="P,Ny" Repetitions="a1">
+         <ATOMICSEQUENCE Name="A1">
+            <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="70" InitialPhase="90+(-1)^a1*90" Name="P1" Observe="C,Counter/C,Repetitions"/>
+         </ATOMICSEQUENCE>
+         <DELAYATOMICSEQUENCE Delay="a1" DelayType="C2C" Name="D1" Observe="P,TE" StartSeq="A1" StopSeq="A3"/>
+         <ATOMICSEQUENCE Name="A2">
+            <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P2" Observe="P4,Area"/>
+            <TRAPGRADPULSE Area="a1-a2*a3" Axis="GY" Name="P3" Observe="P,KMAXy/C,Counter/P,DKy"/>
+         </ATOMICSEQUENCE>
+         <ATOMICSEQUENCE Name="A3">
+            <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="-2*a1" FlatTopTime="6" Name="P4" Observe="P,KMAXx/P,Nx" PhaseLock="1"/>
+         </ATOMICSEQUENCE>
+         <ATOMICSEQUENCE Name="A4">
+            <TRAPGRADPULSE Area="-a1/2" Axis="GX" Name="P5" Observe="P4,Area"/>
+            <TRAPGRADPULSE Area="-a1" Axis="GY" Name="P6" Observe="P3,Area"/>
+         </ATOMICSEQUENCE>
+         <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>
+      </ConcatSequence>
+   </ConcatSequence>
+\endcode
+
+Test if the sequence diagram and k-space trajectory looks as expected.
+
+Then, use the same lower slice as in the first example, turn off CS and turn on suceptibility at 127 MHz (3 Tesla).
+The simualtion result looks like this:
+
+\image html pics/ex_art_band_trufi.jpg 
+\image latex pics/ex_art_band_trufi.eps width=12cm
+
+\n
+
+\section ug_example_artifacts_long_se Artifacts arising from a long refocusing pulse in a spin echo sequence
+As with tyhe previous example, it takes only a few steps to convert the GRE sequence into a spin echo sequence.
+Here, just the result is shown:
+
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters FOVx="256" FOVy="256" FOVz="1" Name="P" Nx="96" Ny="96" Nz="1" TE="70" TR="400">
+   <ConcatSequence Name="R">
+      <ConcatSequence Name="C" Observe="P,Ny" Repetitions="a1">
+         <ATOMICSEQUENCE Name="A1">
+            <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" Name="P1"/>
+         </ATOMICSEQUENCE>
+         <DELAYATOMICSEQUENCE Delay="a1/2" DelayType="C2C" Name="D1" Observe="P,TE" StartSeq="A1" StopSeq="A1b"/>
+         <ATOMICSEQUENCE Name="A2">
+            <TRAPGRADPULSE Area="a1/2" Axis="GX" Name="P2" Observe="P4,Area"/>
+            <TRAPGRADPULSE Area="-a1+a2*a3" Axis="GY" Name="P3" Observe="P,KMAXy/C,Counter/P,DKy"/>
+         </ATOMICSEQUENCE>
+         <ATOMICSEQUENCE Name="A1b">
+            <HARDRFPULSE Axis="RF" Duration="50" FlipAngle="180" Name="P1b"/>
+         </ATOMICSEQUENCE>
+         <DELAYATOMICSEQUENCE Delay="a1/2" DelayType="C2C" Name="D1b" Observe="P,TE" StartSeq="A1b" StopSeq="A3"/>
+         <ATOMICSEQUENCE Name="A3">
+            <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="4" Name="P4" Observe="P,KMAXx/P,Nx"/>
+            <TRAPGRADPULSE Area="a1/2" Axis="GX" InitialDelay="a2" Name="P5" Observe="P4,Area/P4,EndOfFlatTop"/>
+         </ATOMICSEQUENCE>
+         <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>
+      </ConcatSequence>
+   </ConcatSequence>
+</Parameters>
+\endcode
+
+Note the extremely long duration of the 180 degree refocussing pulse "P1b".
+
+Run this sequence on the default brain slice. The result displays the artefact as a center stripe.
+
+\image html pics/ex_art_selongrf.jpg
+\image latex pics/ex_art_selongrf.eps width=12cm
+\n
+
+***************************************************
+*/
+

@@ -1,0 +1,63 @@
+
+/**
+**************************************************
+* \page ug_intro Introduction
+
+\n
+\section ug_intro_summary Summary
+JEMRIS is an extensible MRI simulation framework which provides an MRI sequence development and simulation environment for the MRI community. The development was driven by the desire to achieve generality of simulated 3D MRI experiments reflecting modern MRI systems hardware. The accompanying computational burden is overcome by means of parallel computing. Many aspects are covered which have not hitherto been simultaneously investigated in general MRI simulations such as parallel transmit and receive, important off-resonance effects, non-linear gradients, and arbitrary spatiotemporal parameter variations at different levels. The latter can be used to simulate various types of motion, for instance. The JEMRIS user interface is very simple to use but, nevertheless, it presents few limitations. MRI sequences with arbitrary waveforms and complex inter-dependent modules are modelled in a GUI-based environment requiring no further programming. 
+
+\n
+\section ug_intro_features Features
+JEMRIS supports the following features:
+
+\li Utilising an optimised library for numerical solutions of differential equations (<a href="http://www.llnl.gov/casc/sundials">CVODE</a>) provides accurate 3D MRI simulation results in cases where no analytical solution is available, e.g. to simulate complex nonlinear RF waveforms for selective excitation or adiabatic full passage pulses. 
+
+\li JEMRIS can deal with arbitrary RF and gradient waveforms, arbitrary multi-channel Tx-Rx coil geometries and configurations, as well as many important physical concepts, such as nonlinear gradients, chemical shift, reversible spin dephasing (T2*), susceptibility-induced off-resonance, temporal varying processes of the object (e.g. movement or flow), concomitant gradient fields, etc.
+
+\li Symbolic mathematical calculations are supported by means of the <a href="http://www.ginac.de">GiNaC library</a>. Thus, many extensions are readily available with no additional programming involved.
+
+\li The core simulation routines take advantage of massive parallel processing (<a href="http://www-unix.mcs.anl.gov/mpi">using the MPI standard</a>) and are available on different hardware architectures. JEMRIS simulations scale on single-core hardware, small HPC clusters and also on massively parallel supercomputers. 
+
+\li A <a href="http://www.mathworks.com">Matlab</a> graphical user interface (GUI) is provided with which all simulation parameters are configured, including nearly arbitrary complex MRI sequences. The GUI stores these configurations in XML format which is parsed by the simulator using the <a href="http://xerces.apache.org/xerces-c">Xerces</a> library.
+
+\li JEMRIS is open source and the community is encouraged to make contributions to the project under <a href="http://www.jemris.org">www.jemris.org</a>. It has been successfully tested on Linux, Windows and Mac OS X.
+
+\n
+\section ug_intro_framework Framework
+\subsection ug_intro_framework_main Main Executable Program
+All core routines of Jemris are written in C++. Simplified, the mode of action of the main simulator program is as follows:
+a master process splits the sample into equal portions which are distributed to the compute node processes.
+Here, the MRI sequence returns values of all pulse axes (RF magnitudes and phases for all transmit coils plus 3 gradient axes)
+at desired time points to the physical model which numerically solves the Bloch equation individually for each spin.
+The coil array receives and sums the net signal at every desired time point, which is sent back to the master process
+where finally the bulk signal is summed and stored. Read <a href="ug_command_line.html"> this chapter </a>, if you prefer
+directly running the main execucatbles from the command line.
+
+\subsection ug_intro_gui Graphical User Interfaces
+Our experience showed that acceptance of the software is increased if a GUI is provided, and data I/O is supported from Matlab
+such that users can easily test self-written Matlab code for either sample construction or signal processing. For these reasons,
+three Matlab GUIs were developed: one for interactively <a href="ug_JEMRIS_seq.html">designing the MRI sequence</a>, another
+for <a href="ug_JEMRIS_txrx.html">defining the coil configuration</a>,
+and one for the <a href="ug_JEMRIS_sim.html">set-up and execution of the main simulator</a>, respectively.
+The latter provides some predefined samples, such as the
+<a href="http://www.bic.mni.mcgill.ca/brainweb">MNI human brain phantom</a>,
+as well as the possibility for the input of a user-defined sample.
+
+\n
+\section ug_intro_dc Disclaimer
+
+JEMRIS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY. See the
+ <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a> for more details.
+
+Feedback and bug reports are very wellcome. See <a href="http://www.jemris.org">www.jemris.org</a> to contact the authors.  
+It should be noted that the Matlab GUIs are preliminary. They are stable enough to serve as good starting tools.
+However, this part of the software might be changed in a later version. Bug reports and feature wishes concerning the GUIs are
+also very wellcome also any reaction might be shifted to the next major release of JEMRIS.
+\n
+\n
+\n
+***************************************************
+*/
+
+

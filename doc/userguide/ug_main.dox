@@ -1,0 +1,282 @@
+/**
+ \page ug_main User guide
+ \mainpage Welcome to the the JEMRIS project
+ \n
+ \li JEMRIS is a versatile, open-source, multi-purpose MRI simulator. It is well-suited for education and research.\n
+ \n
+ \li Please read the \subpage ug_intro for more information.\n
+ \n
+ \li Here you can \subpage ug_downl the most recent JEMRIS version and learn how to work with the \subpage ug_uis.
+ \n \n \n \n \n
+ <CENTER> <b> Example Gallery </b> </CENTER>
+ \image html pics/jemris_website_misc.png
+  \n
+  \n
+  \n
+*/
+
+/**
+ \page ug_getit  Get it
+\n
+Get the latest stable version of JEMRIS:
+\n
+<table border="0">
+ <tr><td> \li \subpage ug_downl   <td> &emsp;&emsp; <td> sources or binary packages
+ <tr><td> \li \subpage ug_install   <td> &emsp;&emsp; <td> instructions to build JEMRIS on your own
+</table>
+\n
+Additionally, you can clone the JEMRIS project from <a href="https://github.com/JEMRIS/jemris">GitHub</a>.
+\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
+*/
+
+/**
+ \page ug_downl  Download
+\n
+Download the latest stable version of JEMRIS. (Alternativaly, source code of the most recent developer version is on <a href="https://github.com/JEMRIS/jemris">GitHub</a>.)
+\n
+\n
+<b> Image Reconstruction Pipeline: </b> \n
+JEMRIS binaries do not include  image reconstruction. For these features the image reconstruction server needs to be installed as explained on the project's 
+<a href=" https://github.com/mrphysics-bonn/python-ismrmrd-reco"><b>github page</b></a>. \n
+(Installing JEMRIS from source code will automatically install the server, see \ref ug_install.)
+\n
+<ul>
+        <li> <b> Sources </b>
+             <ul>
+                <li> <a href="../get/jemris-X.Y.Z.tar.gz">jemris-X.Y.Z.tar.gz</a>
+                <li> md5sum: M5XXX
+                <li> shasum: SHXXX
+             </ul>
+
+        <li> <b> Ubuntu 22.04 Binary </b>
+             <ul>
+                <li> <a href="../get/jemris-X.Y.Z-Linux.deb">jemris-X.Y.Z-Linux.deb</a>
+                <li> md5sum: M5YYY
+                <li> shasum: SHYYY
+             </ul>
+
+        <li> <b> Mac Binary </b>
+             <ul>
+                <li> <a href="../get/jemris-X.Y.Z.mpkg.zip">jemris-X.Y.Z.mpkg.zip</a>
+                <li> md5sum: M5ZZZ
+                <li> shasum: SHZZZ
+                <li> <b>Note:</b> Parallel jemris requires the open-mpi library from <a href="https://brew.sh/">Homebrew</a>
+             </ul>
+
+        <li> <b> Windows Binary </b>
+             <ul>
+                <li> <a href="../get/jemris-2.8.3.msi">jemris-2.8.3.msi</a>
+                <li> md5sum: M5WWW
+                <li> shasum: SHWWW                
+                <li> <b>Note:</b> Parallel jemris requires <a href="http://www.mcs.anl.gov/research/projects/mpich2/downloads/tarballs/1.4.1p1/mpich2-1.4.1p1-win-ia32.msi">MPICH2 IA32 1.4.1p1</a>. See also the <a href="ug_mpiwin.html">Install guide</a>. 
+             </ul>
+         Windows binaries are no longer supported since JEMRIS version 2.9.0. Some of the new features are not compatible with our approach for cross compiling.
+         It might be possbile to use <b>WSL</b> (<a href=" https://docs.microsoft.com/en-us/windows/wsl/">Windows Subsystem for Linux</a>) to compile and run the
+         newest JEMRIS version on Windows. WSL worked with previous JEMRIS versions, but we have not tested it yet with version 2.9.0.
+
+</ul>
+
+*/
+
+/**
+ \page ug_mpiwin MPICH2 for Windows
+Installing and running MPICH2 under Windows 64 >= Vista for a single computer with multiple cores
+\n
+<b>Installation</b>
+<ul>
+<li>Install msi file accepting the license and so on.</li>
+<li>Accept the preset passphrase for now</li>
+<li>On the next mask choose install for "Everyone"</li>
+<li>Confirm installation</li>
+</ul>
+\n
+<b>Configuration</b>
+<ul>
+<li>On the start menu right-click "Computer"</li>
+<li>From the list choose "Properties"</li>
+<li>From the list "Control Panel Home" on the left of the new window pick "Advanced system settings"</li>
+<li>Near the bottom click on "Environment Variables"</li>
+<li>Add to if existing or create the PATH variable to include C:\Program Files (x86)\MPICH2\bin or approriate path.</li>
+<li>Confirm with 3 times OK</li>
+<li>Open a command prompt by right clicking its symbol and choosing from the list "Run as administrator"
+<li>Execute including the quotation marks smpd -passphrase "yourpass" -install</li>
+<li>You should read somthing about the success.</li>
+<li>Close that command prompt again and open a new one with user priviledges.</li>
+<li>Execute now mpiexec -np 4 hostname</li>
+<li>You should now see the hostname of your computer 4 times.
+<li>At this point all ist setup and you should be able to use parallel jemris.</li>
+</ul>
+\n
+Should you want to connect multiple computers running Windows to perform HPC computing with jemris, be assured of our empathy. We wish you the best of luck. You will most centainly need some kind of Windows domain authentication hastle-hurdle-trap-pitfall.
+*/
+
+
+/**
+ \page ug_userguide  Documentation
+ \n
+ These pages introduce the basic concepts and functionality of JEMRIS. Please help improving the documentation!
+ \n
+<table border="0">
+ <tr><td> \li \subpage ug_intro   <td> &emsp;&emsp;&emsp;&emsp; <td> Summary of concepts and features
+ <tr><td> \li \subpage ug_uis   <td> &emsp;&emsp;&emsp;&emsp; <td> <b> Detailed manual</b> of the main functionality
+ <tr><td> \li \subpage ug_tutor  <td> &emsp;&emsp;&emsp;&emsp; <td> Hands-on exercises for beginners
+ <tr><td> \li \subpage ug_ex <td> &emsp;&emsp;&emsp;&emsp; <td> Simulation results showing a few features
+</table>
+ \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
+*/
+
+
+/**
+ \page ug_uis User Interfaces
+<b>Matlab Graphical User Interfaces</b>
+\n
+JEMRIS was developed in C++ to achieve usability as well as performance. It can be used from the command line, 
+where  the configuration of the MR-simulation is done via several XML files. Additionally, three Matlab GUIs were developed 
+for interactively designing the MRI sequence, defining the coil configuration, and execution of the simulations, respectively. \n
+\n
+All Matlab GUIs follow the same procedure: construct a valid XML file from the user input, then call the external
+JEMRIS executables to compute the data, and finally read and visualise the result.
+
+<table border="0">
+ <tr><td> \li \subpage ug_JEMRIS_seq   <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for MRI sequence design
+ <tr><td> \li \subpage ug_JEMRIS_sim   <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for execution of MRI simulations
+ <tr><td> \li \subpage ug_JEMRIS_txrx  <td>  &emsp;&emsp;&emsp;&emsp; <td> Matlab GUI for layout design of transmit and receive arrays
+ <tr><td> \li \subpage ug_command_line <td>  &emsp;&emsp;&emsp;&emsp; <td> Learn how to control jemris for batch submission etc.
+</table>
+
+Before starting the Matlab GUIs, the directory in which the JEMRIS m-files are located has to be added to
+the Matlab search path.  Use <I>"addpath('<dir>')"</I>, where <I>"<dir>=/usr/local/share/jemris/matlab"</I> is the default installation directory.
+\n
+\n
+<b>Standalone GUI Apps</b>
+\n
+We also provide the JEMRIS GUIs as Matlab Standalone Applications which do not require a Matlab license. The Standalone Apps are only available for linux.
+The apps as well as installation instructions can be found under <I>/usr/local/share/jemris/standalone_guis</I>
+\n
+\n
+ */
+
+/**
+ \page ug_tutor Tutorials
+
+Some first steps with JEMRIS:
+
+Learn to implement an EPI sequence from scratch, do the
+simulation, and extend it to 2D selective excitation by means of analytic pulse shapes.
+
+Finally, a c++ framework extension is shown.
+
+ \subpage ug_tutorial_epi_seq \n \n
+ \subpage ug_tutorial_epi_sim \n \n
+ \subpage ug_tutorial_selex1 \n \n
+ \subpage ug_tutorial_selex2 \n \n
+ */
+
+/**
+ \page ug_ex Examples
+ Detailed instructions to reproduce the simulations in the MRM jemris paper (1). \n
+ \n
+ \subpage ug_example_artifacts \n \n
+ \subpage ug_example_nlg \n \n
+ \subpage ug_example_ktblast \n \n
+ \n
+ \n
+ (1) Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder, N. Jon Shah. High-performance computing MRI simulations. Magnetic Resonance in Medicine. 2010, 64(1), 186 - 193.\n
+ */
+
+
+/**
+ \page ug_about About JEMRIS
+\section ug_version Version
+
+JEMRIS Version 2.9.1\n
+Copyright (C) 2006-2023  Tony Stöcker, Kaveh Vahedipour, Daniel Pflugfelder \n
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\n
+\n
+
+\section ug_lit Main Reference
+
+If you use JEMRIS for research publications, please cite this paper:
+<i>Stöcker, T., Vahedipour, K., Pflugfelder, D., & Shah, N. J. (2010). High-performance computing MRI simulations. Magnetic Resonance in Medicine, 64(1), 186–93.</i> <a href="https://doi.org/10.1002/mrm.22406">DOI</a>
+
+\section ug_contact Contact
+
+Please use the <a href="https://groups.google.com/forum/?hl=en-gb#!forum/jemris"><b>JEMRIS discussion group on Google</b></a>
+to ask questions related to the software and the project.
+\n
+\n
+
+\section ug_developers Developers
+
+JEMRIS is developed and maintained by ...
+
+Tony Stöcker, project founder (tony.stoecker(at)dzne.de) \n
+Framework design, sequence and solver implementation, package maintenance. \n
+\n
+Daniel Pflugfelder (d.pflugfelder(at)fz-juelich.de) \n
+MPI parallelization, performance debugging, code optimization, Temporal variations, Diffusion. \n
+\n
+Kaveh Vahedipour (kaveh (at) codeare.org) \n
+Framework design, parallel TX/RX, supercomputer implementation. \n
+\n
+\n
+
+\section ug_contrib Contributors
+Over the years JEMRIS improved a lot through feedback and bug reports from the user community. Thanks a lot for your contributions!
+Some projects extended JEMRIS and added new functionality to the software. Here is a list of the major contributions over the past years.
+\n\n
+<b> 2022</b>\n 
+Marten Veldmann implemented the <b> ISMRMRD data format </b> into JEMRIS. With this feature, the simulation data can be feeded into image reconstuction 
+software which is compatible with ISMRMRD. Marten also implemented a fully <b> automated image reconstruction pipeline </b> as a Docker service
+for JEMRIS. The pipeline is installed during JEMRIS installation (see \ref ug_install). Furthermore, Marten updated and extended the Pulseq support 
+of JEMRIS (see below) to the newest Pulseq version. The reconstruction pipeline is compatible with JEMRIS simulations and real MR data acquired with
+Pulseq sequences. More information on the pipeline can be found on <a href=" https://github.com/mrphysics-bonn/python-ismrmrd-reco"><b>github</b></a>.
+The complete process - sequence development, acquisition, and image reconstuction - was presented at the ISMRM 2021 conference:
+<i>	Open-Source MR Imaging Workflow. Veldmann M, Ehses P, Chow K, Zaitsev M, Stöcker T, ISMRM 2021, #0729</i>
+
+<b> 2021b</b>\n 
+2021: Ben Hoshino and Xin Chen from Canon Medical Research significantly improved JEMRIS simulation performance (since version 2.9.0).
+This was mainly realized by introducing “Children Caching” for recursive retrieval of events from the JEMRIS sequence tree.
+This results in up to 3x faster simulations! (Depending on the complexity of the sequence.)
+ 
+<b> 2021a</b>\n 
+Hanna Hanson and Benny Rowland implemented <b> motion of deformable phantoms </b> into JEMRIS, which can e.g. be used for realistic simulations of cardiac MRI or respiration.
+An example can be found on  <a href=" https://github.com/hmhanson/4DPhantomMRI"><b>Hanna's github page</b></a>. Read this paper for more information:
+<i> Hanson, H.M. , Eiben, B.,  McClelland, J.R., van Herk, M. & Rowland, B.C. (2021) 4D Deformable Digital Phantom for MRI %Sequence Development. Medical Physics. </i>
+<a>https://aapm.onlinelibrary.wiley.com/doi/10.1002/mp.15036</a>
+\n\n
+<b> 2020</b>\n
+Since 2010 JEMRIS supports <b>multi-pool MRI simulations based on the Bloch-McConnel equations</b>. The feauture was never documented and the functionality
+became partly incompatible with newer versions of JEMRIS. Suzan Akbey revived the functionality and wrote python wrappers to run CEST
+simulations with JEMRIS. A Jupyter Notebook with examples can be found on 
+<a href=" https://github.com/mrphysics-bonn/CEST-simulations-with-JEMRIS"><b>github</b></a>. 
+The tool was presented at the ESMRMB 2020 conference: <i>CEST Simulations with JEMRIS. S. Akbey, T. Stöcker, ESMRMB 2020, L01.99</i>
+\n\n
+<b> 2018</b>\n
+Thanks to Alexandre Fortin et al, <b> JEMRIS supports flow simulation </b> in arbitrary complex geometries (since version 2.8.2).
+Flow simulation examples can be found in \c "/usr/local/share/jemris/angio_simu" of your local JEMRIS installation. Read this paper for more information:
+<i>Fortin, A., Baruthio, J., Delbany, M., & Durand, E. (2018). Flow MRI simulation in complex 3D geometries : Application to the cerebral venous network.
+Magnetic Resonance in Medicine, 80(4):1655-1665.</i> <a href="https://doi.org/10.1002/mrm.27114">DOI</a>
+\n\n
+<b> 2017</b>\n
+A major contribution to JEMRIS was the <a href="https://pulseq.github.io/"><b>Pulseq</b></a> integration, which allows you to <b> run JEMRIS
+sequences on real MR scanners</b>. Thanks a lot to the Pulseq developer team!
+Check the section \ref ug_command_line_jemris_export to learn how to export Pulseq files from JEMRIS. Read this paper for more information:
+<i>Layton, K. J., Kroboth, S., Jia, F., Littin, S., Yu, H., Leupold, J., Nielsen, J.F., Stöcker T, & Zaitsev, M. (2017). Pulseq: A rapid and hardware-independent pulse sequence prototyping framework.
+Magnetic Resonance in Medicine, 77(4), 1544–1552.</i> <a href="https://doi.org/10.1002/mrm.26235">DOI</a>\n
+\n
+\n
+
+
+*/

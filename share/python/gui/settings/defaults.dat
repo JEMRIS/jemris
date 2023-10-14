@@ -1,0 +1,9 @@
+# --------------------------------------------------------------------------- #
+JEMRIS Defaults File
+# --------------------------------------------------------------------------- #
+
+Jshare = /usr/local/share/jemris/matlab
+Jpath = /usr/local/bin
+MPIcall = /usr/bin/mpiexec
+workspace = /home/user/JEMRIS
+QStyle = GTK+

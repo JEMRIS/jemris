@@ -1,0 +1,19 @@
+dump of sequence tree
+                          TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
+                          ----------------------------------------------------------------- |  ---------------
+sequence-root-------->   CONCAT       CONCATSEQUENCE        R  1600.000     1024      1726  |  Repetitions = 1, type SLI|PHA|PAR|SET|CON|AVG = 0|0|0|0|0|0
+  |_ child 1   ------>   CONCAT       CONCATSEQUENCE        C  1600.000     1024      1726  |  Repetitions = 32, type SLI|PHA|PAR|SET|CON|AVG = 0|1|0|0|0|0
+    |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A1     0.100        0         3  | 
+      |_ child 1   -->    PULSE          HARDRFPULSE       P1     0.100        0         3  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (20,49600,1e+16,0,0.5) 
+    |_ child 2   ---->     ATOM  DELAYATOMICSEQUENCE       D1     3.690        0         2  |  DelayType = C2C  , StartSeq = A1 , StopSeq = A3 , Delay = 8
+      |_ child 1   -->    PULSE           EMPTYPULSE    eP_D1     3.690        0         2  |  Axis = none 
+    |_ child 3   ---->     ATOM       ATOMICSEQUENCE       A2     1.860        0         5  | 
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P2     1.860        0         4  |  Axis = GX  , Area = -0.863938
+      |_ child 2   -->    PULSE        TRAPGRADPULSE       P3     1.720        0         4  |  Axis = GY  , Area = 0.736311
+    |_ child 4   ---->     ATOM       ATOMICSEQUENCE       A3     4.800       32        36  | 
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     4.800       32        36  |  Axis = GX  , ADC type ADC|IMG|ACS|PC|NOISE = 0|1|0|0|0 , Area = 1.72788 , FlatTop: (Area,time)= (1.5708,4)
+    |_ child 5   ---->     ATOM       ATOMICSEQUENCE       A4     3.600        0         6  | 
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P6     3.600        0         4  |  Axis = GX  , Area = 2.59181
+      |_ child 2   -->    PULSE        TRAPGRADPULSE       P7     1.720        0         4  |  Axis = GY  , Area = -0.736311
+    |_ child 6   ---->     ATOM  DELAYATOMICSEQUENCE       D2    35.950        0         2  |  DelayType = B2E  , StartSeq = A1 , Delay = 50
+      |_ child 1   -->    PULSE           EMPTYPULSE    eP_D2    35.950        0         2  |  Axis = none 

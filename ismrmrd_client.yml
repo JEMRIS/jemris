@@ -1,0 +1,12 @@
+name: ismrmrd_client
+channels:
+    - defaults
+dependencies:
+    - python=3.8
+    - pip
+    - numpy
+    - pip:
+        - h5py
+        - ismrmrd
+        - git+https://github.com/pehses/python-ismrmrd-server.git@mrm_paper
+        - git+https://github.com/ismrmrd/ismrmrdviewer.git

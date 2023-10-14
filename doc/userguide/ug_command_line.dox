@@ -1,0 +1,341 @@
+/**
+***************************************************
+* \page ug_command_line Running JEMRIS from the Command Line
+The above introduced Matlab GUIs follow the same procedure: construct a valid XML file from the user input, then call the external JEMRIS
+executables to compute the data, and finally read and visualise the result. Of course it is possible to directly run
+the executables without running Matlab. For this, the XML configuration files might be directly manipulated to set up
+the numerical experiments.
+
+This section presents example XML files and explains how to use the JEMRIS from the command line:
+\n
+\n 
+\ref ug_command_line_XML 
+   \li \ref ug_seq_xml
+   \li \ref ug_trx_xml
+   \li \ref ug_sim_xml
+
+\ref ug_command_line_jemris
+   \li \ref ug_command_line_jemris_seq
+   \li \ref ug_command_line_jemris_sense
+   \li \ref ug_command_line_jemris_sim
+   \li \ref ug_command_line_pjemris
+   \li \ref ug_command_line_jemris_export
+
+\n
+ <HR>
+
+\section ug_command_line_XML Creating and editing XML configuration Files
+There are three different types of XML files which configure a JEMRIS simulation:
+\li \ref ug_seq_xml
+\li \ref ug_trx_xml
+\li \ref ug_sim_xml
+
+\subsection ug_seq_xml The Sequence XML file
+
+MRI sequences may be scripted directly in XML where the sequence and pulse modules are represented
+by XML elements. Their parameterization is done via attributes utilizing the observer
+mechanism. See section \ref ug_JEMRIS_seq_modules for a list of available modules and their attributes. Section
+\ref ug_JEMRIS_seq_ginac describes the observer mechanism and symbolic attribute dependences.
+
+This is an example of a 2D EPI sequence for 2D simulation (i.e. without slice selection). \n
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters FOVx="256" FOVy="256" GradMaxAmpl="2" GradSlewRate="10" Name="P" Nx="64" Ny="64" TE="50" TR="100">
+   <ConcatSequence Name="C1">
+      <AtomicSequence Name="A1">
+         <HARDRFPULSE Axis="RF" Duration="0.1" FlipAngle="90" Name="P1"/>
+      </AtomicSequence>
+      <AtomicSequence Name="A2">
+         <TrapGradPulse Area="-0.5*abs(A)" Axis="GX" Name="P2" Observe="A=P4.Area"/>
+         <TrapGradPulse Area="KMY" Axis="GY" Name="P3" Observe="KMY=P.KMAXy"/>
+      </AtomicSequence>
+      <DelayAtomicSequence Delay="TE" DelayType="C2C" Name="D1" Observe="TE=P.TE" StartSeq="A1" StopSeq="C2"/>
+      <ConcatSequence Name="C2" Observe="NY=P.Ny" Repetitions="NY">
+         <AtomicSequence Name="A3">
+            <TrapGradPulse ADCs="NX" Axis="GX" FlatTopArea="2*KMX*(-1)^C" FlatTopTime="1"
+                           Name="P4" Observe="KMX=P.KMAXx, C=C2.Counter, NX=P.Nx"/>
+         </AtomicSequence>
+         <AtomicSequence Name="A4">
+            <TrapGradPulse Area="ite(1+C,R,0,-DKY)" Axis="GY" Name="P5" Observe="DKY=P.DKy, C=C2.Counter, R=C2.Repetitions"/>
+         </AtomicSequence>
+      </ConcatSequence>
+      <DelayAtomicSequence Delay="TR" DelayType="B2E" Name="D2" Observe="TR=P.TR" StartSeq="A1"/>
+   </ConcatSequence>
+</Parameters>
+\endcode
+\n
+
+\subsection ug_trx_xml The Coil Array XML file
+As for the sequence, also coil array files can be directly scripted in XML. Elements represent the available coils (see section '\ref ug_JEMRIS_txrx' for a complete list and
+their parameterization).
+This is an example for an 8 channel phased array:
+\code
+
+<?xml version="1.0" encoding="utf-8"?>
+<CoilArray>
+   <BIOTSAVARTLOOP Azimuth="0" Dim="3" Extent="260" Name="C1" Points="32" Polar="90" Radius="200" Scale="0.19" XPos="256" YPos="0" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="45" Dim="3" Extent="260" Name="C2" Points="32" Polar="90" Radius="200" Scale="0.19" XPos="181.019" YPos="181.019" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="90" Dim="3" Extent="260" Name="C3" Points="32" Polar="90" Radius="200" Scale="0.19" XPos="0" YPos="256" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="135" Dim="3" Extent="260" Name="C4" Points="32" Polar="90" Radius="200" Scale="0.19" XPos="-181.019" YPos="181.019" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="180" Dim="3" Extent="260" Name="C5" Points="32" Polar="90" Radius="200" Scale="0.19" XPos="-256" YPos="0" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="225" Dim="3" Extent="260" Name="C6" Points="32" Polar="90" Radius="200" Scale="0.19" XPos="-181.019" YPos="-181.019" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="270" Dim="3" Extent="260" Name="C7" Points="32" Polar="90" Radius="200" Scale="0.19" XPos="0" YPos="-256" ZPos="0"/>
+   <BIOTSAVARTLOOP Azimuth="315" Dim="3" Extent="260" Name="C8" Points="32" Polar="90" Radius="200" Scale="0.19" XPos="181.019" YPos="-181.019" ZPos="0"/>
+</CoilArray>
+\endcode
+\n
+
+\subsection ug_sim_xml The Simulation XML file
+The simulation XML file contains elements for the XML file locations of the sequence, the coil arrays (transmit and receive), and the location of the sample HDF5-file (the object).\n
+Examples of such samples as well as how to create user defined samples are described in section \ref ug_JEMRIS_sim_sample.
+
+Additionally, a few other parameters may be added via attributes of the "parameter" element which are documented in section '\ref ug_JEMRIS_sim_add' of the simulation GUI chapter.
+
+This is an example for a simulation XML file generated by the \ref ug_JEMRIS_sim :
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<simulate name="JEMRIS">
+   <sequence name="epi" uri="/data/mr_cluster/tstoecker/example/epi.xml"/>
+   <sample name="brain" uri="/data/mr_cluster/tstoecker/example/sample.h5"/>
+   <RXcoilarray uri="/usr/local/share/jemris/matlab/uniform.xml"/>
+   <TXcoilarray uri="/usr/local/share/jemris/matlab/uniform.xml"/>
+   <parameter ConcomitantFields="0" EvolutionPrefix="evol" EvolutionSteps="0" RandomNoise="0"/>
+   <model name="Bloch" type="CVODE"/>
+</simulate>
+\endcode
+\n
+
+ <HR>
+\section ug_command_line_jemris Invoking the JEMRIS executable
+Executing jemris on the command line without arguments shows the possible options:
+\code
+me@my_box:~$ jemris
+
+jemris 2.8.4 (5c44660)
+
+
+  Usage:
+
+  1. jemris <xml-file>
+     The file could be either a a) Simulation, b) Sequence, or c) Coilarray file,
+     so that a) the simultion is performed, b) a sequence diagram is written,
+     or c) the sensitivity maps are dumped, respectively.
+
+  2. jemris modlist
+     Writes the file mod.xml containing a list of all available modules.
+
+  Parameters:
+     -o <output_dir>: Output directory
+     -f <filename>:   Output filename (without extension)
+     -x: Output Pulseq sequence file format (.seq)
+     -r: Start reconstruction after simulation (running recon server is required).
+     -d <def>=<val>:  Define custom sequence variable for Pulseq file
+
+\endcode
+The special case 'modlist' is used by the \ref ug_JEMRIS_seq to generate
+the list of modules. Therefore, framework extensions will automatically appear in the GUI.
+
+\n
+\subsection ug_command_line_jemris_seq Generating the Pulse Sequence Diagram Data
+
+Running jemris with the EPI sequence XML file results in
+\code
+me@my_box:~$ jemris /usr/local/share/jemris/examples/epi.xml
+
+JEMRIS 2.2 r1480M
+
+dump of sequence tree
+                          TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
+                          ----------------------------------------------------------------- |  ---------------
+sequence-root-------->   CONCAT       CONCATSEQUENCE       C1   100.000     4096      4488  |  Repetitions = 1
+  |_ child 1   ------>     ATOM       ATOMICSEQUENCE       A1     0.100        0         1  |
+    |_ child 1   ---->    PULSE          HARDRFPULSE       P1     0.100        0         1  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel) = (90,0,1e+16,0)
+  |_ child 2   ------>     ATOM       ATOMICSEQUENCE       A2     0.654        0         5  |
+    |_ child 1   ---->    PULSE        TRAPGRADPULSE       P2     0.654        0         3  |  Axis = GX  , Area = -0.908768
+    |_ child 2   ---->    PULSE        TRAPGRADPULSE       P3     0.593        0         3  |  Axis = GY  , Area = 0.785398
+  |_ child 3   ------>     ATOM  DELAYATOMICSEQUENCE       D1     4.072        0         1  |  DelayType = C2C  , StartSeq = A1 , StopSeq = C2
+    |_ child 1   ---->    PULSE           EMPTYPULSE    eP_D1     4.072        0         1  |  Axis = none
+  |_ child 4   ------>   CONCAT       CONCATSEQUENCE       C2    90.448     4096      4480  |  Repetitions = 64
+    |_ child 1   ---->     ATOM       ATOMICSEQUENCE       A3     1.314       64        68  |
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P4     1.314       64        68  |  Axis = GX  , Area = -1.81754 , FlatTop: (Area,time)= (-1.5708,1)
+    |_ child 2   ---->     ATOM       ATOMICSEQUENCE       A4     0.099        0         2  |
+      |_ child 1   -->    PULSE        TRAPGRADPULSE       P5     0.099        0         3  |  Axis = GY  , Area = -0.0245437
+  |_ child 5   ------>     ATOM  DELAYATOMICSEQUENCE       D2     4.726        0         1  |  DelayType = B2E  , StartSeq = A1
+    |_ child 1   ---->    PULSE           EMPTYPULSE    eP_D2     4.726        0         1  |  Axis = none
+
+\endcode
+Additionally, a  HDF5-file "seq.h5" is written which is read by the Matlab GUI to plot the sequence diagram.
+
+The output shows that this sequence has in total 4096 ADC points. The sequence diagram is non-equidistantly sampled:
+it consists of 4488 TPOIs ("time points of interest") which are the ADCs plus some additional important time points
+(for instance the ramps of trapezoidal gradients).
+In the above example the HDF5-file "seq.h5" contains 4888 sampling points.
+The data is stored in a dataspace "seqdiag" with names "T", "RXP", "TXM", "TXP", "GX", "GY", and "GZ",
+each of size \f$N \times 1\f$ (column vectors) where \f$N\f$ is the number of sampling points.
+
+Reading the sequence diagram HDF5-file in Matlab:
+\code
+T   = h5read('seq.h5','/seqdiag/T');           % temporal sampling points
+RXP = h5read('seq.h5','/seqdiag/RXP');         % RF Receiver phase; unit: radiants; if negative, the TPOI was not an ADC
+TXM = h5read('seq.h5','/seqdiag/TXM');         % RF Transmitter magnitude
+TXP = h5read('seq.h5','/seqdiag/TXP');         % RF Transmitter phase; unit: radiants
+GX  = h5read('seq.h5','/seqdiag/GX');          % physical X-Gradient
+GY  = h5read('seq.h5','/seqdiag/GY');          % physical Y-Gradient
+GZ  = h5read('seq.h5','/seqdiag/GZ');          % physical Z-Gradient
+\endcode
+
+\n
+\subsection ug_command_line_jemris_sense Generating the Coil Sensitiviy Maps
+
+Running jemris with a coil array XML file results in
+\code
+me@my_box:~$ jemris 8chheadcyl.xml
+
+JEMRIS 2.2 r1509M
+
+dumping sensitivity maps to sensmaps.h5 ...
+done!
+\endcode
+
+The coil sensitivity HDF5-file contains dataspaces "/maps/magnitude/00" and "/maps/phase/00" which hold 2D or 3D coil maps according to the grid size
+which is specified in the coil array XML file. If the  coil-array has multiple channels (coils), the maps of the second coil are stored in datspaces
+"/maps/magnitude/01", "/maps/phase/01", etc.
+
+Example to read the complex sensitivity HDF5-file in Matlab, assuming 4 coils with 2D-sensitivities:
+\code
+for i = 1:4
+ a = h5read ('sensmaps.h5', sprintf('/maps/magnitude/%02d',i-1));
+ p = h5read ('sensmaps.h5', sprintf('/maps/phase/%02d',i-1));
+ SMAP(:,:,i)=a.*exp(sqrt(-1)*(p));
+end
+\endcode
+\n
+\n
+\subsection ug_command_line_jemris_sim Executing MRI Simulations
+
+Running jemris with a simulation XML file
+\code
+me@my_box:~$ jemris simu.xml
+
+JEMRIS 2.2 r1509M
+
+Model    : Bloch          , solver = CVODE
+Sample   : 2D sphere      , spins  = 7825
+TxArray  : /usr/local/share/jemris/matlab/uniform.xml
+RxArray  : /usr/local/share/jemris/matlab/uniform.xml
+Sequence : /data/mr_cluster/tstoecker/jemris_paper_ex/epi.xml
+
+Simulating | ************************************************** | 100% done
+
+Actual simulation took 3.61 seconds.
+\endcode
+The simulation result is stored to the HDF5-file "signals.h5".
+
+The signal file contains the HDF5 datspace "/signal/times" of size \f$N \times 1\f$, the time points of each ADC event of the sequence,
+and the datspace "/signal/channel/00" where the acoording signals of size \f$3 \times N\f$ are stored, i.e. the x,y, and z component of
+the net magnetization at every time point. If a receive coil with multiple channels was used, the signals of channels 2,3, etc. are stores in
+datspaces "/signal/channel/01", "/signal/channel/02", etc.
+
+Example to read the signal HDF5-file in Matlab, assuming 8 receiver channels:
+\code
+T   = h5read('signals.h5','/signal/times');
+S   = zeros(3,numel(T),8);
+for i = 1:8
+ S(:,:,i) = h5read('signals.h5', sprintf('/signal/channels/%02i',i-1));
+end
+\endcode
+If an imaging sequence was simulated, image reconstruction can be started directly after the simulation using the switch \c -r 
+\code
+me@my_box:~$ jemris -r simu.xml
+\endcode
+Assuming that the recon server is installed, this will run the python image reconstruction pipeline and store the images to the file \c signals_ismrmrd_recon.h5.
+See section \ref ug_JEMRIS_reco_start for more information about the image reconstruction pipeline.
+\n
+\subsection ug_command_line_pjemris Invoking the parallel version of JEMRIS
+Running the parallel version requires a working MPI environment (see \ref ug_install).
+
+The following command runs the parallel version with 5 parallel processes:
+\code
+me@my_box:~$ mpirun -np 5 pjemris simu.xml
+
+
+PARALLEL JEMRIS 2.2 r1470M
+
+Model    : Bloch	  , solver = CVODE
+Sample   : brain	  , spins  = 25841
+TxArray  : /usr/local/share/jemris/matlab/uniform.xml
+RxArray  : /usr/local/share/jemris/matlab/uniform.xml
+Sequence : /data/mr_cluster/tstoecker/example/epi.xml
+
+nmrpc40 -> Master Process: send MR sample (25841 spins) to 4 slave(s)
+
+Simulating | ************************************************** | 100% done
+
+Actual simulation took 208.64 seconds.
+\endcode
+
+The resulting signal file is the same as for sequential jemris simulations.
+
+Additionally, the percent progress is written to the hidden file ".jemris_progress.out".
+
+Note that spins are first distributed in small packets, then the packet size increases (and decreases at the end, to ).
+The program performs load balancing and first estimates the number of spins which are simulated in 5 seconds per process. Then,
+every 5 seconds checkpoints are stored to temporary hidden binary files the ".spins_state.dat" and ".tmp_sig01.bin" which are removed
+after successful completion. If however the simulation is unexpectedly stopped, a restart will continue at the last checkpoint.
+This is useful for huge simulations lasting several hours (or even days) where sudden crash e.g. due to power breakdown may occur.
+\n
+\subsection ug_command_line_jemris_export Exporting a Sequence to an MRI Scanner with Pulseq
+Running jemris with the -x option exports the sequence in Pulseq format
+(http://pulseq.github.io) for execution on a real MRI scanner,
+\code
+me@my_box:~$ jemris -x -d id=1 -f epi /usr/local/share/jemris/examples/epi.xml
+me@my_box:~$ head -n 20 epi.seq
+# Pulseq sequence format
+# Created by JEMRIS 2.8.3
+
+[VERSION]
+major 1
+minor 2
+revision 1
+
+[DEFINITIONS]
+id 1
+Num_Blocks 132
+
+# Format of blocks:
+# #  D RF  GX  GY  GZ ADC
+[BLOCKS]
+  1  0  1   0   0   0  0
+  2  0  0   1   2   0  0
+  3  1  0   0   0   0  0
+  4  0  0   3   0   0  1
+  5  0  0   0   4   0  0
+\endcode
+This creates a file suitable to run on a scanner. The -x option indicates export, -d allows for custom definitions
+(such as scan ID), and the .seq file is named according to the -f option (default: external.seq).
+In addition, an ISMRMD file is generated (epi.h5 in the example above, default: external.h5 ), which
+contains sequence meta information (trajectory etc.) which can be used for image reonstruction.
+This file can be merged with the ISMRD raw data file resulting from scanner execution and then fed 
+into the Python reconstruction pipeline, wich is also used for image reconstruction of JEMRIS simulations.
+The workflow is described in detail on the project's <a href=" https://github.com/mrphysics-bonn/python-ismrmrd-reco"><b>github page</b></a>.
+\n \n
+<b>Caution:</b> read the Pulseq manual carefully before running sequences created with JEMRIS on the scanner!
+Creating valid Pulseq files requires some experience.
+Here is a brief and incomplete list of things which may be taken into account when creating Pulseq files with JEMRIS:
+\li For trapezoidal gradients (TrapGradPulse): ramp sampling is not used if FlatTopTime and FlatTopArea are set.
+    Otherwise, ramp sampling is always enabled (as displayed in the \ref ug_JEMRIS_seq )
+\li All other gradient forms are exported as arbitrary gradients.
+\li ADCs which are specified from a DelayAtomicSequence are not exported!
+\li The EmptyPulse can be used as a delay. Here, ADCs are exported to the Pulseq file.
+\li For all ADC events, the dwell time is defined as Duration / number of ADCs
+
+Additionally, some hardware-specific restrictions may have to be considered (see the Pulseq Manual for more details).
+\li In Pulseq's "strict timing mode", the RF pulse requires a simultaneous GradPulse or EmptyPulse in the same AtomicSequence.
+    Otherwise the Strict Duration Check may fail due to missing dead times before and/or after the RF pulse.
+\li The number of ADCs should be chosen such that the dwell time is compatible with the hardware RF raster time.
+\li Sequence blocks should not end with an ADC, for example a delay can be set parallel to the ADC.
+\li For large numbers of ADCs it might be necessary to segment ADCs events, which match gradient raster time
+
+ <HR>
+
+*/

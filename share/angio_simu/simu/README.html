@@ -1,0 +1,65 @@
+<div class="contents">
+<div class="textblock">
+<ul></ul>
+<h1><a class="anchor" id="ug_angio"></a>
+Advanced angiographic simulations</h1>
+<p><br />
+Angiographic simulations can be performed by providing as input a file containing the Lagrangian trajectories of the flowing spins.
+ The flow must be continuous during the sequence and the density of spins must be spatially homogeneous.
+ Static spins positions must also be specified.<br /><br />
+
+<li>The input flow file can be ASCII or HDF5 (for HDF5, quadruple the negative indicators and use the structure: Group &apos;/flow&apos;, Dataset &apos;trajectories&apos;, Size 4xN). The trajectories format is:</li></p>
+<div class="line">t0 spin0_x spin0_y spin0_z</div>
+<div class="line">-111&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<i>-> SPIN ACTIVATION</i></div>
+<div class="line">t1 spin0_x spin0_y spin0_z</div>
+<div class="line">t2 spin0_x spin0_y spin0_z</div>
+<div class="line">t3 spin0_x spin0_y spin0_z</div>
+<div class="line">...</div>
+<div class="line">tN spin0_x spin0_y spin0_z</div>
+<div class="line">-222&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<i>-> SPIN DEACTIVATION</i></div>
+<div class="line">-999999&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;<i>-> SPIN CHANGE INDICATOR</i></div>
+ </p> <p>
+<div class="line">t0 spin1_x spin1_y spin1_z</div>
+<div class="line">-111</div>
+<div class="line">t1 spin0_x spin0_y spin0_z</div>
+<div class="line">t2 spin0_x spin0_y spin0_z</div>
+<div class="line">t3 spin0_x spin0_y spin0_z</div>
+<div class="line">...</div>
+<div class="line">tN spin0_x spin0_y spin0_z</div>
+<div class="line">-222</div>
+<div class="line">-999999</div>
+<div class="line"></div>
+<div class="line">...</div>
+</p> 
+<br />
+<li>In the .xml simu file, provide the path of the flow file, e.g.:</li></p>
+<p><div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span>
+  encoding=<span class="stringliteral">&quot;utf-8&quot;</span>?&gt;</div>
+  <div class="line">&lt;simulate name=<span class="stringliteral">&quot;JEMRIS&quot;</span>&gt;</div>
+  <div class="line">   &lt;sequence name=<span class="stringliteral">&quot;angio&quot;</span> uri=<span class="stringliteral">&quot;./angio.xml&quot;</span>/&gt;</div>
+  <div class="line">   &lt;sample name=<span class="stringliteral">&quot;vessels&quot;</span> name=<span class="stringliteral">&quot;./Flow.dat&quot;</span> uri=<span class="stringliteral">&quot;./sample.h5&quot;</span>/&gt;</div>
+  <div class="line">   &lt;RXcoilarray uri=<span class="stringliteral">&quot;./uniform.xml&quot;</span>/&gt;</div>
+  <div class="line">   &lt;TXcoilarray uri=<span class="stringliteral">&quot;./uniform.xml&quot;</span>/&gt;</div>
+  <div class="line">   &lt;parameter ConcomitantFields=<span class="stringliteral">&quot;0&quot;</span> EvolutionPrefix=<span class="stringliteral">&quot;evol&quot;</span> EvolutionSteps=<span class="stringliteral">&quot;0&quot;</span> RandomNoise=<span class="stringliteral">&quot;0&quot;</span>/&gt;</div>
+  <div class="line">   &lt;model name=<span class="stringliteral">&quot;Bloch&quot;</span> type=<span class="stringliteral">&quot;CVODE&quot;</span>/&gt;</div><div class="line">&lt;/simulate&gt;</div></div><!-- fragment --><p>
+</p><p>
+<li>Run the .xml simu file normally with jemris or pjemris.</li></p>
+<br />
+
+<h2>Flow loop option</h2>
+<p>The same flow trajectories can be reused periodically to reduce the amount of data, e.g. for steady or periodic flow (cardiac cycle).
+In the .xml simu files, set e.g.:</p>
+<p><div class="line">   &lt;sample name=<span class="stringliteral">&quot;cardiac&quot;</span> name=<span class="stringliteral">&quot;./Flow.dat&quot;</span> FlowLoopDuration=<span class="stringliteral">&quot;850&quot;</span> FlowLoopNumber=<span class="stringliteral">&quot;1500&quot;</span> uri=<span class="stringliteral">&quot;./sample.h5&quot;</span>/&gt;</div>
+</p><p>&quot;FlowLoopDuration&quot; is the duration of the flow cycle (ms).  If the sample size exceeds the total number of trajectories, the N last trajectories corresponding to &quot;FlowLoopNumber&quot; will be reused periodically with a time shift equal to &quot;FlowLoopDuration&quot; (note: the spins stays at their initial position until the beginning of their trajectory). 
+Thus, to cover the whole sequence, the input sample size must be:<br />
+&emsp; NonLoopedSpins + FlowLoopNumber*SequenceDuration/FlowLoopDuration</p>
+<p>E.g., we can imagine a vessel initially containing 10&nbsp;000 spins, which entry is seeded with 1&nbsp;500 spins during one cardiac cycle of 850 ms. Then, the input flow file will contain 11&nbsp;500 trajectories, and a sequence of 400&nbsp;000 ms 
+will be simulated with a sample of 10&nbsp;000&nbsp;+&nbsp;1&nbsp;500*400&nbsp;000/850&nbsp;=&nbsp;715&nbsp;882 spins.</p>
+<br />
+
+<h2>Image reconstruction from output signal</h2>
+<p>For basic sequences, images can be visualized with the JEMRIS_sim Matlab interface. For 3D sequences or phase contrast sequences, use the specific Recon_*.m Matlab reconstruction scripts.</p>
+
+</div></div><!-- contents -->
+
+

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CoilArray>
+   <EXTERNALCOIL Dim="2" Extent="256" Filename="sens.h5" Name="C2" Points="64"/>
+</CoilArray>

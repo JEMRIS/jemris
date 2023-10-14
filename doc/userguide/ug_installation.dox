@@ -1,0 +1,70 @@
+/**
+**************************************************
+* \page ug_install Installation
+
+This section describes the installation procedures for building jemris from scratch.
+This is usually not necessary.
+Binary packages for Linux, Windows and Mac OS X, are available in the section \ref ug_downl.
+
+\section ug_install_pre Prerequisites
+
+<b>JEMRIS</b> relies on several libraries, which need to be downloaded and installed prior to its compilation:
+
+\li <a href="http://computing.llnl.gov/projects/sundials">CVODE</a> variable time stepping ODE solver 5.8 (default package in ubuntu 22.04)
+\li <a href="http://xerces.apache.org/xerces-c">Xerces-C++</a> XML parser >=2.8
+\li <a href="http://www.hdfgroup.org/HDF5/">HDF5</a> a file format for storing and managing data >=1.8
+\li <a href="http://www.ginac.de/CLN">CLN</a> library for Numbers version >=1.2.X
+\li <a href="http://www.ginac.de">GiNaC</a> library for symbolic mathematics >=1.4.X
+\li <a href="https://ismrmrd.github.io/">ISMRMRD</a> ISMRM Raw Data Format >=1.4.X
+
+Some Linux distributions have the some of the above packages prebuilt and included in their package management.
+
+\n
+\section ug_install_opt Optionals
+
+\subsection ug_install_mpi Parallelization with the MPI Library
+
+Should you want to exploit more than one CPU core, you will need an implementation of MPI. <b>JEMRIS</b> has been tested with
+<a href="https://www.open-mpi.org/">Open MPI</a> and <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2</a>.
+<b>JEMRIS</b> on Mac OS X works well with the pre-compiled Open-MPI implementation available from <a href="https://brew.sh/">Homebrew</a>.   
+
+\subsection ug_install_imgreco Automated Image Reconstruction Pipeline
+
+Automated image reconstruction of JEMRIS simulations requires a dedicated Docker container. The container provides several tools including the
+ <a href="https://mrirecon.github.io/bart">BART</a> toolbox for image reconstruction. JEMRIS comunicates with the Docker container via a Python client,
+ which is  installed as Conda environment. The installation process requires Docker and Conda-Python installed:
+\li <a href=" https://docs.docker.com/engine">Docker</a> Containerized application service 
+\li <a href="https://docs.conda.io/">Conda</a> Python package manager 
+
+If one of them is missing, JEMRIS compilation and installation may still work but the image reconstruction features will not.
+
+\subsection ug_install_boost Boost C++
+
+The boost C++ libraries are used for the evaluation of elliptical integration terms of the Biot-Savart law. <b>JEMRIS</b> is operational without the boost libraries
+while Biot-Savart-Loops behave like ideal coils.
+
+\n
+\section ug_install_compilation Compiling JEMRIS
+
+Download the JEMRIS source package from \ref ug_downl and unpack the tar ball. JEMRIS is compiled with \c cmake: 
+\li \c <b>"# cd jemris-X.X"</b>
+\li \c <b>"# mkdir build; cd build; cmake .."</b>
+\li \c <b>"# make"</b>
+\li \c <b>"# ctest -V"</b>
+\li \c <b>"# make install"</b>
+
+The \c "cmake" command will also download the docker container and the Conda environment for image reconstruction, which may take some minutes
+depending on your internet connection. This happens only once or if there have been changes to the Docker container or the Conda environment.
+
+The last step (\c "make install") will only work if you have write access to
+<b>/usr/local/bin</b> and <b>/usr/local/share</b>. The binaries jemris
+and if available pjemris, matlab GUI files and examples are
+installed.
+
+After adding <b>/usr/local/share/jemris/matlab</b> to the Matlab path, you can run the JEMRIS Matlab GUIs for sequence design and simulation
+(see \ref ug_JEMRIS_seq and \ref ug_JEMRIS_sim).
+
+You may start by loading one of the example sequences in the directory \c <b>"/usr/local/share/jemris/exmaples"</b>.
+
+**************************************************
+*/

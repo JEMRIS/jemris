@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulate name="JEMRIS">
+   <sample name="sphere" uri="../share/examples/approved/sample.h5"/>
+   <RXcoilarray uri="../share/examples/approved/uniform.xml"/>
+   <TXcoilarray uri="../share/examples/approved/uniform.xml"/>
+   <parameter PositionRandomness="0"/>
+   <sequence name="epi" uri="../share/examples/epi.xml"/>
+   <model name="Bloch" type="CVODE"/>
+</simulate>
+

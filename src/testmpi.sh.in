@@ -1,0 +1,7 @@
+echo
+echo "Test Case 4: testing parallel execution"
+echo "======================================="
+@MPIRUN@ @MPIRUN_PROC_OPT@ 3 ./pjemris ../share/examples/approved/mpi_simu.xml > mpirun.out
+ec=$?
+cat mpirun.out
+exit $ec

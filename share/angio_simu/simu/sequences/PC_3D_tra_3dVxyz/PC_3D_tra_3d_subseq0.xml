@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters TI="1.85" FOVx="192" FOVy="192" FOVz="126" GradMaxAmpl="12" GradSlewRate="53.5" Name="P" Nx="64" Ny="64" Nz="42" TE="5.5" TR="40">
+   <ConcatSequence Aux1="150" Name="Venc">
+      <CONCATSEQUENCE Name="C3" Repetitions="10">
+         <ATOMICSEQUENCE Name="A11">
+            <HARDRFPULSE Duration="0.1" FlipAngle="15" Name="P11" Symmetry="0.5"/>
+         </ATOMICSEQUENCE>
+         <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D3" Observe="P,TR" StartSeq="A11"/>
+      </CONCATSEQUENCE>
+      <CONCATSEQUENCE Name="C4" Observe="P,Nz" Repetitions="a1">
+         <ConcatSequence Name="C" Observe="P,Ny" Repetitions="a1">
+            <ATOMICSEQUENCE Name="A1">
+               <HARDRFPULSE Duration="a1" FlipAngle="a2" Name="P10" Observe="P11,Duration/P11,FlipAngle" Symmetry="0.5"/>
+            </ATOMICSEQUENCE>
+            <DELAYATOMICSEQUENCE Delay="a1" DelayType="C2C" Name="D1" Observe="P,TE" StartSeq="A1" StopSeq="A600"/>
+            <ATOMICSEQUENCE Name="A2">
+               <TRAPGRADPULSE Area="0*1000*3.14/(a1 * a3)" Axis="GX" Duration="a1" Name="P4" Observe="P,TI/C4,Counter/Venc,Aux1"/>
+            </ATOMICSEQUENCE>
+            <ATOMICSEQUENCE Name="A3">
+               <TRAPGRADPULSE Area="-a1" Axis="GX" Duration="a2" Name="P8" Observe="P4,Area/P4,Duration"/>
+            </ATOMICSEQUENCE>
+            <ATOMICSEQUENCE Name="A6">
+               <TRAPGRADPULSE Area="a1/2" Axis="GX" Name="P50" Observe="P6,Area"/>
+            </ATOMICSEQUENCE>
+            <ATOMICSEQUENCE Name="A4">
+               <TRAPGRADPULSE Area="-a1" Axis="GX" Name="P5" Observe="P6,Area"/>
+               <TRAPGRADPULSE Area="a1-a2*a3*(1+1/(a4-1))" Axis="GY" Name="P3" Observe="P,KMAXy/C,Counter/P,DKy/P,Ny"/>
+               <TRAPGRADPULSE Area="a1-a2*a3*(1+1/(a4-1))" Axis="GZ" Name="P30" Observe="P,KMAXz/C4,Counter/P,DKz/P,Nz"/>
+            </ATOMICSEQUENCE>
+            <ATOMICSEQUENCE Name="A600">
+               <TRAPGRADPULSE ADCs="a2" Axis="GX" FlatTopArea="2*a1" FlatTopTime="a3" Name="P6" Observe="P,KMAXx/P,Nx/P,TI"/>
+            </ATOMICSEQUENCE>
+            <ATOMICSEQUENCE Name="A100">
+               <TRAPGRADPULSE Area="2*a1" Axis="GX" Name="P88" Observe="P6,FlatTopArea"/>
+            </ATOMICSEQUENCE>
+            <DELAYATOMICSEQUENCE Delay="a1" DelayType="B2E" Name="D2" Observe="P,TR" StartSeq="A1"/>
+         </ConcatSequence>
+      </CONCATSEQUENCE>
+   </ConcatSequence>
+</Parameters>

@@ -1,0 +1,21 @@
+dump of sequence tree
+                        TYPE              CLASS        NAME  duration      ADCs     TPOIs |  module specific
+                        ----------------------------------------------------------------- |  ---------------
+sequence-root------>   CONCAT       CONCATSEQUENCE        C   640.000     1024      3366  |  Repetitions = 32, type SLI|PHA|PAR|SET|CON|AVG = 0|1|0|0|0|0
+  |_ child 1   ---->     ATOM       ATOMICSEQUENCE   Aslice     4.000        0        53  | 
+    |_ child 1   -->    PULSE      GAUSSIANRFPULSE       RF     4.000        0        52  |  Axis = RF  , (Flipangle,Phase,Bandwidth,Channel,Symmetry) = (90,0,6.2832,0,0.5) 
+    |_ child 2   -->    PULSE        TRAPGRADPULSE      GSS     4.000        0         4  |  Axis = GZ  , Area = 8.2801
+  |_ child 2   ---->     ATOM  DELAYATOMICSEQUENCE      DTE     0.090        0         2  |  DelayType = C2C  , StartSeq = Aslice , StopSeq = Aro , Delay = 6.3
+    |_ child 1   -->    PULSE           EMPTYPULSE   eP_DTE     0.090        0         2  |  Axis = none 
+  |_ child 3   ---->     ATOM       ATOMICSEQUENCE     Apre     1.000        0         8  | 
+    |_ child 1   -->    PULSE        TRAPGRADPULSE     preX     1.000        0         4  |  Axis = GX  , Area = 0.501016
+    |_ child 2   -->    PULSE        TRAPGRADPULSE     preY     1.000        0         4  |  Axis = GY  , Area = -0.0493458
+    |_ child 3   -->    PULSE        TRAPGRADPULSE     rphZ     1.000        0         4  |  Axis = GZ  , Area = -4.14005
+  |_ child 4   ---->     ATOM       ATOMICSEQUENCE      Aro     6.420       32        36  | 
+    |_ child 1   -->    PULSE        TRAPGRADPULSE      roX     6.420       32        36  |  Axis = GX  , ADC type ADC|IMG|ACS|PC|NOISE = 0|1|0|0|0 , Area = -1.00203 , FlatTop: (Area,time)= (-1.00047,6.4)
+    |_ child 2   -->    PULSE        TRAPGRADPULSE      roY     6.420        0         4  |  Axis = GY  , Area = 0.0986915 , FlatTop: (Area,time)= (0.0985376,6.4)
+  |_ child 5   ---->     ATOM       ATOMICSEQUENCE     Arfc     1.000        0         6  | 
+    |_ child 1   -->    PULSE        TRAPGRADPULSE     rphX     1.000        0         4  |  Axis = GX  , Area = 0.501016
+    |_ child 2   -->    PULSE        TRAPGRADPULSE     rphY     1.000        0         4  |  Axis = GY  , Area = -0.0493458
+  |_ child 6   ---->     ATOM  DELAYATOMICSEQUENCE      DTR     7.490        0         2  |  DelayType = B2E  , StartSeq = Aslice , Delay = 20
+    |_ child 1   -->    PULSE           EMPTYPULSE   eP_DTR     7.490        0         2  |  Axis = none 
