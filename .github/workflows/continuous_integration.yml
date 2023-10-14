@@ -17,7 +17,6 @@ env:
 
 jobs:
   build:
-    example_matrix:
     strategy:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04] # , macos-12
@@ -26,7 +25,6 @@ jobs:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
@@ -39,7 +37,6 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          
 
       #- name: Copy ginac excompiler # This is highly fragile
       #  run: cp /lib/*/ginac/ginac-excompiler /usr/bin/ginac-excompiler
@@ -51,7 +48,7 @@ jobs:
 
       - name: Build
         # Build your program with the given configuration
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} 
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Test
         env:
@@ -74,7 +71,7 @@ jobs:
         run: |
           cp -Lpr ${{github.workspace}}/build/jemris-sanitycheck-test.xml test-results.xml
         shell: bash
-      
+
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
