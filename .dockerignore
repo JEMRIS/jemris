@@ -1,0 +1,7 @@
+.github
+.devcontainer
+build
+debian
+doc
+m4
+CMakeCache.txt
