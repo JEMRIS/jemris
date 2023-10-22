@@ -79,3 +79,15 @@ jobs:
         with:
           files: |
             test-results.xml
+
+      - name: Generate package
+        working-directory: ${{github.workspace}}
+        run: |
+          mkdir -p ${{github.workspace}}/packages && cpack -G TBZ2 -B {{github.workspace}}/packages
+
+      - name: Store results as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: jemris-package
+          path: |
+            packages/*.*
