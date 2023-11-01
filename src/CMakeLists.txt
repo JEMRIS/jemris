@@ -92,19 +92,19 @@ install (TARGETS jemris DESTINATION "bin")
 add_test (
   NAME sequences
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/share/examples
-  COMMAND sanityck . 1)
+  COMMAND ${PROJECT_BINARY_DIR}/src/sanityck . 1)
 add_test (
   NAME signals 
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/share/examples
-  COMMAND sanityck . 2 0.2)
+  COMMAND ${PROJECT_BINARY_DIR}/src/sanityck . 2 )
 add_test (
   NAME coils 
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/share/examples
-  COMMAND sanityck . 3)
+  COMMAND ${PROJECT_BINARY_DIR}/src/sanityck . 3)
 add_test (
   NAME pulseq_output 
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/share/examples
-  COMMAND sanityck . 4)
+  COMMAND ${PROJECT_BINARY_DIR}/src/sanityck . 4)
 
 if (MPI_FOUND)
    add_test(

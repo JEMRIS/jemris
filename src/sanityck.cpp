@@ -34,7 +34,9 @@
 #include "SequenceTree.h"
 #include "ConcatSequence.h"
 
-#define DEFAULT_TOLERANCE_SIG_COMPARE_PERCENT 0.1
+#define DEFAULT_TOLERANCE_SEQ_COMPARE_PPM   1.0
+#define DEFAULT_TOLERANCE_SIG_COMPARE_PPM  10.0
+#define DEFAULT_TOLERANCE_SEN_COMPARE_PPM   5.0
 
 using namespace std;
 
@@ -91,6 +93,7 @@ double compare_binary_files(string file1, string file2)
 
 	double dif = 0.0;
 	double sum = 0.0;
+	long   num = 0;
 	double d1, d2;
 
 	ifstream IF1(file1.c_str(), ios::binary);
@@ -103,9 +106,10 @@ double compare_binary_files(string file1, string file2)
 		IF2.read((char *)(&(d2)), sizeof(double));
 		dif += sqrt(pow(d1 - d2, 2));
 		sum += (fabs(d1) + fabs(d2));
+		num++;
 	}
 
-	double error = 100.0 * dif / sum;
+	double error = (1e6/num) * dif / sum;
 
 	if (!IF1.eof() || !IF2.eof())
 		error = -1.0;
@@ -165,7 +169,7 @@ double compare_hdf5_fields(string file1, string file2, string field)
 
 	if (sum < 1e-15)
 		return 0.0;
-	return 100.0 * dif / sum;
+	return (1e6/v1.size()) * dif / sum;
 }
 
 /****************************************************/
@@ -215,13 +219,13 @@ bool CheckSeqs(string path, vector<string> seq)
 				d += compare_hdf5_fields(path + binfile, path + "approved/" + binfile, "/seqdiag/GX");
 				d += compare_hdf5_fields(path + binfile, path + "approved/" + binfile, "/seqdiag/GY");
 				d += compare_hdf5_fields(path + binfile, path + "approved/" + binfile, "/seqdiag/GZ");
-				if (d > 0.1)
+				if (d > DEFAULT_TOLERANCE_SEQ_COMPARE_PPM)
 				{
 					status = false;
-					printf("is NOT ok (e=%7.3f %%)       | ", d);
+					printf("is NOT ok (e=%7.3f ppm)       | ", d);
 				}
 				else
-					printf("is ok (e=%7.3f %%)           | ", d);
+					printf("is ok (e=%7.3f ppm)           | ", d);
 			}
 
 			// sequence-tree
@@ -293,10 +297,10 @@ bool CheckSigs(string path, vector<string> seq, double tolerance_in_percent)
 			if (d > tolerance_in_percent)
 			{
 				status = false;
-				printf("is NOT ok (e=%7.4f %%) \n", d);
+				printf("is NOT ok (e=%7.4f ppm) \n", d);
 			}
 			else
-				printf("is ok (e=%7.4f %%) \n", d);
+				printf("is ok (e=%7.4f ppm) \n", d);
 		}
 	}
 	return status;
@@ -350,10 +354,10 @@ bool CheckSens(string path, vector<string> coils)
 			d += m + p;
 		}
 
-		if (d > 0.1)
+		if (d > DEFAULT_TOLERANCE_SEN_COMPARE_PPM)
 		{
 			status = false;
-			printf("is NOT ok (e=%7.4f %%) \n", d);
+			printf("is NOT ok (e=%7.4f ppm) \n", d);
 		}
 		else
 			printf("is ok (e=%7.4f %%) \n", d);
@@ -421,11 +425,11 @@ int main(int argc, char *argv[])
 
 	string path(argv[1]);
 	string input(argv[2]);
-	double tolerance = DEFAULT_TOLERANCE_SIG_COMPARE_PERCENT;
+	double sig_tolerance = DEFAULT_TOLERANCE_SIG_COMPARE_PPM;
 
 	if (argc > 3)
 	{
-		tolerance = atof(argv[3]);
+		sig_tolerance = atof(argv[3]);
 	}
 
 	path += '/';
@@ -465,13 +469,15 @@ int main(int argc, char *argv[])
 	switch (atoi(input.c_str()))
 	{
 	case (1):
+		cout << "Checking sequence diagram with tolerance of " << DEFAULT_TOLERANCE_SEQ_COMPARE_PPM << " ppm";
 		status = CheckSeqs(path, seq);
 		break; // test sequence diagrams for all sequences
 	case (2):
-		cout << "Checking signals with tolerance of " << tolerance << "percent";
-		status = CheckSigs(path, seq, tolerance);
+		cout << "Checking signals with tolerance of " << sig_tolerance << " ppm";
+		status = CheckSigs(path, seq, sig_tolerance);
 		break; // test signal simulations for all sequences
 	case (3):
+		cout << "Checking coil sensitivities with tolerance of " << DEFAULT_TOLERANCE_SEN_COMPARE_PPM << " ppm";
 		status = CheckSens(path, coils);
 		break; // test sensitivity maps for all coils
 	case (4):
