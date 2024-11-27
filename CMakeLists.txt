@@ -123,13 +123,13 @@ link_directories(${ISMRMRD_LIBRARY_DIRS})
 include_directories(${ISMRMRD_INCLUDE_DIRS})
 
 # Docker image
-#message( NOTICE "pulling docker image for reconstruction server...")
-#execute_process(COMMAND "docker" "pull" "mavel101/bart-reco-server" RESULT_VARIABLE ret OUTPUT_FILE CMD_OUTPUT)
-#if(ret EQUAL "1")
-    #message( WARNING "Docker image for reconstruction server cannot be pulled. Docker may not be installed.")
-#else()
-    #message( NOTICE "Succesfully pulled Docker image.")
-#endif()
+message( NOTICE "pulling docker image for reconstruction server...")
+execute_process(COMMAND "docker" "pull" "mavel101/bart-reco-server" RESULT_VARIABLE ret OUTPUT_FILE CMD_OUTPUT)
+if(ret EQUAL "1")
+    message( WARNING "Docker image for reconstruction server cannot be pulled. Docker may not be installed.")
+else()
+    message( NOTICE "Succesfully pulled Docker image.")
+endif()
 
 # Client conda environment
 if ( NOT DEFINED SKIP_CONDA)
