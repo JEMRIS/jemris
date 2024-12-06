@@ -81,9 +81,10 @@ int main (int argc, char *argv[])
 
 
     int N=0,m=0,l=0,statSeed=0,sep=0;
-    double t,tShift=0,t_test,tmem=-999999,grandissT=1,tmaxWritten=0,t_write;
+    double t,tShift=0,t_test,tmem=-999999,grandissT=1,tmaxWritten=0,t_write=0.0;
     float Dx=0,Dy=0,Dz=0,grandissX=1,grandissY=1,grandissZ=1;
-    float x,y,z,xmem,ymem,zmem,xextrSup=-Dx,yextrSup=-Dy,zextrSup=-Dz,xextrInf=-Dx,yextrInf=-Dy,zextrInf=-Dz;
+    float x,y,z,xmem=0.0,ymem=0.0,zmem=0.0;
+    float xextrSup=-Dx,yextrSup=-Dy,zextrSup=-Dz,xextrInf=-Dx,yextrInf=-Dy,zextrInf=-Dz;
     streampos pos;
 
     fstream spins("./particles.dat",ios::in);

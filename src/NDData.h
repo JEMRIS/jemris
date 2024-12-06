@@ -111,7 +111,7 @@ public:
      * @param n2 Third side
      */
     NDData (const size_t n0, const size_t n1, const size_t n2, const size_t n3) {
-    	_dims.resize(3);
+    	_dims.resize(4);
     	_dims[0] = n0;
     	_dims[1] = n1;
     	_dims[2] = n2;

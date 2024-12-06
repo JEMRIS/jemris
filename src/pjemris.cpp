@@ -45,9 +45,30 @@ using namespace std;
  #define MKDIR(S,M)    mkdir(S,M)
 #endif
 
+/**
+ * Print usage information
+ */
+
+void usage () {
+  cout << "Parallel-core implementation of the JEMRIS MRI simulator" << endl;
+  cout << endl << "  Usage:" << endl << endl;
+	cout   << "  pjemris <xml-file>        " << endl;
+	cout   << "     The file could be either a a) Simulation, b) Sequence, or c) Coilarray file, " << endl;
+	cout   << "     so that a) the simultion is performed, b) a sequence diagram is written, " << endl;
+	cout   << "     or c) the sensitivity maps are dumped, respectively." << endl << endl;
+	cout   << "  Parameters:" << endl;
+	cout   << "     -o <output_dir>: Output directory" << endl;
+	cout   << "     -f <filename>:   Output filename (without extension)"  << endl;
+	cout   << "     -r: Start reconstruction after simulation (running recon server is required). "  << endl;
+}
 
 int main (int argc, char *argv[]) {
-  
+
+	if (argc==1) {
+		usage();
+		return 0;
+	}
+
 	//init MPI
 #ifdef HAVE_MPI_THREADS
   int provided;
@@ -63,6 +84,22 @@ int main (int argc, char *argv[]) {
 	int master=0, tag=42;
 	double t1 = MPI_Wtime();
 
+	int size;
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+	
+	if (size == 1) {
+	  cout << "  !!! MPI failed to launch any slave processes !!!\n" << endl;
+	  cout << "  to take advantage of the parallelization, use the following calls..." << endl;
+	  // https://stackoverflow.com/questions/62503731/invalid-mit-magic-cookie-1-key-when-locally-running-mpi-application-or-starting
+	  // tell hwloc to ignore graphics devices:
+	  cout << "    export HWLOC_COMPONENTS=\"-gl\" " << endl;
+	  // tell the MPI system how many processors to use
+	  cout << "    mpiexec -np <N> pjemris <xml-file>" << endl;
+	  cout << "  where N is the number of processors to use" << endl;
+	    return(-1);
+	}
+
+	
   string output_dir("");
   string filename("");
 
@@ -89,9 +126,9 @@ int main (int argc, char *argv[]) {
       case 'f':
         filename = optarg;
         break;
-	  case 'r':
-		recon=true;
-		break;
+      case 'r':
+	recon=true;
+	break;
       case '?':
         if (optopt == 'o')
           cerr << "Option '-o' requires an argument." << endl;

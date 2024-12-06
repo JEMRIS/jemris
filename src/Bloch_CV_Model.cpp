@@ -168,6 +168,9 @@ inline static int bloch (realtype rt, N_Vector y, N_Vector ydot, void *pWorld) {
 
 /**********************************************************/
 Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
+    int comm=1;
+    SUNContext sunctx;
+    SUNContext_Create( &comm, &sunctx );
 
     m_world->solverSettings = new nvec;
 /*    for (int i=0;i<OPT_SIZE;i++) {m_iopt[i]=0; m_ropt[i]=0.0;}
@@ -176,16 +179,16 @@ Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
     m_reltol       = RTOL;
 
      // create cvode memory pointer; no mallocs done yet.
-    m_cvode_mem = CVodeCreate (CV_ADAMS);
+    m_cvode_mem = CVodeCreate (CV_ADAMS, sunctx);
 
  
     // cvode allocate memory.
     // do CVodeMalloc with dummy values y0,abstol once here;
     // -> CVodeReInit can later be used
     N_Vector y0, abstol;
-    y0		= N_VNew_Serial(NEQ);
-    abstol	= N_VNew_Serial(NEQ);
-    ((nvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ);
+    y0		= N_VNew_Serial(NEQ, sunctx);
+    abstol	= N_VNew_Serial(NEQ, sunctx);
+    ((nvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ, sunctx);
 
     NV_Ith_S(y0, AMPL)  = 0;
     NV_Ith_S(y0, PHASE) = 0;
@@ -238,18 +241,21 @@ Bloch_CV_Model::Bloch_CV_Model     () : m_tpoint(0) {
     // maximum number of warnings t+h = t (if number negative -> no warnings are issued )
     CVodeSetMaxHnilWarns(m_cvode_mem,2);
 
-
+    SUNContext_Free(&sunctx);
 }
 
 /**********************************************************/
 void Bloch_CV_Model::InitSolver    () {
+    int comm=1;
+    SUNContext sunctx;
+    SUNContext_Create( &comm, &sunctx );
 
-    ((nvec*) (m_world->solverSettings))->y = N_VNew_Serial(NEQ);
+    ((nvec*) (m_world->solverSettings))->y = N_VNew_Serial(NEQ, sunctx);
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,AMPL )  = m_world->solution[AMPL] ;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,PHASE ) = fmod(m_world->solution[PHASE],TWOPI) ;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->y,ZC )    = m_world->solution[ZC] ;
 
-    ((nvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ);
+    ((nvec*) (m_world->solverSettings))->abstol = N_VNew_Serial(NEQ, sunctx);
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,AMPL )  = ATOL1*m_accuracy_factor;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,PHASE ) = ATOL2*m_accuracy_factor;
     NV_Ith_S( ((nvec*) (m_world->solverSettings))->abstol,ZC )    = ATOL3*m_accuracy_factor;
@@ -267,7 +273,7 @@ void Bloch_CV_Model::InitSolver    () {
     	exit (-1);
     }
 
-
+    SUNContext_Free(&sunctx);
 }
 
 /**********************************************************/
