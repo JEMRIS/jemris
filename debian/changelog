@@ -1,12 +1,19 @@
+jemris (2.9-2) stable; urgency=low
+  * Major support of sundials library 6.4 (no backward compatibility with older versions)
+  * Minor improved test metrics for unit tests (sanityck)
+  * Minor bug fixes
+  * Minor updated documentation
 
- -- Tony Stoecker <tony.stoecker@dzne.de>  Thu, 08 Sep 2023 11:56:45 +0200
+ -- Tony Stoecker <tony.stoecker@dzne.de>  Fr, 03 Jan 2025 11:56:45 +0200
+
 jemris (2.9-1) stable; urgency=low
   * Major support of sundials cvode library 5.8 (no backward compatibility with older versions < 5.x)
   * Major added linux matlab standalone GUIs (such that MATLAB is not needed for using the GUIs)
   * Minor bug fixes
   * Minor updated documentation
 
- -- Tony Stoecker <tony.stoecker@dzne.de>  Thu, 03 Feb 2022 11:56:45 +0200
+ -- Tony Stoecker <tony.stoecker@dzne.de>  Thu, 08 Sep 2023 11:56:45 +0200
+
 jemris (2.9-0) stable; urgency=low
   * Major added image reconstruction and ismrmrd support
   * Major added deformable motion simulation

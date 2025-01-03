@@ -1,5 +1,5 @@
 # Pulseq sequence format
-# Created by JEMRIS 2.9.1
+# Created by JEMRIS 2.9.2
 
 [VERSION]
 major 1
@@ -937,4 +937,4 @@ num_samples 2667
 
 [SIGNATURE]
 Type md5
-Hash c874704b8f21835afb78780fcffda7ea
+Hash c25ab20c2444bec997d34d8bacb93edb

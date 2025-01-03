@@ -6,7 +6,7 @@ function writeXMLseq(handles,S,dnode,docNode)
 
 %
 %  JEMRIS Copyright (C) 
-%                        2006-2023  Tony Stoecker
+%                        2006-2025  Tony Stoecker
 %                        2007-2015  Kaveh Vahedipour
 %                        2009-2019  Daniel Pflugfelder
 %                                  
