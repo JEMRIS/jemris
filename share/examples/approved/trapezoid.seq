@@ -3,25 +3,29 @@
 
 [VERSION]
 major 1
-minor 2
-revision 1
+minor 4
+revision 0
 
 [DEFINITIONS]
 Name trapezoid
 Num_Blocks 3
+GradientRasterTime 1e-05
+AdcRasterTime 1e-07
+RadiofrequencyRasterTime 1e-06
+BlockDurationRaster 1e-05
 
 # Format of blocks:
-##  D RF  GX  GY  GZ ADC
+# NUM DUR RF  GX  GY  GZ ADC EXT
 [BLOCKS]
-1  0  1   0   0   0  0
-2  0  0   1   0   0  0
-3  0  0   2   0   0  1
+1  10   1   0   0   0  0  0
+2 114   0   1   0   0  0  0
+3 420   0   2   0   0  1  0
 
 # Format of RF events:
-# id amplitude mag_id phase_id delay freq phase
-# ..        Hz   ....     ....    us   Hz   rad
+# id amplitude mag_id phase_id time_shape_id delay freq phase
+# ..        Hz   ....     ....          ....    us   Hz   rad
 [RF]
-1         2500 1 2   0 0 0
+1         2500 1 2 0   0 0 0
 
 # Format of trapezoid gradients:
 # id amplitude rise flat fall delay
@@ -37,7 +41,6 @@ Num_Blocks 3
  1  64  62500 100 500 3.14159
 
 # Sequence Shapes
-
 [SHAPES]
 
 shape_id 1
@@ -55,5 +58,8 @@ num_samples 100
 
 
 [SIGNATURE]
+# This is the hash of the Pulseq file, calculated right before the [SIGNATURE] section was added
+# It can be reproduced/verified with md5sum if the file trimmed to the position right above [SIGNATURE]
+# The new line character preceding [SIGNATURE] BELONGS to the signature (and needs to be stripped away for recalculating/verification)
 Type md5
-Hash 54568a146eb11adc8f018a447d5b5e26
+Hash 3723d9bca74a3c40c7ac28c29b0b367a

@@ -122,20 +122,11 @@ void OutputSequenceData::AddEvents(vector<Event*> &events, double duration)
 			// Set index of current block
 			block.events[SeqBlock::ADC] = idx+1;
 		}
-
-		// Add delay events
-		DelayEvent *delay = dynamic_cast<DelayEvent*>(event);
-		if (delay!=NULL) {
-			// Search library of delay events
-			idx = SearchLibrary(m_delay_library,*delay);
-			if (idx>=m_delay_library.size())
-				m_delay_library.push_back(*delay);
-
-			// Set index of current block
-			block.events[SeqBlock::DELAY] = idx+1;
-		}
 	}
 
+	block.duration = duration;
+	if (duration > m_max_block_duration)
+  		m_max_block_duration = duration;
 	m_duration += duration;
 	m_blocks.push_back(block);
 
@@ -166,20 +157,27 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	// Output Pulseq Version
 	output << "[VERSION]" << endl;
 	output << "major 1" << endl;
-	output << "minor 2" << endl;
-	output << "revision 1" << endl;
+	output << "minor 4" << endl;
+	output << "revision 0" << endl;
 	output << endl;
 
 	// Output high level parameters
+	double grad_raster_time = 1e-5;
+	double block_duration_raster = 1e-5;
+	double adc_raster_time = 1e-7;
+	double rf_raster_time = 1e-6;
 	Parameters* P = Parameters::instance();
 	output << "[DEFINITIONS]" << endl;
 	for (map<string,string>::iterator it=m_definitions.begin(); it!=m_definitions.end(); ++it)
 		output << it->first << " " << it->second << endl;
 	output << "Name " << outFile.substr(0, outFile.find(".", 0)) << endl;
 	output << "Num_Blocks " << m_blocks.size() << endl;
+	output << "GradientRasterTime " << grad_raster_time << endl;
+	output << "AdcRasterTime " << adc_raster_time << endl;
+	output << "RadiofrequencyRasterTime " << rf_raster_time << endl;
+	output << "BlockDurationRaster " << block_duration_raster << endl;
 	if (P->m_fov_x > 0 && P->m_fov_y > 0 && P->m_fov_z > 0){
-		output << "FOV " << P->m_fov_x << " " << P->m_fov_y << " " << P->m_fov_z << endl; // FOV in [mm] in Pulseq 1.2.1 ([m] from 1.3.0 on)
-		output << "Slice_Thickness " << P->m_fov_z << endl;
+		output << "FOV " << 1e-3*P->m_fov_x << " " << 1e-3*P->m_fov_y << " " << 1e-3*P->m_fov_z << endl;
 	}
 	if (distanceFromIdentity>1e-6) {
 		output << "Rot_Matrix " << setprecision(9)
@@ -191,25 +189,36 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 
 	// Determine width of block ID fields for right align
 	int blockIdWidth;
+	int blockDurWidth;
 	ostringstream ss;
 	ss <<  m_blocks.size();
 	blockIdWidth = ss.str().length();
+	ss.str("");
+	ss.clear();
+	ss << static_cast<int>(m_max_block_duration / 1000.0 / block_duration_raster);
+	blockDurWidth = ss.str().length();
 
 	// Output blocks
 	// ============================================================
 	output << "# Format of blocks:" << endl;
-	output << "#" << setw(blockIdWidth-1) << "#";
-	output << "  D RF  GX  GY  GZ ADC" << endl;
-	int eventWidths[] = {2,2,3,3,3,2};
+	output << "# " << setw(blockIdWidth-1);
+	output << "NUM DUR RF  GX  GY  GZ ADC EXT" << endl;
+	int eventWidths[] = {3,3,3,3,2};
 	output << "[BLOCKS]" << endl;
 
 	for (int iB=0; iB<m_blocks.size(); iB++)
 	{
 		SeqBlock & block = m_blocks[iB];
+		double dur = block.duration / 1000.0 / block_duration_raster;
+		if (dur - std::floor(dur) >= 0.01)
+   			dur = std::ceil(dur);
+		else
+			dur = std::floor(dur);
 		output << setw(blockIdWidth) << iB+1;
+		output << " " << setw(blockDurWidth) << static_cast<int>(dur);
 		for (int iE=0; iE<SeqBlock::NUM_EVENTS; iE++)
 			output << " " << setw(eventWidths[iE]) << block.events[iE];
-		output << endl;
+		output << " " << setw(2) << 0 << endl;
 	}
 	output << endl;
 
@@ -219,13 +228,13 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	// RF events
 	if (m_rf_library.size()>0) {
 		output << "# Format of RF events:" << endl;
-		output << "# id amplitude mag_id phase_id delay freq phase" << endl;
-		output << "# ..        Hz   ....     ....    us   Hz   rad" << endl;
+		output << "# id amplitude mag_id phase_id time_shape_id delay freq phase" << endl;
+		output << "# ..        Hz   ....     ....          ....    us   Hz   rad" << endl;
 		output << "[RF]" << endl;
 		for (int iE=0; iE<m_rf_library.size(); iE++) {
 			RFEvent &rf = m_rf_library[iE];
 			output << iE+1 << " " <<  setw(12) << FREQ_TO_EXTERNAL*rf.m_amplitude
-			        << " " << rf.m_mag_shape << " " << rf.m_phase_shape << " " << setw(3) << rf.m_delay
+			        << " " << rf.m_mag_shape << " " << rf.m_phase_shape << " " << 0 << " " << setw(3) << rf.m_delay
 			        << " " << FREQ_TO_EXTERNAL*rf.m_freq_offset << " " << rf.m_phase_offset << endl;
 		}
 		output << endl;
@@ -242,13 +251,13 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	// Arbitrary gradient events
 	if (numArbGrad>0) {
 		output << "# Format of arbitrary gradients:" << endl;
-		output << "# id amplitude shape_id delay" << endl;
-		output << "# ..      Hz/m     ....    us" << endl;
+		output << "# id amplitude shape_id time_shape_id delay" << endl;
+		output << "# ..      Hz/m     ....          ....    us" << endl;
 		output << "[GRADIENTS]" << endl;
 		for (int iE=0; iE<m_grad_library.size(); iE++) {
 			GradEvent &grad = m_grad_library[iE];
 			if (grad.m_shape>0)
-				output << iE+1 << " " << setw(12) << GRAD_TO_EXTERNAL*grad.m_amplitude << " " << grad.m_shape << " " << setw(3) << grad.m_delay << endl;
+				output << iE+1 << " " << setw(12) << GRAD_TO_EXTERNAL*grad.m_amplitude << " " << grad.m_shape << " " << 0 << " " << setw(3) << grad.m_delay << endl;
 		}
 		output << endl;
 	}
@@ -282,22 +291,11 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 		output << endl;
 	}
 
-	// Delay events
-	if (m_delay_library.size()>0) {
-		output << "# Format of delays:" << endl;
-		output << "# id delay (us)" << endl;
-		output << "[DELAYS]" << endl;
-		for (int iE=0; iE<m_delay_library.size(); iE++) {
-			DelayEvent &delay = m_delay_library[iE];
-			output << iE+1 << " " << delay.m_delay << endl;
-		}
-		output << endl;
-	}
 
 	// Output shapes
 	// ============================================================
 
-	output << "# Sequence Shapes" << endl << endl;
+	output << "# Sequence Shapes" << endl;
 	output << "[SHAPES]" << endl << endl;
 
 	for (int iS=0; iS<m_shape_library.size(); iS++)
@@ -309,7 +307,6 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 			output << setprecision(7) << shape.m_samples[k] << endl;
 		output << endl;
 	}
-	output << endl;
 
 	// Write stringstream to file
 	outfile << output.rdbuf();
@@ -318,7 +315,11 @@ void OutputSequenceData::WriteFiles(const string &outDir, const string &outFile)
 	World* pW = World::instance();
 	string output_str = output.str();
 	pW->m_seqSignature = md5(output_str);
+	outfile << endl;
 	outfile << "[SIGNATURE]" << endl;
+	outfile << "# This is the hash of the Pulseq file, calculated right before the [SIGNATURE] section was added" << endl;
+	outfile << "# It can be reproduced/verified with md5sum if the file trimmed to the position right above [SIGNATURE]" << endl;
+	outfile << "# The new line character preceding [SIGNATURE] BELONGS to the signature (and needs to be stripped away for recalculating/verification)" << endl;
 	outfile << "Type " << "md5" << endl;
 	outfile << "Hash " << pW->m_seqSignature << endl;
 

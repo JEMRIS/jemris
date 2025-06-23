@@ -25,7 +25,6 @@ public:
 	 * @brief Open file format event order
 	 */
 	enum EventCode {
-		DELAY,
 		RF,
 		XGRAD,
 		YGRAD,
@@ -50,7 +49,9 @@ public:
      * event libraries of the OutputSequenceData class.
      * The order is given by the enum EventCode.
      */
-	int events[NUM_EVENTS];     // DELAY RF X Y Z ADC
+	int events[NUM_EVENTS];     // RF X Y Z ADC
+
+	double duration;          /**< @brief Duration of this block in ms */
 
 };
 
@@ -161,12 +162,12 @@ class OutputSequenceData
 
 	double  m_rot_matrix[3][3];     /**< @brief Rotation matrix */
 	double  m_duration;             /**< @brief Total duration of sequence blocks */
+	double  m_max_block_duration; 	/**< @brief Maximum duration of a single block */
 
 	std::map<std::string,std::string> m_definitions; /**< @brief Custom definitions for user-specific purposes to be output in file */
 
 	std::vector<SeqBlock>         m_blocks;          /**< @brief List of sequence blocks */
 
-	std::vector<DelayEvent>       m_delay_library;   /**< @brief Library of delay events */
 	std::vector<RFEvent>          m_rf_library;      /**< @brief Library of RF events */
 	std::vector<GradEvent>        m_grad_library;    /**< @brief Library of gradient events */
 	std::vector<ADCEvent>         m_adc_library;     /**< @brief Library of ADC events */
