@@ -44,7 +44,6 @@ end
 
 % --- Executes just before JEMRIS_seq is made visible.
 function JEMRIS_ContainerSequence_OpeningFcn(hObject, eventdata, handles, varargin)
-colordef white
 
 % Choose default command line output for JEMRIS_seq
 handles.output = hObject;
