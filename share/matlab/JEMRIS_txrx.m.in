@@ -48,8 +48,6 @@ end
 % --- Executes just before JEMRIS_txrx is made visible.
 function JEMRIS_txrx_OpeningFcn(hObject, eventdata, handles, varargin)
 
-colordef white
-
 hax{1}=handles.axes1; hax{2}=handles.axes2; 
 for i=1:length(hax);set(hax{i},'color',[1 1 1],'visible','off');end
 handles.hax=hax;
